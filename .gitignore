@@ -1,0 +1,16 @@
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Temporary & Cache Files
+*.tmp
+*.temp
+*.log
+__pycache__/
+*.pyc
+
+# Local Backups (Automated snapshots are preserved locally)
+# backups_automaticos/*.json

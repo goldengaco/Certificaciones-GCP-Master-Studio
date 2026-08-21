@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="description" content="Plataforma de Entrenamiento y Simulación Oficial para Certificaciones Google Cloud (CDL, ACE, PCA) - 100% Offline y Autónomo.">
+  <title>Google Cloud Master Certification Studio | CDL · ACE · PCA</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Accessibility Skip Link -->
+  <a href="#main-content" class="skip-to-content">Saltar al contenido principal</a>
+
+  <!-- =========================================================================
+       INLINE SVG SPRITE ICON DEFINITIONS (Zero CDN / Zero Font Flicker)
+       ========================================================================= -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
+    <defs>
+      <!-- GCP Cloud Brand Logo -->
+      <symbol id="icon-gcp-cloud" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+      </symbol>
+
+      <!-- Dashboard View Icon -->
+      <symbol id="icon-dashboard" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+      </symbol>
+
+      <!-- Study Mode Icon (Brain / Lightbulb) -->
+      <symbol id="icon-study" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 2C7.03 2 3 6.03 3 11c0 3.12 1.6 5.86 4 7.42V20c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1.58c2.4-1.56 4-4.3 4-7.42 0-4.97-4.03-9-9-9zm-1 17h2v-1h-2v1zm4.64-3.88l-.64.42V17h-6v-1.46l-.64-.42C6.54 13.9 5 11.6 5 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 .6-.54 2.9-3.36 4.12z"/>
+      </symbol>
+
+      <!-- Exam Simulation Icon (Timer / Award) -->
+      <symbol id="icon-exam" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+      </symbol>
+
+      <!-- Weakness Drill Mode Icon (Lightning / Zap) -->
+      <symbol id="icon-drill" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M7 2v11h3v9l7-12h-4l4-8z"/>
+      </symbol>
+
+      <!-- Review / Flag Icon -->
+      <symbol id="icon-flag" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>
+      </symbol>
+
+      <!-- Success Checkmark -->
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+      </symbol>
+
+      <!-- Error / Cross Icon -->
+      <symbol id="icon-cross" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </symbol>
+
+      <!-- Case Study Document Icon -->
+      <symbol id="icon-case-study" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+      </symbol>
+
+      <!-- Settings Gear Icon -->
+      <symbol id="icon-settings" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </symbol>
+
+      <!-- Theme: Sun (Light Mode) -->
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+      </symbol>
+
+      <!-- Theme: Moon (Dark Mode) -->
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12.3 2a10 10 0 0 0-1.9 19.8 9.9 9.9 0 0 0 9.8-9.8c0-.6-.1-1.2-.2-1.8a10 10 0 0 1-7.7-8.2z"/>
+      </symbol>
+
+      <!-- Clipboard Copy Icon -->
+      <symbol id="icon-copy" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+      </symbol>
+
+      <!-- Refresh / Reset Icon -->
+      <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+      </symbol>
+
+      <!-- Audio On Icon -->
+      <symbol id="icon-volume-on" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </symbol>
+
+      <!-- Audio Off / Muted Icon -->
+      <symbol id="icon-volume-off" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+      </symbol>
+
+      <!-- Radar Chart Icon -->
+      <symbol id="icon-chart-radar" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+      </symbol>
+
+      <!-- Timeline Chart Icon -->
+      <symbol id="icon-chart-timeline" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+      </symbol>
+
+      <!-- Download / Export Icon -->
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+      </symbol>
+
+      <!-- Upload / Import Icon -->
+      <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+      </symbol>
+
+      <!-- Trash / Delete Icon -->
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+      </symbol>
+
+      <!-- Info Icon -->
+      <symbol id="icon-info" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+      </symbol>
+
+      <!-- Alert / Warning Triangle -->
+      <symbol id="icon-warning" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- =========================================================================
+       APP HEADER (Brand, Active Cert Switcher, Navigation Tabs & Utilities)
+       ========================================================================= -->
+  <header class="app-header" role="banner">
+    <div class="header-left">
+      <div class="brand-container" id="brand-home-link" role="button" tabindex="0" aria-label="Ir al Dashboard Principal">
+        <div class="brand-logo-icon">
+          <svg class="icon icon-brand" aria-hidden="true"><use href="#icon-gcp-cloud"/></svg>
+        </div>
+        <div class="brand-titles">
+          <div class="brand-badge-row">
+            <span class="brand-badge">GCP MASTER</span>
+            <span class="brand-version-badge">v2.0</span>
+          </div>
+          <h1 class="brand-name">Google Cloud Cert Studio</h1>
+        </div>
+      </div>
+
+      <!-- Active Certification Switcher -->
+      <div class="cert-switcher" role="group" aria-label="Seleccionar certificación activa">
+        <button class="cert-pill" data-cert="cdl" aria-pressed="false" id="btn-cert-cdl" title="Cloud Digital Leader">
+          <span class="cert-code">CDL</span>
+          <span class="cert-label">Digital Leader</span>
+        </button>
+        <button class="cert-pill active" data-cert="ace" aria-pressed="true" id="btn-cert-ace" title="Associate Cloud Engineer">
+          <span class="cert-code">ACE</span>
+          <span class="cert-label">Cloud Engineer</span>
+        </button>
+        <button class="cert-pill" data-cert="pca" aria-pressed="false" id="btn-cert-pca" title="Professional Cloud Architect">
+          <span class="cert-code">PCA</span>
+          <span class="cert-label">Cloud Architect</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Primary Navigation Links -->
+    <nav class="app-nav" role="navigation" aria-label="Navegación de vistas">
+      <button class="nav-tab active" data-view="dashboard" id="nav-btn-dashboard" aria-selected="true" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-dashboard"/></svg>
+        <span data-i18n="navDashboard">Dashboard</span>
+      </button>
+      <button class="nav-tab" data-view="study" id="nav-btn-study" aria-selected="false" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-study"/></svg>
+        <span data-i18n="modeStudy">Modo Estudio</span>
+      </button>
+      <button class="nav-tab" data-view="exam" id="nav-btn-exam" aria-selected="false" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-exam"/></svg>
+        <span data-i18n="modeExam">Modo Examen</span>
+      </button>
+      <button class="nav-tab" data-view="drill" id="nav-btn-drill" aria-selected="false" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-drill"/></svg>
+        <span data-i18n="modeDrill">Modo Ráfaga</span>
+      </button>
+      <button class="nav-tab" data-view="search" id="nav-btn-search" aria-selected="false" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
+        <span data-i18n="modeSearch">Buscador & 900+ Qs</span>
+      </button>
+      <button class="nav-tab" data-view="news" id="nav-btn-news" aria-selected="false" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
+        <span data-i18n="modeNews">Free Certs & News</span>
+      </button>
+      <button class="nav-tab" data-view="tools" id="nav-btn-tools" aria-selected="false" role="tab">
+        <svg class="icon" aria-hidden="true"><use href="#icon-settings"/></svg>
+        <span data-i18n="modeTools">Árboles Decisión</span>
+      </button>
+    </nav>
+
+    <!-- Right Utility HUD -->
+    <div class="header-right">
+      <div class="top-search-box">
+        <input type="search" id="topNavSearchInput" class="form-input-sm" placeholder="Buscar preguntas (Ctrl+K)..." data-i18n-placeholder="navSearchPlaceholder">
+      </div>
+      <button class="icon-btn" id="langToggleBtn" title="Cambiar Idioma (Español / English)" aria-label="Cambiar Idioma">
+        🇪🇸 ES
+      </button>
+      <div class="passing-pill" id="header-passing-pill" title="Probabilidad Real de Aprobación Calibrada">
+        <span class="passing-pill-label">Aprobación:</span>
+        <strong class="passing-pill-value" id="header-passing-prob">--%</strong>
+      </div>
+      <button class="icon-btn" id="btn-case-studies-header" title="Ver Casos de Estudio (PCA)" aria-label="Abrir Casos de Estudio">
+        <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-audio-toggle" title="Alternar Sonido / Alertas" aria-label="Alternar alertas de audio" aria-pressed="true">
+        <svg class="icon icon-audio-on" aria-hidden="true"><use href="#icon-volume-on"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-theme-toggle" title="Alternar tema claro/oscuro" aria-label="Alternar tema visual">
+        <svg class="icon icon-theme-moon" aria-hidden="true"><use href="#icon-moon"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-open-settings" title="Configuración y Datos" aria-label="Abrir configuración y copias de seguridad">
+        <svg class="icon" aria-hidden="true"><use href="#icon-settings"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       MAIN CONTENT CONTAINER (4 Views)
+       ========================================================================= -->
+  <main id="main-content" class="app-main" role="main">
+
+    <!-- =======================================================================
+         VIEW 1: DASHBOARD & DIAGNOSTIC ANALYTICS (#view-dashboard)
+         ======================================================================= -->
+    <section id="view-dashboard" class="view-section active" role="region" aria-labelledby="heading-dashboard">
+      <!-- Top Hero Summary Banner -->
+      <div class="dashboard-hero-card">
+        <div class="hero-info">
+          <div class="hero-badge-line">
+            <span class="cert-level-badge" id="dash-cert-level">Associate</span>
+            <span class="exam-code-badge" id="dash-cert-code">ACE-2026</span>
+          </div>
+          <h2 id="dash-cert-title" class="hero-title">Google Cloud Certified - Associate Cloud Engineer</h2>
+          <p id="dash-cert-tagline" class="hero-tagline">Despliegue, configuración y operación de soluciones empresariales en Google Cloud</p>
+          
+          <div class="hero-metrics-bar">
+            <div class="metric-item">
+              <span class="metric-label">Banco Oficial</span>
+              <strong class="metric-val" id="dash-total-q">300</strong>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Dominadas (Box 3)</span>
+              <strong class="metric-val text-green" id="dash-mastered-count">0</strong>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Simulacros Rendidos</span>
+              <strong class="metric-val" id="dash-exams-count">0</strong>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Promedio Reciente</span>
+              <strong class="metric-val text-yellow" id="dash-avg-score">--%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real Passing Probability Gauge Widget -->
+        <div class="hero-gauge-area">
+          <div class="svg-gauge-container">
+            <svg class="radial-gauge-svg" viewBox="0 0 160 160" width="160" height="160" id="dash-passing-gauge-svg" aria-hidden="true">
+              <circle class="gauge-bg" cx="80" cy="80" r="68"/>
+              <circle class="gauge-fill" id="dash-gauge-fill" cx="80" cy="80" r="68" stroke-dasharray="427.25" stroke-dashoffset="427.25"/>
+            </svg>
+            <div class="gauge-inner-text">
+              <span class="gauge-pct" id="dash-passing-percent">0%</span>
+              <span class="gauge-caption">Probabilidad Real</span>
+            </div>
+          </div>
+          <div class="verdict-badge badge-neutral" id="dash-readiness-badge">SIN REGISTRO</div>
+        </div>
+      </div>
+
+      <!-- Mode Launch Cards Grid -->
+      <div class="mode-launch-grid">
+        <!-- Launch Study Mode -->
+        <div class="mode-card card-study" id="card-launch-study">
+          <div class="card-icon-wrapper">
+            <svg class="icon" aria-hidden="true"><use href="#icon-study"/></svg>
+          </div>
+          <div class="card-content">
+            <h3>Modo Estudio Activo</h3>
+            <p>Aprende a tu propio ritmo con retroalimentación inmediata, justificación técnica y análisis forense de distractores.</p>
+            <div class="card-meta">
+              <span id="dash-study-progress">0/300 respondidas</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-start-study">Iniciar Estudio</button>
+        </div>
+
+        <!-- Launch Official Simulation Mode -->
+        <div class="mode-card card-exam" id="card-launch-exam">
+          <div class="card-icon-wrapper">
+            <svg class="icon" aria-hidden="true"><use href="#icon-exam"/></svg>
+          </div>
+          <div class="card-content">
+            <h3>Modo Examen Oficial</h3>
+            <p>Simulador estricto de 50 preguntas, rotación de bloques estratificados 1 a 6 y cronómetro oficial con revisión.</p>
+            <div class="card-meta">
+              <span id="dash-exam-block-info">Siguiente: Bloque 1 de 6</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-accent" id="btn-start-exam">Iniciar Simulador</button>
+        </div>
+
+        <!-- Launch Weakness Drill Mode -->
+        <div class="mode-card card-drill" id="card-launch-drill">
+          <div class="card-icon-wrapper">
+            <svg class="icon" aria-hidden="true"><use href="#icon-drill"/></svg>
+          </div>
+          <div class="card-content">
+            <h3>Modo Ráfaga de Debilidades</h3>
+            <p>Repetición espaciada acelerada (Leitner 3-Hit). Elimina puntos ciegos y domina preguntas falladas mediante atajos de teclado.</p>
+            <div class="card-meta">
+              <span id="dash-drill-queue-badge">0 preguntas en cola</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-warning" id="btn-start-drill">Iniciar Ráfaga</button>
+        </div>
+      </div>
+
+      <!-- Diagnostics Analytics Pure SVG Charts Grid -->
+      <div class="dashboard-analytics-grid">
+        <div class="chart-card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <svg class="icon" aria-hidden="true"><use href="#icon-chart-radar"/></svg>
+              <h3>Rendimiento por Dominio Oficial</h3>
+            </div>
+            <span class="benchmark-legend"><span class="dot-green"></span> Umbral 70% Requerido</span>
+          </div>
+          <div class="svg-radar-wrapper" id="chart-domain-radar-container">
+            <!-- Rendered dynamically by js/ui_charts.js -->
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <svg class="icon" aria-hidden="true"><use href="#icon-chart-timeline"/></svg>
+              <h3>Evolución de Puntajes en Simulaciones</h3>
+            </div>
+            <span class="benchmark-legend"><span class="dot-blue"></span> Score Simulación</span>
+          </div>
+          <div class="svg-timeline-wrapper" id="chart-score-timeline-container">
+            <!-- Rendered dynamically by js/ui_charts.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Domain Breakdown & Leitner Status Grid -->
+      <div class="dashboard-secondary-grid">
+        <div class="domain-list-card">
+          <div class="card-header">
+            <h3>Diagnóstico Detallado de Dominios</h3>
+            <span class="text-muted" id="dash-domain-summary-count">Dominios Evaluados</span>
+          </div>
+          <div class="domain-progress-list" id="dash-domain-breakdown-list">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+        <div class="leitner-status-card">
+          <div class="card-header">
+            <h3>Distribución en Memoria Espaciada (Leitner)</h3>
+            <span class="text-muted">3 Aciertos para Dominio</span>
+          </div>
+          <div class="leitner-boxes-grid">
+            <div class="leitner-box box-0">
+              <span class="box-count text-red" id="dash-leitner-box0">0</span>
+              <span class="box-title">Box 0: Nuevas / Fallos</span>
+              <span class="box-desc">Cola prioritaria</span>
+            </div>
+            <div class="leitner-box box-1">
+              <span class="box-count text-yellow" id="dash-leitner-box1">0</span>
+              <span class="box-title">Box 1: Aprendiendo</span>
+              <span class="box-desc">1 acierto consecutivo</span>
+            </div>
+            <div class="leitner-box box-2">
+              <span class="box-count text-blue" id="dash-leitner-box2">0</span>
+              <span class="box-title">Box 2: Repaso</span>
+              <span class="box-desc">2 aciertos consecutivos</span>
+            </div>
+            <div class="leitner-box box-3">
+              <span class="box-count text-green" id="dash-leitner-box3">0</span>
+              <span class="box-title">Box 3: Dominadas</span>
+              <span class="box-desc">3 aciertos (Mastery)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Forensic History Table -->
+      <div class="history-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <h3>Historial de Sesiones y Simulacros</h3>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-clear-history-confirm">Limpiar Historial</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-session-history">
+            <thead>
+              <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Certificación</th>
+                <th scope="col">Modalidad</th>
+                <th scope="col">Aciertos</th>
+                <th scope="col">Puntaje</th>
+                <th scope="col">Duración</th>
+                <th scope="col">Resultado</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- Rows injected dynamically -->
+            </tbody>
+          </table>
+          <div class="empty-state" id="history-empty-state">
+            <svg class="empty-state-icon" aria-hidden="true"><use href="#icon-info"/></svg>
+            <p>Aún no has completado simulaciones. ¡Inicia un examen oficial para calibrar tu probabilidad de aprobación!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 2: INTERACTIVE STUDY MODE (#view-study)
+         ======================================================================= -->
+    <section id="view-study" class="view-section" role="region" aria-labelledby="heading-study" style="display: none;">
+      <!-- Study Control Header -->
+      <div class="study-control-bar">
+        <div class="study-control-left">
+          <button class="btn btn-secondary btn-sm" id="btn-study-back-dash">
+            <svg class="icon" aria-hidden="true"><use href="#icon-dashboard"/></svg>
+            <span>Dashboard</span>
+          </button>
+          <span class="study-q-counter" id="study-question-counter">Pregunta 1 de 300</span>
+          <span class="domain-badge" id="study-domain-tag">Dominio 1</span>
+        </div>
+
+        <div class="study-control-center">
+          <select class="form-select-sm" id="study-domain-filter-select" aria-label="Filtrar por dominio">
+            <option value="ALL">Todos los dominios (300 Preguntas)</option>
+          </select>
+        </div>
+
+        <div class="study-control-right">
+          <button class="icon-btn" id="btn-study-flag" title="Marcar / Desmarcar pregunta" aria-label="Marcar pregunta">
+            <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
+          </button>
+          <select class="form-select-sm" id="study-jump-select" aria-label="Saltar a pregunta">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Main Study Question Card -->
+      <div class="question-container">
+        <div class="question-header-meta">
+          <div class="tags-row">
+            <span class="tag tag-qid" id="study-qid-badge">ACE-D1-001</span>
+            <span class="tag tag-difficulty" id="study-diff-badge">Intermedio</span>
+            <span class="tag tag-bloom" id="study-bloom-badge">Aplicar</span>
+            <span class="tag tag-cs" id="study-case-study-badge" style="display: none;">Caso de Estudio</span>
+          </div>
+          <h3 class="question-title" id="study-question-title">Cargando título...</h3>
+        </div>
+
+        <!-- Scenario Box -->
+        <div class="scenario-box" id="study-scenario-text">
+          Cargando enunciado...
+        </div>
+
+        <!-- Trigger Keywords Badge Bar -->
+        <div class="keywords-bar" id="study-keywords-bar">
+          <!-- Injected keyword chips -->
+        </div>
+
+        <!-- Options Container -->
+        <div class="options-container" id="study-options-container" role="radiogroup" aria-label="Opciones de respuesta">
+          <!-- Option items injected dynamically -->
+        </div>
+
+        <!-- Deep Justification & Feedback Drawer -->
+        <div class="justification-drawer" id="study-justification-drawer" style="display: none;">
+          <div class="feedback-banner" id="study-feedback-banner">
+            <div class="feedback-icon" id="study-feedback-icon"></div>
+            <div class="feedback-status-text" id="study-feedback-status"></div>
+          </div>
+
+          <div class="feedback-body">
+            <!-- Architectural Principle -->
+            <div class="feedback-section">
+              <h4>Principio Arquitectónico Google Cloud</h4>
+              <div class="explanation-text" id="study-explanation-text"></div>
+            </div>
+
+            <!-- Distractor Traps Analysis Table -->
+            <div class="feedback-section">
+              <h4>Desglose Forense de Distractores (Por qué fallan)</h4>
+              <div class="table-responsive">
+                <table class="distractor-table" id="study-distractors-table">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="width: 50px;">Opción</th>
+                      <th scope="col" style="width: 110px;">Evaluación</th>
+                      <th scope="col">Justificación Técnica y Trampa Detectada</th>
+                    </tr>
+                  </thead>
+                  <tbody id="study-distractors-body">
+                    <!-- Distractor rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- gcloud CLI / Terraform / Components -->
+            <div class="feedback-section" id="study-cli-section" style="display: none;">
+              <div class="section-header-inline">
+                <h4>Comando gcloud CLI / Snippet Relevante</h4>
+                <button class="btn btn-secondary btn-xs" id="btn-copy-study-cli">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-copy"/></svg> Copiar
+                </button>
+              </div>
+              <pre class="code-terminal"><code id="study-cli-code"></code></pre>
+            </div>
+
+            <!-- Official Docs URL -->
+            <div class="feedback-section" id="study-doc-section" style="display: none;">
+              <a class="doc-link-btn" id="study-doc-link" href="#" target="_blank" rel="noopener noreferrer">
+                <span>Ver Documentación Oficial de Google Cloud</span>
+                <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
+              </a>
+            </div>
+
+            <!-- Private Study Notes Section -->
+            <div class="feedback-section" id="study-notes-section">
+              <div class="section-header-inline">
+                <h4>Mis Notas Personales (Guardadas Localmente)</h4>
+                <button class="btn btn-secondary btn-xs" id="btn-save-study-notes">Guardar Nota</button>
+              </div>
+              <textarea class="form-textarea-sm" id="study-notes-textarea" placeholder="Escribe tus notas, trucos nemotécnicos o dudas sobre este reactivo..." rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Study Action Bar -->
+      <div class="sticky-action-bar">
+        <button class="btn btn-secondary" id="btn-study-prev">← Anterior</button>
+        <div class="action-bar-center">
+          <button class="btn btn-primary" id="btn-study-reveal">Comprobar Respuesta</button>
+          <button class="btn btn-accent" id="btn-study-next">Siguiente Pregunta →</button>
+        </div>
+        <button class="btn btn-warning btn-sm" id="btn-study-drill-failed" style="display: none;">Practicar en Ráfaga</button>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 3: OFFICIAL SIMULATION MODE & PCA SPLIT-VIEW (#view-exam)
+         ======================================================================= -->
+    <section id="view-exam" class="view-section" role="region" aria-labelledby="heading-exam" style="display: none;">
+      <!-- Exam HUD Bar -->
+      <div class="exam-hud-bar">
+        <div class="hud-left">
+          <span class="exam-title-badge" id="exam-badge-cert">ACE</span>
+          <span class="exam-block-title" id="exam-block-title">Associate Cloud Engineer — Bloque 1 de 6</span>
+        </div>
+
+        <div class="hud-center">
+          <span class="exam-position-text" id="exam-position-indicator">Pregunta 1 de 50</span>
+          <div class="exam-track-bar">
+            <div class="exam-track-fill" id="exam-track-fill" style="width: 2%;"></div>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <button class="flag-toggle-btn" id="btn-exam-flag" aria-pressed="false">
+            <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
+            <span>Marcar para Revisión [F]</span>
+          </button>
+
+          <div class="timer-badge timer-normal" id="exam-timer-display" role="timer" aria-live="polite">
+            02:00:00
+          </div>
+
+          <button class="btn btn-primary btn-sm" id="btn-exam-submit-trigger">
+            Finalizar Examen
+          </button>
+        </div>
+      </div>
+
+      <!-- Split Exam Workspace Layout -->
+      <div class="exam-workspace-layout" id="exam-workspace-layout">
+        
+        <!-- Left Column: Case Study Drawer / Panel (PCA Only) -->
+        <aside class="case-study-panel" id="exam-case-study-panel" style="display: none;" aria-label="Caso de Estudio Oficial">
+          <div class="cs-panel-header">
+            <div class="cs-title-group">
+              <span class="cs-badge">CASO DE ESTUDIO OFICIAL</span>
+              <h3 id="exam-cs-title">Mountkirk Games</h3>
+            </div>
+            <button class="icon-btn-sm" id="btn-close-cs-panel" title="Ocultar panel" aria-label="Ocultar caso de estudio">
+              <svg class="icon" aria-hidden="true"><use href="#icon-cross"/></svg>
+            </button>
+          </div>
+
+          <!-- Case Study Section Tabs -->
+          <div class="cs-tabs-nav">
+            <button class="cs-tab active" data-cs-tab="overview">Resumen</button>
+            <button class="cs-tab" data-cs-tab="biz">Requisitos Negocio</button>
+            <button class="cs-tab" data-cs-tab="tech">Requisitos Técnicos</button>
+            <button class="cs-tab" data-cs-tab="arch">Arquitectura</button>
+          </div>
+
+          <!-- Case Study Content -->
+          <div class="cs-panel-body" id="exam-cs-content-area">
+            <!-- Injected dynamically -->
+          </div>
+        </aside>
+
+        <!-- Center Column: Exam Question Area -->
+        <main class="exam-question-area" id="exam-question-area">
+          <div class="exam-q-header">
+            <div class="exam-q-header-left">
+              <span class="domain-tag" id="exam-domain-tag">Dominio</span>
+              <span class="multi-select-badge" id="exam-multiselect-badge" style="display: none;">Seleccione 2 opciones</span>
+            </div>
+            <button class="btn btn-secondary btn-xs" id="btn-exam-open-cs-trigger" style="display: none;">
+              <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg> Ver Caso de Estudio
+            </button>
+          </div>
+
+          <div class="scenario-box" id="exam-scenario-text">
+            Cargando pregunta de examen...
+          </div>
+
+          <div class="options-container" id="exam-options-container" role="radiogroup" aria-label="Opciones de examen">
+            <!-- Exam options injected -->
+          </div>
+
+          <div class="exam-navigation-footer">
+            <button class="btn btn-secondary" id="btn-exam-prev">← Anterior</button>
+            <div class="exam-nav-center">
+              <button class="btn btn-secondary btn-sm" id="btn-exam-clear-choice">Limpiar Selección</button>
+            </div>
+            <button class="btn btn-primary" id="btn-exam-next">Siguiente →</button>
+          </div>
+        </main>
+
+        <!-- Right Column: 50-Question Interactive Palette -->
+        <aside class="exam-palette-sidebar" id="exam-palette-sidebar" aria-label="Navegador de preguntas del examen">
+          <div class="palette-header">
+            <h4>Navegador de Preguntas</h4>
+            <div class="palette-stats-summary">
+              <span class="p-stat text-blue" id="palette-count-answered">0 Resp.</span>
+              <span class="p-stat text-muted" id="palette-count-unanswered">50 Pend.</span>
+              <span class="p-stat text-yellow" id="palette-count-flagged">0 Marc.</span>
+            </div>
+          </div>
+
+          <div class="palette-filters-bar">
+            <button class="palette-filter-chip active" data-filter="all">Todas</button>
+            <button class="palette-filter-chip" data-filter="unanswered">Pendientes</button>
+            <button class="palette-filter-chip" data-filter="flagged">Marcadas</button>
+          </div>
+
+          <div class="palette-grid-50" id="exam-palette-grid">
+            <!-- 50 buttons generated dynamically -->
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 4: WEAKNESS SPACED REPETITION DRILL MODE (#view-drill)
+         ======================================================================= -->
+    <section id="view-drill" class="view-section" role="region" aria-labelledby="heading-drill" style="display: none;">
+      <!-- Drill Control Header -->
+      <div class="drill-header-bar">
+        <div class="drill-header-left">
+          <button class="btn btn-secondary btn-sm" id="btn-drill-back-dash">
+            <svg class="icon" aria-hidden="true"><use href="#icon-dashboard"/></svg>
+            <span>Dashboard</span>
+          </button>
+          <div class="drill-queue-badge">
+            Cola de Refuerzo: <strong id="drill-queue-number">0</strong> preguntas
+          </div>
+        </div>
+
+        <div class="drill-header-center">
+          <div class="mastery-3hit-container" title="3 aciertos consecutivos para certificar dominio">
+            <span class="mastery-label">Racha de Dominio:</span>
+            <div class="mastery-dots-row">
+              <span class="mastery-dot" id="drill-dot-1"></span>
+              <span class="mastery-dot" id="drill-dot-2"></span>
+              <span class="mastery-dot" id="drill-dot-3"></span>
+            </div>
+            <span class="mastery-status-text" id="drill-mastery-text">0 / 3 Aciertos</span>
+          </div>
+        </div>
+
+        <div class="drill-header-right">
+          <button class="btn btn-secondary btn-sm" id="btn-drill-exit">Salir de Ráfaga [Esc]</button>
+        </div>
+      </div>
+
+      <!-- Drill Domain Filter Chips -->
+      <div class="drill-filters-bar" id="drill-domain-chips-container">
+        <!-- Injected domain chips -->
+      </div>
+
+      <!-- Rapid Fire Flashcard Workspace -->
+      <div class="drill-card-workspace">
+        <div class="drill-card">
+          <div class="drill-meta-header">
+            <span class="domain-tag" id="drill-domain-tag">Dominio</span>
+            <span class="q-id-tag" id="drill-qid-tag">ACE-D1-001</span>
+          </div>
+
+          <div class="drill-scenario" id="drill-scenario-text">
+            Cargando reactivo de ráfaga...
+          </div>
+
+          <div class="drill-options-grid" id="drill-options-grid">
+            <!-- Rapid fire options with [1 / A] badges -->
+          </div>
+
+          <!-- Rapid Feedback Drawer -->
+          <div class="drill-feedback-drawer" id="drill-feedback-drawer" style="display: none;">
+            <div class="drill-result-banner" id="drill-result-banner"></div>
+            <div class="drill-explanation-body" id="drill-explanation-text"></div>
+            <div class="drill-advance-prompt">Presione <kbd>Espacio</kbd> o <kbd>Enter</kbd> para la siguiente pregunta</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drill Keyboard Shortcuts Legend -->
+      <div class="drill-hotkeys-legend">
+        <span class="hotkey-item"><kbd>1</kbd> - <kbd>4</kbd> o <kbd>A</kbd> - <kbd>D</kbd> Elegir Opción</span>
+        <span class="hotkey-item"><kbd>Espacio</kbd> Comprobar / Avanzar</span>
+        <span class="hotkey-item"><kbd>F</kbd> Marcar Pregunta</span>
+        <span class="hotkey-item"><kbd>Esc</kbd> Salir</span>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 5: GLOBAL SEARCH & QUESTION EXPLORER (#view-search)
+         ======================================================================= -->
+    <section id="view-search" class="view-section" role="region" aria-labelledby="heading-search" style="display: none;">
+      <div class="search-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
+        <h2 id="heading-search" style="color: var(--text-primary); margin-bottom: 0.5rem;">🔍 Buscador y Explorador de Preguntas Oficiales</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Busca en tiempo real entre las más de 900 preguntas de CDL, ACE y PCA por término técnico, comando de gcloud, trampa de distractor o ID.</p>
+        
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <input type="search" id="globalSearchInput" class="form-input" style="flex: 1; min-width: 280px; padding: 12px 16px; font-size: 1rem;" placeholder="Escribe para buscar (ej. 'impersonate', 'Spanner', 'Cloud Run', 'VPC Peering', 'gcloud')...">
+          
+          <select id="searchCertFilter" class="form-select" style="min-width: 200px; padding: 12px 16px; font-size: 0.95rem;">
+            <option value="all">Todas las Certificaciones (CDL + ACE + PCA)</option>
+            <option value="cdl">Cloud Digital Leader (CDL)</option>
+            <option value="ace">Associate Cloud Engineer (ACE)</option>
+            <option value="pca">Professional Cloud Architect (PCA)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+          <span id="searchResultCount">Cargando 900+ preguntas...</span>
+          <span>Atajo de teclado: <kbd>Ctrl+K</kbd></span>
+        </div>
+      </div>
+
+      <!-- Search Results Container -->
+      <div id="searchResultsContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Injected search cards -->
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 6: FREE CERTIFICATIONS & CLOUD NEWS RADAR (#view-news)
+         ======================================================================= -->
+    <section id="view-news" class="view-section" role="region" aria-labelledby="heading-news" style="display: none;">
+      <div class="news-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
+        <h2 id="heading-news" style="color: var(--text-primary); margin-bottom: 0.5rem;">📰 Radar de Certificaciones 100% Gratuitas, Badges y Noticias</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Catálogo curado oficial (Cloud Study Network / Free-Certifications) de cursos con certificado e insignias oficiales a costo $0 para enriquecer tu perfil profesional mientras te certificas en Google Cloud.</p>
+      </div>
+
+      <!-- Live Vouchers & Announcements Banner -->
+      <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.1rem;">⚡ Alertas de Vouchers, Programas y Noticias Activas</h3>
+      <div class="news-alert-banner" id="newsAlertsContainer">
+        <!-- Injected news cards -->
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 1.5rem 0 1rem 0;" id="freeCertCategoryFilters">
+        <button class="free-cat-chip active btn btn-secondary btn-sm" data-cat="all" onclick="window.GCP_UI_NEWS?.setCategoryFilter('all')">Todos los Cursos</button>
+        <button class="free-cat-chip btn btn-secondary btn-sm" data-cat="Cloud" onclick="window.GCP_UI_NEWS?.setCategoryFilter('Cloud')">Cloud Computing</button>
+        <button class="free-cat-chip btn btn-secondary btn-sm" data-cat="AI / ML" onclick="window.GCP_UI_NEWS?.setCategoryFilter('AI / ML')">Inteligencia Artificial / GenAI</button>
+        <button class="free-cat-chip btn btn-secondary btn-sm" data-cat="Networking & Security" onclick="window.GCP_UI_NEWS?.setCategoryFilter('Networking & Security')">Redes y Seguridad</button>
+        <button class="free-cat-chip btn btn-secondary btn-sm" data-cat="Databases" onclick="window.GCP_UI_NEWS?.setCategoryFilter('Databases')">Bases de Datos</button>
+        <button class="free-cat-chip btn btn-secondary btn-sm" data-cat="DevOps & APIs" onclick="window.GCP_UI_NEWS?.setCategoryFilter('DevOps & APIs')">DevOps y APIs</button>
+      </div>
+
+      <!-- Free Courses Grid -->
+      <div class="free-cert-grid" id="freeCoursesGrid">
+        <!-- Injected free cert cards -->
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         VIEW 7: ARCHITECTURE TOOLS & DECISION TREES (#view-tools)
+         ======================================================================= -->
+    <section id="view-tools" class="view-section" role="region" aria-labelledby="heading-tools" style="display: none;">
+      <div class="tools-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
+        <h2 id="heading-tools" style="color: var(--text-primary); margin-bottom: 0.5rem;">🛠️ Centro de Arquitectura y Árboles de Decisión</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Herramientas interactivas de decisión rápida basadas en el Google Cloud Architecture Framework para elegir los servicios correctos en exámenes y proyectos reales.</p>
+        
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem;">
+          <button class="tool-subtab-btn active btn btn-secondary btn-sm" data-tool="database">🗄️ Bases de Datos</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="compute">⚡ Cómputo & Serverless</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="storage">📦 Clases de Cloud Storage</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="networking">🌐 Conectividad Híbrida</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="cheatsheets">📋 Reglas de Oro (Cheatsheets)</button>
+        </div>
+      </div>
+
+      <!-- Tool Content Body -->
+      <div id="architectureToolContent">
+        <!-- Injected decision tree -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODALS & OVERLAY DIALOGS LAYER
+       ========================================================================= -->
+
+  <!-- Modal 1: Case Studies Viewer Modal (PCA 4-Case Reader) -->
+  <div class="modal-backdrop" id="modal-case-studies" role="dialog" aria-modal="true" aria-labelledby="modal-cs-title-text" style="display: none;">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
+          <h3 id="modal-cs-title-text">Casos de Estudio Oficiales — Professional Cloud Architect</h3>
+        </div>
+        <button class="modal-close-btn" id="btn-close-modal-cs" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body-study-tabs">
+        <button class="study-select-tab active" data-study="mountkirk_games">Mountkirk Games</button>
+        <button class="study-select-tab" data-study="terramearth">TerramEarth</button>
+        <button class="study-select-tab" data-study="ehr_healthcare">EHR Healthcare</button>
+        <button class="study-select-tab" data-study="helicopter_racing_league">Helicopter Racing League</button>
+      </div>
+      <div class="modal-body modal-scrollable" id="modal-cs-content-body">
+        <!-- Rendered case study document -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-dismiss-modal-cs">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Pre-Submission Review Modal -->
+  <div class="modal-backdrop" id="modal-exam-review" role="dialog" aria-modal="true" aria-labelledby="modal-review-heading" style="display: none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 id="modal-review-heading">Revisión Previa a la Finalización del Examen</h3>
+        <button class="modal-close-btn" id="btn-close-modal-review" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="review-stats-summary-grid">
+          <div class="review-stat-box box-green">
+            <strong id="review-stat-answered">0</strong>
+            <span>Respondidas</span>
+          </div>
+          <div class="review-stat-box box-red">
+            <strong id="review-stat-unanswered">0</strong>
+            <span>Sin Responder</span>
+          </div>
+          <div class="review-stat-box box-yellow">
+            <strong id="review-stat-flagged">0</strong>
+            <span>Marcadas para Revisión</span>
+          </div>
+        </div>
+        
+        <p class="review-instruction">Haz clic en cualquier pregunta para regresar directamente a ella en el examen:</p>
+        
+        <div class="review-items-list" id="modal-review-items-list">
+          <!-- Injected list of all 50 items with jump links -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-review-continue-exam">Volver al Examen</button>
+        <button class="btn btn-primary btn-accent" id="btn-review-confirm-grade">Confirmar Entrega y Calificar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Exam Scorecard Modal -->
+  <div class="modal-backdrop" id="modal-scorecard" role="dialog" aria-modal="true" aria-labelledby="modal-scorecard-heading" style="display: none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 id="modal-scorecard-heading">Resultado del Examen Oficial</h3>
+        <button class="modal-close-btn" id="btn-close-modal-scorecard" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Pass/Fail Banner -->
+        <div class="scorecard-pass-fail-banner" id="scorecard-banner">
+          <div class="banner-icon" id="scorecard-icon"></div>
+          <div class="banner-text">
+            <h2 id="scorecard-status-title">APROBADO</h2>
+            <p id="scorecard-status-subtitle">Has superado el estándar de certificación del 70%.</p>
+          </div>
+        </div>
+
+        <!-- Scores Overview -->
+        <div class="scorecard-scores-row">
+          <div class="scorecard-main-score">
+            <span class="score-number" id="scorecard-final-percent">0%</span>
+            <span class="score-ratio" id="scorecard-final-ratio">0 de 50 Correctas</span>
+          </div>
+          <div class="scorecard-time-stats">
+            <div class="time-stat-row">
+              <span>Tiempo Total:</span>
+              <strong id="scorecard-time-elapsed">00:00:00</strong>
+            </div>
+            <div class="time-stat-row">
+              <span>Tiempo Promedio / Pregunta:</span>
+              <strong id="scorecard-time-pace">0s</strong>
+            </div>
+            <div class="time-stat-row">
+              <span>Umbral Oficial:</span>
+              <strong>70% (35 / 50)</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Breakdown Bars -->
+        <div class="scorecard-domain-breakdown">
+          <h4>Desempeño por Dominio de Evaluación</h4>
+          <div class="scorecard-bars-container" id="scorecard-domains-list">
+            <!-- Injected bars with 70% threshold indicator -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-scorecard-to-dashboard">Volver al Dashboard</button>
+        <button class="btn btn-warning" id="btn-scorecard-drill-missed">Entrenar Fallos en Ráfaga</button>
+        <button class="btn btn-primary" id="btn-scorecard-forensic-review">Revisión Detallada (Forensic)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Settings & Data Management Modal -->
+  <div class="modal-backdrop" id="modal-settings" role="dialog" aria-modal="true" aria-labelledby="modal-settings-heading" style="display: none;">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <h3 id="modal-settings-heading">Configuración y Gestión de Datos</h3>
+        <button class="modal-close-btn" id="btn-close-modal-settings" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-group">
+          <h4>Preferencias de Interfaz</h4>
+          <div class="setting-item">
+            <label for="settings-theme-select">Tema Visual</label>
+            <select class="form-select" id="settings-theme-select">
+              <option value="dark">Oscuro Enterprise (Google Cloud Console)</option>
+              <option value="light">Claro Material (High Contrast)</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label class="switch-label">
+              <input type="checkbox" id="settings-audio-toggle" checked>
+              <span class="switch-text">Efectos Sonoros y Alertas de Cronómetro</span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <label class="switch-label">
+              <input type="checkbox" id="settings-shortcuts-toggle" checked>
+              <span class="switch-text">Atajos de Teclado Rápidos (1-4, A-D, Espacio, Esc)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h4>Copia de Seguridad y Sincronización (CRC-32)</h4>
+          <p class="setting-desc">Exporta tu progreso histórico completo o impórtalo en otro navegador de forma segura con verificación criptográfica IEEE 802.3 CRC-32.</p>
+          <div class="backup-actions-row">
+            <button class="btn btn-secondary btn-sm" id="btn-export-backup">
+              <svg class="icon" aria-hidden="true"><use href="#icon-download"/></svg> Exportar Progreso (JSON)
+            </button>
+            <label class="btn btn-secondary btn-sm file-input-label">
+              <svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg> Importar Progreso (JSON)
+              <input type="file" id="settings-import-file-input" accept=".json" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group danger-zone">
+          <h4>Zona de Peligro</h4>
+          <p class="setting-desc">Restablece todas las estadísticas, historial de simulaciones y estados de repetición espaciada a valores de fábrica.</p>
+          <button class="btn btn-danger btn-sm" id="btn-trigger-factory-reset">
+            <svg class="icon" aria-hidden="true"><use href="#icon-trash"/></svg> Restablecer Todo a Cero
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-save-settings">Guardar y Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Generic High-Contrast Confirmation Modal -->
+  <div class="modal-backdrop" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title" style="display: none;">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-header">
+        <h3 id="modal-confirm-title">¿Está seguro?</h3>
+        <button class="modal-close-btn" id="btn-close-modal-confirm" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-confirm-message">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-confirm-cancel">Cancelar</button>
+        <button class="btn btn-danger" id="btn-confirm-accept">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Floating Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- =========================================================================
+       DATA AND JAVASCRIPT ENGINE IMPORTS (Clean Relative Imports, Zero CDN)
+       ========================================================================= -->
+  <!-- 1. Data Foundation Layer -->
+  <script src="data/cert_manifest.js"></script>
+  <script src="data/case_studies.js"></script>
+  <script src="data/cert_cdl.js"></script>
+  <script src="data/cert_ace.js"></script>
+  <script src="data/cert_pca.js"></script>
+  <script src="data/free_certifications.js"></script>
+  <script src="data/architecture_tools.js"></script>
+
+  <!-- 2. State, Engine & i18n Core Layer -->
+  <script src="js/i18n.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/engine.js"></script>
+
+  <!-- 3. UI Visualizer & Controller Modules -->
+  <script src="js/ui_charts.js"></script>
+  <script src="js/ui_study.js"></script>
+  <script src="js/ui_exam.js"></script>
+  <script src="js/ui_drill.js"></script>
+  <script src="js/ui_news.js"></script>
+  <script src="js/ui_tools.js"></script>
+  <script src="js/ui_search.js"></script>
+
+  <!-- 4. Main Application Orchestrator & Router -->
+  <script src="js/app.js"></script>
+</body>
+</html>
