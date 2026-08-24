@@ -25,7 +25,7 @@
     "icon-volume-on",
     "icon-warning"
   ],
-  "svg_icon_instances": 19,
+  "svg_icon_instances": 21,
   "total_buttons": 68,
   "button_ids_sample": [
     "btn-cert-cdl",
@@ -46,7 +46,7 @@
   ],
   "total_inputs": 4,
   "total_selects": 4,
-  "total_emojis_found": 15,
+  "total_emojis_found": 12,
   "total_ui_cards_and_containers": 52,
   "views_sections_count": 7,
   "sections": [

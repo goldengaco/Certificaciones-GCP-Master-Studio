@@ -80,6 +80,21 @@
         btnCopyCli.addEventListener('click', () => this.copyCliSnippet());
       }
 
+      // Save Notes button
+      const btnSaveNotes = document.getElementById('btn-save-study-notes');
+      if (btnSaveNotes) {
+        btnSaveNotes.addEventListener('click', () => {
+          const q = this.filteredQuestions[this.currentQuestionIndex];
+          const ta = document.getElementById('study-notes-textarea');
+          if (q && ta) {
+            this.saveUserNote(q.id, ta.value.trim());
+            if (global.GCP_APP && global.GCP_APP.showToast) {
+              global.GCP_APP.showToast('Nota de estudio guardada con éxito 📝', 'success');
+            }
+          }
+        });
+      }
+
       // Drill Failed items button
       const btnDrillFailed = document.getElementById('btn-study-drill-failed');
       if (btnDrillFailed) {

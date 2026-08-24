@@ -210,7 +210,7 @@
     <!-- =======================================================================
          VIEW 1: DASHBOARD & SIMULADOR PRINCIPAL (#view-dashboard)
          ======================================================================= -->
-    <section id="view-dashboard" class="view-section active" role="region" aria-labelledby="heading-dashboard">
+    <section id="view-dashboard" class="view-section active" aria-labelledby="heading-dashboard">
       <!-- Tarjeta de Bienvenida y Selección de Certificación -->
       <div class="human-welcome-card">
         <div class="welcome-header">
@@ -353,13 +353,13 @@
               </tr>
             </thead>
             <tbody id="history-table-body">
-              <!-- Rows injected dynamically -->
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                  Aún no has completado simulaciones. ¡Inicia un examen oficial para calibrar tu probabilidad de aprobación!
+                </td>
+              </tr>
             </tbody>
           </table>
-          <div class="empty-state" id="history-empty-state">
-            <svg class="empty-state-icon" aria-hidden="true"><use href="#icon-info"/></svg>
-            <p>Aún no has completado simulaciones. ¡Inicia un examen oficial para calibrar tu probabilidad de aprobación!</p>
-          </div>
         </div>
       </div>
     </section>
@@ -367,7 +367,7 @@
     <!-- =======================================================================
          VIEW 2: INTERACTIVE STUDY MODE (#view-study)
          ======================================================================= -->
-    <section id="view-study" class="view-section" role="region" aria-labelledby="heading-study" style="display: none;">
+    <section id="view-study" class="view-section" aria-labelledby="heading-study" style="display: none;">
       <!-- Study Control Header -->
       <div class="study-control-bar">
         <div class="study-control-left">
@@ -500,7 +500,7 @@
     <!-- =======================================================================
          VIEW 3: OFFICIAL SIMULATION MODE & PCA SPLIT-VIEW (#view-exam)
          ======================================================================= -->
-    <section id="view-exam" class="view-section" role="region" aria-labelledby="heading-exam" style="display: none;">
+    <section id="view-exam" class="view-section" aria-labelledby="heading-exam" style="display: none;">
       <!-- Exam HUD Bar -->
       <div class="exam-hud-bar">
         <div class="hud-left">
@@ -617,7 +617,7 @@
     <!-- =======================================================================
          VIEW 4: WEAKNESS SPACED REPETITION DRILL MODE (#view-drill)
          ======================================================================= -->
-    <section id="view-drill" class="view-section" role="region" aria-labelledby="heading-drill" style="display: none;">
+    <section id="view-drill" class="view-section" aria-labelledby="heading-drill" style="display: none;">
       <!-- Drill Control Header -->
       <div class="drill-header-bar">
         <div class="drill-header-left">
@@ -689,7 +689,7 @@
     <!-- =======================================================================
          VIEW 5: GLOBAL SEARCH & QUESTION EXPLORER (#view-search)
          ======================================================================= -->
-    <section id="view-search" class="view-section" role="region" aria-labelledby="heading-search" style="display: none;">
+    <section id="view-search" class="view-section" aria-labelledby="heading-search" style="display: none;">
       <div class="search-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
         <h2 id="heading-search" style="color: var(--text-primary); margin-bottom: 0.5rem;">🔍 Buscador y Explorador de Preguntas Oficiales</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Busca en tiempo real entre las más de 900 preguntas de CDL, ACE y PCA por término técnico, comando de gcloud, trampa de distractor o ID.</p>
@@ -720,7 +720,7 @@
     <!-- =======================================================================
          VIEW 6: FREE CERTIFICATIONS & CLOUD NEWS RADAR (#view-news)
          ======================================================================= -->
-    <section id="view-news" class="view-section" role="region" aria-labelledby="heading-news" style="display: none;">
+    <section id="view-news" class="view-section" aria-labelledby="heading-news" style="display: none;">
       <div class="news-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
         <h2 id="heading-news" style="color: var(--text-primary); margin-bottom: 0.5rem;">📰 Radar de Certificaciones 100% Gratuitas, Badges y Noticias</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">Catálogo curado oficial (Cloud Study Network / Free-Certifications) de cursos con certificado e insignias oficiales a costo $0 para enriquecer tu perfil profesional mientras te certificas en Google Cloud.</p>
@@ -751,7 +751,7 @@
     <!-- =======================================================================
          VIEW 7: ARCHITECTURE TOOLS & DECISION TREES (#view-tools)
          ======================================================================= -->
-    <section id="view-tools" class="view-section" role="region" aria-labelledby="heading-tools" style="display: none;">
+    <section id="view-tools" class="view-section" aria-labelledby="heading-tools" style="display: none;">
       <div class="tools-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
         <h2 id="heading-tools" style="color: var(--text-primary); margin-bottom: 0.5rem;">🛠️ Centro de Arquitectura y Árboles de Decisión</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">Herramientas interactivas de decisión rápida basadas en el Google Cloud Architecture Framework para elegir los servicios correctos en exámenes y proyectos reales.</p>
