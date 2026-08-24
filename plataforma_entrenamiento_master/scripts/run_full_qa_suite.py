@@ -52,11 +52,12 @@ def run_qa_suite():
         
     # 3. Lighthouse Scorecard
     print("\n[3] Resultados de Auditoría de Calidad Google Lighthouse (Headless Chrome)...")
-    lh_file = os.path.join(base_dir, "lighthouse_2026_spec.json")
+    lh_file = os.path.join(base_dir, "reports", "lighthouse_2026_spec.json")
     # Auto-detect most recent lighthouse report
     import glob
+    reports_dir = os.path.join(base_dir, "reports")
     lh_candidates = sorted(
-        glob.glob(os.path.join(base_dir, "lighthouse*.json")),
+        glob.glob(os.path.join(reports_dir, "lighthouse*.json")),
         key=os.path.getmtime, reverse=True
     )
     if lh_candidates:
