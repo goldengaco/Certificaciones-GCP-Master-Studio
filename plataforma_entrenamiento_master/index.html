@@ -136,95 +136,64 @@
   </svg>
 
   <!-- =========================================================================
-       APP HEADER (Brand, Active Cert Switcher, Navigation Tabs & Utilities)
+       APP HEADER (Limpio, Humano y Directo)
        ========================================================================= -->
   <header class="app-header" role="banner">
     <div class="header-left">
-      <div class="brand-container" id="brand-home-link" role="button" tabindex="0" aria-label="Ir al Dashboard Principal">
+      <div class="brand-container" id="brand-home-link" role="button" tabindex="0" aria-label="Ir al Inicio">
         <div class="brand-logo-icon">
           <svg class="icon icon-brand" aria-hidden="true"><use href="#icon-gcp-cloud"/></svg>
         </div>
         <div class="brand-titles">
-          <div class="brand-badge-row">
-            <span class="brand-badge">GCP MASTER</span>
-            <span class="brand-version-badge">v2.0</span>
-          </div>
-          <h1 class="brand-name">Google Cloud Cert Studio</h1>
+          <h1 class="brand-name">GCP Cert Studio</h1>
+          <span class="brand-subtitle">Simulador de Exámenes Google Cloud</span>
         </div>
       </div>
 
-      <!-- Active Certification Switcher -->
+      <!-- Selector de Certificación Principal (Grande y Claro) -->
       <div class="cert-switcher" role="group" aria-label="Seleccionar certificación activa">
-        <button class="cert-pill" data-cert="cdl" aria-pressed="false" id="btn-cert-cdl" title="Cloud Digital Leader">
+        <button class="cert-pill" data-cert="cdl" id="btn-cert-cdl" title="Cloud Digital Leader">
           <span class="cert-code">CDL</span>
           <span class="cert-label">Digital Leader</span>
         </button>
-        <button class="cert-pill active" data-cert="ace" aria-pressed="true" id="btn-cert-ace" title="Associate Cloud Engineer">
+        <button class="cert-pill active" data-cert="ace" id="btn-cert-ace" title="Associate Cloud Engineer">
           <span class="cert-code">ACE</span>
           <span class="cert-label">Cloud Engineer</span>
         </button>
-        <button class="cert-pill" data-cert="pca" aria-pressed="false" id="btn-cert-pca" title="Professional Cloud Architect">
+        <button class="cert-pill" data-cert="pca" id="btn-cert-pca" title="Professional Cloud Architect">
           <span class="cert-code">PCA</span>
           <span class="cert-label">Cloud Architect</span>
         </button>
       </div>
     </div>
 
-    <!-- Primary Navigation Links -->
-    <nav class="app-nav" role="navigation" aria-label="Navegación de vistas">
-      <button class="nav-tab active" data-view="dashboard" id="nav-btn-dashboard" aria-selected="true" role="tab">
+    <!-- Navegación Principal Simplificada (Solo 4 Pestañas Claras) -->
+    <nav class="app-nav" role="navigation" aria-label="Navegación principal">
+      <button class="nav-tab active" data-view="dashboard" id="nav-btn-dashboard" role="tab">
         <svg class="icon" aria-hidden="true"><use href="#icon-dashboard"/></svg>
-        <span data-i18n="navDashboard">Dashboard</span>
+        <span>Inicio y Simulador</span>
       </button>
-      <button class="nav-tab" data-view="study" id="nav-btn-study" aria-selected="false" role="tab">
-        <svg class="icon" aria-hidden="true"><use href="#icon-study"/></svg>
-        <span data-i18n="modeStudy">Modo Estudio</span>
-      </button>
-      <button class="nav-tab" data-view="exam" id="nav-btn-exam" aria-selected="false" role="tab">
-        <svg class="icon" aria-hidden="true"><use href="#icon-exam"/></svg>
-        <span data-i18n="modeExam">Modo Examen</span>
-      </button>
-      <button class="nav-tab" data-view="drill" id="nav-btn-drill" aria-selected="false" role="tab">
-        <svg class="icon" aria-hidden="true"><use href="#icon-drill"/></svg>
-        <span data-i18n="modeDrill">Modo Ráfaga</span>
-      </button>
-      <button class="nav-tab" data-view="search" id="nav-btn-search" aria-selected="false" role="tab">
+      <button class="nav-tab" data-view="search" id="nav-btn-search" role="tab">
         <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
-        <span data-i18n="modeSearch">Buscador & 900+ Qs</span>
+        <span>Buscar Preguntas</span>
       </button>
-      <button class="nav-tab" data-view="news" id="nav-btn-news" aria-selected="false" role="tab">
+      <button class="nav-tab" data-view="news" id="nav-btn-news" role="tab">
         <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
-        <span data-i18n="modeNews">Free Certs & News</span>
+        <span>Cursos Gratis</span>
       </button>
-      <button class="nav-tab" data-view="tools" id="nav-btn-tools" aria-selected="false" role="tab">
+      <button class="nav-tab" data-view="tools" id="nav-btn-tools" role="tab">
         <svg class="icon" aria-hidden="true"><use href="#icon-settings"/></svg>
-        <span data-i18n="modeTools">Árboles Decisión</span>
+        <span>Guías de Arquitectura</span>
       </button>
     </nav>
 
-    <!-- Right Utility HUD -->
+    <!-- Utilidades Rápidas -->
     <div class="header-right">
-      <div class="top-search-box">
-        <input type="search" id="topNavSearchInput" class="form-input-sm" placeholder="Buscar preguntas (Ctrl+K)..." data-i18n-placeholder="navSearchPlaceholder">
-      </div>
-      <button class="icon-btn" id="langToggleBtn" title="Cambiar Idioma (Español / English)" aria-label="Cambiar Idioma">
+      <button class="icon-btn lang-btn" id="langToggleBtn" title="Cambiar Idioma (Español / English)">
         🇪🇸 ES
       </button>
-      <div class="passing-pill" id="header-passing-pill" title="Probabilidad Real de Aprobación Calibrada">
-        <span class="passing-pill-label">Aprobación:</span>
-        <strong class="passing-pill-value" id="header-passing-prob">--%</strong>
-      </div>
-      <button class="icon-btn" id="btn-case-studies-header" title="Ver Casos de Estudio (PCA)" aria-label="Abrir Casos de Estudio">
-        <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
-      </button>
-      <button class="icon-btn" id="btn-audio-toggle" title="Alternar Sonido / Alertas" aria-label="Alternar alertas de audio" aria-pressed="true">
-        <svg class="icon icon-audio-on" aria-hidden="true"><use href="#icon-volume-on"/></svg>
-      </button>
-      <button class="icon-btn" id="btn-theme-toggle" title="Alternar tema claro/oscuro" aria-label="Alternar tema visual">
+      <button class="icon-btn" id="btn-theme-toggle" title="Modo Claro / Oscuro" aria-label="Alternar tema visual">
         <svg class="icon icon-theme-moon" aria-hidden="true"><use href="#icon-moon"/></svg>
-      </button>
-      <button class="icon-btn" id="btn-open-settings" title="Configuración y Datos" aria-label="Abrir configuración y copias de seguridad">
-        <svg class="icon" aria-hidden="true"><use href="#icon-settings"/></svg>
       </button>
     </div>
   </header>
@@ -235,149 +204,97 @@
   <main id="main-content" class="app-main" role="main">
 
     <!-- =======================================================================
-         VIEW 1: DASHBOARD & DIAGNOSTIC ANALYTICS (#view-dashboard)
+         VIEW 1: DASHBOARD & SIMULADOR PRINCIPAL (#view-dashboard)
          ======================================================================= -->
     <section id="view-dashboard" class="view-section active" role="region" aria-labelledby="heading-dashboard">
-      <!-- Top Hero Summary Banner -->
-      <div class="dashboard-hero-card">
-        <div class="hero-info">
-          <div class="hero-badge-line">
+      <!-- Tarjeta de Bienvenida y Selección de Certificación -->
+      <div class="human-welcome-card">
+        <div class="welcome-header">
+          <div class="cert-indicator">
             <span class="cert-level-badge" id="dash-cert-level">Associate</span>
             <span class="exam-code-badge" id="dash-cert-code">ACE-2026</span>
           </div>
-          <h2 id="dash-cert-title" class="hero-title">Google Cloud Certified - Associate Cloud Engineer</h2>
-          <p id="dash-cert-tagline" class="hero-tagline">Despliegue, configuración y operación de soluciones empresariales en Google Cloud</p>
-          
-          <div class="hero-metrics-bar">
-            <div class="metric-item">
-              <span class="metric-label">Banco Oficial</span>
-              <strong class="metric-val" id="dash-total-q">300</strong>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Dominadas (Box 3)</span>
-              <strong class="metric-val text-green" id="dash-mastered-count">0</strong>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Simulacros Rendidos</span>
-              <strong class="metric-val" id="dash-exams-count">0</strong>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Promedio Reciente</span>
-              <strong class="metric-val text-yellow" id="dash-avg-score">--%</strong>
-            </div>
-          </div>
+          <h2 id="dash-cert-title" class="welcome-title">Google Cloud Certified - Associate Cloud Engineer</h2>
+          <p id="dash-cert-tagline" class="welcome-subtitle">Elige cómo quieres practicar hoy para aprobar tu examen oficial a la primera:</p>
         </div>
 
-        <!-- Real Passing Probability Gauge Widget -->
-        <div class="hero-gauge-area">
-          <div class="svg-gauge-container">
-            <svg class="radial-gauge-svg" viewBox="0 0 160 160" width="160" height="160" id="dash-passing-gauge-svg" aria-hidden="true">
-              <circle class="gauge-bg" cx="80" cy="80" r="68"/>
-              <circle class="gauge-fill" id="dash-gauge-fill" cx="80" cy="80" r="68" stroke-dasharray="427.25" stroke-dashoffset="427.25"/>
-            </svg>
-            <div class="gauge-inner-text">
-              <span class="gauge-pct" id="dash-passing-percent">0%</span>
-              <span class="gauge-caption">Probabilidad Real</span>
-            </div>
+        <div class="quick-stats-strip">
+          <div class="stat-pill">
+            <span class="stat-num" id="dash-total-q">300</span>
+            <span class="stat-text">Preguntas Oficiales</span>
           </div>
-          <div class="verdict-badge badge-neutral" id="dash-readiness-badge">SIN REGISTRO</div>
-        </div>
-      </div>
-
-      <!-- Mode Launch Cards Grid -->
-      <div class="mode-launch-grid">
-        <!-- Launch Study Mode -->
-        <div class="mode-card card-study" id="card-launch-study">
-          <div class="card-icon-wrapper">
-            <svg class="icon" aria-hidden="true"><use href="#icon-study"/></svg>
+          <div class="stat-pill">
+            <span class="stat-num text-green" id="dash-mastered-count">0</span>
+            <span class="stat-text">Preguntas Dominadas</span>
           </div>
-          <div class="card-content">
-            <h3>Modo Estudio Activo</h3>
-            <p>Aprende a tu propio ritmo con retroalimentación inmediata, justificación técnica y análisis forense de distractores.</p>
-            <div class="card-meta">
-              <span id="dash-study-progress">0/300 respondidas</span>
-            </div>
+          <div class="stat-pill">
+            <span class="stat-num text-yellow" id="dash-exams-count">0</span>
+            <span class="stat-text">Simulacros Realizados</span>
           </div>
-          <button class="btn btn-primary" id="btn-start-study">Iniciar Estudio</button>
-        </div>
-
-        <!-- Launch Official Simulation Mode -->
-        <div class="mode-card card-exam" id="card-launch-exam">
-          <div class="card-icon-wrapper">
-            <svg class="icon" aria-hidden="true"><use href="#icon-exam"/></svg>
-          </div>
-          <div class="card-content">
-            <h3>Modo Examen Oficial</h3>
-            <p>Simulador estricto de 50 preguntas, rotación de bloques estratificados 1 a 6 y cronómetro oficial con revisión.</p>
-            <div class="card-meta">
-              <span id="dash-exam-block-info">Siguiente: Bloque 1 de 6</span>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-accent" id="btn-start-exam">Iniciar Simulador</button>
-        </div>
-
-        <!-- Launch Weakness Drill Mode -->
-        <div class="mode-card card-drill" id="card-launch-drill">
-          <div class="card-icon-wrapper">
-            <svg class="icon" aria-hidden="true"><use href="#icon-drill"/></svg>
-          </div>
-          <div class="card-content">
-            <h3>Modo Ráfaga de Debilidades</h3>
-            <p>Repetición espaciada acelerada (Leitner 3-Hit). Elimina puntos ciegos y domina preguntas falladas mediante atajos de teclado.</p>
-            <div class="card-meta">
-              <span id="dash-drill-queue-badge">0 preguntas en cola</span>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-warning" id="btn-start-drill">Iniciar Ráfaga</button>
-        </div>
-      </div>
-
-      <!-- Diagnostics Analytics Pure SVG Charts Grid -->
-      <div class="dashboard-analytics-grid">
-        <div class="chart-card">
-          <div class="card-header">
-            <div class="card-header-left">
-              <svg class="icon" aria-hidden="true"><use href="#icon-chart-radar"/></svg>
-              <h3>Rendimiento por Dominio Oficial</h3>
-            </div>
-            <span class="benchmark-legend"><span class="dot-green"></span> Umbral 70% Requerido</span>
-          </div>
-          <div class="svg-radar-wrapper" id="chart-domain-radar-container">
-            <!-- Rendered dynamically by js/ui_charts.js -->
-          </div>
-        </div>
-
-        <div class="chart-card">
-          <div class="card-header">
-            <div class="card-header-left">
-              <svg class="icon" aria-hidden="true"><use href="#icon-chart-timeline"/></svg>
-              <h3>Evolución de Puntajes en Simulaciones</h3>
-            </div>
-            <span class="benchmark-legend"><span class="dot-blue"></span> Score Simulación</span>
-          </div>
-          <div class="svg-timeline-wrapper" id="chart-score-timeline-container">
-            <!-- Rendered dynamically by js/ui_charts.js -->
+          <div class="stat-pill">
+            <span class="stat-num text-blue" id="dash-avg-score">--%</span>
+            <span class="stat-text">Calificación Promedio</span>
           </div>
         </div>
       </div>
 
-      <!-- Detailed Domain Breakdown & Leitner Status Grid -->
-      <div class="dashboard-secondary-grid">
-        <div class="domain-list-card">
-          <div class="card-header">
-            <h3>Diagnóstico Detallado de Dominios</h3>
-            <span class="text-muted" id="dash-domain-summary-count">Dominios Evaluados</span>
+      <!-- 3 Opciones Principales de Estudio (Grandes, Claras y Sin Rodeos) -->
+      <div class="human-action-grid">
+        <!-- Tarjeta 1: Modo Estudio -->
+        <div class="action-card card-study-human" id="card-launch-study">
+          <div class="action-icon">🧠</div>
+          <div class="action-body">
+            <h3>1. Modo Estudio (Aprender con calma)</h3>
+            <p>Responde preguntas a tu propio ritmo. Cada vez que elijas una opción, verás de inmediato la <strong>justificación técnica</strong> de por qué es la correcta y qué trampas evitar.</p>
+            <div class="action-meta" id="dash-study-progress">0 de 300 respondidas</div>
           </div>
-          <div class="domain-progress-list" id="dash-domain-breakdown-list">
-            <!-- Injected dynamically -->
-          </div>
+          <button class="btn btn-primary btn-lg" id="btn-start-study">Comenzar a Estudiar →</button>
         </div>
 
-        <div class="leitner-status-card">
-          <div class="card-header">
-            <h3>Distribución en Memoria Espaciada (Leitner)</h3>
-            <span class="text-muted">3 Aciertos para Dominio</span>
+        <!-- Tarjeta 2: Modo Examen -->
+        <div class="action-card card-exam-human" id="card-launch-exam">
+          <div class="action-icon">⏱️</div>
+          <div class="action-body">
+            <h3>2. Modo Examen Oficial (Simulacro real)</h3>
+            <p>Ponte a prueba con <strong>50 preguntas cronometradas</strong> exactamente como en el examen real de Google Cloud. Al finalizar, obtendrás tu calificación oficial y tu desglose de aciertos.</p>
+            <div class="action-meta" id="dash-exam-block-info">Bloque 1 de 6 (50 preguntas)</div>
           </div>
+          <button class="btn btn-accent btn-lg" id="btn-start-exam">Iniciar Examen Oficial →</button>
+        </div>
+
+        <!-- Tarjeta 3: Repasar Fallos -->
+        <div class="action-card card-drill-human" id="card-launch-drill">
+          <div class="action-icon">🎯</div>
+          <div class="action-body">
+            <h3>3. Repasar Mis Fallos (Refuerzo)</h3>
+            <p>El sistema guarda automáticamente las preguntas en las que te has equivocado. Practica <strong>únicamente tus errores</strong> hasta que logres 3 aciertos seguidos y las domines.</p>
+            <div class="action-meta" id="dash-drill-queue-badge">0 preguntas por corregir</div>
+          </div>
+          <button class="btn btn-warning btn-lg" id="btn-start-drill">Practicar Mis Fallos →</button>
+        </div>
+      </div>
+
+      <!-- Sección de Estadísticas y Progreso Opcional -->
+      <div class="stats-toggle-section">
+        <details class="stats-details">
+          <summary class="stats-summary-btn">📊 Ver Gráficas y Diagnóstico por Dominio</summary>
+          <div class="dashboard-analytics-grid" style="margin-top: 1rem;">
+            <div class="chart-card">
+              <div class="card-header">
+                <h3>Rendimiento por Dominio</h3>
+              </div>
+              <div class="svg-radar-wrapper" id="chart-domain-radar-container"></div>
+            </div>
+            <div class="chart-card">
+              <div class="card-header">
+                <h3>Evolución de Puntajes</h3>
+              </div>
+              <div class="svg-timeline-wrapper" id="chart-score-timeline-container"></div>
+            </div>
+          </div>
+          <div class="domain-progress-list" id="dash-domain-breakdown-list" style="margin-top: 1rem;"></div>
+        </details>
+      </div>
           <div class="leitner-boxes-grid">
             <div class="leitner-box box-0">
               <span class="box-count text-red" id="dash-leitner-box0">0</span>

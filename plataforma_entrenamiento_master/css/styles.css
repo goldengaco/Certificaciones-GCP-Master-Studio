@@ -1,7 +1,164 @@
 /* =========================================================================
-   GOOGLE CLOUD MASTER CERTIFICATION TRAINING STUDIO (CDL · ACE · PCA)
-   Enterprise Design System & Application Stylesheet (Zero CDN / 100% Offline)
+   HUMAN-FIRST CLEAN DESIGN SYSTEM (ESTUDIO Y SIMULADOR DIRECTO)
    ========================================================================= */
+
+.human-welcome-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.welcome-header {
+  margin-bottom: 1.5rem;
+}
+
+.cert-indicator {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.welcome-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.quick-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.stat-pill {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.stat-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* 3 Main Action Cards */
+.human-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.action-card {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-study-human:hover {
+  border-color: var(--gcp-blue);
+}
+
+.card-exam-human:hover {
+  border-color: var(--gcp-green);
+}
+
+.card-drill-human:hover {
+  border-color: var(--gcp-yellow);
+}
+
+.action-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.action-body h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.action-body p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.action-meta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-base);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
+.btn-lg {
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.stats-toggle-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stats-summary-btn {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gcp-blue);
+  cursor: pointer;
+  user-select: none;
+}
+
+.stats-summary-btn:hover {
+  text-decoration: underline;
+}
 
 /* =========================================================================
    FREE CERTIFICATIONS & NEWS RADAR STYLES (MATCHING FREE-CERTIFICATIONS.COM)
