@@ -1,5 +1,5 @@
 /**
- * Bilingual Support Engine (Español 🇪🇸 / English 🇺🇸)
+ * Bilingual Support Engine (Español / English)
  */
 window.GCP_I18N = {
   currentLang: "es", // "es" | "en"
@@ -15,17 +15,17 @@ window.GCP_I18N = {
       navModes: "Modos de Entrenamiento",
       navToolsSection: "Herramientas & Recursos",
       
-      modeStudy: "🧠 Modo Estudio",
+      modeStudy: "Modo Estudio",
       modeStudySub: "Feedback Inmediato",
-      modeExam: "⏱️ Simulación Oficial",
+      modeExam: "Simulacro Oficial",
       modeExamSub: "Cronómetro y 6 Bloques",
-      modeDrill: "🎯 Radar de Debilidades",
+      modeDrill: "Radar de Debilidades",
       modeDrillSub: "Repetición Espaciada (Leitner)",
-      modeSearch: "🔍 Buscador & Explorador",
+      modeSearch: "Buscador y Explorador",
       modeSearchSub: "900+ Preguntas",
-      modeNews: "📰 Radar de Certificados Free",
+      modeNews: "Radar de Certificados Gratuitos",
       modeNewsSub: "Cursos y Noticias",
-      modeTools: "🛠️ Árboles de Decisión",
+      modeTools: "Árboles de Decisión",
       modeToolsSub: "Cheatsheets y Arquitectura",
 
       // Top Stats
@@ -40,9 +40,9 @@ window.GCP_I18N = {
       submitExam: "Finalizar y Calificar Examen",
       reviewMark: "Marcar para Revisión",
       filterAllDomains: "Todos los Dominios",
-      anatomyOfDistractors: "🔍 Anatomía del Descarte (Por qué fallan las otras opciones):",
-      technicalJustification: "💡 Justificación Técnica Oficial:",
-      gcloudCommandTitle: "🛠️ Comando CLI / Servicio asociado:",
+      anatomyOfDistractors: "Anatomía del Descarte (Análisis de distractores):",
+      technicalJustification: "Justificación Técnica Oficial:",
+      gcloudCommandTitle: "Comando CLI / Servicio asociado:",
       keywordsTitle: "Puntos Clave:",
       caseStudyBtn: "Ver Caso de Estudio Oficial",
 
@@ -62,17 +62,17 @@ window.GCP_I18N = {
       navModes: "Training Modes",
       navToolsSection: "Tools & Resources",
       
-      modeStudy: "🧠 Study Mode",
+      modeStudy: "Study Mode",
       modeStudySub: "Instant Feedback",
-      modeExam: "⏱️ Official Simulation",
+      modeExam: "Official Simulation",
       modeExamSub: "Timer & 6 Disjoint Blocks",
-      modeDrill: "🎯 Weakness Radar",
+      modeDrill: "Weakness Radar",
       modeDrillSub: "Spaced Repetition (Leitner)",
-      modeSearch: "🔍 Question Explorer",
+      modeSearch: "Question Explorer",
       modeSearchSub: "900+ Searchable Qs",
-      modeNews: "📰 Free Certs & News Radar",
+      modeNews: "Free Certs & News Radar",
       modeNewsSub: "Courses & Industry News",
-      modeTools: "🛠️ Architecture Trees",
+      modeTools: "Architecture Trees",
       modeToolsSub: "Cheatsheets & Decision Flow",
 
       // Top Stats
@@ -87,9 +87,9 @@ window.GCP_I18N = {
       submitExam: "Submit & Grade Exam",
       reviewMark: "Flag for Review",
       filterAllDomains: "All Domains",
-      anatomyOfDistractors: "🔍 Elimination Anatomy (Why other options fail):",
-      technicalJustification: "💡 Official Technical Justification:",
-      gcloudCommandTitle: "🛠️ Associated CLI Command / Service:",
+      anatomyOfDistractors: "Elimination Anatomy (Distractor Analysis):",
+      technicalJustification: "Official Technical Justification:",
+      gcloudCommandTitle: "Associated CLI Command / Service:",
       keywordsTitle: "Key Trigger Words:",
       caseStudyBtn: "View Official Case Study",
 
@@ -137,7 +137,9 @@ window.GCP_I18N = {
 
     const langBtn = document.getElementById("langToggleBtn");
     if (langBtn) {
-      langBtn.innerHTML = lang === "es" ? "🇪🇸 ES" : "🇺🇸 EN";
+      langBtn.innerHTML = lang === "es" 
+        ? '<span style="font-weight:700;letter-spacing:0.05em">ES</span> <span style="opacity:0.5;font-size:0.75rem">EN</span>' 
+        : '<span style="font-weight:700;letter-spacing:0.05em">EN</span> <span style="opacity:0.5;font-size:0.75rem">ES</span>';
     }
   }
 };

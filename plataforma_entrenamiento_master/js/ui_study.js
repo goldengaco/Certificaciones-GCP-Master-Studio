@@ -89,7 +89,7 @@
           if (q && ta) {
             this.saveUserNote(q.id, ta.value.trim());
             if (global.GCP_APP && global.GCP_APP.showToast) {
-              global.GCP_APP.showToast('Nota de estudio guardada con éxito 📝', 'success');
+              global.GCP_APP.showToast('Nota de estudio guardada con éxito', 'success');
             }
           }
         });
@@ -505,10 +505,10 @@
 
           if (isThisCorrect) {
             card.classList.add('option-correct');
-            if (statusEl) statusEl.innerHTML = '<span class="badge badge-success">✓ Correcta</span>';
+            if (statusEl) statusEl.innerHTML = '<span class="badge badge-success">Correcta</span>';
           } else if (isThisChosen && !isThisCorrect) {
             card.classList.add('option-incorrect');
-            if (statusEl) statusEl.innerHTML = '<span class="badge badge-danger">✗ Tu Selección</span>';
+            if (statusEl) statusEl.innerHTML = '<span class="badge badge-danger">Tu Selección</span>';
           } else {
             card.classList.add('option-neutral-distractor');
           }
@@ -569,11 +569,11 @@
       }
       if (statusText) {
         statusText.innerHTML = isCorrect
-          ? '<strong>¡Excelente! Respuesta Correcta</strong>'
+          ? '<strong>Respuesta Correcta</strong>'
           : `<strong>Respuesta Incorrecta</strong> — La opción válida es: <strong>${correctAnswers.join(', ')}</strong>`;
       }
       if (iconEl) {
-        iconEl.innerHTML = isCorrect ? '✓' : '✖';
+        iconEl.innerHTML = isCorrect ? '<svg class="icon"><use href="#icon-check"/></svg>' : '<svg class="icon"><use href="#icon-cross"/></svg>';
       }
 
       // Architectural Principle
@@ -599,7 +599,7 @@
             <td><strong>${opt.letter}</strong></td>
             <td>
               <span class="badge ${isThisCorrect ? 'badge-success' : 'badge-danger'}">
-                ${isThisCorrect ? '✅ Solución' : '❌ Distractor'}
+                ${isThisCorrect ? 'Solución Oficial' : 'Distractor'}
               </span>
             </td>
             <td>${distText}</td>
@@ -749,7 +749,7 @@
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-          if (global.GCP_APP) global.GCP_APP.showToast('Comando copiado al portapapeles 📋', 'success');
+          if (global.GCP_APP) global.GCP_APP.showToast('Comando copiado al portapapeles', 'success');
         }).catch(() => {
           this._fallbackCopyText(text);
         });
@@ -771,7 +771,7 @@
       ta.select();
       try {
         document.execCommand('copy');
-        if (global.GCP_APP) global.GCP_APP.showToast('Comando copiado al portapapeles 📋', 'success');
+        if (global.GCP_APP) global.GCP_APP.showToast('Comando copiado al portapapeles', 'success');
       } catch (e) {}
       document.body.removeChild(ta);
     },

@@ -226,7 +226,9 @@ window.GCP_UI_SEARCH = {
     if (foundCount === 0) {
       resultsContainer.innerHTML = `
         <div class="search-empty-state">
-          <div class="empty-icon">🔍</div>
+          <div class="empty-icon">
+            <svg class="icon" style="width:32px;height:32px;color:var(--text-muted);" aria-hidden="true"><use href="#icon-search"/></svg>
+          </div>
           <h3>No se encontraron preguntas con los términos buscados</h3>
           <p>Prueba buscando por nombre de servicio de GCP (ejemplo: <code>IAM</code>, <code>Spanner</code>, <code>GKE</code>, <code>Cloud Run</code>, <code>VPC</code>, <code>Storage</code>).</p>
         </div>
@@ -267,14 +269,14 @@ window.GCP_UI_SEARCH = {
                 <div class="search-opt-row ${isCorrect ? 'is-correct-opt' : ''}">
                   <span class="opt-letter">${opt.letter}</span>
                   <span class="opt-text">${optText}</span>
-                  ${isCorrect ? '<span class="correct-check">✓ RESPUESTA OFICIAL</span>' : ''}
+                  ${isCorrect ? '<span class="correct-check">RESPUESTA OFICIAL</span>' : ''}
                 </div>
               `;
             }).join('')}
           </div>
 
           <div class="search-explanation-callout">
-            <strong>💡 Justificación y Descarte Técnico:</strong>
+            <strong>Justificación y Descarte Técnico:</strong>
             <p>${explanationHighlighted}</p>
             ${q.gcloudCommand ? `
               <div class="cli-snippet-box">

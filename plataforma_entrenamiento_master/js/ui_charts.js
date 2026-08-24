@@ -400,7 +400,9 @@
       if (!Array.isArray(history) || history.length === 0) {
         return `
           <div class="timeline-empty-card" style="padding: 2.5rem 1.5rem; text-align: center; background: var(--bg-card, #1f2937); border-radius: var(--radius-md, 12px); border: 1px dashed var(--border-color, #374151);">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--text-muted, #6b7280);">📈</div>
+            <div style="margin-bottom: 0.5rem; color: var(--text-muted, #6b7280);">
+              <svg class="icon" style="width:32px;height:32px;color:var(--text-muted);" aria-hidden="true"><use href="#icon-chart-timeline"/></svg>
+            </div>
             <h4 style="color: var(--text-primary, #f9fafb); margin-bottom: 0.25rem; font-size: 1.1rem;">Sin Historial de Exámenes</h4>
             <p style="color: var(--text-secondary, #9ca3af); font-size: 0.9rem; max-width: 420px; margin: 0 auto 1rem auto;">
               Aún no has completado simulacros de examen oficial. Realiza tu primer simulacro para visualizar tu curva de aprendizaje y evolución temporal.

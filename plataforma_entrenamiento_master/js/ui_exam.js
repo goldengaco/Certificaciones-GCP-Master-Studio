@@ -674,7 +674,7 @@
       }
 
       if (global.GCP_APP && global.GCP_APP.showToast) {
-        global.GCP_APP.showToast(userAns.isFlagged ? 'Pregunta marcada para revisión 🚩' : 'Pregunta desmarcada', 'info');
+        global.GCP_APP.showToast(userAns.isFlagged ? 'Pregunta marcada para revisión' : 'Pregunta desmarcada', 'info');
       }
 
       this.renderPalette();
@@ -721,8 +721,8 @@
 
         btn.innerHTML = `
           <span class="palette-num">${idx + 1}</span>
-          ${isFlagged ? '<span class="palette-flag-icon">⚑</span>' : ''}
-          ${isAnswered && !isFlagged ? '<span class="palette-check-icon">✓</span>' : ''}
+          ${isFlagged ? '<span class="palette-flag-dot"></span>' : ''}
+          ${isAnswered && !isFlagged ? '<span class="palette-check-dot"></span>' : ''}
         `;
 
         btn.addEventListener('click', () => {
@@ -995,7 +995,9 @@
         banner.className = `scorecard-pass-fail-banner ${passed ? 'banner-pass' : 'banner-fail'}`;
       }
       if (iconEl) {
-        iconEl.innerHTML = passed ? '🏆' : '⚠️';
+        iconEl.innerHTML = passed 
+          ? '<svg class="icon icon-lg" style="width:32px;height:32px;color:var(--gcp-green,#34a853);" aria-hidden="true"><use href="#icon-check"/></svg>' 
+          : '<svg class="icon icon-lg" style="width:32px;height:32px;color:var(--gcp-red,#ea4335);" aria-hidden="true"><use href="#icon-warning"/></svg>';
       }
       if (statusTitle) {
         statusTitle.textContent = passed ? '¡APROBADO!' : 'NO APROBADO';
@@ -1160,9 +1162,9 @@
             <span class="forensic-q-num">Pregunta ${idx + 1} (${q.id})</span>
             <span class="domain-tag">${q.domainId || ''}</span>
             <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
-              ${isCorrect ? '✓ CORRECTA' : '✖ FALLADA'}
+              ${isCorrect ? 'CORRECTA' : 'FALLADA'}
             </span>
-            ${isFlagged ? '<span class="badge badge-warning">⚑ Marcada</span>' : ''}
+            ${isFlagged ? '<span class="badge badge-warning">Marcada</span>' : ''}
           </div>
 
           <div class="forensic-scenario">${q.scenario || ''}</div>
@@ -1181,8 +1183,8 @@
                   <div class="option-letter-badge">${opt.letter}</div>
                   <div class="option-content-text">${opt.text}</div>
                   <div class="option-feedback-status">
-                    ${isThisCorrect ? '<span class="badge badge-success">✓ Correcta</span>' : ''}
-                    ${isThisChosen && !isThisCorrect ? '<span class="badge badge-danger">✗ Tu Selección</span>' : ''}
+                    ${isThisCorrect ? '<span class="badge badge-success">Correcta</span>' : ''}
+                    ${isThisChosen && !isThisCorrect ? '<span class="badge badge-danger">Tu Selección</span>' : ''}
                   </div>
                 </div>
               `;
@@ -1202,8 +1204,8 @@
                   return `
                     <tr class="${isThisCorrect ? 'row-correct' : 'row-distractor'}">
                       <td style="width: 40px;"><strong>${opt.letter}</strong></td>
-                      <td style="width: 100px;">
-                        <span class="badge ${isThisCorrect ? 'badge-success' : 'badge-danger'}">${isThisCorrect ? '✅ Solución' : '❌ Distractor'}</span>
+                      <td style="width: 120px;">
+                        <span class="badge ${isThisCorrect ? 'badge-success' : 'badge-danger'}">${isThisCorrect ? 'Solución Oficial' : 'Distractor'}</span>
                       </td>
                       <td>${dist}</td>
                     </tr>

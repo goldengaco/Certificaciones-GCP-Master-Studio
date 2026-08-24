@@ -184,7 +184,7 @@
       if (scenarioEl) {
         scenarioEl.innerHTML = `
           <div class="drill-complete-banner">
-            <h3>🎉 ¡Excelente! No tienes preguntas débiles en esta categoría</h3>
+            <h3>Diagnóstico Completado: Sin preguntas pendientes de refuerzo</h3>
             <p>Has alcanzado el dominio en las preguntas evaluadas. Puedes reiniciar la ráfaga con todo el banco o practicar otro dominio.</p>
           </div>
         `;
@@ -404,8 +404,8 @@
       if (resultBanner) {
         resultBanner.className = `drill-result-banner ${isCorrect ? 'result-correct' : 'result-incorrect'}`;
         resultBanner.innerHTML = isCorrect
-          ? `<strong>✓ ¡Correcto!</strong> ${wasMastered ? '🏆 ¡Has dominado esta pregunta (3 aciertos consecutivos)!' : `Racha: ${this.sessionStats.currentStreak} seguidas`}`
-          : `<strong>✖ Incorrecto</strong> — Opción correcta: <strong>${correctAnswers.join(', ')}</strong>`;
+          ? `<strong>Correcto</strong> ${wasMastered ? '— Pregunta dominada (3 aciertos consecutivos)' : `(Racha: ${this.sessionStats.currentStreak} seguidas)`}`
+          : `<strong>Incorrecto</strong> — Opción correcta: <strong>${correctAnswers.join(', ')}</strong>`;
       }
 
       if (explText) {
@@ -447,7 +447,7 @@
       if (scenarioEl) {
         scenarioEl.innerHTML = `
           <div class="drill-summary-card">
-            <h3>🏁 ¡Ráfaga de Entrenamiento Completada!</h3>
+            <h3>Sesión de Refuerzo Completada</h3>
             
             <div class="drill-summary-metrics">
               <div class="summary-metric">
@@ -465,9 +465,9 @@
             </div>
 
             <div class="drill-summary-actions">
-              <button class="btn btn-primary" id="btn-drill-next-batch">▶ Siguiente Ráfaga (10 Preguntas)</button>
-              ${this.failedInThisBatch.length > 0 ? `<button class="btn btn-warning" id="btn-drill-retry-failed">↺ Repetir Falladas (${this.failedInThisBatch.length})</button>` : ''}
-              <button class="btn btn-secondary" id="btn-drill-return-dash">📊 Volver al Dashboard</button>
+              <button class="btn btn-primary" id="btn-drill-next-batch">Siguiente Ráfaga (10 Preguntas)</button>
+              ${this.failedInThisBatch.length > 0 ? `<button class="btn btn-warning" id="btn-drill-retry-failed">Repetir Falladas (${this.failedInThisBatch.length})</button>` : ''}
+              <button class="btn btn-secondary" id="btn-drill-return-dash">Volver al Dashboard</button>
             </div>
           </div>
         `;

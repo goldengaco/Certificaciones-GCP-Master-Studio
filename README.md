@@ -1,109 +1,195 @@
-# 🚀 Google Cloud Master Certification Studio & Training Platform
+# Google Cloud Master Certification Studio
 
-[![Google Cloud](https://img.shields.io/badge/Google_Cloud-Certifications_2026-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/certification)
-[![Architecture](https://img.shields.io/badge/Architecture-Enterprise_Offline_Ready-34A853?style=for-the-badge&logo=google&logoColor=white)](#)
-[![License](https://img.shields.io/badge/License-MIT-FBBC04?style=for-the-badge)](#)
-[![Bilingual](https://img.shields.io/badge/Languages-ES_%F0%9F%87%AA%F0%9F%87%B8_%7C_EN_%F0%9F%87%BA%F0%9F%87%B8-EA4335?style=for-the-badge)](#)
-
-> **Plataforma Enterprise de Simulación, Diagnóstico Forense y Acreditación Garantizada para Certificaciones Oficiales de Google Cloud** (Cloud Digital Leader, Associate Cloud Engineer y Professional Cloud Architect).
+Enterprise Training, Diagnostic & Pass Guarantee Platform for Google Cloud Certifications:
+- Cloud Digital Leader (CDL)
+- Associate Cloud Engineer (ACE)
+- Professional Cloud Architect (PCA)
 
 ---
 
-## 🌟 Características Principales
+## 1. Overview and Core Architecture
 
-### 1. 📚 Banco Masivo de 900+ Preguntas Oficiales Calibradas
-* **Cloud Digital Leader (CDL):** 300 preguntas de conceptos fundamentales, economía de nube, TCO/ROI, migración y cumplimiento.
-* **Associate Cloud Engineer (ACE):** 300 preguntas técnicas con comandos reales de la CLI `gcloud`, despliegue de Compute Engine, Kubernetes Engine (GKE), VPCs, IAM y Storage.
-* **Professional Cloud Architect (PCA):** 300 escenarios complejos y los **4 Casos de Estudio Oficiales** de Google Cloud (*Mountkirk Games, TerramEarth, EHR Healthcare y Helicopter Racing League*).
+Google Cloud Master Certification Studio is a high-performance, 100% offline, standalone Single Page Application (SPA) designed to simulate official Google Cloud certification exams with production-grade fidelity.
 
-### 2. ⏱️ Motor de Rotación en 6 Bloques Estratificados (Zero-Repetition)
-* Cada examen extrae **50 preguntas disjuntas** organizadas en 6 bloques únicos.
-* Al completar 6 simulaciones, cubres el **100% del banco de 300 preguntas** sin solapamiento antes de reiniciar el ciclo.
+The platform requires zero cloud dependencies, zero external CDNs, and zero installation of complex runtime frameworks. All state, metrics, and session telemetry are persisted locally via client-side storage (localStorage) with full export/import capabilities.
 
-### 3. 🎯 Radar de Debilidades y Repetición Espaciada (Algoritmo Leitner de 4 Cajas)
-* Cada fallo envía la pregunta a la **Caja 0 (Cola de Refuerzo)**.
-* Para certificar el dominio de un reactivo, el usuario debe **acertarlo 3 veces consecutivas** en sesiones espaciadas.
-
-### 4. 📈 Medidor de Certeza de Aprobación (Logistic Pass Engine)
-* Modelo estadístico calibrado que evalúa la cobertura del banco, la consistencia en simulacros y la tasa de errores no resueltos para calcular la **Probabilidad Real de Aprobación (0% a 100%)**.
-
-### 5. 🔍 Buscador y Explorador Global en Tiempo Real (`Ctrl + K`)
-* Motor de búsqueda instantánea para inspeccionar cualquier reactivo por palabra clave, comando `gcloud`, trampa de distractor o ID.
-
-### 6. 📰 Radar de Certificaciones 100% Gratuitas & Noticias
-* Catálogo curado de programas con certificación oficial e insignias a costo **$0.00** (Oracle Cloud, Databricks GenAI, Cisco Networking, Postman, Google Cloud Skills Boost, ISC2).
-
-### 7. 🛠️ Centro de Arquitectura y Árboles de Decisión
-* Flujos interactivos para seleccionar servicios de **Cómputo** (VMs vs GKE vs Cloud Run), **Bases de Datos** (Cloud SQL vs Spanner vs Bigtable vs Firestore vs BigQuery), **Clases de Storage** y **Conectividad Híbrida**.
-
-### 8. 🌐 Soporte Bilingüe Instantáneo
-* Alternancia fluida entre **Español 🇪🇸** e **Inglés 🇺🇸** con un solo clic.
+`
++-----------------------------------------------------------------------------------+
+|                              Client Runtime / SPA                                 |
+|                                                                                   |
+|  +---------------------+   +---------------------+   +-------------------------+  |
+|  |     Study Mode      |   |   Exam Simulator    |   |     Weakness Radar      |  |
+|  |  (Instant feedback, |   |  (Official timers,  |   |   (4-box Leitner SRS,   |  |
+|  |   distractor traps, |   |   6-block rotation, |   |    spaced repetition)   |  |
+|  |    CLI associated)  |   |   PCA case studies) |   |                         |  |
+|  +----------+----------+   +----------+----------+   +------------+------------+  |
+|             |                         |                           |               |
+|             +-------------------------+---------------------------+               |
+|                                       |                                           |
+|                                       v                                           |
+|                     +-----------------------------------+                         |
+|                     |     App Controller & Router       |                         |
+|                     |            (js/app.js)            |                         |
+|                     +-----------------+-----------------+                         |
+|                                       |                                           |
+|              +------------------------+------------------------+                  |
+|              v                                                 v                  |
+|  +-------------------------+                       +-----------------------+      |
+|  |      Engine Core        |                       |    State & Storage    |      |
+|  |      (js/engine.js)     |                       |     (js/state.js)     |      |
+|  |  - Block Rotation       |                       |  - LocalStorage sync  |      |
+|  |  - Spaced Repetition    |                       |  - Session telemetry  |      |
+|  |  - Pass Probability     |                       |  - JSON backup engine |      |
+|  +------------+------------+                       +-----------+-----------+      |
+|               |                                                |                  |
+|               +-----------------------+------------------------+                  |
+|                                       |                                           |
+|                                       v                                           |
+|  +-----------------------------------------------------------------------------+  |
+|  |                           Question Data Store                               |  |
+|  |  - data/cert_manifest.js      (Domain weights, taxonomy, and rules)         |  |
+|  |  - data/cert_cdl.js           (300 items · Cloud Digital Leader)            |  |
+|  |  - data/cert_ace.js           (300 items · Associate Cloud Engineer)        |  |
+|  |  - data/cert_pca.js           (300 items · Professional Cloud Architect)    |  |
+|  |  - data/case_studies.js       (4 Official PCA Case Studies)                 |  |
+|  |  - data/free_certifications.js (Curated  training catalog)                |  |
+|  |  - data/architecture_tools.js (Decision trees & cheatsheets)                |  |
+|  +-----------------------------------------------------------------------------+  |
++-----------------------------------------------------------------------------------+
+`
 
 ---
 
-## 🏗️ Arquitectura del Repositorio
+## 2. Certification Track Specifications
 
-```
+| Track | Level | Exam Duration | Questions | Passing Score | Core Focus |
+|---|---|---|---|---|---|
+| **Cloud Digital Leader (CDL)** | Foundational | 90 minutes | 50-60 | 70% | Cloud concepts, Google Cloud solutions, TCO/ROI, security & compliance |
+| **Associate Cloud Engineer (ACE)** | Associate | 120 minutes | 50-60 | 70% | Infrastructure deployment, Compute Engine, GKE, VPC, IAM, gcloud CLI commands |
+| **Professional Cloud Architect (PCA)** | Professional | 120 minutes | 50-60 | 70% | Scalable architecture design, reliability, security, multi-region failover, Case Studies |
+
+---
+
+## 3. Algorithmic Capabilities
+
+### 3.1 Stratified Block Rotation Engine (Zero-Repetition)
+- The entire bank of 300 questions per certification is divided into **6 distinct, non-overlapping blocks of 50 questions**.
+- Consecutive mock sessions draw strictly from consecutive blocks without repetition until the full 300-question pool has been completed.
+
+### 3.2 4-Box Leitner Spaced Repetition System (Weakness Radar)
+- Any incorrectly answered question is automatically routed to **Box 0 (Weakness Queue)**.
+- To achieve mastery, a question must be answered correctly across **3 consecutive spaced sessions**.
+- Eliminates confirmation bias and reinforces root conceptual understanding.
+
+### 3.3 Logistic Pass Probability Predictor
+- Calculates real-time passing likelihood (0% to 100%) using a calibrated logistic function:
+  P(\text{pass}) = \frac{1}{1 + e^{-k(S - S_0)}}
+- Evaluates bank coverage percentage, historical session consistency, and unresolved error count.
+
+### 3.4 Forensic Distractor Analysis
+- Every question includes official technical justifications, associated gcloud CLI syntax, and distractor trap breakdowns explaining why alternate options fail architectural best practices.
+
+---
+
+## 4. Repository Structure
+
+`
 Certificaciones_GCP/
-├── plataforma_entrenamiento_master/      # Núcleo SPA (HTML5, CSS3 Variables, ES6 Modules)
-│   ├── index.html                        # Interfaz principal Enterprise
-│   ├── iniciar_plataforma.bat            # Acceso rápido con 1 clic
-│   ├── css/
-│   │   └── styles.css                    # Design System (Dark/Light themes, Responsive)
-│   ├── js/
-│   │   ├── app.js                        # Enrutador SPA, sintetizador Web Audio, orquestador
-│   │   ├── engine.js                     # Motores Leitner, Rotación de Bloques y Probabilidad
-│   │   ├── i18n.js                       # Motor bilingüe ES/EN
-│   │   ├── ui_study.js                   # Controlador de Modo Estudio interactivo
-│   │   ├── ui_exam.js                    # Controlador de Simulación Oficial con cronómetro
-│   │   ├── ui_drill.js                   # Controlador de Ráfaga / Repetición Espaciada
-│   │   ├── ui_search.js                  # Buscador y Explorador de 900+ preguntas
-│   │   ├── ui_news.js                    # Radar de Certificaciones Gratuitas y Noticias
-│   │   ├── ui_tools.js                   # Árboles de Decisión y Cheatsheets de Arquitectura
-│   │   └── ui_charts.js                  # Visualizadores SVG (Radar Chart y Timeline)
-│   └── data/
-│       ├── cert_manifest.js              # Dominios y ponderaciones oficiales
-│       ├── cert_cdl.js                   # 300 reactivos Cloud Digital Leader
-│       ├── cert_ace.js                   # 300 reactivos Associate Cloud Engineer
-│       ├── cert_pca.js                   # 300 reactivos Professional Cloud Architect
-│       ├── case_studies.js               # Los 4 Casos de Estudio de Arquitectura
-│       ├── free_certifications.js        # Base de datos de cursos y badges gratis
-│       └── architecture_tools.js         # Árboles de decisión interactivos
+├── iniciar_plataforma.bat            # 1-Click root launcher
+├── LICENSE                           # MIT License
+├── README.md                         # Technical architecture documentation
+├── .gitignore                        # Git ignore specifications
 │
-├── Associate_Cloud_Engineer/             # Guías de estudio en Markdown
-│   ├── 01_guia_oficial_temario.md        # Desglose de dominios y CLI
-│   ├── 02_framework_resolucion_preguntas.md # Reglas de descarte de trampas
-│   └── 03_banco_de_preguntas_ace.md      # Reactivos comentados
-│
-├── loop_mejora_continua.py               # Script de auditoría forense y respaldos
-└── ejecutar_loop_mejora.bat              # Lanzador batch para auditorías
-```
+└── plataforma_entrenamiento_master/  # Core SPA platform
+    ├── index.html                    # Application entry point
+    ├── iniciar_plataforma.bat        # Local HTTP server launcher
+    │
+    ├── css/
+    │   └── styles.css                # Enterprise design system (Dark & Light tokens)
+    │
+    ├── data/
+    │   ├── cert_manifest.js          # Certification domain taxonomy & exam configurations
+    │   ├── cert_cdl.js               # 300 CDL items with distractor analysis
+    │   ├── cert_ace.js               # 300 ACE items with gcloud commands
+    │   ├── cert_pca.js               # 300 PCA items with case study links
+    │   ├── case_studies.js           # Full official case studies (Mountkirk, TerramEarth, EHR, HRL)
+    │   ├── free_certifications.js    # Curated  certifications catalog
+    │   └── architecture_tools.js     # Decision trees (Compute, Database, Storage, Network)
+    │
+    ├── js/
+    │   ├── app.js                    # Main application controller, routing & audio synthesis
+    │   ├── engine.js                 # Leitner SRS, block rotation & pass probability algorithms
+    │   ├── state.js                  # State persistence, JSON backup & recovery
+    │   ├── i18n.js                   # Bilingual runtime engine (ES / EN)
+    │   ├── ui_study.js               # Study mode controller with distractor drawer
+    │   ├── ui_exam.js                # Timed exam simulation controller
+    │   ├── ui_drill.js               # Weakness drill & rapid-recall controller
+    │   ├── ui_search.js              # Tokenized smart search explorer (Ctrl + K)
+    │   ├── ui_news.js                # Free courses & voucher radar
+    │   ├── ui_tools.js               # Interactive architecture decision trees
+    │   └── ui_charts.js              # Native SVG visualization (Radar & Timeline charts)
+    │
+    ├── reports/                      # Quality & audit reports (Lighthouse JSONs)
+    ├── scripts/                      # QA suite & forensic inspection scripts
+    ├── tests/                        # Adversarial & functional test suites (Node.js)
+    └── backups/                      # Automatic system state backups
+`
 
 ---
 
-## 🚀 Cómo Empezar
+## 5. Quick Start & Execution
 
-### Opción 1: Ejecución Local Inmediata (Sin Servidor / 100% Offline)
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/goldengaco/Certificaciones-GCP-Master-Studio.git
-   cd Certificaciones-GCP-Master-Studio
-   ```
-2. Abre `plataforma_entrenamiento_master/index.html` en cualquier navegador web moderno (Chrome, Edge, Firefox, Safari) o ejecuta `iniciar_plataforma.bat`.
+### Method 1: Instant 1-Click Launcher (Recommended)
+Double-click iniciar_plataforma.bat located at the root of the repository.
+The script automatically detects your local environment, initializes a local HTTP server on port 8080 or 8989, and launches the application in your default web browser.
 
-### Opción 2: Ejecutar el Loop de Mejora Continua
-Para verificar la integridad de todos los módulos y preguntas:
-```bash
-python loop_mejora_continua.py
-```
+### Method 2: Manual HTTP Server
+`ash
+# Navigate to the core application folder
+cd plataforma_entrenamiento_master
 
----
+# Launch standard HTTP server
+python -m http.server 8989 --bind 127.0.0.1
+`
+Then open http://127.0.0.1:8989 in Google Chrome, Microsoft Edge, Mozilla Firefox, or Apple Safari.
 
-## 🛡️ Seguridad y Privacidad
-* **100% Local & Privado:** Tu progreso, historial de exámenes y estadísticas se guardan exclusivamente en el almacenamiento local de tu navegador (`localStorage`).
-* **Cero CDN / Cero Telemetría:** No depende de librerías externas en la nube ni recopila datos del usuario.
+### Method 3: Direct File Execution (Zero Network / Air-Gapped)
+Open plataforma_entrenamiento_master/index.html directly in any web browser. The platform runs 100% offline without requiring an active internet connection.
 
 ---
 
-## 📄 Licencia
-Distribuido bajo la Licencia MIT. Consulta `LICENSE` para más información.
+## 6. Verification and Quality Assurance
+
+The codebase includes automated test suites covering syntax verification, UI element wiring, and algorithm correctness:
+
+`ash
+# Run full automated QA verification suite
+python plataforma_entrenamiento_master/scripts/run_full_qa_suite.py
+
+# Run interactive button & DOM wiring tests
+node plataforma_entrenamiento_master/tests/test_all_ui_buttons.js
+
+# Run search engine tokenization tests
+node plataforma_entrenamiento_master/tests/test_smart_search.js
+`
+
+### Google Lighthouse Quality Benchmark
+- **Accessibility:** 100 / 100
+- **Best Practices:** 100 / 100
+- **SEO:** 100 / 100
+- **Agentic Browsing:** 100 / 100
+- **Performance:** 75 / 100
+
+---
+
+## 7. Security and Data Privacy
+
+- **100% Local Execution:** All user progress, exam attempt records, and notes remain strictly within the user's browser localStorage.
+- **Zero Telemetry / Zero External Requests:** No data is transmitted to third-party servers.
+- **Air-Gap Compatible:** Suitable for enterprise restricted environments and offline training setups.
+
+---
+
+## 8. License
+
+Distributed under the MIT License. See LICENSE for details.

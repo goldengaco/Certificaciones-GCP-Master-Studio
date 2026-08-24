@@ -44,7 +44,7 @@ window.GCP_UI_TOOLS = {
   renderDatabaseTree(container, tree) {
     container.innerHTML = `
       <div class="tool-view-card">
-        <h3>🗄️ ${tree.title}</h3>
+        <h3>${tree.title}</h3>
         <p class="tool-desc">${tree.description}</p>
 
         <div class="decision-matrix-grid">
@@ -97,7 +97,7 @@ window.GCP_UI_TOOLS = {
   renderComputeTree(container, tree) {
     container.innerHTML = `
       <div class="tool-view-card">
-        <h3>⚡ ${tree.title}</h3>
+        <h3>${tree.title}</h3>
         <p class="tool-desc">${tree.description}</p>
 
         <div class="decision-matrix-grid">
@@ -132,7 +132,7 @@ window.GCP_UI_TOOLS = {
   renderStorageTable(container, tree) {
     container.innerHTML = `
       <div class="tool-view-card">
-        <h3>📦 ${tree.title}</h3>
+        <h3>${tree.title}</h3>
         <p class="tool-desc">${tree.description}</p>
 
         <div class="table-responsive">
@@ -168,7 +168,7 @@ window.GCP_UI_TOOLS = {
   renderNetworkingTree(container, tree) {
     container.innerHTML = `
       <div class="tool-view-card">
-        <h3>🌐 ${tree.title}</h3>
+        <h3>${tree.title}</h3>
         <p class="tool-desc">${tree.description}</p>
 
         <div class="decision-matrix-grid">
@@ -197,7 +197,7 @@ window.GCP_UI_TOOLS = {
   renderCheatsheets(container, cheatsheets) {
     container.innerHTML = `
       <div class="tool-view-card">
-        <h3>📋 Reglas de Oro de Arquitectura y Exámenes</h3>
+        <h3>Reglas de Oro de Arquitectura y Exámenes</h3>
         ${cheatsheets.map(cs => `
           <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1rem;">
             <h4 style="color: var(--gcp-blue); margin-bottom: 0.75rem;">${cs.title}</h4>

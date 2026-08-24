@@ -80,7 +80,7 @@ window.GCP_UI_NEWS = {
         <p class="free-cert-desc">${item.description}</p>
         
         <div class="free-cert-gcp-sync">
-          <strong>⚡ Aporte para tu certificación GCP:</strong>
+          <strong>Aporte para tu certificación GCP:</strong>
           <span>${item.relevanceGCP}</span>
         </div>
 

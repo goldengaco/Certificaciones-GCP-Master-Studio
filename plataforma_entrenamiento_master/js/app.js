@@ -798,7 +798,7 @@
           if (global.GCP_I18N && typeof global.GCP_I18N.toggleLanguage === 'function') {
             global.GCP_I18N.toggleLanguage();
             const currentL = global.GCP_I18N.currentLang;
-            this.showToast(currentL === 'es' ? 'Idioma cambiado a Español 🇪🇸' : 'Language changed to English 🇺🇸', 'info');
+            this.showToast(currentL === 'es' ? 'Idioma: Español activado' : 'Language: English enabled', 'info');
           }
         });
       }
@@ -1083,7 +1083,7 @@
 
       const toast = document.createElement('div');
       toast.className = `toast-card toast-${type}`;
-      const iconSymbol = type === 'success' ? '✓' : type === 'error' ? '✖' : type === 'warning' ? '⚡' : 'ℹ';
+      const iconSymbol = type === 'success' ? '[OK]' : type === 'error' ? '[ERROR]' : type === 'warning' ? '[WARN]' : '[INFO]';
 
       toast.innerHTML = `
         <span class="toast-icon">${iconSymbol}</span>
