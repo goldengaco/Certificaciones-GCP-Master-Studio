@@ -161,6 +161,135 @@
 }
 
 /* =========================================================================
+   MATERIAL 3 DOMAIN MASTERY GRID (ZERO OVERLAPPING TEXT)
+   ========================================================================= */
+
+.domain-mastery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.domain-mastery-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all var(--transition-fast);
+}
+
+.domain-mastery-card:hover {
+  border-color: var(--gcp-blue);
+  transform: translateY(-2px);
+}
+
+.domain-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.domain-name-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.domain-status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.status-mastered {
+  background: var(--gcp-green-subtle);
+  color: var(--gcp-green);
+  border: 1px solid var(--gcp-green-border);
+}
+
+.status-progress {
+  background: var(--gcp-yellow-subtle);
+  color: var(--gcp-yellow);
+  border: 1px solid var(--gcp-yellow-border);
+}
+
+.status-init {
+  background: var(--bg-base);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.domain-progress-track {
+  height: 8px;
+  background: var(--bg-base);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.domain-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease-out;
+}
+
+.domain-card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.domain-score-pct {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.domain-target-note {
+  color: var(--text-muted);
+}
+
+/* Search Highlights */
+.search-highlight {
+  background: rgba(251, 188, 4, 0.35);
+  color: inherit;
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.search-empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.search-empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.search-empty-state h3 {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.search-empty-state p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* =========================================================================
    FREE CERTIFICATIONS & NEWS RADAR STYLES (MATCHING FREE-CERTIFICATIONS.COM)
    ========================================================================= */
 
@@ -539,46 +668,46 @@
    ========================================================================= */
 
 :root, [data-theme="dark"] {
-  /* Surface Color Hierarchy (Google Cloud Console Dark Theme) */
-  --bg-base: #0b0f19;              /* Deep canvas void */
-  --bg-surface: #111827;           /* Cards, navbars, sidebars */
-  --bg-surface-elevated: #1f2937;  /* Hover surfaces, scenario boxes */
-  --bg-surface-high: #283548;      /* Active state cards, elevated modals */
-  --bg-input: #151d2c;             /* Input fields and selects */
-  --bg-modal-backdrop: rgba(3, 7, 18, 0.82);
+  /* Surface Color Hierarchy (Google Cloud Console Modern Dark Theme) */
+  --bg-base: #131314;              /* Official Google Dark Surface */
+  --bg-surface: #1e1f20;           /* Cards, navbars, sidebars */
+  --bg-surface-elevated: #282a2c;  /* Hover surfaces, scenario boxes */
+  --bg-surface-high: #333538;      /* Active state cards, elevated modals */
+  --bg-input: #1a1b1e;             /* Input fields and selects */
+  --bg-modal-backdrop: rgba(19, 19, 20, 0.85);
 
   /* Borders & Dividers */
-  --border-subtle: #1f2937;
-  --border-default: #374151;
-  --border-bright: #4b5563;
-  --border-focus: #1a73e8;
+  --border-subtle: #2d3135;
+  --border-default: #3c4043;
+  --border-bright: #5f6368;
+  --border-focus: #8ab4f8;
 
-  /* Typography Colors */
-  --text-primary: #f9fafb;         /* Primary readable body & headings */
-  --text-secondary: #9ca3af;       /* Subheadings, labels, secondary copy */
-  --text-muted: #6b7280;           /* Captions, timestamps, disabled items */
-  --text-inverse: #111827;
+  /* High Contrast Typography Colors (WCAG AA Compliant >= 4.5:1) */
+  --text-primary: #ffffff;         /* 100% white for optimal contrast */
+  --text-secondary: #e3e3e3;       /* High-contrast secondary text */
+  --text-muted: #bdc1c6;           /* High-contrast captions and tags */
+  --text-inverse: #131314;
 
-  /* Official Google Cloud Brand Colors */
-  --gcp-blue: #1a73e8;             /* Primary Accent */
-  --gcp-blue-hover: #1557b0;
-  --gcp-blue-subtle: rgba(26, 115, 232, 0.15);
-  --gcp-blue-border: rgba(26, 115, 232, 0.45);
+  /* Official Google Brand Colors */
+  --gcp-blue: #8ab4f8;             /* Google Blue Text & Accents */
+  --gcp-blue-hover: #aecbfa;
+  --gcp-blue-subtle: rgba(66, 133, 244, 0.20);
+  --gcp-blue-border: rgba(138, 180, 248, 0.55);
 
-  --gcp-green: #34a853;            /* Correct, Success, Box 3 Mastered */
-  --gcp-green-hover: #2d9247;
-  --gcp-green-subtle: rgba(52, 168, 83, 0.15);
-  --gcp-green-border: rgba(52, 168, 83, 0.45);
+  --gcp-green: #81c995;            /* Google Green */
+  --gcp-green-hover: #a8dab5;
+  --gcp-green-subtle: rgba(52, 168, 83, 0.20);
+  --gcp-green-border: rgba(129, 201, 149, 0.55);
 
-  --gcp-red: #ea4335;              /* Incorrect, Danger, Critical Timer */
-  --gcp-red-hover: #d33828;
-  --gcp-red-subtle: rgba(234, 67, 53, 0.15);
-  --gcp-red-border: rgba(234, 67, 53, 0.45);
+  --gcp-red: #f28b82;              /* Google Red */
+  --gcp-red-hover: #f6aea9;
+  --gcp-red-subtle: rgba(234, 67, 53, 0.20);
+  --gcp-red-border: rgba(242, 139, 130, 0.55);
 
-  --gcp-yellow: #fbbc04;           /* Warning, Flagged, Box 2 Review */
-  --gcp-yellow-hover: #e3a800;
-  --gcp-yellow-subtle: rgba(251, 188, 4, 0.15);
-  --gcp-yellow-border: rgba(251, 188, 4, 0.45);
+  --gcp-yellow: #fdd663;           /* Google Yellow */
+  --gcp-yellow-hover: #fde293;
+  --gcp-yellow-subtle: rgba(251, 188, 4, 0.20);
+  --gcp-yellow-border: rgba(253, 214, 99, 0.55);
 
   --gcp-purple: #af5cf7;           /* Analytics, AI/ML badges */
   --gcp-purple-subtle: rgba(175, 92, 247, 0.15);

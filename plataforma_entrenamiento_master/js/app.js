@@ -442,9 +442,11 @@
           const tabView = tab.getAttribute('data-view') || tab.getAttribute('data-nav-target');
           if (tabView === targetView) {
             tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
             tab.setAttribute('aria-current', 'page');
           } else {
             tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
             tab.removeAttribute('aria-current');
           }
         });

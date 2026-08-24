@@ -1,12 +1,22 @@
 /**
- * Global Search and Question Explorer Controller
- * Enables real-time searching and filtering across all 900+ questions.
+ * Smart Tokenized & Fuzzy-Weighted Search Engine for Google Cloud Certifications
+ * Handles natural language queries ("que es iam", "como conectar vpc", "spanner vs sql")
+ * Filters stop words, normalizes accents, calculates relevance scores, and highlights matches.
  */
 window.GCP_UI_SEARCH = {
   allQuestionsPool: [],
   filteredQuestions: [],
   selectedCertFilter: "all",
   searchQuery: "",
+
+  // Multilingual stop words list to remove noise from search queries
+  STOP_WORDS: new Set([
+    'que', 'es', 'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas',
+    'de', 'del', 'a', 'en', 'para', 'por', 'con', 'sin', 'sobre', 'como',
+    'cual', 'cuales', 'donde', 'cuando', 'quien', 'quienes', 'y', 'o', 'u',
+    'what', 'is', 'are', 'the', 'a', 'an', 'in', 'to', 'for', 'with', 'about',
+    'how', 'which', 'where', 'when', 'who', 'and', 'or'
+  ]),
 
   init() {
     this.assembleAllQuestions();
@@ -15,9 +25,9 @@ window.GCP_UI_SEARCH = {
   },
 
   assembleAllQuestions() {
-    const cdl = window.GCP_CDL_QUESTIONS || [];
-    const ace = window.GCP_ACE_QUESTIONS || [];
-    const pca = window.GCP_PCA_QUESTIONS || [];
+    const cdl = (window.GCP_CDL_QUESTIONS || []).map(q => ({ ...q, certId: q.certId || 'cdl' }));
+    const ace = (window.GCP_ACE_QUESTIONS || []).map(q => ({ ...q, certId: q.certId || 'ace' }));
+    const pca = (window.GCP_PCA_QUESTIONS || []).map(q => ({ ...q, certId: q.certId || 'pca' }));
     this.allQuestionsPool = [...cdl, ...ace, ...pca];
     this.filteredQuestions = [...this.allQuestionsPool];
   },
@@ -27,19 +37,22 @@ window.GCP_UI_SEARCH = {
     const topBarSearchInput = document.getElementById("topNavSearchInput");
     const certFilterSelect = document.getElementById("searchCertFilter");
 
-    // Shortcut Ctrl+K
+    // Global shortcut Ctrl+K
     window.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        window.GCP_ROUTER?.navigate("search");
-        if (searchInput) searchInput.focus();
-        else if (topBarSearchInput) topBarSearchInput.focus();
+        if (window.GCP_APP?.navigateTo) {
+          window.GCP_APP.navigateTo("search");
+        }
+        setTimeout(() => {
+          if (searchInput) searchInput.focus();
+        }, 100);
       }
     });
 
     if (searchInput) {
       searchInput.addEventListener("input", (e) => {
-        this.searchQuery = e.target.value.toLowerCase().trim();
+        this.searchQuery = e.target.value;
         this.applySearchFilters();
       });
     }
@@ -47,8 +60,10 @@ window.GCP_UI_SEARCH = {
     if (topBarSearchInput) {
       topBarSearchInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
-          window.GCP_ROUTER?.navigate("search");
-          this.searchQuery = topBarSearchInput.value.toLowerCase().trim();
+          if (window.GCP_APP?.navigateTo) {
+            window.GCP_APP.navigateTo("search");
+          }
+          this.searchQuery = topBarSearchInput.value;
           if (searchInput) searchInput.value = this.searchQuery;
           this.applySearchFilters();
         }
@@ -63,29 +78,137 @@ window.GCP_UI_SEARCH = {
     }
   },
 
+  normalizeText(str) {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  },
+
+  extractSearchTokens(rawQuery) {
+    const norm = this.normalizeText(rawQuery);
+    const rawTokens = norm.split(/[\s,.;:!?¿¡\-_/\\()]+/);
+    
+    // Filter stop words, but if all tokens were stop words, keep original tokens
+    const meaningfulTokens = rawTokens.filter(t => t.length > 1 && !this.STOP_WORDS.has(t));
+    if (meaningfulTokens.length > 0) {
+      return meaningfulTokens;
+    }
+    return rawTokens.filter(t => t.length > 0);
+  },
+
   applySearchFilters() {
-    const q = this.searchQuery;
+    const rawQ = this.searchQuery.trim();
     const cert = this.selectedCertFilter;
 
-    this.filteredQuestions = this.allQuestionsPool.filter(item => {
-      // Match Cert
-      const matchCert = cert === "all" || item.certId === cert;
-      if (!matchCert) return false;
+    if (!rawQ) {
+      this.filteredQuestions = this.allQuestionsPool.filter(item => cert === "all" || item.certId === cert);
+      this.renderSearchResults();
+      return;
+    }
 
-      if (!q) return true;
+    const tokens = this.extractSearchTokens(rawQ);
+    const scoredResults = [];
 
-      // Search in title, scenario, keywords, gcloudCommand, subtopic, explanation
-      const matchTitle = (item.title || "").toLowerCase().includes(q);
-      const matchScenario = (item.scenario || "").toLowerCase().includes(q);
-      const matchKeywords = (item.keywords || []).some(k => k.toLowerCase().includes(q));
-      const matchCmd = (item.gcloudCommand || "").toLowerCase().includes(q);
-      const matchSub = (item.subtopic || "").toLowerCase().includes(q);
-      const matchId = (item.id || "").toLowerCase().includes(q);
+    for (const item of this.allQuestionsPool) {
+      if (cert !== "all" && item.certId !== cert) {
+        continue;
+      }
 
-      return matchTitle || matchScenario || matchKeywords || matchCmd || matchSub || matchId;
-    });
+      const titleNorm = this.normalizeText(item.title);
+      const scenarioNorm = this.normalizeText(item.scenario);
+      const explNorm = this.normalizeText(item.explanation);
+      const cmdNorm = this.normalizeText(item.gcloudCommand);
+      const domNorm = this.normalizeText(item.domainName || item.domain);
+      const subNorm = this.normalizeText(item.subtopic);
+      const idNorm = this.normalizeText(item.id);
+      const keywordsNorm = (item.keywords || []).map(k => this.normalizeText(k)).join(" ");
+      const optionsNorm = (item.options || []).map(o => this.normalizeText(o.text)).join(" ");
 
+      let matchScore = 0;
+      let matchedTokenCount = 0;
+
+      for (const token of tokens) {
+        let tokenMatched = false;
+
+        // Exact match in keywords (high priority)
+        if (keywordsNorm.includes(token)) {
+          matchScore += 35;
+          tokenMatched = true;
+        }
+
+        // Title / ID Match
+        if (titleNorm.includes(token) || idNorm.includes(token)) {
+          matchScore += 25;
+          tokenMatched = true;
+        }
+
+        // CLI Command Match
+        if (cmdNorm.includes(token)) {
+          matchScore += 20;
+          tokenMatched = true;
+        }
+
+        // Domain / Subtopic Match
+        if (domNorm.includes(token) || subNorm.includes(token)) {
+          matchScore += 15;
+          tokenMatched = true;
+        }
+
+        // Scenario Match
+        if (scenarioNorm.includes(token)) {
+          matchScore += 12;
+          tokenMatched = true;
+        }
+
+        // Explanation Match
+        if (explNorm.includes(token)) {
+          matchScore += 8;
+          tokenMatched = true;
+        }
+
+        // Options Match
+        if (optionsNorm.includes(token)) {
+          matchScore += 6;
+          tokenMatched = true;
+        }
+
+        if (tokenMatched) {
+          matchedTokenCount++;
+        }
+      }
+
+      // If at least one meaningful token matched, include the question
+      if (matchScore > 0 && matchedTokenCount > 0) {
+        // Bonus for multi-token coverage
+        const coverageBonus = (matchedTokenCount / tokens.length) * 50;
+        scoredResults.push({
+          question: item,
+          score: matchScore + coverageBonus
+        });
+      }
+    }
+
+    // Sort descending by relevance score
+    scoredResults.sort((a, b) => b.score - a.score);
+    this.filteredQuestions = scoredResults.map(r => r.question);
     this.renderSearchResults();
+  },
+
+  highlightKeywords(text, query) {
+    if (!text || !query) return text || "";
+    const tokens = this.extractSearchTokens(query);
+    if (tokens.length === 0) return text;
+
+    let result = text;
+    for (const token of tokens) {
+      if (token.length < 2) continue;
+      const regex = new RegExp(`(${token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      result = result.replace(regex, '<mark class="search-highlight">$1</mark>');
+    }
+    return result;
   },
 
   renderSearchResults() {
@@ -93,50 +216,75 @@ window.GCP_UI_SEARCH = {
     const resultsContainer = document.getElementById("searchResultsContainer");
     if (!resultsContainer) return;
 
+    const totalInPool = this.allQuestionsPool.length;
+    const foundCount = this.filteredQuestions.length;
+
     if (countDisplay) {
-      countDisplay.textContent = `Mostrando ${this.filteredQuestions.length} de ${this.allQuestionsPool.length} preguntas`;
+      countDisplay.textContent = `Mostrando ${foundCount} de ${totalInPool} preguntas oficiale${foundCount === 1 ? '' : 's'}`;
     }
 
-    if (this.filteredQuestions.length === 0) {
+    if (foundCount === 0) {
       resultsContainer.innerHTML = `
-        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
-          🔍 No se encontraron preguntas para la búsqueda: "<strong>${this.searchQuery}</strong>".
+        <div class="search-empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>No se encontraron preguntas con los términos buscados</h3>
+          <p>Prueba buscando por nombre de servicio de GCP (ejemplo: <code>IAM</code>, <code>Spanner</code>, <code>GKE</code>, <code>Cloud Run</code>, <code>VPC</code>, <code>Storage</code>).</p>
         </div>
       `;
       return;
     }
 
-    // Render paginated / first 50 results
+    // Limit initial display to first 50 results for instant rendering speed
     const displayed = this.filteredQuestions.slice(0, 50);
 
-    resultsContainer.innerHTML = displayed.map((q, idx) => `
-      <div class="search-question-card">
-        <div class="search-q-header">
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <span class="cert-pill-badge">${(q.certId || 'gcp').toUpperCase()}</span>
-            <span class="domain-tag">${q.domainName || q.domain || 'Dominio'}</span>
-            <span class="q-id-badge">${q.id}</span>
-          </div>
-          <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">${q.difficulty || 'standard'}</span>
-        </div>
+    resultsContainer.innerHTML = displayed.map(q => {
+      const certName = q.certId === 'cdl' ? 'Cloud Digital Leader' : (q.certId === 'pca' ? 'Cloud Architect' : 'Cloud Engineer');
+      const certBadgeClass = q.certId === 'cdl' ? 'badge-cdl' : (q.certId === 'pca' ? 'badge-pca' : 'badge-ace');
+      
+      const titleHighlighted = this.highlightKeywords(q.title || 'Escenario de Examen', this.searchQuery);
+      const scenarioHighlighted = this.highlightKeywords(q.scenario || '', this.searchQuery);
+      const explanationHighlighted = this.highlightKeywords(q.explanation || '', this.searchQuery);
 
-        <h4 class="search-q-title">${q.title || 'Escenario de Examen'}</h4>
-        <p class="search-q-scenario">${q.scenario}</p>
-
-        <div class="search-q-options">
-          ${(q.options || []).map(opt => `
-            <div class="search-opt-item ${opt.letter === q.correct ? 'opt-correct' : ''}">
-              <strong>${opt.letter}:</strong> ${opt.text}
-              ${opt.letter === q.correct ? '<span style="color: var(--gcp-green); font-weight: 700; margin-left: 8px;">✓ (CORRECTA)</span>' : ''}
+      return `
+        <div class="search-question-card">
+          <div class="search-card-topbar">
+            <div class="badge-group">
+              <span class="cert-tag ${certBadgeClass}">${(q.certId || 'GCP').toUpperCase()}</span>
+              <span class="domain-tag">${q.domainName || q.domain || 'Dominio Oficial'}</span>
+              <span class="qid-tag">${q.id}</span>
             </div>
-          `).join('')}
-        </div>
+            <span class="cert-full-name">${certName}</span>
+          </div>
 
-        <div class="search-q-details">
-          <div><strong>💡 Justificación:</strong> ${q.explanation || ''}</div>
-          ${q.gcloudCommand ? `<div class="cmd-box" style="margin-top: 8px;">${q.gcloudCommand}</div>` : ''}
+          <h3 class="search-q-title">${titleHighlighted}</h3>
+          <p class="search-q-scenario">${scenarioHighlighted}</p>
+
+          <div class="search-options-list">
+            ${(q.options || []).map(opt => {
+              const isCorrect = opt.letter === q.correct;
+              const optText = this.highlightKeywords(opt.text, this.searchQuery);
+              return `
+                <div class="search-opt-row ${isCorrect ? 'is-correct-opt' : ''}">
+                  <span class="opt-letter">${opt.letter}</span>
+                  <span class="opt-text">${optText}</span>
+                  ${isCorrect ? '<span class="correct-check">✓ RESPUESTA OFICIAL</span>' : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="search-explanation-callout">
+            <strong>💡 Justificación y Descarte Técnico:</strong>
+            <p>${explanationHighlighted}</p>
+            ${q.gcloudCommand ? `
+              <div class="cli-snippet-box">
+                <span class="cli-label">Comando gcloud:</span>
+                <code>${q.gcloudCommand}</code>
+              </div>
+            ` : ''}
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 };

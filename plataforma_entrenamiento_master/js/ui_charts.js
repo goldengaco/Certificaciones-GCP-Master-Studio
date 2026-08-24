@@ -162,193 +162,48 @@
      */
     generateSVG(options = {}) {
       const domains = this.normalizeDomains(options.domains || options.domainScores || []);
-      const width = Number(options.width) || 420;
-      const height = Number(options.height) || 380;
-      const radius = Number(options.radius) || 125;
-      const showBenchmark = options.showBenchmark !== false;
-      const chartId = options.chartId || ('radar-' + Math.random().toString(36).substring(2, 7));
-
-      const N = domains.length;
-      if (N < 3) {
-        return `
-          <div class="chart-empty-state" style="padding: 2rem; text-align: center; color: var(--text-muted, #9ca3af);">
-            <p>Se requieren al menos 3 dominios para trazar el gráfico de radar.</p>
-          </div>`;
+      if (domains.length === 0) {
+        return `<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Sin datos de dominios registrados aún. Realiza un simulacro para ver tu progreso.</div>`;
       }
-
-      const cx = width / 2;
-      const cy = height / 2 + 6; // Slight downward offset for header balance
-
-      // 1. Concentric Circular Polygon Grid Levels (20%, 40%, 60%, 80%, 100%)
-      const gridLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
-      let gridPolygonsSvg = '';
-      let gridLabelsSvg = '';
-
-      gridLevels.forEach((level) => {
-        const levelRadius = radius * level;
-        const levelPoints = [];
-        for (let i = 0; i < N; i++) {
-          const angle = -Math.PI / 2 + (2 * Math.PI * i) / N;
-          const x = cx + levelRadius * Math.cos(angle);
-          const y = cy + levelRadius * Math.sin(angle);
-          levelPoints.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-        }
-        gridPolygonsSvg += `
-          <polygon points="${levelPoints.join(' ')}" 
-                   fill="none" 
-                   stroke="${COLORS.gridLine}" 
-                   stroke-width="1" />`;
-
-        // Percentage indicator on top vertical axis
-        const labelY = cy - levelRadius + (level === 1.0 ? -4 : 9);
-        gridLabelsSvg += `
-          <text x="${(cx + 4).toFixed(1)}" y="${labelY.toFixed(1)}" 
-                fill="${COLORS.textMuted}" font-size="8.5" font-family="monospace">
-            ${Math.round(level * 100)}%
-          </text>`;
-      });
-
-      // 2. Official 70% Benchmark Polygon
-      let benchmarkSvg = '';
-      if (showBenchmark) {
-        const benchRadius = radius * 0.70;
-        const benchPoints = [];
-        for (let i = 0; i < N; i++) {
-          const angle = -Math.PI / 2 + (2 * Math.PI * i) / N;
-          const x = cx + benchRadius * Math.cos(angle);
-          const y = cy + benchRadius * Math.sin(angle);
-          benchPoints.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-        }
-        benchmarkSvg = `
-          <polygon points="${benchPoints.join(' ')}" 
-                   fill="${COLORS.gcpGreenLight}" 
-                   stroke="${COLORS.gcpGreen}" 
-                   stroke-width="1.5" 
-                   stroke-dasharray="4 3" 
-                   opacity="0.85">
-            <title>Meta Aprobatoria Oficial (70%)</title>
-          </polygon>`;
-      }
-
-      // 3. Radial Axis Spokes & Domain Labels
-      let spokesSvg = '';
-      let labelsSvg = '';
-      const labelDistance = radius + 24;
-
-      domains.forEach((d, i) => {
-        const angle = -Math.PI / 2 + (2 * Math.PI * i) / N;
-        const cosVal = Math.cos(angle);
-        const sinVal = Math.sin(angle);
-
-        // Radial spoke line from center to 100% boundary
-        const endX = cx + radius * cosVal;
-        const endY = cy + radius * sinVal;
-        spokesSvg += `
-          <line x1="${cx}" y1="${cy}" x2="${endX.toFixed(1)}" y2="${endY.toFixed(1)}" 
-                stroke="${COLORS.axisLine}" stroke-width="1" stroke-dasharray="2 2" />`;
-
-        // Smart text-anchor based on angle quadrant
-        let textAnchor = 'middle';
-        let xOffset = 0;
-        if (cosVal > 0.25) {
-          textAnchor = 'start';
-          xOffset = 5;
-        } else if (cosVal < -0.25) {
-          textAnchor = 'end';
-          xOffset = -5;
-        }
-
-        let yOffset = 0;
-        if (sinVal < -0.6) yOffset = -6;
-        else if (sinVal > 0.6) yOffset = 11;
-        else yOffset = 3;
-
-        const labelX = cx + labelDistance * cosVal + xOffset;
-        const labelY = cy + labelDistance * sinVal + yOffset;
-
-        const domainTitle = escapeXml(d.shortName || d.name || d.domainId);
-        const weightText = d.weight ? ` (${d.weight}%)` : '';
-
-        labelsSvg += `
-          <g class="radar-axis-label" data-domain="${escapeXml(d.domainId)}">
-            <text x="${labelX.toFixed(1)}" y="${labelY.toFixed(1)}" 
-                  text-anchor="${textAnchor}" 
-                  fill="${COLORS.textPrimary}" 
-                  font-size="10" 
-                  font-weight="600">
-              ${domainTitle}
-            </text>
-            <text x="${labelX.toFixed(1)}" y="${(labelY + 11).toFixed(1)}" 
-                  text-anchor="${textAnchor}" 
-                  fill="${COLORS.textSecondary}" 
-                  font-size="8.5">
-              ${escapeXml(d.domainId)}${weightText}
-            </text>
-          </g>`;
-      });
-
-      // 4. User Score Polygon & Hover Points
-      const userPoints = [];
-      const dataCircles = [];
-
-      domains.forEach((d, i) => {
-        const score = Math.max(0, Math.min(100, Number(d.score) || 0));
-        const scoreFraction = score / 100;
-        // Keep minimum radius of 4% so polygon vertex is always visible
-        const r = radius * Math.max(0.04, scoreFraction);
-        const angle = -Math.PI / 2 + (2 * Math.PI * i) / N;
-
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-
-        userPoints.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-
-        const pointColor = score >= 70 ? COLORS.gcpGreen : (score >= 50 ? COLORS.gcpYellow : COLORS.gcpRed);
-        dataCircles.push(`
-          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" 
-                  fill="${pointColor}" 
-                  stroke="#ffffff" 
-                  stroke-width="1.5" 
-                  class="radar-point" 
-                  data-domain="${escapeXml(d.domainId)}" 
-                  data-score="${score.toFixed(1)}%">
-            <title>${escapeXml(d.shortName || d.name || d.domainId)}: ${score.toFixed(1)}%</title>
-          </circle>`);
-      });
-
-      // SVG Gradients & Filters
-      const svgDefs = `
-        <defs>
-          <linearGradient id="${chartId}-user-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="${COLORS.gcpBlue}" stop-opacity="0.45" />
-            <stop offset="100%" stop-color="${COLORS.gcpBlue}" stop-opacity="0.10" />
-          </linearGradient>
-          <filter id="${chartId}-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="${COLORS.gcpBlue}" flood-opacity="0.3" />
-          </filter>
-        </defs>`;
 
       return `
-        <svg xmlns="http://www.w3.org/2000/svg" 
-             viewBox="0 0 ${width} ${height}" 
-             class="radar-chart-svg" 
-             style="width: 100%; height: auto; max-width: ${width}px; display: block; margin: 0 auto;" 
-             role="img" 
-             aria-label="Gráfico de Radar de Rendimiento por Dominio">
-          ${svgDefs}
-          <g class="radar-grid">${gridPolygonsSvg}${gridLabelsSvg}</g>
-          <g class="radar-spokes">${spokesSvg}</g>
-          <g class="radar-benchmark">${benchmarkSvg}</g>
-          <g class="radar-user-area" filter="url(#${chartId}-shadow)">
-            <polygon points="${userPoints.join(' ')}" 
-                     fill="url(#${chartId}-user-grad)" 
-                     stroke="${COLORS.gcpBlue}" 
-                     stroke-width="2.5" 
-                     stroke-linejoin="round" />
-          </g>
-          <g class="radar-points">${dataCircles.join('')}</g>
-          <g class="radar-labels">${labelsSvg}</g>
-        </svg>`;
+        <div class="domain-mastery-grid">
+          ${domains.map(d => {
+            const score = Number(d.score) || 0;
+            let statusText = "Por Iniciar";
+            let statusClass = "status-init";
+            let barColor = "var(--gcp-blue)";
+
+            if (score >= 80) {
+              statusText = "Dominado";
+              statusClass = "status-mastered";
+              barColor = "var(--gcp-green)";
+            } else if (score >= 50) {
+              statusText = "En Progreso";
+              statusClass = "status-progress";
+              barColor = "var(--gcp-yellow)";
+            }
+
+            return `
+              <div class="domain-mastery-card">
+                <div class="domain-card-header">
+                  <span class="domain-name-title">${escapeXml(d.name || d.shortName || d.domainId)}</span>
+                  <span class="domain-status-pill ${statusClass}">${statusText}</span>
+                </div>
+                
+                <div class="domain-progress-track">
+                  <div class="domain-progress-fill" style="width: ${Math.max(score, 4)}%; background: ${barColor};"></div>
+                </div>
+
+                <div class="domain-card-footer">
+                  <span class="domain-score-pct">${score}% de Precisión</span>
+                  <span class="domain-target-note">Meta Oficial: 70%</span>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
     },
 
     /**

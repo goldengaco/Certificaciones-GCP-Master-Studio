@@ -148,7 +148,7 @@
         },
         settings: {
           theme: 'dark',
-          timerAudioEnabled: true,
+          timerAudioEnabled: false,
           keyboardShortcutsEnabled: true
         }
       };

@@ -2,11 +2,12 @@
 <html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="theme-color" content="#0b0f19">
-  <meta name="description" content="Plataforma de Entrenamiento y Simulación Oficial para Certificaciones Google Cloud (CDL, ACE, PCA) - 100% Offline y Autónomo.">
-  <title>Google Cloud Master Certification Studio | CDL · ACE · PCA</title>
+  <meta name="theme-color" content="#131314">
+  <meta name="description" content="Simulador Oficial y Plataforma de Estudio para Certificaciones Google Cloud (CDL, ACE, PCA). 100% Offline, Rápido y Autónomo.">
+  <title>GCP Cert Studio — Simulador Oficial Google Cloud</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c-4.4 0-8.2 2.3-10.4 5.8 1.4-.4 2.9-.6 4.4-.6 6.1 0 11.2 4.1 12.8 9.8 1-.4 2.1-.6 3.2-.6 4.4 0 8 3.6 8 8 0 .4 0 .9-.1 1.3 4.6-1.5 7.9-5.7 7.9-10.7 0-6.1-4.9-11-11-11-1.3 0-2.6.2-3.8.7-2.4-4.5-7.3-7.5-12.8-7.5z'/%3E%3Cpath fill='%234285F4' d='M36 34c0-4.4-3.6-8-8-8-1.1 0-2.2.2-3.2.6-1.6-5.7-6.7-9.8-12.8-9.8-1.5 0-3 .2-4.4.6C5.4 18.2 4 21.9 4 26c0 5.4 3.7 10 8.8 11.5.7.2 1.4.3 2.2.3h21c0-1.3 0-2.6 0-3.8z'/%3E%3Cpath fill='%23FBBC05' d='M15 37.8c-.8 0-1.5-.1-2.2-.3C7.7 36 4 31.4 4 26c0-4.1 1.4-7.8 3.6-8.6C4.8 20.3 3 24.4 3 29c0 6.6 5.4 12 12 12h21c.8 0 1.6-.1 2.3-.3-1.1-.9-2.2-1.9-3.3-2.9H15z'/%3E%3Cpath fill='%2334A853' d='M38.3 40.7c.7-.2 1.5-.5 2.1-.9 4-2.7 6.6-7.3 6.6-12.6 0-5-3.3-9.2-7.9-10.7.1-.4.1-.9.1-1.3 0-4.4-3.6-8-8-8-.6 0-1.2.1-1.8.2 2.3 2.4 3.7 5.6 3.7 9.2 0 1.2-.2 2.3-.5 3.3 2.1 1.4 3.6 3.7 3.9 6.4 1.4 1.7 2.2 3.9 2.2 6.3 0 2.2-.7 4.2-1.8 5.8.6.5 1.1 1.1 1.4 1.9z'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -18,9 +19,12 @@
        ========================================================================= -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
     <defs>
-      <!-- GCP Cloud Brand Logo -->
-      <symbol id="icon-gcp-cloud" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+      <!-- Official Google Cloud 4-Color Brand Logo -->
+      <symbol id="icon-gcp-cloud" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c-4.4 0-8.2 2.3-10.4 5.8 1.4-.4 2.9-.6 4.4-.6 6.1 0 11.2 4.1 12.8 9.8 1-.4 2.1-.6 3.2-.6 4.4 0 8 3.6 8 8 0 .4 0 .9-.1 1.3 4.6-1.5 7.9-5.7 7.9-10.7 0-6.1-4.9-11-11-11-1.3 0-2.6.2-3.8.7-2.4-4.5-7.3-7.5-12.8-7.5z"/>
+        <path fill="#4285F4" d="M36 34c0-4.4-3.6-8-8-8-1.1 0-2.2.2-3.2.6-1.6-5.7-6.7-9.8-12.8-9.8-1.5 0-3 .2-4.4.6C5.4 18.2 4 21.9 4 26c0 5.4 3.7 10 8.8 11.5.7.2 1.4.3 2.2.3h21c0-1.3 0-2.6 0-3.8z"/>
+        <path fill="#FBBC05" d="M15 37.8c-.8 0-1.5-.1-2.2-.3C7.7 36 4 31.4 4 26c0-4.1 1.4-7.8 3.6-8.6C4.8 20.3 3 24.4 3 29c0 6.6 5.4 12 12 12h21c.8 0 1.6-.1 2.3-.3-1.1-.9-2.2-1.9-3.3-2.9H15z"/>
+        <path fill="#34A853" d="M38.3 40.7c.7-.2 1.5-.5 2.1-.9 4-2.7 6.6-7.3 6.6-12.6 0-5-3.3-9.2-7.9-10.7.1-.4.1-.9.1-1.3 0-4.4-3.6-8-8-8-.6 0-1.2.1-1.8.2 2.3 2.4 3.7 5.6 3.7 9.2 0 1.2-.2 2.3-.5 3.3 2.1 1.4 3.6 3.7 3.9 6.4 1.4 1.7 2.2 3.9 2.2 6.3 0 2.2-.7 4.2-1.8 5.8.6.5 1.1 1.1 1.4 1.9z"/>
       </symbol>
 
       <!-- Dashboard View Icon -->
@@ -167,21 +171,21 @@
       </div>
     </div>
 
-    <!-- Navegación Principal Simplificada (Solo 4 Pestañas Claras) -->
-    <nav class="app-nav" role="navigation" aria-label="Navegación principal">
-      <button class="nav-tab active" data-view="dashboard" id="nav-btn-dashboard" role="tab">
+    <!-- Navegación Principal Simplificada (Solo 4 Pestañas Claras con ARIA completo) -->
+    <nav class="app-nav" role="tablist" aria-label="Navegación principal">
+      <button class="nav-tab active" data-view="dashboard" id="nav-btn-dashboard" role="tab" aria-selected="true">
         <svg class="icon" aria-hidden="true"><use href="#icon-dashboard"/></svg>
         <span>Inicio y Simulador</span>
       </button>
-      <button class="nav-tab" data-view="search" id="nav-btn-search" role="tab">
+      <button class="nav-tab" data-view="search" id="nav-btn-search" role="tab" aria-selected="false">
         <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
         <span>Buscar Preguntas</span>
       </button>
-      <button class="nav-tab" data-view="news" id="nav-btn-news" role="tab">
+      <button class="nav-tab" data-view="news" id="nav-btn-news" role="tab" aria-selected="false">
         <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
         <span>Cursos Gratis</span>
       </button>
-      <button class="nav-tab" data-view="tools" id="nav-btn-tools" role="tab">
+      <button class="nav-tab" data-view="tools" id="nav-btn-tools" role="tab" aria-selected="false">
         <svg class="icon" aria-hidden="true"><use href="#icon-settings"/></svg>
         <span>Guías de Arquitectura</span>
       </button>
@@ -685,9 +689,9 @@
         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Busca en tiempo real entre las más de 900 preguntas de CDL, ACE y PCA por término técnico, comando de gcloud, trampa de distractor o ID.</p>
         
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-          <input type="search" id="globalSearchInput" class="form-input" style="flex: 1; min-width: 280px; padding: 12px 16px; font-size: 1rem;" placeholder="Escribe para buscar (ej. 'impersonate', 'Spanner', 'Cloud Run', 'VPC Peering', 'gcloud')...">
+          <input type="search" id="globalSearchInput" class="form-input" style="flex: 1; min-width: 280px; padding: 12px 16px; font-size: 1rem;" aria-label="Buscar preguntas en lenguaje natural o por servicio" placeholder="Escribe lo que buscas (ej. 'que es iam', 'Spanner vs SQL', 'Cloud Run', 'VPC', 'gcloud')...">
           
-          <select id="searchCertFilter" class="form-select" style="min-width: 200px; padding: 12px 16px; font-size: 0.95rem;">
+          <select id="searchCertFilter" class="form-select" style="min-width: 200px; padding: 12px 16px; font-size: 0.95rem;" aria-label="Filtrar por certificación">
             <option value="all">Todas las Certificaciones (CDL + ACE + PCA)</option>
             <option value="cdl">Cloud Digital Leader (CDL)</option>
             <option value="ace">Associate Cloud Engineer (ACE)</option>
@@ -963,32 +967,32 @@
   <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- =========================================================================
-       DATA AND JAVASCRIPT ENGINE IMPORTS (Clean Relative Imports, Zero CDN)
+       DATA AND JAVASCRIPT ENGINE IMPORTS (Deferred for Maximum Performance & Core Web Vitals)
        ========================================================================= -->
   <!-- 1. Data Foundation Layer -->
-  <script src="data/cert_manifest.js"></script>
-  <script src="data/case_studies.js"></script>
-  <script src="data/cert_cdl.js"></script>
-  <script src="data/cert_ace.js"></script>
-  <script src="data/cert_pca.js"></script>
-  <script src="data/free_certifications.js"></script>
-  <script src="data/architecture_tools.js"></script>
+  <script defer src="data/cert_manifest.js"></script>
+  <script defer src="data/case_studies.js"></script>
+  <script defer src="data/cert_cdl.js"></script>
+  <script defer src="data/cert_ace.js"></script>
+  <script defer src="data/cert_pca.js"></script>
+  <script defer src="data/free_certifications.js"></script>
+  <script defer src="data/architecture_tools.js"></script>
 
   <!-- 2. State, Engine & i18n Core Layer -->
-  <script src="js/i18n.js"></script>
-  <script src="js/state.js"></script>
-  <script src="js/engine.js"></script>
+  <script defer src="js/i18n.js"></script>
+  <script defer src="js/state.js"></script>
+  <script defer src="js/engine.js"></script>
 
   <!-- 3. UI Visualizer & Controller Modules -->
-  <script src="js/ui_charts.js"></script>
-  <script src="js/ui_study.js"></script>
-  <script src="js/ui_exam.js"></script>
-  <script src="js/ui_drill.js"></script>
-  <script src="js/ui_news.js"></script>
-  <script src="js/ui_tools.js"></script>
-  <script src="js/ui_search.js"></script>
+  <script defer src="js/ui_charts.js"></script>
+  <script defer src="js/ui_study.js"></script>
+  <script defer src="js/ui_exam.js"></script>
+  <script defer src="js/ui_drill.js"></script>
+  <script defer src="js/ui_news.js"></script>
+  <script defer src="js/ui_tools.js"></script>
+  <script defer src="js/ui_search.js"></script>
 
   <!-- 4. Main Application Orchestrator & Router -->
-  <script src="js/app.js"></script>
+  <script defer src="js/app.js"></script>
 </body>
 </html>
