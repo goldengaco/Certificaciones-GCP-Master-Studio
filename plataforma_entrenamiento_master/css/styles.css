@@ -97,13 +97,41 @@
   border-color: var(--gcp-green);
 }
 
-.card-drill-human:hover {
-  border-color: var(--gcp-yellow);
+.action-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast);
 }
 
-.action-icon {
-  font-size: 2.5rem;
-  line-height: 1;
+.action-card:hover .action-icon-wrapper {
+  transform: scale(1.08);
+}
+
+.action-icon-svg {
+  width: 28px;
+  height: 28px;
+}
+
+.icon-study-bg {
+  background: rgba(66, 133, 244, 0.15);
+  color: #8ab4f8;
+  border: 1px solid rgba(138, 180, 248, 0.35);
+}
+
+.icon-exam-bg {
+  background: rgba(52, 168, 83, 0.15);
+  color: #81c995;
+  border: 1px solid rgba(129, 201, 149, 0.35);
+}
+
+.icon-drill-bg {
+  background: rgba(251, 188, 4, 0.15);
+  color: #fdd663;
+  border: 1px solid rgba(253, 214, 99, 0.35);
 }
 
 .action-body h3 {
@@ -497,84 +525,374 @@
 }
 
 /* Global Search & Explorer */
-.search-question-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+/* =========================================================================
+   ENTERPRISE 2026 Q3 DESIGN SYSTEM (SAAS UI / GOOGLE CLOUD CONSOLE LUXURY)
+   ========================================================================= */
+
+/* Header & Glassmorphic Navigation Bar */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 68px;
+  padding: 0.75rem 2rem;
+  background: rgba(19, 19, 20, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-default);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity var(--transition-fast);
+}
+
+.brand-container:hover {
+  opacity: 0.9;
+}
+
+.brand-logo-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-titles {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  transition: border-color var(--transition-fast);
 }
 
-.search-question-card:hover {
-  border-color: var(--gcp-blue);
+.brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.search-q-header {
+.brand-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Modern Segmented Control for Certification Switcher */
+.cert-switcher {
   display: flex;
-  justify-content: space-between;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  gap: 4px;
+}
+
+.cert-pill {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 7px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cert-pill:hover:not(.active) {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cert-pill.active {
+  background: #1a73e8;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(26, 115, 232, 0.4);
+}
+
+.cert-code {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.cert-label {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+/* Nav Tabs */
+.app-nav {
+  display: flex;
+  gap: 6px;
   align-items: center;
 }
 
-.cert-pill-badge {
-  background: var(--gcp-blue-subtle);
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab.active {
   color: var(--gcp-blue);
-  border: 1px solid var(--gcp-blue-border);
-  padding: 2px 8px;
-  border-radius: var(--radius-xs);
-  font-size: 0.75rem;
+  background: var(--gcp-blue-subtle);
+  border-color: var(--gcp-blue-border);
   font-weight: 700;
 }
 
-.q-id-badge {
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Search Question Card & Luxury Option Cards */
+.search-question-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.search-question-card:hover {
+  border-color: var(--border-bright);
+  box-shadow: var(--shadow-md);
+}
+
+.search-card-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.85rem;
+}
+
+.badge-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cert-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.04em;
+}
+
+.badge-cdl {
+  background: rgba(66, 133, 244, 0.18);
+  color: #8ab4f8;
+  border: 1px solid rgba(138, 180, 248, 0.4);
+}
+
+.badge-ace {
+  background: rgba(52, 168, 83, 0.18);
+  color: #81c995;
+  border: 1px solid rgba(129, 201, 149, 0.4);
+}
+
+.badge-pca {
+  background: rgba(251, 188, 4, 0.18);
+  color: #fdd663;
+  border: 1px solid rgba(253, 214, 99, 0.4);
+}
+
+.domain-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-base);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+.qid-tag {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--text-muted);
+  background: var(--bg-base);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.cert-full-name {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .search-q-title {
   color: var(--text-primary);
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .search-q-scenario {
   color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  background: var(--bg-base);
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.search-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-opt-row {
+  background: var(--bg-surface-elevated);
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: all var(--transition-fast);
+}
+
+.search-opt-row:hover {
+  background: var(--bg-surface-high);
+  border-color: var(--border-bright);
+}
+
+.search-opt-row.is-correct-opt {
+  border-color: var(--gcp-green) !important;
+  background: var(--gcp-green-subtle) !important;
+}
+
+.opt-letter {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.is-correct-opt .opt-letter {
+  background: #34a853;
+  color: #ffffff;
+  border-color: #34a853;
+}
+
+.opt-text {
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.correct-check {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gcp-green);
+  background: rgba(52, 168, 83, 0.2);
+  border: 1px solid var(--gcp-green-border);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.search-explanation-callout {
+  background: var(--bg-base);
+  border-left: 4px solid var(--gcp-blue);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-explanation-callout strong {
+  color: var(--text-primary);
   font-size: 0.92rem;
+}
+
+.search-explanation-callout p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
   line-height: 1.6;
 }
 
-.search-q-options {
+.cli-snippet-box {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: var(--bg-base);
-  padding: 0.75rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-}
-
-.search-opt-item {
-  color: var(--text-secondary);
-  padding: 4px 6px;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface-elevated);
+  padding: 8px 12px;
   border-radius: var(--radius-xs);
+  margin-top: 6px;
+  border: 1px solid var(--border-subtle);
 }
 
-.search-opt-item.opt-correct {
-  background: var(--gcp-green-subtle);
-  color: var(--text-primary);
+.cli-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
-.search-q-details {
-  background: var(--bg-surface-elevated);
-  padding: 0.75rem;
-  border-radius: var(--radius-sm);
+.cli-snippet-box code {
+  font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--gcp-cyan);
 }
 
 /* Architecture Decision Matrix */
