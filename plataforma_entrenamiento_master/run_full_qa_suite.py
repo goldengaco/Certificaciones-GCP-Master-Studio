@@ -53,12 +53,21 @@ def run_qa_suite():
     # 3. Lighthouse Scorecard
     print("\n[3] Resultados de Auditoría de Calidad Google Lighthouse (Headless Chrome)...")
     lh_file = os.path.join(base_dir, "lighthouse_2026_spec.json")
+    # Auto-detect most recent lighthouse report
+    import glob
+    lh_candidates = sorted(
+        glob.glob(os.path.join(base_dir, "lighthouse*.json")),
+        key=os.path.getmtime, reverse=True
+    )
+    if lh_candidates:
+        lh_file = lh_candidates[0]
+        print(f"  → Usando reporte más reciente: {os.path.basename(lh_file)}")
     if os.path.exists(lh_file):
         with open(lh_file, "r", encoding="utf-8") as f:
             lh = json.load(f)
         for cat_id, cat in lh.get("categories", {}).items():
             score = int((cat.get("score") or 0) * 100)
-            status = "🟢 EXCELENTE" if score >= 90 else ("🟡 BUENO" if score >= 70 else "🔴 REGULAR")
+            status = "EXCELENTE" if score >= 90 else ("BUENO" if score >= 70 else "REGULAR")
             print(f"  • {cat.get('title')}: {score}/100 -> {status}")
             
     print("\n" + "=" * 70)

@@ -964,9 +964,22 @@
       if (btnCloseModalCs) btnCloseModalCs.addEventListener('click', () => this.closeModal('modal-case-studies'));
       if (btnDismissModalCs) btnDismissModalCs.addEventListener('click', () => this.closeModal('modal-case-studies'));
 
-      // Global Escape key listener to close active modals
+      // Global keyboard shortcut listeners
       if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
         window.addEventListener('keydown', (e) => {
+          // Ctrl+K → Open Search (prevent browser default)
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            e.stopPropagation();
+            this.navigateTo('search');
+            setTimeout(() => {
+              const searchInput = document.getElementById('globalSearchInput');
+              if (searchInput) searchInput.focus();
+            }, 120);
+            return;
+          }
+
+          // Escape → Close active modals
           if (e.key === 'Escape') {
             const openBackdrops = document.querySelectorAll('.modal-backdrop');
             openBackdrops.forEach(modal => {
@@ -975,7 +988,7 @@
               }
             });
           }
-        });
+        }, true); // capture phase to intercept before browser
       }
     },
 

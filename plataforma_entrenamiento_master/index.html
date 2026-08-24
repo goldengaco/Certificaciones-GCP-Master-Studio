@@ -136,6 +136,21 @@
       <symbol id="icon-warning" viewBox="0 0 24 24">
         <path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
       </symbol>
+
+      <!-- Search / Magnifying Glass -->
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </symbol>
+
+      <!-- Graduation Cap / Learning -->
+      <symbol id="icon-graduation" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+      </symbol>
+
+      <!-- Architecture / Hub-Nodes -->
+      <symbol id="icon-architecture" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M17 16l-4-4V8.82C14.16 8.4 15 7.3 15 6c0-1.66-1.34-3-3-3S9 4.34 9 6c0 1.3.84 2.4 2 2.82V12l-4 4H3v5h5v-3.05l4-4.2 4 4.2V21h5v-5h-4z"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -178,15 +193,15 @@
         <span>Inicio y Simulador</span>
       </button>
       <button class="nav-tab" data-view="search" id="nav-btn-search" role="tab" aria-selected="false">
-        <svg class="icon" aria-hidden="true"><use href="#icon-case-study"/></svg>
+        <svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg>
         <span>Buscar Preguntas</span>
       </button>
       <button class="nav-tab" data-view="news" id="nav-btn-news" role="tab" aria-selected="false">
-        <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
+        <svg class="icon" aria-hidden="true"><use href="#icon-graduation"/></svg>
         <span>Cursos Gratis</span>
       </button>
       <button class="nav-tab" data-view="tools" id="nav-btn-tools" role="tab" aria-selected="false">
-        <svg class="icon" aria-hidden="true"><use href="#icon-settings"/></svg>
+        <svg class="icon" aria-hidden="true"><use href="#icon-architecture"/></svg>
         <span>Guías de Arquitectura</span>
       </button>
     </nav>
@@ -194,7 +209,7 @@
     <!-- Utilidades Rápidas -->
     <div class="header-right">
       <button class="icon-btn lang-btn" id="langToggleBtn" title="Cambiar Idioma (Español / English)">
-        🇪🇸 ES
+        <span style="font-weight:700;letter-spacing:0.05em">ES</span> <span style="opacity:0.5;font-size:0.75rem">EN</span>
       </button>
       <button class="icon-btn" id="btn-theme-toggle" title="Modo Claro / Oscuro" aria-label="Alternar tema visual">
         <svg class="icon icon-theme-moon" aria-hidden="true"><use href="#icon-moon"/></svg>
@@ -287,7 +302,7 @@
       <!-- Sección de Estadísticas y Progreso Opcional -->
       <div class="stats-toggle-section">
         <details class="stats-details">
-          <summary class="stats-summary-btn">📊 Ver Gráficas y Diagnóstico por Dominio</summary>
+          <summary class="stats-summary-btn"><svg class="icon" style="width:16px;height:16px;vertical-align:middle;margin-right:4px" aria-hidden="true"><use href="#icon-chart-timeline"/></svg>Ver Gráficas y Diagnóstico por Dominio</summary>
           <div class="dashboard-analytics-grid" style="margin-top: 1rem;">
             <div class="chart-card">
               <div class="card-header">
@@ -691,7 +706,7 @@
          ======================================================================= -->
     <section id="view-search" class="view-section" aria-labelledby="heading-search" style="display: none;">
       <div class="search-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
-        <h2 id="heading-search" style="color: var(--text-primary); margin-bottom: 0.5rem;">🔍 Buscador y Explorador de Preguntas Oficiales</h2>
+        <h2 id="heading-search" style="color: var(--text-primary); margin-bottom: 0.5rem;"><svg class="icon" style="width:20px;height:20px;vertical-align:middle;margin-right:6px" aria-hidden="true"><use href="#icon-search"/></svg>Buscador y Explorador de Preguntas Oficiales</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Busca en tiempo real entre las más de 900 preguntas de CDL, ACE y PCA por término técnico, comando de gcloud, trampa de distractor o ID.</p>
         
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -722,12 +737,12 @@
          ======================================================================= -->
     <section id="view-news" class="view-section" aria-labelledby="heading-news" style="display: none;">
       <div class="news-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
-        <h2 id="heading-news" style="color: var(--text-primary); margin-bottom: 0.5rem;">📰 Radar de Certificaciones 100% Gratuitas, Badges y Noticias</h2>
+        <h2 id="heading-news" style="color: var(--text-primary); margin-bottom: 0.5rem;"><svg class="icon" style="width:20px;height:20px;vertical-align:middle;margin-right:6px" aria-hidden="true"><use href="#icon-graduation"/></svg>Radar de Certificaciones 100% Gratuitas, Badges y Noticias</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">Catálogo curado oficial (Cloud Study Network / Free-Certifications) de cursos con certificado e insignias oficiales a costo $0 para enriquecer tu perfil profesional mientras te certificas en Google Cloud.</p>
       </div>
 
       <!-- Live Vouchers & Announcements Banner -->
-      <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.1rem;">⚡ Alertas de Vouchers, Programas y Noticias Activas</h3>
+      <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.1rem;"><svg class="icon" style="width:16px;height:16px;vertical-align:middle;margin-right:4px" aria-hidden="true"><use href="#icon-drill"/></svg>Alertas de Vouchers, Programas y Noticias Activas</h3>
       <div class="news-alert-banner" id="newsAlertsContainer">
         <!-- Injected news cards -->
       </div>
@@ -753,15 +768,15 @@
          ======================================================================= -->
     <section id="view-tools" class="view-section" aria-labelledby="heading-tools" style="display: none;">
       <div class="tools-hero-bar" style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-default); margin-bottom: 1.5rem;">
-        <h2 id="heading-tools" style="color: var(--text-primary); margin-bottom: 0.5rem;">🛠️ Centro de Arquitectura y Árboles de Decisión</h2>
+        <h2 id="heading-tools" style="color: var(--text-primary); margin-bottom: 0.5rem;"><svg class="icon" style="width:20px;height:20px;vertical-align:middle;margin-right:6px" aria-hidden="true"><use href="#icon-architecture"/></svg>Centro de Arquitectura y Árboles de Decisión</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">Herramientas interactivas de decisión rápida basadas en el Google Cloud Architecture Framework para elegir los servicios correctos en exámenes y proyectos reales.</p>
         
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem;">
-          <button class="tool-subtab-btn active btn btn-secondary btn-sm" data-tool="database">🗄️ Bases de Datos</button>
-          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="compute">⚡ Cómputo & Serverless</button>
-          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="storage">📦 Clases de Cloud Storage</button>
-          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="networking">🌐 Conectividad Híbrida</button>
-          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="cheatsheets">📋 Reglas de Oro (Cheatsheets)</button>
+          <button class="tool-subtab-btn active btn btn-secondary btn-sm" data-tool="database">Bases de Datos</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="compute">Cómputo &amp; Serverless</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="storage">Clases de Cloud Storage</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="networking">Conectividad Híbrida</button>
+          <button class="tool-subtab-btn btn btn-secondary btn-sm" data-tool="cheatsheets">Reglas de Oro (Cheatsheets)</button>
         </div>
       </div>
 
