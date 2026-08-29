@@ -3615,1330 +3615,1230 @@
   {
     "id": "ACE-D2-016",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine Sole-Tenant Nodes",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Sole-Tenant Nodes for Regulatory Hardware Isolation and BYOL",
-    "scenario": "A healthcare company is migrating on-premises licensed Windows Server and Microsoft SQL Server workloads to Compute Engine. Due to strict software licensing agreements (BYOL per physical socket/core) and HIPAA physical hardware isolation mandates, the company requires instances to run on dedicated, non-shared physical hardware servers. What Compute Engine feature should they plan?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Sole-Tenant Nodes",
-      "BYOL",
-      "Hardware Isolation",
-      "HIPAA Compliance",
-      "Node Groups"
+      "Compute Engine",
+      "BYOL licensing",
+      "Physical hardware isolation",
+      "Node affinity labels"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Sole-Tenant Nodes for Regulatory Hardware Isolation and BYOL",
+    "scenario": "A healthcare organization is migrating licensed Windows Server and Microsoft SQL Server workloads to Compute Engine. Due to strict software licensing agreements (BYOL per physical socket/core) and HIPAA physical hardware isolation mandates, the company requires instances to run on dedicated, non-shared physical servers with full visibility over core allocation and maintenance schedules. What Compute Engine feature should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Preemptible N2 instances with Shielded VM enabled."
+        "text": "Deploy VMs on N2 shared instances configured with Customer-Supplied Encryption Keys."
       },
       {
         "letter": "B",
-        "text": "Google Kubernetes Engine with Autopilot mode."
+        "text": "Create a Google Kubernetes Engine Autopilot cluster using isolated private nodes."
       },
       {
         "letter": "C",
-        "text": "Standard multi-tenant E2 instances with custom machine types."
+        "text": "Provision standard E2 instances assigned to dedicated VPC subnet security perimeters."
       },
       {
         "letter": "D",
-        "text": "Sole-Tenant Node Groups."
+        "text": "Provision Sole-Tenant Node Groups and apply node affinity labels to VM instances."
       }
     ],
     "correct": "D",
-    "explanation": "Sole-tenant nodes provide dedicated physical Compute Engine servers allocated exclusively to a single customer's VMs, ensuring physical hardware isolation for regulatory compliance (HIPAA/PCI) and enabling Bring-Your-Own-License (BYOL) based on physical core and socket counts.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Sole-Tenant Nodes provide dedicated physical Compute Engine servers for your exclusive use, ensuring physical hardware isolation, compliance with HIPAA/PCI-DSS standards, and support for Bring-Your-Own-License (BYOL) scenarios requiring visibility over physical cores and sockets. Affinity labels are used to schedule specific VMs onto designated node groups.",
     "distractors": {
-      "A": "Preemptible VMs run on shared multi-tenant physical hardware and are subject to termination at any time.",
-      "C": "Standard instances share underlying physical hardware hosts with other cloud tenants, violating strict physical isolation.",
-      "B": "GKE Autopilot runs on shared multi-tenant infrastructure and does not provide physical server core visibility for legacy BYOL."
+      "A": "CSEK provides disk encryption at rest using customer keys but runs on multi-tenant physical hardware, violating physical isolation and per-socket software licensing mandates.",
+      "B": "GKE Autopilot manages underlying node infrastructure across shared multi-tenant hosts and cannot satisfy physical host licensing or dedicated single-tenant server requirements.",
+      "C": "VPC subnet security perimeters isolate network traffic but do not provide dedicated physical server hardware or socket-level host management."
     },
-    "gcloudCommand": "gcloud compute node-templates create sole-tenant-tmpl --region=us-central1 --node-type=c2-node-60-240 && gcloud compute node-groups create my-node-group --zone=us-central1-a --template=sole-tenant-tmpl --target-size=2",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D2-017",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Network Architecture: VPC Peering vs Shared VPC",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Choosing Between VPC Network Peering and Shared VPC",
-    "scenario": "An enterprise has 15 business units with separate GCP projects. The central security team requires centralized administration of all VPC subnets, firewall rules, and Cloud NAT gateways in a single project, while allowing developers in business unit projects to attach VMs to those centralized subnets. Which networking architecture should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
       "Shared VPC",
-      "VPC Peering",
-      "Centralized Governance",
-      "Network Admin"
+      "Host Project",
+      "Service Projects",
+      "Centralized Network Administration",
+      "VPC Network Peering"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Choosing Between VPC Network Peering and Shared VPC",
+    "scenario": "An enterprise has 15 autonomous business units, each operating in its own Google Cloud project. The central security team requires centralized administration of all VPC subnets, firewall rules, route tables, and Cloud NAT gateways from a single project, while allowing developers in each business unit project to attach Compute Engine VMs to those enterprise subnets. What networking architecture should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Single massive project containing all 15 business unit workloads without project separation."
+        "text": "Configure a Shared VPC with a central Host project and business unit Service projects."
       },
       {
         "letter": "B",
-        "text": "VPC Network Peering mesh between all 15 independent VPCs."
+        "text": "Establish a full-mesh VPC Network Peering topology across all 15 individual projects."
       },
       {
         "letter": "C",
-        "text": "Cloud VPN tunnels interconnecting 15 separate VPCs."
+        "text": "Provision Cloud VPN gateways with dynamic BGP routing between all 15 individual VPCs."
       },
       {
         "letter": "D",
-        "text": "Shared VPC with a central Host project and business unit Service projects."
+        "text": "Deploy all 15 business unit workloads inside a single project using IAM role perimeters."
       }
     ],
-    "correct": "D",
-    "explanation": "Shared VPC enables a central Network Administrator team in a Host project to manage networks, subnets, firewalls, and routing, while delegating subnet usage to Service Projects. VPC Peering maintains separate administrative domains in each project and does not allow centralized firewall/subnet governance.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Shared VPC allows an organization to connect resources from multiple service projects to a common, centralized VPC network hosted in a designated host project. Network administrators maintain centralized control over network resources (subnets, routes, firewalls) while project administrators maintain autonomy over instance resources.",
     "distractors": {
-      "A": "A single project destroys billing boundaries, IAM isolation, and project resource quotas.",
-      "B": "A full 15-project VPC Peering mesh requires configuring and maintaining dozens of bidirectional peering links and decentralizes firewall administration.",
-      "C": "Cloud VPN introduces bandwidth costs, encryption overhead, and 3 Gbps tunnel caps for intra-cloud networking."
+      "B": "VPC Network Peering connects decentralized VPCs without centralizing subnet ownership, firewall administration, or Cloud NAT routing into a single host project.",
+      "C": "Cloud VPN introduces bandwidth caps, egress encryption overhead, and decentralized network management rather than native centralized VPC sharing.",
+      "D": "Consolidating all workloads into a single project removes resource isolation, complicates IAM billing attribution, and violates organizational governance boundaries."
     },
-    "gcloudCommand": "gcloud compute shared-vpc enable host-net-proj && gcloud compute shared-vpc service-projects associate bu1-service-proj --host-project=host-net-proj",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Compute Engine",
-      "Resource Manager"
-    ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/shared-vpc"
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/shared-vpc",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D2-018",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Storage Minimum Duration Charges & FinOps",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Evaluating Cloud Storage Lifecycle Minimum Duration Penalties",
-    "scenario": "An operations team writes temporary debug log files to a Cloud Storage bucket configured with default storage class `Coldline`. The debug logs are created and then automatically deleted by a script after 10 days. At the end of the month, the cloud bill shows unexpected high storage charges. What is the root cause of the extra charge?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Storage",
-      "Coldline",
+      "Coldline Storage",
       "Early Deletion Fee",
-      "Minimum Duration Penalty",
-      "FinOps"
+      "Minimum Storage Duration",
+      "Object Lifecycle Management"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Evaluating Cloud Storage Lifecycle Minimum Duration Penalties",
+    "scenario": "An operations team writes automated temporary diagnostic logs (100 TB monthly) to a Cloud Storage bucket configured with default storage class Coldline. An Object Lifecycle Management rule deletes these diagnostic log objects after 10 days. At the end of the billing cycle, the invoice reflects unexpected high storage charges. What is the root cause of these unexpected charges?",
     "options": [
       {
         "letter": "A",
-        "text": "Objects in Coldline cannot be deleted until 1 year has passed."
+        "text": "Coldline storage charges an upfront provisioning fee of $0.05 per GB for all newly created objects."
       },
       {
         "letter": "B",
-        "text": "Cloud Logging automatically replicates all Coldline buckets to BigQuery."
+        "text": "Coldline enforces a 90-day minimum storage duration, charging an early deletion fee for 80 days."
       },
       {
         "letter": "C",
-        "text": "Coldline storage has a 90-day minimum storage duration; deleting objects after 10 days incurs an early deletion fee equivalent to the remaining 80 days of storage."
+        "text": "Object Lifecycle Management incurs an egress bandwidth surcharge when deleting uncompressed data."
       },
       {
         "letter": "D",
-        "text": "Coldline storage charges $100 per GB for object deletion requests."
+        "text": "Deleting Coldline objects automatically triggers high-priority metadata replication to Archive tier."
       }
     ],
-    "correct": "C",
-    "explanation": "Cloud Storage infrequency tiers enforce minimum storage duration commitments: Nearline (30 days), Coldline (90 days), and Archive (365 days). Deleting or overwriting an object before its minimum duration incurs an early deletion charge for the remaining unfulfilled days.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Coldline storage has a 90-day minimum storage duration requirement. If an object is deleted or replaced before 90 days have elapsed, Google Cloud bills an early deletion fee equal to the remaining storage cost for the remainder of the 90-day commitment (in this case, 80 remaining days).",
     "distractors": {
-      "B": "Cloud Logging does not automatically replicate Cloud Storage object payloads to BigQuery.",
-      "A": "Objects can be deleted at any time, but early deletion penalties apply if deleted before the minimum duration.",
-      "D": "Delete API calls themselves are free; the charge is the prorated remaining minimum duration storage cost."
+      "A": "Cloud Storage does not charge upfront provisioning fees for object creation; charges are based on stored capacity and duration.",
+      "C": "Object Lifecycle Management deletes objects asynchronously at no additional network egress bandwidth fee.",
+      "D": "Deleting objects permanently deletes data and does not replicate metadata or objects into Archive storage."
     },
-    "gcloudCommand": "gcloud storage buckets update gs://debug-temp-logs --default-storage-class=STANDARD",
-    "architectureComponents": [
-      "Cloud Storage",
-      "Cloud Billing"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/storage-classes#coldline"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/storage-classes#coldline",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D2-019",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "VPC Subnet Sizing & Alias IPs",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Subnet Topology for High-Density Microservices with Alias IPs",
-    "scenario": "You are sizing a new VPC custom subnet in us-central1 that will host 50 Compute Engine instances running container orchestration. Each instance will host up to 30 containerized microservice pods, and every container pod must be directly addressable on the VPC network with its own private IP address. How should you design the IP allocation?",
-    "keywords": [
-      "VPC Subnet",
-      "Alias IP Ranges",
-      "CIDR Sizing",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "Alias IP ranges",
+      "VPC Subnets",
+      "Secondary IP ranges",
       "Compute Engine",
-      "Containers"
+      "Container Networking"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Subnet Topology for High-Density Microservices with Alias IPs",
+    "scenario": "You are configuring a VPC custom subnet in us-central1 that will host 50 Compute Engine instances running container orchestration. Each instance will host up to 30 containerized microservice pods, and every container pod must be directly addressable within the private VPC network using its own distinct internal IP address. How should you design the subnet IP allocation?",
     "options": [
       {
         "letter": "A",
-        "text": "Deploy 30 network interface controllers (NICs) on each VM instance."
+        "text": "Attach 30 independent virtual network interfaces (NICs) to each Compute Engine VM instance."
       },
       {
         "letter": "B",
-        "text": "Assign 30 external public IP addresses to each VM instance."
+        "text": "Assign 30 external ephemeral IP addresses to each Compute Engine VM instance for direct routing."
       },
       {
         "letter": "C",
-        "text": "Assign a primary subnet CIDR of 10.0.0.0/24 for instance primary IPs, and allocate an Alias IP range (/27) to each instance from a secondary subnet range (10.1.0.0/16)."
+        "text": "Configure a secondary subnet CIDR range and allocate an Alias IP range (/27) to each instance."
       },
       {
         "letter": "D",
-        "text": "Create 30 separate VPC networks connected via Cloud VPN."
+        "text": "Provision 30 separate VPC networks connected to each VM instance through Cloud VPN gateways."
       }
     ],
     "correct": "C",
-    "explanation": "Alias IP ranges allow attaching multiple internal IP addresses (or secondary CIDR blocks) to a single VM's primary network interface (`nic0`). This allows containers or services running inside the VM to be directly routable on the VPC without requiring multiple physical NICs or public IPs.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Alias IP ranges allow you to assign a range of internal IP addresses from a secondary subnet CIDR block to a single VM network interface. This allows hosted containers or pods on that VM to receive their own first-class private IP addresses on the VPC network without requiring multiple physical NICs.",
     "distractors": {
-      "B": "Public IPs expose internal containers to the internet and exhaust IPv4 quotas.",
-      "A": "Compute Engine supports a maximum of 8 network interfaces (NICs) per instance, so 30 NICs is physically impossible.",
-      "D": "Multiple VPCs with VPNs add massive latency, routing complexity, and cost."
+      "A": "Compute Engine limits instances to a maximum of 8 virtual network interfaces (NICs), making 30 NICs per instance technically impossible.",
+      "B": "Assigning external IP addresses exposes internal microservices to the public internet and violates private VPC internal routing standards.",
+      "D": "Provisioning 30 separate VPC networks creates extreme operational complexity and violates VPC routing limits without enabling pod-level addressing."
     },
-    "gcloudCommand": "gcloud compute instances network-interfaces update my-vm --zone=us-central1-a --aliases='10.1.0.0/27'",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/alias-ip"
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/alias-ip",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-020",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Network Load Balancing: External Passthrough (DSR)",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting Cloud Load Balancer for Layer 4 Non-HTTP Protocols with Direct Server Return",
-    "scenario": "You are deploying a multiplayer UDP game server and custom TCP messaging engine on Compute Engine. The architecture requires high-throughput Layer 4 load balancing that preserves client source IP addresses, does NOT perform TLS/TCP termination proxying, and supports Direct Server Return (DSR) where responses bypass the load balancer to minimize latency. Which load balancer should you choose?",
-    "keywords": [
-      "External TCP/UDP Network Load Balancer",
-      "Layer 4 Passthrough",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "External Passthrough Network Load Balancer",
+      "Layer 4 Load Balancing",
+      "UDP",
       "Direct Server Return",
-      "DSR",
-      "Low Latency"
+      "Preserve Client IP"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting Cloud Load Balancer for Layer 4 Non-HTTP Protocols with Direct Server Return",
+    "scenario": "You are deploying a multiplayer UDP game server and custom TCP streaming service on Compute Engine. The architecture requires high-throughput Layer 4 load balancing that preserves client source IP addresses, does not perform TLS/TCP termination proxying, and supports Direct Server Return (DSR) where backend server responses bypass the load balancer to minimize round-trip latency. Which load balancer should you choose?",
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Armor Managed Proxy."
+        "text": "Regional External Application Load Balancer with WebSockets enabled."
       },
       {
         "letter": "B",
-        "text": "Global External HTTPS Load Balancer."
+        "text": "Global External Application Load Balancer with HTTP/2 proxying mode."
       },
       {
         "letter": "C",
-        "text": "External Passthrough Network Load Balancer (backend service based)."
+        "text": "External Passthrough Network Load Balancer based on backend services."
       },
       {
         "letter": "D",
-        "text": "SSL Proxy Load Balancer."
+        "text": "External Proxy Network Load Balancer with TCP SSL termination enabled."
       }
     ],
     "correct": "C",
-    "explanation": "The External Passthrough Network Load Balancer is a Layer 4 regional load balancer built on Google Maglev. It routes TCP and UDP traffic directly to backend VMs without proxy termination, preserves client source IP, and uses Direct Server Return (DSR) for maximum throughput and minimum latency.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "External Passthrough Network Load Balancers operate at Layer 4 without proxying. They route UDP/TCP packets directly to backend instances with Direct Server Return (DSR), preserving client source IP addresses and delivering high throughput and low latency.",
     "distractors": {
-      "A": "Cloud Armor is a security policy layer on proxies, not a standalone passthrough load balancer.",
-      "B": "External HTTPS LB terminates HTTP/HTTPS proxy traffic at Layer 7 and does not support arbitrary UDP game traffic.",
-      "D": "SSL Proxy terminates TLS connections and only supports TCP port 443 (not UDP)."
+      "A": "Application Load Balancers operate at Layer 7 (HTTP/HTTPS) and do not support raw UDP packet traffic or Direct Server Return.",
+      "B": "Global External Application Load Balancers terminate connections at the Google edge proxy, altering client source IPs and rejecting UDP packets.",
+      "D": "External Proxy Network Load Balancers terminate TCP connections at proxy instances and do not support UDP or Direct Server Return."
     },
-    "gcloudCommand": "gcloud compute forwarding-rules create udp-game-forwarding-rule --region=us-central1 --ports=7777 --backend-service=udp-game-backend",
-    "architectureComponents": [
-      "Cloud Load Balancing",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/network"
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/passthrough-network-overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-021",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud HA VPN & Dynamic BGP Routing",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning HA Cloud VPN Architecture with 99.99% Availability SLA",
-    "scenario": "An enterprise is connecting its on-premises corporate data center to Google Cloud using Cloud VPN. Corporate compliance mandates a 99.99% availability SLA. What network topology must you plan to achieve the 99.99% SLA?",
-    "keywords": [
-      "HA VPN",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "HA Cloud VPN",
       "99.99% SLA",
-      "BGP",
       "Cloud Router",
-      "Two Tunnels"
+      "BGP dynamic routing",
+      "Dual IPsec tunnels"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning HA Cloud VPN Architecture with 99.99% Availability SLA",
+    "scenario": "An enterprise is connecting its on-premises corporate data center to Google Cloud using Cloud VPN. Corporate governance mandates a 99.99% network availability SLA for production traffic across the hybrid connection. Which two architectural configurations must you implement to qualify for Google Cloud's 99.99% HA VPN SLA? Choose 2.",
     "options": [
       {
         "letter": "A",
-        "text": "Use VPC Peering over the public internet."
+        "text": "Configure static policy-based routes pointing to redundant on-premises gateway IPs."
       },
       {
         "letter": "B",
-        "text": "Deploy a Cloud HA VPN gateway with two active tunnels configured against an on-premises peer gateway across two separate IPsec interfaces, using dynamic routing with Cloud Router and BGP."
+        "text": "Configure dynamic routing using Cloud Router with Border Gateway Protocol (BGP)."
       },
       {
         "letter": "C",
-        "text": "Deploy a single HA VPN tunnel with static routes."
+        "text": "Deploy two Classic VPN gateways in different regions connected via VPC Peering."
       },
       {
         "letter": "D",
-        "text": "Deploy two Classic VPN gateways with static routes."
+        "text": "Enable Cloud Armor adaptive protection on the external VPN gateway interface IPs."
+      },
+      {
+        "letter": "E",
+        "text": "Deploy an HA VPN gateway with two active tunnels configured across both interfaces."
       }
     ],
-    "correct": "B",
-    "explanation": "Google Cloud HA VPN provides a 99.99% availability SLA when configured with two tunnels (one on each of the HA VPN gateway's two public IP interfaces: `interface 0` and `interface 1`) paired with dynamic routing via Cloud Router and BGP.",
-    "distractors": {
-      "C": "A single tunnel provides only 99.9% SLA; two active tunnels are required for 99.99% SLA.",
-      "A": "VPC Peering connects two GCP VPCs, not an on-premises data center.",
-      "D": "Classic VPN is deprecated for new designs and only carries a 99.9% SLA."
-    },
-    "gcloudCommand": "gcloud compute vpn-gateways create corp-ha-vpn --network=prod-vpc --region=us-central1",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Cloud Router"
+    "correct": [
+      "B",
+      "E"
     ],
-    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/vpn/concepts/ha-vpn-topologies"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Google Cloud guarantees a 99.99% availability SLA for HA Cloud VPN only when: (1) An HA VPN gateway is deployed with two tunnels operating on separate gateway interfaces (interface 0 and interface 1) connected to peer gateway(s), and (2) dynamic routing is configured using Cloud Router and BGP.",
+    "distractors": {
+      "A": "HA VPN with a 99.99% SLA requires dynamic BGP routing with Cloud Router; static routing does not qualify for the 99.99% HA VPN SLA.",
+      "C": "Classic VPN is deprecated for new designs and only supports a 99.9% availability SLA.",
+      "D": "Cloud Armor protects HTTP(S) and TCP/UDP load balancers against web attacks, not IPsec VPN gateway tunnels."
+    },
+    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/vpn/concepts/ha-vpn-topologies",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-022",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "BigQuery Table Design: Partitioning & Clustering",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting BigQuery Storage Model: Partitioning vs Clustering for FinOps",
-    "scenario": "A data warehouse team runs frequent daily analytical queries over a 50 TB telemetry dataset in BigQuery. 90% of queries filter by `event_timestamp` within a 7-day date range and filter by `customer_id` and `region`. To optimize query performance and reduce BigQuery on-demand analysis scan costs, how should you plan the table structure?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "BigQuery",
-      "Time Partitioning",
-      "Clustering",
-      "Cost Optimization",
-      "FinOps"
+      "Table Partitioning",
+      "Table Clustering",
+      "FinOps",
+      "Query Cost Optimization"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting BigQuery Storage Model: Partitioning vs Clustering for FinOps",
+    "scenario": "A data analytics team runs hundreds of daily analytical queries over a 50 TB telemetry dataset in BigQuery. The vast majority of queries filter by event_timestamp within a 7-day rolling window and group by customer_id and region. To optimize query performance and minimize BigQuery on-demand analysis scan costs, how should you plan the table structure?",
     "options": [
       {
         "letter": "A",
-        "text": "Create 365 separate daily tables (sharded tables) named table_YYYYMMDD."
+        "text": "Partition the table by day on event_timestamp, and cluster the table by customer_id and region."
       },
       {
         "letter": "B",
-        "text": "Partition the table by day on the event_timestamp column, and cluster the table by customer_id and region."
+        "text": "Shard the table into 365 individual daily tables named telemetry_events_YYYYMMDD in the dataset."
       },
       {
         "letter": "C",
-        "text": "Cluster the table by event_timestamp without any partitioning."
+        "text": "Cluster the table by event_timestamp and customer_id without defining any table partition keys."
       },
       {
         "letter": "D",
-        "text": "Store the data in Cloud Storage and query it using BigQuery external tables with no schema."
+        "text": "Create external BigQuery tables referencing raw unpartitioned Parquet files in Cloud Storage."
       }
     ],
-    "correct": "B",
-    "explanation": "BigQuery Partitioning by timestamp segments the data by date boundaries, allowing BigQuery to prune unread partitions and drastically reduce scanned bytes. Adding Clustering on high-cardinality query filter columns (`customer_id`, `region`) further collocates related data within partitions, maximizing query speed and minimizing cost.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Partitioning by day on the timestamp column allows BigQuery to prune unread date partitions, dramatically reducing the number of bytes scanned and cutting query costs. Adding clustering on customer_id and region further sorts the data within partitions, accelerating multi-column filtering and aggregations.",
     "distractors": {
-      "A": "Date-sharded tables (`table_YYYYMMDD`) are a legacy anti-pattern with higher query latency, schema maintenance headaches, and partition limits.",
-      "C": "Clustering alone without partitioning does not prune whole date blocks cleanly for time-windowed queries.",
-      "D": "External tables over Cloud Storage have significantly slower query performance and lack metadata indexing."
+      "B": "Date-sharded tables (e.g. table_YYYYMMDD) degrade query performance, increase schema maintenance overhead, and are an anti-pattern compared to native partitioned tables.",
+      "C": "Clustering alone without partitioning does not eliminate unread date partitions, forcing BigQuery to scan more data blocks and incurring higher on-demand query fees.",
+      "D": "External tables on Cloud Storage lack native BigQuery storage format optimizations, resulting in slower query performance and higher scan overhead."
     },
-    "gcloudCommand": "bq mk --table --time_partitioning_field=event_timestamp --clustering_fields=customer_id,region corp_analytics:telemetry_events schema.json",
-    "architectureComponents": [
-      "BigQuery"
-    ],
-    "officialDocUrl": "https://cloud.google.com/bigquery/docs/partitioned-tables"
+    "officialDocUrl": "https://cloud.google.com/bigquery/docs/partitioned-tables",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-023",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Storage Selection: Local SSD vs Persistent Disk",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Local SSD vs Persistent Disk for Extreme IOPS Scratch Disks",
-    "scenario": "A machine learning training pipeline running on Compute Engine requires an ultra-high-speed temporary scratch storage volume to store uncompressed image training batches. The pipeline requires over 800,000 read IOPS and microsecond latency. The data is temporary and can be regenerated if the instance stops. Which disk type should you plan?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Local SSD",
-      "NVMe",
+      "Persistent Disk",
       "Extreme IOPS",
-      "Microsecond Latency",
-      "Temporary Scratch"
+      "Scratch Disk",
+      "Compute Engine"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Local SSD vs Persistent Disk for Extreme IOPS Scratch Disks",
+    "scenario": "A machine learning training pipeline running on Compute Engine requires an ultra-high-speed temporary scratch storage volume to store uncompressed image training batches. The pipeline requires over 800,000 read IOPS and sub-millisecond latency. The data is purely temporary and can be regenerated from Cloud Storage if the instance stops. Which disk type should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Local SSD NVMe disks attached to the VM."
+        "text": "Cloud Storage bucket mounted inside the VM using the Cloud Storage FUSE driver."
       },
       {
         "letter": "B",
-        "text": "Cloud Storage bucket mounted with gcsfuse."
+        "text": "Standard Persistent Disk (pd-standard) configured with maximum disk capacity."
       },
       {
         "letter": "C",
-        "text": "Standard Persistent Disk (pd-standard)."
+        "text": "Balanced Persistent Disk (pd-balanced) attached in read-write mode to the VM."
       },
       {
         "letter": "D",
-        "text": "Balanced Persistent Disk (pd-balanced)."
+        "text": "Local SSD NVMe disks attached directly to the physical Compute Engine host VM."
       }
     ],
-    "correct": "A",
-    "explanation": "Local SSDs are physically attached to the host server running the VM instance, delivering sub-millisecond latency and up to millions of IOPS. However, because Local SSDs are ephemeral (data is lost on VM stop/terminate), they are specifically engineered for temporary scratch spaces, caches, and ML processing buffers.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Local SSDs are physically attached to the host server running the VM instance, delivering very high IOPS (over 800,000 read IOPS with multiple partitions) and sub-millisecond latency. Because Local SSDs are ephemeral and tied to the physical host, they are ideal for temporary scratch space, caches, and ML processing.",
     "distractors": {
-      "B": "Cloud Storage FUSE introduces high network overhead and lacks microsecond IOPS performance.",
-      "C": "pd-standard is HDD-backed storage capped at low IOPS, completely unable to achieve 800k IOPS.",
-      "D": "pd-balanced is network-attached and capped at much lower IOPS limits compared to directly attached Local NVMe SSDs."
+      "A": "Cloud Storage FUSE operates over network APIs with high latency and cannot deliver the 800,000 IOPS required for high-speed ML scratch workloads.",
+      "B": "Standard Persistent Disk (pd-standard) is backed by standard HDDs with IOPS capped at a few thousand, far below 800,000 IOPS.",
+      "C": "Balanced Persistent Disk (pd-balanced) caps out at 80,000 IOPS per VM, which cannot satisfy the 800,000 IOPS requirement of Local SSDs."
     },
-    "gcloudCommand": "gcloud compute instances create ml-trainer --zone=us-central1-a --machine-type=n2-standard-16 --local-ssd=interface=NVME",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/disks/local-ssd"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/disks/local-ssd",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-024",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine Custom Machine Types",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Custom Machine Types for Optimal Resource Sizing and Cost Efficiency",
-    "scenario": "You have an in-house application that requires exactly 6 vCPUs and 45 GB of RAM to run efficiently. The predefined `n2-standard-8` (8 vCPUs, 32 GB RAM) has too little memory, while the `n2-standard-16` (16 vCPUs, 64 GB RAM) has excessive unused vCPUs, wasting budget. What should you configure?",
-    "keywords": [
-      "Compute Engine",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Custom Machine Types",
-      "Cost Optimization",
-      "Right-Sizing"
+      "Compute Engine",
+      "Resource Sizing",
+      "FinOps",
+      "Cost Optimization"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Custom Machine Types for Optimal Resource Sizing and Cost Efficiency",
+    "scenario": "An internal monolithic application running on Compute Engine requires exactly 6 vCPUs and 45 GB of RAM to operate efficiently. The predefined n2-standard-8 (8 vCPUs, 32 GB RAM) lacks sufficient memory, while the n2-standard-16 (16 vCPUs, 64 GB RAM) wastes 10 vCPUs, inflating monthly compute costs. How should you provision the instance?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a Custom Machine Type specifying 6 vCPUs and 45 GB of memory (e.g. custom-6-46080)."
+        "text": "Deploy two n2-standard-4 instances and split application memory across both servers."
       },
       {
         "letter": "B",
-        "text": "Deploy two n2-standard-4 instances and split the application logic across them."
+        "text": "Provision an m2-ultramem-208 instance configured with extended memory thresholds."
       },
       {
         "letter": "C",
-        "text": "Provision an m2-ultramem instance."
+        "text": "Create a Custom Machine Type specifying exactly 6 vCPUs and 45 GB of system memory."
       },
       {
         "letter": "D",
-        "text": "Attach 10 Local SSDs to make up for the RAM shortage."
+        "text": "Provision an n2-standard-8 instance and attach 8 Local SSD partitions as virtual swap."
       }
     ],
-    "correct": "A",
-    "explanation": "Compute Engine allows configuring Custom Machine Types (`--custom-cpu` and `--custom-memory`), allowing exact matching of required vCPU and memory ratios to right-size workloads and prevent overpaying for unnecessary predefined vCPUs or RAM.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Compute Engine allows you to create Custom Machine Types where you tailor the exact number of vCPUs and memory to match your workload requirements. This avoids overprovisioning unused vCPUs and optimizes monthly infrastructure costs.",
     "distractors": {
-      "C": "M2 instances are massively oversized and cost thousands of dollars per month.",
-      "D": "SSDs are disk storage, not system RAM, and cannot substitute for memory requirements.",
-      "B": "Rewriting single-node applications for multi-VM distribution introduces development overhead and architecture complexity."
+      "A": "Splitting a monolithic application across two smaller instances requires major software refactoring and does not provide unified memory.",
+      "B": "M2 Ultra-memory instances are designed for massive SAP HANA databases (thousands of GB RAM) and are excessively expensive for a 45 GB workload.",
+      "D": "Using SSD storage as OS swap space introduces severe latency penalties compared to physical RAM and degrades application performance."
     },
-    "gcloudCommand": "gcloud compute instances create custom-workload --zone=us-central1-a --custom-cpu=6 --custom-memory=45GB",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-025",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud SQL Read Replicas & Scaling",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Architecting Cloud SQL Read Replicas for High-Volume Read Offloading",
-    "scenario": "An e-commerce reporting dashboard is executing heavy analytical read queries against the primary Cloud SQL OLTP database, causing high CPU utilization and slowing down customer checkout transactions. You need to relieve pressure on the primary database without altering write consistency. What should you architect?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud SQL",
       "Read Replicas",
+      "Database Scaling",
       "Read Offloading",
-      "OLTP Performance"
+      "High Availability"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Architecting Cloud SQL Read Replicas for High-Volume Read Offloading",
+    "scenario": "An e-commerce business runs its primary transactional database on Cloud SQL for MySQL. During business hours, intensive business intelligence reporting queries cause high CPU utilization on the primary instance, degrading customer checkout latency. You must offload analytical read queries from the primary database without modifying transactional write consistency. What should you configure?",
     "options": [
       {
         "letter": "A",
-        "text": "Convert the database to Cloud Datastore."
+        "text": "Migrate the transactional database from Cloud SQL to a Cloud Memorystore Redis cluster."
       },
       {
         "letter": "B",
-        "text": "Deploy one or more Cloud SQL Read Replicas and configure the reporting dashboard to query the Read Replica endpoints exclusively."
+        "text": "Provision Cloud SQL read replicas and direct the reporting queries to replica endpoints."
       },
       {
         "letter": "C",
-        "text": "Increase the backup frequency of the primary instance to every 10 minutes."
+        "text": "Increase the automated backup frequency on the primary Cloud SQL instance to 15 minutes."
       },
       {
         "letter": "D",
-        "text": "Deploy an unmanaged PostgreSQL VM and configure manual daily CSV exports."
+        "text": "Deploy an unmanaged MySQL VM instance on Compute Engine and run manual daily CSV dumps."
       }
     ],
     "correct": "B",
-    "explanation": "Cloud SQL Read Replicas replicate data asynchronously from the primary instance. Directing heavy reporting, BI, and analytical read queries to read replicas offloads read I/O from the primary master, safeguarding OLTP write transaction performance.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud SQL read replicas replicate data asynchronously from the primary instance. By pointing heavy read-only reporting dashboards and analytical queries to read replicas, you isolate read traffic from the primary instance, protecting transactional write performance.",
     "distractors": {
-      "A": "Converting a relational schema to NoSQL requires complete application rewrites.",
-      "C": "Frequent backups increase disk I/O load on the primary instance, worsening the performance issue.",
-      "D": "Manual CSV exports provide stale data and add continuous operational maintenance."
+      "A": "Cloud Memorystore is an in-memory key-value cache that does not support full relational SQL queries, joins, or transactional OLTP ACID semantics.",
+      "C": "Increasing backup frequency creates automated storage snapshots but does not isolate read query CPU load from the primary transactional instance.",
+      "D": "Unmanaged MySQL VMs with CSV dumps introduce stale data, manual operational burden, and lack automated synchronization."
     },
-    "gcloudCommand": "gcloud sql instances create reporting-replica-1 --master-instance-name=primary-oltp-db --region=us-central1 --tier=db-custom-4-16384",
-    "architectureComponents": [
-      "Cloud SQL"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/replication/create-replica"
+    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/replication/create-replica",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-026",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Storage Geographic Redundancy Planning",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Global Multi-Region Storage Class vs Single-Region Storage",
-    "scenario": "A digital marketing agency delivers static web banners and promotional videos to website visitors across all continents. The agency wants maximum content availability across multiple geographic regions within the US, automatic failover, and high network egress throughput. What bucket location type should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Storage",
-      "Multi-Region",
+      "Multi-Region Location",
       "High Availability",
-      "Global Content Delivery"
+      "Disaster Recovery",
+      "Geo-redundancy"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Global Multi-Region Storage Class vs Single-Region Storage",
+    "scenario": "A media streaming platform serves static video thumbnails and marketing assets to millions of end users distributed across the United States. Corporate policy mandates maximum availability (99.95%), automated failover across geographically separated data centers, and low-latency egress routing. Which Cloud Storage bucket location type should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Multi-Region location (e.g. US multi-region)."
+        "text": "Multi-Region location type (such as the US multi-region)."
       },
       {
         "letter": "B",
-        "text": "Single Region location (e.g. us-central1)."
+        "text": "Single Region location type (such as region us-central1)."
       },
       {
         "letter": "C",
-        "text": "Archive bucket in europe-west1."
+        "text": "Dual-Region location type configured with Archive class."
       },
       {
         "letter": "D",
-        "text": "Zonal Persistent Disk mounted over NFS."
+        "text": "Regional Persistent Disk mounted over NFS shared storage."
       }
     ],
     "correct": "A",
-    "explanation": "Multi-Region Cloud Storage buckets replicate data across at least two geographic locations separated by at least 160 km within a multi-region area (e.g. US, EU, ASIA), providing 99.95% availability SLA and disaster recovery against full regional outages.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "A Multi-Region Cloud Storage location stores object data redundantly across at least two geographic locations separated by at least 100 miles within a large geographic area (such as the US). This provides 99.95% availability SLA and geo-redundancy against regional disasters.",
     "distractors": {
-      "C": "Archive class is for long-term cold data with heavy retrieval penalties, completely unsuitable for high-frequency web assets.",
-      "B": "Single Region buckets do not provide cross-region redundancy if the entire region experiences an outage.",
-      "D": "Zonal Persistent Disks are tied to a single datacenter zone and cannot serve global web traffic directly."
+      "B": "Single-region buckets store data redundantly across zones within one region (99.9% availability) but do not survive regional data center outages.",
+      "C": "Archive storage class is designed for cold disaster recovery accessed less than once a year, incurring high retrieval costs for active video thumbnails.",
+      "D": "Regional Persistent Disks are block storage devices attached to Compute Engine VMs, not globally accessible object storage buckets."
     },
-    "gcloudCommand": "gcloud storage buckets create gs://global-static-assets --location=US --default-storage-class=STANDARD",
-    "architectureComponents": [
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/locations#location-mr"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/locations#location-mr",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-027",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Serverless Compute Selection",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Serverless Compute: Cloud Run vs Cloud Functions vs GKE Autopilot",
-    "scenario": "A team is designing a new RESTful microservice backend. Requirements: 1) Deploy custom Docker container images. 2) Automatically scale down to 0 instances when idle to minimize costs. 3) Support concurrent requests per container instance (up to 80 requests/container) to avoid cold starts for each request. 4) Zero server or cluster management. Which service should you choose?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Cloud Run",
       "Serverless Containers",
       "Concurrency",
       "Scale to Zero",
       "Microservices"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Serverless Compute: Cloud Run vs Cloud Functions vs GKE Autopilot",
+    "scenario": "A development team is architecting a RESTful microservice backend. Requirements: 1) Deploy custom container images packaged with specific binary libraries. 2) Automatically scale down to zero instances when idle to eliminate compute costs. 3) Handle up to 80 concurrent requests per container instance to minimize cold starts. 4) Require zero underlying server or cluster infrastructure management. Which Google Cloud service should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Compute Engine unmanaged VMs with cron shutdown."
+        "text": "Compute Engine managed instance groups with custom scaling schedules."
       },
       {
         "letter": "B",
-        "text": "GKE Standard with custom node pools."
+        "text": "Google Kubernetes Engine Standard mode with pre-warmed node pools."
       },
       {
         "letter": "C",
-        "text": "Cloud Functions (1st gen)."
+        "text": "Cloud Functions (1st gen) configured with HTTP triggers and timeouts."
       },
       {
         "letter": "D",
-        "text": "Cloud Run (fully managed)."
+        "text": "Cloud Run (fully managed) configured with container concurrency."
       }
     ],
     "correct": "D",
-    "explanation": "Cloud Run is a fully managed serverless platform that runs container images, automatically scales to zero, and uniquely supports multi-concurrency (handling up to 1,000 concurrent requests per container instance), drastically reducing instance count and eliminating per-request cold starts.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Run is a fully managed serverless compute platform that runs stateless containers. It automatically scales from zero to hundreds of instances based on incoming traffic, supports configurable concurrency (up to 1,000 concurrent requests per container), and requires zero infrastructure management.",
     "distractors": {
-      "B": "GKE Standard requires configuring and paying for underlying VM nodes even when idle, and does not scale to zero VMs automatically without cluster autoscaler scale-down delays.",
-      "A": "Compute Engine VMs do not natively scale on HTTP request concurrency and require heavy operational maintenance.",
-      "C": "Cloud Functions 1st gen handles only 1 concurrent request per function instance, resulting in frequent cold starts under bursty load."
+      "A": "Compute Engine MIGs require VM OS maintenance, persistent base compute costs, and cannot instantly scale to zero on HTTP traffic.",
+      "B": "GKE Standard requires ongoing Kubernetes control plane and node pool management, incurring minimum cluster management fees.",
+      "C": "Cloud Functions 1st gen processes only 1 request concurrently per instance, causing cold starts under sudden traffic surges."
     },
-    "gcloudCommand": "gcloud run deploy rest-microservice --image=gcr.io/corp-proj/api:v1 --platform=managed --concurrency=80 --min-instances=0",
-    "architectureComponents": [
-      "Cloud Run"
-    ],
-    "officialDocUrl": "https://cloud.google.com/run/docs/about-instance-autoscaling"
+    "officialDocUrl": "https://cloud.google.com/run/docs/about-instance-autoscaling",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D2-028",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine Shielded VM Features",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Shielded VM Configuration for Boot Integrity and vTPM Security",
-    "scenario": "An enterprise financial application running on Compute Engine requires cryptographic protection against rootkits, bootkits, and unauthorized modifications to the VM kernel during the boot sequence. What Compute Engine security features should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Shielded VM",
       "Secure Boot",
       "vTPM",
       "Integrity Monitoring",
-      "Boot Security"
+      "Compute Engine Security"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Shielded VM Configuration for Boot Integrity and vTPM Security",
+    "scenario": "A security compliance audit requires all production Compute Engine VM instances to defend against kernel-level malware, unauthorized bootloader modifications, and rootkits. The configuration must verify the digital signature of all boot components and generate integrity measurement logs in Cloud Logging. Which two Shielded VM features must you enable? Choose 2.",
     "options": [
       {
         "letter": "A",
-        "text": "Enable Shielded VM with Secure Boot, Virtual Trusted Platform Module (vTPM), and Integrity Monitoring."
+        "text": "Secure Boot to verify digital signatures of firmware and kernel drivers."
       },
       {
         "letter": "B",
-        "text": "Deploy a third-party antivirus scanner in the VM startup script."
+        "text": "Customer-Supplied Encryption Keys (CSEK) on root persistent boot disks."
       },
       {
         "letter": "C",
-        "text": "Encrypt the VPC subnet using Cloud VPN."
+        "text": "Confidential VM hardware memory encryption with AMD SEV technology."
       },
       {
         "letter": "D",
-        "text": "Attach a Cloud KMS key to the serial port."
+        "text": "Virtual Trusted Platform Module (vTPM) with Integrity Monitoring enabled."
+      },
+      {
+        "letter": "E",
+        "text": "OS Login with two-factor authentication enabled across VPC subnets."
       }
     ],
-    "correct": "A",
-    "explanation": "Shielded VMs provide verifiable boot integrity using Secure Boot (ensures only signed kernel and drivers load), vTPM (validates guest OS pre-boot and boot measurements), and Integrity Monitoring (generates alerts if the baseline measurements change).",
-    "distractors": {
-      "D": "Cloud KMS does not monitor or cryptographically verify VM guest boot sequences.",
-      "B": "In-guest antivirus runs after the operating system boots and cannot prevent rootkits loaded prior to the kernel.",
-      "C": "Cloud VPN encrypts network transit packets, but does not protect VM host hypervisor or guest boot integrity."
-    },
-    "gcloudCommand": "gcloud compute instances create secure-fin-vm --zone=us-central1-a --shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring",
-    "architectureComponents": [
-      "Compute Engine"
+    "correct": [
+      "A",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/shielded-vm"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Shielded VM features include: (1) Secure Boot, which ensures that the system only runs authentic software by verifying the digital signature of all boot components, and (2) Virtual Trusted Platform Module (vTPM) with Integrity Monitoring, which measures the boot process and compares it to a trusted baseline, logging integrity events to Cloud Logging.",
+    "distractors": {
+      "B": "CSEK encrypts disk data at rest using customer keys but does not inspect or validate bootloader integrity or digital signatures.",
+      "C": "Confidential VM encrypts memory in-use against hypervisor inspection but is separate from the Shielded VM bootloader integrity suite.",
+      "E": "OS Login manages POSIX user accounts and SSH key access via IAM but does not validate low-level firmware or kernel boot integrity."
+    },
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/shielded-vm",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-029",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Kubernetes Planning: GKE Autopilot vs Standard",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting GKE Autopilot vs GKE Standard for Production Operations",
-    "scenario": "A software company wants to deploy microservices onto Google Kubernetes Engine (GKE). The engineering team wants Google to fully manage, provision, auto-scale, and secure the underlying node infrastructure according to GKE best practices, charging only for the Pods' requested CPU, memory, and storage rather than unallocated VM node capacity. Which mode should they choose?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "GKE Autopilot",
       "GKE Standard",
-      "Pod-Level Billing",
-      "Node Management"
+      "Kubernetes Management",
+      "Operational Overhead",
+      "Google Cloud SRE"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting GKE Autopilot vs GKE Standard for Production Operations",
+    "scenario": "A software company is modernizing its containerized microservices to Google Kubernetes Engine (GKE). The platform operations team wants to eliminate the administrative burden of provisioning, configuring, auto-repairing, and upgrading worker nodes, while enforcing Google-recommended security hardening by default and paying only for running pod resource requests. Which GKE operational mode should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Run for Anthos on-premises."
+        "text": "GKE Standard mode with cluster autoscaler and custom node pools."
       },
       {
         "letter": "B",
-        "text": "GKE Standard mode with custom node pools."
+        "text": "GKE Autopilot mode with fully managed node lifecycle automation."
       },
       {
         "letter": "C",
-        "text": "Compute Engine unmanaged instances with kubeadm."
+        "text": "Unmanaged Compute Engine VM instances orchestrated with kubeadm."
       },
       {
         "letter": "D",
-        "text": "GKE Autopilot mode."
+        "text": "Cloud Run on GKE deployed across bare-metal dedicated instances."
       }
     ],
-    "correct": "D",
-    "explanation": "GKE Autopilot is a fully managed mode of operation where Google manages the cluster configuration, node provisioning, autoscaling, and security hardening. Users pay strictly for the compute resources requested by their running Pods rather than whole VM worker nodes.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "GKE Autopilot is an automated mode of operation in GKE where Google manages the entire cluster infrastructure, including node provisioning, auto-scaling, auto-upgrades, security hardening, and OS maintenance. Customers are billed only for the CPU, memory, and storage requested by running pods.",
     "distractors": {
-      "A": "Cloud Run for Anthos requires managing underlying Anthos clusters and is intended for hybrid deployments.",
-      "B": "GKE Standard requires users to manage node pools, machine sizing, OS upgrades, and pay for whole node VM capacity.",
-      "C": "Self-managed Kubernetes via kubeadm adds immense operational maintenance and patching burden."
+      "A": "GKE Standard mode leaves node provisioning, OS image management, node pool sizing, and underlying VM infrastructure maintenance to the customer.",
+      "C": "Unmanaged VMs with kubeadm require manual Kubernetes control plane management, OS patching, and lack automated GKE integration.",
+      "D": "Cloud Run on GKE requires managing the underlying GKE cluster nodes and Anthos infrastructure manually."
     },
-    "gcloudCommand": "gcloud container clusters create-auto production-k8s --region=us-central1",
-    "architectureComponents": [
-      "Google Kubernetes Engine (GKE)"
-    ],
-    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview"
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-030",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Armor WAF Planning",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Cloud Armor Security Policies for Web Application Defense",
-    "scenario": "An e-commerce website exposed via a Global External HTTP(S) Load Balancer is experiencing distributed denial-of-service (DDoS) attempts, SQL injection attacks, and malicious bot scraping originating from specific geographic countries. How should the architecture be hardened?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
       "Cloud Armor",
-      "WAF",
-      "OWASP Top 10",
-      "Geo-Blocking",
+      "Security Policy",
+      "WAF Rules",
       "Rate Limiting",
-      "Global HTTPS LB"
+      "Backend Service"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Cloud Armor Security Policies for Web Application Defense",
+    "scenario": "An online retail application receives millions of HTTP requests through an External Application Load Balancer. The security operations team must protect the web tier against SQL injection (SQLi) attacks and enforce rate limiting to throttle abusive clients sending more than 100 requests per minute from a single IP. Which two steps must you configure? Choose 2.",
     "options": [
       {
         "letter": "A",
-        "text": "Create VPC firewall rules on port 80/443 for each individual malicious IP address."
+        "text": "Create VPC egress firewall rules blocking destination port 80 for untrusted subnets."
       },
       {
         "letter": "B",
-        "text": "Disable external public IP addresses on the load balancer forwarding rule."
+        "text": "Create a Cloud Armor policy containing preconfigured WAF and rate-limiting rules."
       },
       {
         "letter": "C",
-        "text": "Attach a Cloud Armor Security Policy to the Load Balancer Backend Service with pre-configured WAF rules (OWASP Top 10), rate limiting, and geo-blocking rules."
+        "text": "Deploy Envoy proxy sidecars inside each backend VM to evaluate incoming SQL strings."
       },
       {
         "letter": "D",
-        "text": "Deploy an Nginx proxy VM in front of each Compute Engine instance."
+        "text": "Enable Cloud NAT logging with packet inspection filters on the target VPC gateway."
+      },
+      {
+        "letter": "E",
+        "text": "Attach the Cloud Armor security policy to the target Load Balancer Backend Service."
       }
     ],
-    "correct": "C",
-    "explanation": "Google Cloud Armor provides enterprise DDoS defense and Web Application Firewall (WAF) capabilities integrated natively into the Global External HTTP(S) Load Balancer. It supports preconfigured OWASP Top 10 rules (SQLi, XSS), IP allow/denylists, geographic filtering, and rate limiting at Google's edge.",
-    "distractors": {
-      "D": "Self-managed Nginx proxies create bottlenecks and cannot absorb multi-terabit edge DDoS volume.",
-      "B": "Disabling the public IP on the load balancer takes the entire public e-commerce website offline.",
-      "A": "VPC firewall rules cannot evaluate HTTP request payloads (SQLi/XSS), geo-location headers, or Layer 7 rate limits."
-    },
-    "gcloudCommand": "gcloud compute security-policies create edge-waf-policy && gcloud compute backend-services update web-backend-svc --security-policy=edge-waf-policy --global",
-    "architectureComponents": [
-      "Cloud Armor",
-      "Cloud Load Balancing"
+    "correct": [
+      "B",
+      "E"
     ],
-    "officialDocUrl": "https://cloud.google.com/armor/docs/security-policy-overview"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "To protect web backends with Cloud Armor: (1) Create a Cloud Armor security policy defining rules such as preconfigured WAF expressions (e.g. sqli-v33-stable) and rate-limiting thresholds, and (2) Attach the security policy to the target Backend Service of the External Application Load Balancer.",
+    "distractors": {
+      "A": "VPC firewall rules operate at Layer 3/4 (IP and port) and cannot inspect Layer 7 HTTP payloads for SQL injection or enforce per-client rate limits.",
+      "C": "Deploying custom Envoy sidecars inside backend VMs adds unnecessary operational overhead and does not leverage Google edge DDoS/WAF protection.",
+      "D": "Cloud NAT provides outbound internet access for private VMs and cannot filter or inspect incoming HTTP traffic."
+    },
+    "officialDocUrl": "https://cloud.google.com/armor/docs/security-policy-overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-031",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Pub/Sub Messaging Architecture",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Architecting Google Cloud Pub/Sub for Asynchronous Decoupling",
-    "scenario": "You are designing an order processing pipeline where a high-volume frontend web application publishes purchase orders that multiple independent downstream microservices (Inventory, Billing, Shipping, Analytics) must consume and process asynchronously at their own individual processing rates. What messaging architecture should you plan?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Pub/Sub",
-      "Asynchronous Messaging",
-      "Fan-Out",
-      "Decoupling",
+      "Asynchronous Decoupling",
+      "Publish-Subscribe",
+      "Independent Subscriptions",
       "Microservices"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Architecting Google Cloud Pub/Sub for Asynchronous Decoupling",
+    "scenario": "An e-commerce order processing system must handle massive flash-sale order spikes without dropping messages. When an order is placed, four downstream microservices (Inventory, Payment, Shipping, Analytics) must each receive and process a copy of the order independently and at their own processing rate. How should you design this messaging architecture using Google Cloud Pub/Sub?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a single Cloud Pub/Sub topic for orders, and create separate independent Pub/Sub subscriptions for Inventory, Billing, Shipping, and Analytics."
+        "text": "Create a single Pub/Sub topic for orders and four separate subscriptions for downstream services."
       },
       {
         "letter": "B",
-        "text": "Use synchronous REST HTTP POST calls from the frontend directly to each microservice sequentially."
+        "text": "Create four independent Pub/Sub topics and have the frontend publish to each topic sequentially."
       },
       {
         "letter": "C",
-        "text": "Create a Cloud Storage bucket and write 1 file per order."
+        "text": "Create a single Pub/Sub topic with one subscription shared across all four competing worker groups."
       },
       {
         "letter": "D",
-        "text": "Have the frontend web app write orders directly into a shared MySQL database table with locks."
+        "text": "Provision a Cloud Tasks queue with four worker targets configured with rate-limiting throttling."
       }
     ],
     "correct": "A",
-    "explanation": "Cloud Pub/Sub provides a fully managed, durable, highly available publish/subscribe messaging system. A 1-to-many fan-out architecture is achieved by attaching multiple independent subscriptions to a single topic, allowing each downstream consumer to pull messages at its own pace without coupling.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Google Cloud Pub/Sub implements a 1-to-many publish-subscribe pattern. By publishing order messages to a single topic, multiple independent subscriptions can be attached to that topic. Each subscription receives a full copy of every published message and tracks message acknowledgment independently.",
     "distractors": {
-      "D": "Writing directly to a shared SQL database creates severe write contention, tight schema coupling, and database connection exhaustion.",
-      "B": "Synchronous REST chains create cascading failure risks: if Billing is slow or down, frontend checkouts fail immediately.",
-      "C": "Cloud Storage object creation is not an asynchronous event-driven messaging queue."
+      "B": "Publishing to 4 separate topics from the frontend increases network overhead, couples publisher logic to subscriber topology, and wastes egress bandwidth.",
+      "C": "A single subscription distributes messages among competing consumers so each message is processed by only ONE service rather than all four.",
+      "D": "Cloud Tasks is designed for point-to-point task execution with individual targets, not multi-subscriber fan-out messaging architectures."
     },
-    "gcloudCommand": "gcloud pubsub topics create order-events && gcloud pubsub subscriptions create inventory-sub --topic=order-events",
-    "architectureComponents": [
-      "Cloud Pub/Sub"
-    ],
-    "officialDocUrl": "https://cloud.google.com/pubsub/docs/overview"
+    "officialDocUrl": "https://cloud.google.com/pubsub/docs/overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-032",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud SQL Automatic Storage Increase",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Cloud SQL Automated Storage Capacity Scaling",
-    "scenario": "A fast-growing mobile app database is hosted on Cloud SQL. If the database disk runs out of storage space, the database will shut down and cause an outage. Management wants to ensure that the database automatically expands storage capacity as data grows without requiring scheduled maintenance downtime or manual resizing. What feature should be enabled?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud SQL",
       "Automatic Storage Increase",
-      "Disk Expansion",
-      "Zero Downtime"
+      "Database Storage",
+      "Zero Downtime",
+      "Capacity Planning"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Cloud SQL Automated Storage Capacity Scaling",
+    "scenario": "A fast-growing production database is hosted on Cloud SQL for PostgreSQL. If the database storage volume runs out of free space, the instance will shut down and cause a service outage. The operations team requires storage to expand automatically as data grows without manual intervention or scheduled downtime. What setting should you configure on the Cloud SQL instance?",
     "options": [
       {
         "letter": "A",
-        "text": "Migrate the database to Cloud Memorystore."
+        "text": "Provision a 64 TB persistent storage volume upfront during initial setup."
       },
       {
         "letter": "B",
-        "text": "Enable Automatic Storage Increase on the Cloud SQL instance."
+        "text": "Enable Automatic Storage Increase on the Cloud SQL instance configuration."
       },
       {
         "letter": "C",
-        "text": "Write a cron script that polls df -h and runs gcloud sql instances patch."
+        "text": "Configure a Cloud Monitoring alert that executes a disk resize Cloud Run."
       },
       {
         "letter": "D",
-        "text": "Allocate a 64 TB persistent disk upfront immediately."
+        "text": "Migrate the database tables to Cloud Memorystore for automated SSD scaling."
       }
     ],
     "correct": "B",
-    "explanation": "Cloud SQL 'Automatic Storage Increase' monitors available disk space. When free space falls below a safe threshold (typically 10-20%), Cloud SQL automatically increases the storage capacity in-place without restarting the database or interrupting application traffic.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "When Automatic Storage Increase is enabled, Cloud SQL checks available storage capacity regularly. When available space falls below a threshold (typically 10% of capacity), Cloud SQL automatically adds storage capacity without requiring database restarts or scheduled maintenance downtime.",
     "distractors": {
-      "A": "Cloud Memorystore is an ephemeral in-memory cache, not a durable relational database.",
-      "D": "Allocating 64 TB upfront incurs unnecessary high persistent disk costs for unallocated space.",
-      "C": "Custom polling scripts are fragile and can trigger disk resize API rate limits or delayed scaling."
+      "A": "Allocating 64 TB upfront incurs unnecessary persistent storage costs for unallocated data and wastes budget.",
+      "C": "Custom scripts and Cloud Monitoring alerts introduce latency, permission dependencies, and failure risks compared to native built-in auto-expansion.",
+      "D": "Cloud Memorystore is an in-memory key-value cache, not a durable relational PostgreSQL database engine."
     },
-    "gcloudCommand": "gcloud sql instances patch my-sql-instance --enable-storage-auto-increase",
-    "architectureComponents": [
-      "Cloud SQL"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/instance-settings#automatic-storage-increase"
+    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/instance-settings#automatic-storage-increase",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-033",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "App Engine Environments: Standard vs Flexible",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting App Engine Standard vs App Engine Flexible Environment",
-    "scenario": "A developer needs to deploy a Python web application on Google App Engine. Requirements: 1) Instant startup and scaling from 0 to hundreds of instances in seconds to handle sudden traffic spikes. 2) Free tier eligibility and scale to 0 cost when idle. 3) Standard Python 3.11 runtime with no custom OS binaries. Which App Engine environment should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "App Engine Standard",
       "App Engine Flexible",
+      "Serverless Autoscaling",
       "Scale to Zero",
-      "Instant Scaling",
-      "Python"
+      "Runtime Environments"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting App Engine Standard vs App Engine Flexible Environment",
+    "scenario": "A development team is deploying a lightweight Python 3.11 web service on Google App Engine. Requirements: 1) Scale rapidly from zero to hundreds of instances within seconds to absorb sudden traffic surges. 2) Scale to zero instances when idle to eliminate compute costs during off-peak hours. 3) Use standard language runtimes without custom OS packages or Dockerfile customization. Which environment should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "App Engine Standard Environment."
+        "text": "App Engine Flexible Environment with custom VM sizes."
       },
       {
         "letter": "B",
-        "text": "Compute Engine Sole-Tenant Node."
+        "text": "Compute Engine Sole-Tenant Nodes with autoscaling."
       },
       {
         "letter": "C",
-        "text": "App Engine Flexible Environment."
+        "text": "App Engine Standard Environment with automatic scaling."
       },
       {
         "letter": "D",
-        "text": "GKE Standard with N2D nodes."
+        "text": "Google Kubernetes Engine Standard with dynamic nodes."
       }
     ],
-    "correct": "A",
-    "explanation": "App Engine Standard runs applications in fine-grained sandbox environments that scale up in milliseconds, scale down to 0 instances when idle, and include a daily free tier. App Engine Flexible runs inside Docker containers on Compute Engine VMs, which take minutes to scale and cannot scale to zero.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "App Engine Standard Environment runs applications in a sandbox using preconfigured language runtimes (such as Python 3.11). It can scale from 0 instances to hundreds in seconds, scales to zero when there is no traffic to minimize costs, and qualifies for the Google Cloud free tier.",
     "distractors": {
-      "B": "Sole-tenant nodes are dedicated physical servers with high monthly fixed costs.",
-      "D": "GKE Standard requires continuous cluster and node pool operational management.",
-      "C": "App Engine Flexible provisions underlying Compute Engine VM instances, taking several minutes to start up and cannot scale to 0 instances."
+      "A": "App Engine Flexible runs inside Docker containers on Compute Engine VMs, taking minutes to scale up and cannot scale to zero instances.",
+      "B": "Sole-Tenant Nodes run dedicated physical hardware with continuous hourly charges and cannot scale rapidly from zero instances.",
+      "D": "GKE Standard requires underlying VM node provisioning and cannot instantly spin up isolated container instances in seconds from zero."
     },
-    "gcloudCommand": "gcloud app deploy app.yaml",
-    "architectureComponents": [
-      "App Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/appengine/docs/the-appengine-environments"
+    "officialDocUrl": "https://cloud.google.com/appengine/docs/the-appengine-environments",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-034",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Storage Bucket Naming & DNS Conventions",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Cloud Storage Bucket Naming and Global Uniqueness",
-    "scenario": "You are automating the creation of Cloud Storage buckets for new customer tenants. Which rule must be followed when choosing names for Google Cloud Storage buckets?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Storage",
       "Bucket Naming",
       "Global Namespace",
-      "DNS Compliant"
+      "DNS Compliance",
+      "Multi-tenancy"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Cloud Storage Bucket Naming and Global Uniqueness",
+    "scenario": "You are creating an automation script using Terraform to provision Cloud Storage buckets for multiple enterprise clients. Which naming rule is strictly enforced by Google Cloud Storage and must be accommodated in your automation logic?",
     "options": [
       {
         "letter": "A",
-        "text": "Bucket names can contain uppercase letters and underscore characters at any position."
+        "text": "Bucket names are private to each project and can be duplicated across separate Google Cloud projects."
       },
       {
         "letter": "B",
-        "text": "Bucket names reside in a single global namespace across all Google Cloud customers, must be DNS-compliant (3-63 characters, lowercase, numbers, hyphens), and cannot be duplicated by any other project globally."
+        "text": "Bucket names must contain between 64 and 255 characters and include uppercase organizational prefixes."
       },
       {
         "letter": "C",
-        "text": "Bucket names only need to be unique within a single VPC subnet."
+        "text": "Bucket names must include the target GCP region and project number as mandatory semicolon suffixes."
       },
       {
         "letter": "D",
-        "text": "Bucket names must start with the string 'gcp-bucket-'."
+        "text": "Bucket names share a single global namespace across all customers and must follow DNS naming standards."
       }
     ],
-    "correct": "B",
-    "explanation": "Google Cloud Storage bucket names are globally unique across all GCP accounts worldwide because buckets can be addressed via global DNS URLs (`storage.googleapis.com/<bucket_name>`). Bucket names must be 3 to 63 characters long, contain only lowercase letters, numbers, and hyphens.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Storage bucket names reside in a single global namespace shared across all Google Cloud accounts worldwide. Bucket names must be globally unique, conform to DNS naming conventions (3-63 characters, lowercase letters, numbers, hyphens), and cannot be duplicated by any other project or organization globally.",
     "distractors": {
-      "C": "Bucket namespace is global, not scoped to individual VPC subnets or projects.",
-      "A": "Uppercase characters are strictly forbidden in Cloud Storage bucket names.",
-      "D": "There is no mandatory prefix requirement for bucket naming."
+      "A": "Bucket names are globally unique across all Google Cloud accounts worldwide; they cannot be reused in another project.",
+      "B": "Bucket names must be 3 to 63 characters long and cannot contain uppercase letters.",
+      "C": "Region names and project numbers are not mandatory bucket name components; semicolons are invalid characters."
     },
-    "gcloudCommand": "gcloud storage buckets create gs://corp-tenant-alpha-storage-101 --location=us-central1",
-    "architectureComponents": [
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/buckets#naming"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/buckets#naming",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-035",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine Availability Policies: Live Migration",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Compute Engine Instance Live Migration vs Restart Policy",
-    "scenario": "A company is hosting stateful, in-memory financial cache software on Compute Engine. During Google Cloud regular physical host maintenance events, the VMs must continue running without disruption or rebooting. How should the instance availability policy be configured?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Compute Engine",
       "Live Migration",
       "OnHostMaintenance",
-      "MIG",
-      "SLA"
+      "Availability Policy",
+      "High Availability"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Compute Engine Instance Live Migration vs Restart Policy",
+    "scenario": "A financial institution runs a stateful in-memory transaction processing engine on Compute Engine. During routine Google Cloud infrastructure maintenance events, the underlying physical host must be upgraded without interrupting the running VM, rebooting the operating system, or losing volatile memory state. How should you configure the instance availability policy?",
     "options": [
       {
         "letter": "A",
-        "text": "Set the OnHostMaintenance policy to TERMINATE."
+        "text": "Set the OnHostMaintenance availability policy to MIGRATE (Live Migration)."
       },
       {
         "letter": "B",
-        "text": "Attach an extreme persistent disk."
+        "text": "Set the OnHostMaintenance availability policy to TERMINATE with restart."
       },
       {
         "letter": "C",
-        "text": "Set the OnHostMaintenance policy to MIGRATE (Live Migration)."
+        "text": "Configure the VM instances to run as Spot VMs with preemptible scheduling."
       },
       {
         "letter": "D",
-        "text": "Enable Spot VM provisioning."
+        "text": "Provision the Compute Engine instances across an Unmanaged Instance Group."
       }
     ],
-    "correct": "C",
-    "explanation": "By default, standard Compute Engine instances have `onHostMaintenance` set to `MIGRATE`. During infrastructure maintenance, Google live-migrates the running VM to another physical host in the same zone without restarting the guest OS or dropping network connections.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "When OnHostMaintenance is set to MIGRATE (the default for standard VMs), Compute Engine performs Live Migration during host maintenance events, seamlessly moving the running VM to another physical host in the same zone without rebooting, dropping network connections, or losing in-memory state.",
     "distractors": {
-      "B": "Disk type has no effect on host hypervisor live migration policies.",
-      "A": "`TERMINATE` stops or restarts the VM on a new host, causing reboot downtime and cache state loss.",
-      "D": "Spot VMs do not support Live Migration and are terminated during host events."
+      "B": "Setting OnHostMaintenance to TERMINATE stops the instance during maintenance events, wiping in-memory state and causing downtime.",
+      "C": "Spot VMs cannot perform live migration and are terminated whenever Compute Engine reclaims capacity.",
+      "D": "Unmanaged Instance Groups do not control host maintenance policies and do not prevent host reboots."
     },
-    "gcloudCommand": "gcloud compute instances create stateful-cache --zone=us-central1-a --maintenance-policy=MIGRATE",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/live-migration"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/live-migration",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-036",
     "certId": "ace",
-    "blockId": "BLOCK-4",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Load Balancing: Internal HTTP(S) LB",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Architecting Internal HTTP(S) Load Balancing for Private Three-Tier Applications",
-    "scenario": "You are designing a secure 3-tier enterprise architecture on GCP (Web Tier -> App Tier -> DB Tier). The App Tier runs on private Compute Engine VMs in a custom VPC subnet. The Web Tier needs to send HTTP REST API requests to the App Tier balanced across multiple backend VMs. The App Tier must NEVER be reachable from outside the VPC. Which load balancing solution should you choose?",
-    "keywords": [
-      "Internal HTTPS Load Balancer",
-      "Private Subnet",
-      "Envoy Proxy",
-      "Three-Tier Architecture"
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "Regional Internal Application Load Balancer",
+      "Three-Tier Architecture",
+      "Private VPC",
+      "Layer 7 Load Balancing",
+      "Internal HTTP(S)"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Architecting Internal HTTP(S) Load Balancing for Private Three-Tier Applications",
+    "scenario": "You are designing a secure 3-tier enterprise architecture in Google Cloud (Web Tier -> App Tier -> Database Tier). The App Tier runs on Compute Engine VMs within a private VPC subnet. The Web Tier must send HTTP REST requests distributed across the App Tier VMs with URL routing capabilities. The App Tier must NEVER be accessible from the public internet. Which load balancing solution should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Global External HTTPS Load Balancer."
+        "text": "Global External Application Load Balancer with Cloud Armor edge policies."
       },
       {
         "letter": "B",
-        "text": "Regional Internal Application Load Balancer (Internal HTTP(S) Load Balancer)."
+        "text": "Regional Internal Application Load Balancer with private subnet backends."
       },
       {
         "letter": "C",
-        "text": "DNS Round-Robin using public DNS records."
+        "text": "External Passthrough Network Load Balancer with public forwarding rules."
       },
       {
         "letter": "D",
-        "text": "Cloud Armor with public VIP."
+        "text": "Internal Passthrough Network Load Balancer with DNS round-robin routing."
       }
     ],
     "correct": "B",
-    "explanation": "The Regional Internal Application Load Balancer (Internal HTTP(S) LB) is an Envoy proxy-based private load balancer that operates inside your VPC using private RFC 1918 IP addresses. It supports Layer 7 URL routing, path matching, and health checking without exposing backends to external networks.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "A Regional Internal Application Load Balancer operates at Layer 7 using a private internal IP address from a proxy-only subnet in your VPC. It enables URL path routing, header-based routing, and load balancing across private VM backends without exposing the application tier to the public internet.",
     "distractors": {
-      "D": "Cloud Armor protects public external endpoints, not private internal VPC communication.",
-      "C": "DNS round-robin lacks instant health checking, fails over slowly, and public DNS records expose internal topology.",
-      "A": "Global External Load Balancer allocates a public Anycast IP reachable from the internet, violating the private isolation requirement."
+      "A": "Global External Application Load Balancers expose public external IP addresses, violating the requirement that the App Tier never be reachable from the internet.",
+      "C": "External Passthrough Network Load Balancers use public IPs and operate at Layer 4, lacking HTTP URL path routing.",
+      "D": "Internal Passthrough Network Load Balancers operate at Layer 4 (TCP/UDP) and cannot inspect HTTP requests or perform Layer 7 URL-based routing."
     },
-    "gcloudCommand": "gcloud compute forwarding-rules create app-internal-lb --region=us-central1 --load-balancing-scheme=INTERNAL_MANAGED --network=prod-vpc --subnet=app-subnet --ports=80 --backend-service=app-backend-svc",
-    "architectureComponents": [
-      "Cloud Load Balancing",
-      "Virtual Private Cloud (VPC)",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/l7-internal"
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/l7-internal",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
   },
   {
     "id": "ACE-D2-037",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine GPU Accelerator Planning",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting GPU Types for Deep Learning Acceleration on Compute Engine",
-    "scenario": "A machine learning research team is planning GPU-accelerated training infrastructure on Compute Engine for large transformer language models. The workload requires high-bandwidth memory (HBM2e), NVLink interconnects between GPUs, and FP16 tensor core acceleration. Which GPU accelerator series should they plan?",
-    "keywords": [
-      "Compute Engine",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
+      "Compute Engine GPUs",
       "NVIDIA A100",
-      "GPUs",
-      "Machine Learning",
-      "Deep Learning"
+      "A2 Machine Types",
+      "Deep Learning",
+      "Tensor Cores"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting GPU Types for Deep Learning Acceleration on Compute Engine",
+    "scenario": "A machine learning research lab is provisioning GPU-accelerated training infrastructure on Compute Engine for large language models (LLMs). The workload requires high-bandwidth memory (HBM2), high-speed NVLink GPU interconnects, and FP16/BF16 Tensor Core acceleration across multi-GPU nodes. Which Compute Engine accelerator configuration should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "NVIDIA A100 (or H100) Tensor Core GPUs attached to A2 (or A3) machine types."
+        "text": "NVIDIA T4 GPUs attached to cost-optimized E2 shared-core machine types."
       },
       {
         "letter": "B",
-        "text": "NVIDIA T4 GPUs on E2 shared-core machines."
+        "text": "NVIDIA K80 GPUs attached to general-purpose N1 standard machine types."
       },
       {
         "letter": "C",
-        "text": "Cloud Bigtable with GPU indexing."
+        "text": "NVIDIA A100 Tensor Core GPUs attached to accelerator-optimized A2 types."
       },
       {
         "letter": "D",
-        "text": "Sole-tenant N1 instances with no attached accelerators."
+        "text": "Sole-Tenant N2 instances configured with maximum persistent SSD storage."
       }
     ],
-    "correct": "A",
-    "explanation": "NVIDIA A100 and H100 GPUs provide high-bandwidth HBM2e memory and high-speed NVLink GPU-to-GPU mesh interconnects, offered natively on Compute Engine Accelerator-Optimized (A2 / A3) machine series for large-scale distributed deep learning training.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The NVIDIA A100 Tensor Core GPU attached to A2 machine types is specifically designed for large deep learning model training and inference. It provides high-bandwidth memory (HBM2), third-generation Tensor Cores, and high-speed NVLink interconnects up to 600 GB/s between GPUs.",
     "distractors": {
-      "B": "NVIDIA T4 is intended for cost-effective inference and lightweight graphics, not massive large-model training, and E2 does not support GPUs.",
-      "C": "Cloud Bigtable is a NoSQL database and does not provide GPU compute accelerators.",
-      "D": "Sole-tenant N1 without GPUs lacks tensor cores and hardware matrix accelerators."
+      "A": "NVIDIA T4 GPUs do not support NVLink interconnects and provide lower memory bandwidth than A100/A2 instances; E2 instances cannot attach GPUs.",
+      "B": "NVIDIA K80 GPUs are legacy architectures lacking modern Tensor Cores and NVLink support for large transformer training.",
+      "D": "Sole-Tenant N2 instances provide CPU cores and disk throughput but lack GPU hardware accelerators for deep learning model training."
     },
-    "gcloudCommand": "gcloud compute instances create ml-gpu-trainer --zone=us-central1-a --machine-type=a2-highgpu-1g --image-family=common-cu113 --image-project=deeplearning-platform-release",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/gpus"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/gpus",
+    "difficulty": "medium",
+    "blockId": "BLOCK-5"
   },
   {
     "id": "ACE-D2-038",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine MIG & Autohealing Planning",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Managed Instance Groups (MIG) for High Availability and Autohealing",
-    "scenario": "You are designing a high-traffic web service running on Compute Engine. The service must automatically recover if an instance freezes or application processes deadlock, scale out during traffic peaks, and distribute instances across three distinct zones within a region for disaster resilience. What architecture should you configure?",
-    "keywords": [
-      "Regional MIG",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
+      "Regional Managed Instance Groups",
       "Autohealing",
-      "Health Check",
-      "Autoscaling",
-      "High Availability"
+      "Health Checks",
+      "High Availability",
+      "Compute Engine"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Managed Instance Groups (MIG) for High Availability and Autohealing",
+    "scenario": "You are architecting a resilient, high-traffic web application on Compute Engine. The architecture must automatically detect and replace deadlocked or unhealthy VM instances without operator intervention, and protect against a full data center zone outage by distributing instances evenly across three availability zones. Which two configurations should you plan? Choose 2.",
     "options": [
       {
         "letter": "A",
-        "text": "A Regional Managed Instance Group (MIG) with an application Health Check for autohealing, CPU/HTTP autoscaling policy, and instance distribution across three zones."
+        "text": "Deploy a Regional Managed Instance Group (MIG) distributing VMs across three zones."
       },
       {
         "letter": "B",
-        "text": "A Zonal MIG with a cron script that restarts instances at midnight."
+        "text": "Configure an Unmanaged Instance Group with manual snapshot restoration schedules."
       },
       {
         "letter": "C",
-        "text": "Three standalone VMs with manual snapshot restores."
+        "text": "Attach Customer-Managed Encryption Keys (CMEK) to all attached boot disk volumes."
       },
       {
         "letter": "D",
-        "text": "An Unmanaged Instance Group spanning three regions."
+        "text": "Configure an application health check and attach it as the MIG autohealing policy."
+      },
+      {
+        "letter": "E",
+        "text": "Configure Cloud NAT with static port allocations across all three target subnets."
       }
     ],
-    "correct": "A",
-    "explanation": "A Regional Managed Instance Group (Regional MIG) automatically spreads instances evenly across multiple zones within a region. Pairing the MIG with a specialized application Health Check enables automated Autohealing (recreating unhealthy instances), while autoscaling dynamically adjusts instance count to match demand.",
-    "distractors": {
-      "C": "Manual standalone VMs require human intervention during failures and lack automated load scaling.",
-      "D": "Unmanaged Instance Groups do not support autohealing, autoscaling, or automated rolling updates.",
-      "B": "Zonal MIGs cannot survive a complete zone outage, and scheduled cron restarts do not detect application deadlocks in real-time."
-    },
-    "gcloudCommand": "gcloud compute instance-groups managed create web-mig-regional --region=us-central1 --template=web-tmpl --size=3 --health-check=web-health-check --initial-delay=300",
-    "architectureComponents": [
-      "Compute Engine",
-      "Cloud Monitoring"
+    "correct": [
+      "A",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "To achieve high availability and autohealing on Compute Engine: (1) A Regional MIG distributes instances evenly across multiple zones within a region to withstand zonal failures, and (2) An application-level health check attached as an autohealing policy proactively detects unresponsive instances and recreates them automatically.",
+    "distractors": {
+      "B": "Unmanaged Instance Groups do not support autoscaling, autohealing, or automated multi-zone distribution.",
+      "C": "CMEK encrypts data at rest with customer keys but does not provide autohealing or zone failure protection.",
+      "E": "Cloud NAT provides outbound connectivity for private VMs but does not monitor VM application health or distribute VMs across zones."
+    },
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs",
+    "difficulty": "medium",
+    "blockId": "BLOCK-5"
   },
   {
     "id": "ACE-D2-039",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Storage Turbo Replication & RPO",
-    "difficulty": "advanced",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Cloud Storage Turbo Replication for Dual-Region RPO SLA",
-    "scenario": "A regulated bank uses a Dual-Region Cloud Storage bucket (`us-central1` and `us-east1`) to store mortgage loan application documents. The regulatory auditor requires a guaranteed Recovery Point Objective (RPO) SLA of 15 minutes or less for 100% of newly written objects replicated to the secondary region. What feature must you enable on the bucket?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Storage",
       "Turbo Replication",
       "Dual-Region",
-      "15-Minute RPO SLA",
-      "Compliance"
+      "Recovery Point Objective",
+      "SLA"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Cloud Storage Turbo Replication for Dual-Region RPO SLA",
+    "scenario": "A regulated financial institution uses a Dual-Region Cloud Storage bucket (us-central1 and us-east1) to store loan applications. Regulatory auditors mandate a guaranteed Recovery Point Objective (RPO) of 15 minutes or less, requiring 100% of newly written objects to replicate to the paired region within 15 minutes, backed by a service level agreement (SLA). What feature should you enable?",
     "options": [
       {
         "letter": "A",
-        "text": "Turbo Replication (enabled via gcloud storage buckets update --turbo-replication)."
+        "text": "Turbo Replication on the Dual-Region Cloud Storage bucket configuration."
       },
       {
         "letter": "B",
-        "text": "Bucket Lock with 15-minute retention."
+        "text": "Object Versioning with a lifecycle rule retaining 20 historical versions."
       },
       {
         "letter": "C",
-        "text": "Object Versioning with 10 versions."
+        "text": "Bucket Lock retention policy configured with a 15-minute compliance lock."
       },
       {
         "letter": "D",
-        "text": "Standard Multi-Region storage class."
+        "text": "Storage Transfer Service configured to run hourly synchronization batches."
       }
     ],
     "correct": "A",
-    "explanation": "Turbo Replication is a feature for Dual-Region Cloud Storage buckets that provides a 15-minute Recovery Point Objective (RPO) backed by a 99.9% service level agreement, ensuring that 100% of newly written objects replicate across paired regions in under 15 minutes.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Turbo Replication is a feature for Dual-Region Cloud Storage buckets that shortens the replication window, replicating 100% of newly written objects to the secondary region within 15 minutes, backed by a 99.9% monthly service level agreement (SLA).",
     "distractors": {
-      "B": "Bucket Lock enforces retention duration, not inter-regional replication speed.",
-      "D": "Standard Multi-Region replicates asynchronously without the contractual 15-minute RPO SLA of Turbo Replication.",
-      "C": "Object Versioning preserves overwritten objects but does not accelerate cross-region replication speed."
+      "B": "Object Versioning retains historical object states upon overwrite or deletion but does not accelerate cross-region geo-replication speed or provide a 15-minute RPO SLA.",
+      "C": "Bucket Lock prevents object deletion or modification for a retention period but does not govern replication speed.",
+      "D": "Storage Transfer Service performs periodic batch transfers between buckets rather than native real-time bucket replication backed by a 15-minute SLA."
     },
-    "gcloudCommand": "gcloud storage buckets update gs://bank-mortgage-vault --turbo-replication",
-    "architectureComponents": [
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/turbo-replication"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/turbo-replication",
+    "difficulty": "medium",
+    "blockId": "BLOCK-5"
   },
   {
     "id": "ACE-D2-040",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "NoSQL Database Selection: Firestore vs Bigtable",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Evaluating Firestore vs Cloud Bigtable for Mobile Gaming User Profiles",
-    "scenario": "A gaming studio is designing the backend database for a new global mobile game with 2 million daily active users. Requirements: 1) Store player profile documents, inventory JSON, and game achievements. 2) Direct integration with mobile iOS/Android client SDKs. 3) Support ACID multi-document transactions when trading items between players. 4) Automatic horizontal scaling. Which database is the best architectural fit?",
-    "keywords": [
-      "Firestore",
-      "Mobile SDK",
-      "Multi-Document Transactions",
-      "NoSQL",
-      "Document Database"
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
+      "Firestore Native Mode",
+      "Cloud Bigtable",
+      "ACID Transactions",
+      "Mobile SDKs",
+      "NoSQL Document Store"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Evaluating Firestore vs Cloud Bigtable for Mobile Gaming User Profiles",
+    "scenario": "A mobile gaming company is designing the backend database for a new global game with 2 million daily active users. Requirements: 1) Store player profile JSON documents and inventory items. 2) Direct integration with client-side mobile iOS and Android SDKs with offline support. 3) Support ACID multi-document transactions when players trade items. 4) Scale automatically with zero cluster provisioning. Which database should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Bigtable with HDD disks."
+        "text": "Firestore in Native mode configured with automated document scaling."
       },
       {
         "letter": "B",
-        "text": "Firestore in Native mode."
+        "text": "Cloud Bigtable with SSD storage clusters and manual node autoscaling."
       },
       {
         "letter": "C",
-        "text": "Cloud Storage CSV files."
+        "text": "Cloud Spanner with multi-region replication and custom SQL schemas."
       },
       {
         "letter": "D",
-        "text": "Cloud Bigtable."
+        "text": "Cloud Memorystore for Redis with automated persistence snapshotting."
       }
     ],
-    "correct": "B",
-    "explanation": "Firestore Native mode is a document-oriented NoSQL database that offers native mobile/web SDKs, automatic scaling, and ACID multi-document transactions (crucial for atomic player inventory item transfers and purchases).",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Firestore in Native mode is a serverless NoSQL document database that offers direct integration with iOS and Android client SDKs, offline data synchronization, automatic multi-region scaling, and support for ACID multi-document transactions.",
     "distractors": {
-      "D": "Cloud Bigtable does not support multi-row ACID transactions, lacks direct mobile client SDKs, and requires backend API servers.",
-      "C": "Cloud Storage CSV files lack transactional atomicity, concurrency controls, and real-time query capabilities.",
-      "A": "Bigtable with HDD is intended for cold batch analytics, not transactional interactive mobile gaming."
+      "B": "Cloud Bigtable does not support multi-row ACID transactions or direct client-side mobile SDK integrations, and requires provisioned cluster nodes.",
+      "C": "Cloud Spanner is a relational database designed for enterprise SQL workloads; it lacks direct client-side mobile SDKs and offline client data synchronization.",
+      "D": "Cloud Memorystore is an in-memory caching service without direct client mobile SDKs or structured document querying capabilities."
     },
-    "gcloudCommand": "gcloud firestore databases create --location=nam5 --type=firestore-native",
-    "architectureComponents": [
-      "Firestore"
-    ],
-    "officialDocUrl": "https://cloud.google.com/firestore/docs/overview"
+    "officialDocUrl": "https://cloud.google.com/firestore/docs/overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-5"
   },
   {
     "id": "ACE-D2-041",
