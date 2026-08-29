@@ -4843,831 +4843,740 @@
   {
     "id": "ACE-D2-041",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Armor Rate Limiting Policies",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Architecting Google Cloud Armor Rate Limiting to Throttling API Abuse",
-    "scenario": "A public REST API is hosted behind a Global External HTTPS Load Balancer. To protect backend database servers from being overwhelmed by credential stuffing or scraper bots, you need to enforce a rate limit of no more than 100 requests per minute per client IP address, returning HTTP 429 Too Many Requests when the limit is exceeded. What should you configure?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
       "Cloud Armor",
       "Rate Limiting",
-      "HTTP 429",
-      "DDoS Defense",
-      "Global Load Balancer"
+      "Application Load Balancer",
+      "DDoS Protection"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Architecting Google Cloud Armor Rate Limiting to Throttling API Abuse",
+    "scenario": "You are designing security controls for a public REST API exposed through an external Application Load Balancer. The backend must be protected from brute-force authentication attacks and volumetric API abuse by enforcing a threshold of 100 requests per minute per client IP address. Legitimate traffic within limits must pass uninterrupted. What should you configure?",
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an API Gateway with an IAM Deny policy on all users."
+        "text": "Create a Cloud Armor security policy with a rate limit rule of 100 requests per minute per IP using a redirect action to an alternate landing page."
       },
       {
         "letter": "B",
-        "text": "Add a Rate Limiting rule to the Cloud Armor Security Policy with threshold 100 requests / 60 seconds, conform action 'allow', and exceed action 'deny-429'."
+        "text": "Configure a VPC firewall rule with packet rate limiting to drop incoming TCP traffic exceeding 100 packets per minute from external client networks."
       },
       {
         "letter": "C",
-        "text": "Configure Cloud CDN to cache all POST requests."
+        "text": "Deploy a Cloud NAT gateway with endpoint-independent mapping to limit incoming client session request rates to 100 connections per minute."
       },
       {
         "letter": "D",
-        "text": "Create a VPC firewall rule blocking IP addresses that send more than 100 packets."
+        "text": "Create a Cloud Armor security policy with a rate limit rule of 100 requests per minute per IP using a deny action to throttle exceeding traffic."
       }
     ],
-    "correct": "B",
-    "explanation": "Google Cloud Armor Rate Limiting rules allow administrators to define request thresholds per client IP (or cookie/header key). When a client exceeds the defined rate (e.g. 100 reqs/min), Cloud Armor automatically throttles or blocks the client returning HTTP 429 (Too Many Requests) or HTTP 403 at Google's edge.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Armor rate limiting rules allow you to throttle incoming traffic to an external Application Load Balancer based on client IP. Setting a threshold of 100 requests per minute with a deny action (HTTP 429 or 403) prevents API abuse while allowing legitimate traffic to pass through.",
     "distractors": {
-      "A": "Denying all users blocks legitimate application traffic completely.",
-      "D": "VPC firewall rules operate at Layer 3/4 and cannot count or rate-limit HTTP request application rates.",
-      "C": "Cloud CDN does not cache mutable REST POST/PUT requests by default, nor does it enforce client rate limits."
+      "A": "Using a redirect action sends users to an alternate URL instead of throttling and returning an HTTP 429 Too Many Requests status code.",
+      "B": "VPC firewall rules operate at Layer 3/4 based on IP and port, and do not provide Layer 7 HTTP request-rate throttling.",
+      "C": "Cloud NAT provides outbound internet connectivity for private VMs and cannot enforce inbound rate limiting on external load balancers."
     },
-    "gcloudCommand": "gcloud compute security-policies rules create 1000 --security-policy=api-protection-policy --rate-limit-threshold-count=100 --rate-limit-threshold-interval-sec=60 --action=rate-based-ban --ban-duration-sec=300 --conform-action=allow --exceed-action=deny-429 --enforce-on-key=IP",
-    "architectureComponents": [
-      "Cloud Armor",
-      "Cloud Load Balancing"
-    ],
-    "officialDocUrl": "https://cloud.google.com/armor/docs/rate-limiting-overview"
+    "officialDocUrl": "https://cloud.google.com/armor/docs/rate-limiting-overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-042",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine Persistent Disk Performance Tiers",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting Persistent Disk Types: pd-standard vs pd-balanced vs pd-ssd vs pd-extreme",
-    "scenario": "You are configuring the storage volume for a high-transaction SAP HANA database on Compute Engine. The database requires 100,000 sustained random write IOPS and 1,200 MB/s disk throughput. Which Persistent Disk type is designed to scale IOPS independently of disk capacity to meet these extreme requirements?",
-    "keywords": [
-      "Extreme Persistent Disk",
-      "pd-extreme",
-      "High IOPS",
-      "SAP HANA",
-      "Block Storage"
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
+      "Compute Engine",
+      "Persistent Disk",
+      "pd-balanced",
+      "pd-ssd",
+      "IOPS Sizing"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting Persistent Disk Types: pd-standard vs pd-balanced vs pd-ssd vs pd-extreme",
+    "scenario": "You are provisioning boot and data storage for several web application backend VMs on Compute Engine. The workload requires cost-effective storage that delivers reliable baseline performance and up to 3,000 IOPS for common business operations, without the high expense of dedicated enterprise SSDs. What Persistent Disk type should you select?",
     "options": [
       {
         "letter": "A",
-        "text": "Balanced Persistent Disk (pd-balanced)."
+        "text": "Provision standard persistent disks (pd-standard) to minimize storage costs for general application VMs."
       },
       {
         "letter": "B",
-        "text": "Standard Persistent Disk (pd-standard)."
+        "text": "Provision extreme persistent disks (pd-extreme) to guarantee provisioned IOPS capacity for transaction logs."
       },
       {
         "letter": "C",
-        "text": "Cloud Storage Archive bucket."
+        "text": "Provision balanced persistent disks (pd-balanced) to provide cost-effective SSD performance and baseline IOPS."
       },
       {
         "letter": "D",
-        "text": "Extreme Persistent Disk (pd-extreme) or Hyperdisk Extreme."
+        "text": "Provision local SSD scratch disks (local-ssd) to maximize temporary read throughput across VM restarts."
       }
     ],
-    "correct": "D",
-    "explanation": "`pd-extreme` (and Hyperdisk Extreme) is Google Cloud's highest performance block storage tier, allowing provisioning of custom target IOPS (up to 120,000+ IOPS) independently of disk capacity for extreme database workloads like SAP HANA and Oracle.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Balanced persistent disks (pd-balanced) use SSD-backed storage to deliver a middle tier of performance and price between standard HDDs (pd-standard) and Performance SSDs (pd-ssd), making them the recommended default for general-purpose web application workloads requiring several thousand IOPS.",
     "distractors": {
-      "A": "pd-balanced caps IOPS and throughput well below extreme SAP HANA requirements unless provisioned with massive multi-terabyte sizes.",
-      "C": "Cloud Storage Archive is object storage for cold multi-year backups and cannot act as a VM block disk.",
-      "B": "pd-standard is mechanical HDD storage capped at very low IOPS (<1,000 IOPS)."
+      "A": "Standard persistent disks (pd-standard) are backed by HDDs and cannot reliably sustain 3,000 IOPS for low-latency web application workloads.",
+      "B": "Extreme persistent disks (pd-extreme) are designed for high-end databases with tens of thousands of custom provisioned IOPS, resulting in unnecessary costs.",
+      "D": "Local SSDs are ephemeral storage tied to the physical host that lose all data when an instance is stopped, making them unsuitable for persistent VM data."
     },
-    "gcloudCommand": "gcloud compute disks create sap-db-disk --zone=us-central1-a --size=1000GB --type=pd-extreme --provisioned-iops=100000",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/disks/extreme-persistent-disks"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/disks#disk-types",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-043",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Selection: Cloud Run Services vs Cloud Run Jobs",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Cloud Run Jobs for Asynchronous Scheduled Batch Ingestion",
-    "scenario": "A finance team needs to run an automated nightly batch calculation script packaged in a container. The script runs for 45 minutes, executes to completion, processes financial spreadsheets, and exits with status 0. It does not listen on an HTTP port. Which serverless execution product should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Cloud Run Jobs",
-      "Batch Processing",
-      "Serverless",
-      "Scheduled Tasks",
-      "Cloud Scheduler"
+      "Cloud Scheduler",
+      "Serverless Batch",
+      "Compute Sizing"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Cloud Run Jobs for Asynchronous Scheduled Batch Ingestion",
+    "scenario": "You need to plan the compute architecture for a batch data ingestion process that runs every night at midnight. The containerized task processes files from Cloud Storage, runs for up to 45 minutes to completion, and does not serve incoming HTTP traffic. You want a fully managed serverless solution with minimum operational overhead. What should you use?",
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Functions 1st gen."
+        "text": "Deploy a Cloud Run service triggered by Cloud Scheduler with request timeout configured to 45 minutes of processing."
       },
       {
         "letter": "B",
-        "text": "Cloud Run Service with HTTP health checks."
+        "text": "Create a Cloud Run job triggered by Cloud Scheduler to execute the container task to completion on demand."
       },
       {
         "letter": "C",
-        "text": "Cloud Run Jobs, triggered on a schedule via Cloud Scheduler."
+        "text": "Deploy a Compute Engine VM with an instance schedule to run the container task and shut down after execution."
       },
       {
         "letter": "D",
-        "text": "Compute Engine 24/7 VM with no shutdown script."
+        "text": "Create a standard Google Kubernetes Engine cluster with a scheduled CronJob running across multiple worker nodes."
       }
     ],
-    "correct": "C",
-    "explanation": "Cloud Run Jobs are built specifically for containerized run-to-completion batch processing tasks that do not listen for HTTP requests and can execute for up to 24 hours. Triggering the job via Cloud Scheduler provides serverless scheduled automation.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Run jobs are designed for containerized tasks that run to completion (up to 24 hours execution time) rather than serving persistent HTTP requests. Triggering a Cloud Run job via Cloud Scheduler provides a fully managed, serverless batch solution without managing VM or cluster infrastructure.",
     "distractors": {
-      "B": "Cloud Run Services require listening on an HTTP port and are intended for persistent web servers/APIs.",
-      "A": "Cloud Functions 1st gen has a maximum execution timeout of 9 minutes, failing the 45-minute runtime requirement.",
-      "D": "Running a 24/7 Compute Engine VM wastes compute budget for 23+ idle hours per day."
+      "A": "Cloud Run services are optimized for responding to incoming HTTP requests with a maximum request timeout of 60 minutes, but Cloud Scheduler HTTP invocation has limits and services expect web requests.",
+      "C": "Compute Engine VMs require managing OS patching, instance lifecycle scripts, and incur higher operational maintenance than serverless jobs.",
+      "D": "A standard GKE cluster requires managing node pools, cluster control plane upgrades, and incurs ongoing compute costs even when idle."
     },
-    "gcloudCommand": "gcloud run jobs create nightly-finance-batch --image=gcr.io/corp/finance-batch:latest --max-retries=3 --task-timeout=3600s --region=us-central1",
-    "architectureComponents": [
-      "Cloud Run",
-      "Cloud Scheduler"
-    ],
-    "officialDocUrl": "https://cloud.google.com/run/docs/create-jobs"
+    "officialDocUrl": "https://cloud.google.com/run/docs/create-jobs",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-044",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Interconnect High Availability (99.99% SLA)",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Dedicated Interconnect Redundancy for 99.99% Enterprise SLA",
-    "scenario": "An enterprise is designing a Dedicated Interconnect connection to Google Cloud. The architecture must achieve a 99.99% availability SLA for mission-critical production operations. What physical infrastructure topology is required?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
       "Dedicated Interconnect",
-      "99.99% SLA",
-      "Two Colocation Facilities",
-      "Four Circuits",
-      "Cloud Router"
+      "99.99% Availability",
+      "Cloud Router",
+      "High Availability"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Dedicated Interconnect Redundancy for 99.99% Enterprise SLA",
+    "scenario": "Your enterprise requires a high-bandwidth hybrid connection between an on-premises data center and a Google Cloud VPC network with a 99.99% availability Service Level Agreement (SLA). The architecture must tolerate the failure of an entire colocation facility or edge availability domain. Which two architectural configurations must you implement? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "A Classic VPN connection paired with static routes."
+        "text": "Provision a single Dedicated Interconnect connection with two VLAN attachments in one metro facility."
       },
       {
         "letter": "B",
-        "text": "A single Dedicated Interconnect 100 Gbps circuit in one colocation facility."
+        "text": "Provision at least two Dedicated Interconnect circuits across two distinct metropolitan colocation zones."
       },
       {
         "letter": "C",
-        "text": "At least four Dedicated Interconnect circuits deployed across two distinct Google Cloud Colocation Facilities (two circuits per metro facility in separate Edge Availability Domains), connected to redundant Cloud Routers in a multi-region or regional VPC configuration with dynamic BGP routing."
+        "text": "Deploy a Cloud VPN gateway with static routing as an automated standby failover link for the circuits."
       },
       {
         "letter": "D",
-        "text": "Two circuits connected to the same physical switch in a single facility."
+        "text": "Configure redundant Cloud Routers in two separate Google Cloud VPC regions with dynamic BGP routing."
+      },
+      {
+        "letter": "E",
+        "text": "Configure a single Cloud Router in one region with active-passive policy-based routes across all VLANs."
       }
     ],
-    "correct": "C",
-    "explanation": "To qualify for Google's 99.99% SLA on Dedicated Interconnect, the architecture requires 4 physical circuits: 2 connections in Colocation Facility A (in Edge Availability Domain 1 and 2) and 2 connections in Colocation Facility B (in Edge Availability Domain 1 and 2), with dynamic BGP routing across dual Cloud Routers.",
-    "distractors": {
-      "A": "Classic VPN is deprecated, travels over the public internet, and does not provide 99.99% enterprise physical line SLA.",
-      "B": "A single circuit has no physical hardware redundancy and carries no SLA.",
-      "D": "Two circuits in a single facility provide only 99.9% SLA (vulnerable to facility-wide power/fiber loss)."
-    },
-    "gcloudCommand": "gcloud compute interconnects create prod-interconnect-metro1-a --customer-name='Corp IT' --interconnect-type=DEDICATED --link-type=LINK_TYPE_ETHERNET_100G_LR --location=iad-zone1-1",
-    "architectureComponents": [
-      "Cloud Interconnect",
-      "Cloud Router",
-      "Virtual Private Cloud (VPC)"
+    "correct": [
+      "B",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/high-availability"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Achieving 99.99% SLA for Dedicated Interconnect requires 4 connections across 2 metros (two circuits per metro at distinct colocation facilities/edge availability domains) and configuring at least two redundant Cloud Routers in two different Google Cloud VPC regions with dynamic BGP routing and global dynamic routing enabled.",
+    "distractors": {
+      "A": "A single interconnect or single metro provides only 99.9% availability (or no SLA) because it cannot tolerate the loss of an entire colocation facility.",
+      "C": "Cloud VPN as backup does not qualify for the 99.99% Dedicated Interconnect SLA and provides significantly lower throughput than dedicated circuits.",
+      "E": "A single Cloud Router in one region represents a single point of failure and does not provide multi-region control plane redundancy for 99.99% SLA."
+    },
+    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/high-availability",
+    "difficulty": "hard",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-045",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Storage Selection: Dual-Region vs Multi-Region",
-    "difficulty": "intermediate",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting Cloud Storage Dual-Region vs Multi-Region for Regulatory Data Residency",
-    "scenario": "A legal firm in Germany must store electronic case records with automated geo-redundancy and cross-datacenter failover. However, strict German data sovereignty laws prohibit data from being stored or replicated in any datacenter outside of Germany (specifically, data cannot be placed in the Netherlands, Belgium, or Ireland). Which bucket location should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Storage",
       "Dual-Region",
-      "Data Sovereignty",
-      "Germany",
-      "europe-west3"
+      "Data Residency",
+      "Replication",
+      "Turbo Replication"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting Cloud Storage Dual-Region vs Multi-Region for Regulatory Data Residency",
+    "scenario": "An enterprise must store customer transaction records in Cloud Storage with high availability and automatic cross-region failover. Strict government compliance mandates that all data must remain strictly within two specific regions inside the European Union (e.g., europe-west1 and europe-west4) and replicate with a 15-minute RPO. What bucket configuration should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "A predefined Dual-Region pairing Frankfurt (europe-west3) and Berlin (europe-west10), or dual-region strictly within Germany."
+        "text": "Create a multi-region bucket in the EU location and configure Object Lifecycle Management rules."
       },
       {
         "letter": "B",
-        "text": "A single zonal persistent disk in us-central1."
+        "text": "Create two single-region buckets in different projects and synchronize them using automated Cloud Functions."
       },
       {
         "letter": "C",
-        "text": "The standard EU Multi-Region location."
+        "text": "Create a single-region bucket in europe-west1 and enable cross-project bucket replication policies across regions."
       },
       {
         "letter": "D",
-        "text": "The US Multi-Region location."
+        "text": "Create a predefined or custom dual-region bucket with Turbo Replication enabled across the two regions."
       }
     ],
-    "correct": "A",
-    "explanation": "EU Multi-Region spreads data across data centers in Germany, Netherlands, Belgium, Finland, etc., which violates the national residency constraint. Selecting a custom or predefined Dual-Region strictly within Germany (e.g. `europe-west3` and `europe-west10`) provides geo-redundancy while strictly confining data to German soil.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Dual-region storage in Cloud Storage stores data redundantly across two specific Google Cloud regions within the same geographic area, providing automatic failover and meeting strict data residency requirements. Enabling Turbo Replication guarantees that 100% of objects replicate across regions within 15 minutes (RPO).",
     "distractors": {
-      "B": "Zonal disks in the US violate both German residency laws and cross-zone disaster recovery standards.",
-      "D": "US Multi-Region stores data in North America, completely breaching European GDPR and German legal mandates.",
-      "C": "EU Multi-Region places data replicas in multiple European countries outside Germany, violating German sovereignty laws."
+      "A": "Multi-region buckets spread data across all EU member regions, which may violate strict regulatory mandates restricting storage to two designated regions.",
+      "B": "Custom synchronization scripts using Cloud Functions introduce operational complexity, latency, and do not provide automatic native read/write failover.",
+      "C": "A single-region bucket does not provide multi-region disaster recovery or automatic failover if the primary region experiences an outage."
     },
-    "gcloudCommand": "gcloud storage buckets create gs://german-legal-vault --location=europe-west3,europe-west10 --default-storage-class=STANDARD",
-    "architectureComponents": [
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/locations#dual-regions"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/locations#location-mr",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-046",
     "certId": "ace",
-    "blockId": "BLOCK-5",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Load Balancing SSL Policies & Cipher Suites",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning SSL Policy Minimum TLS Version for Load Balancers",
-    "scenario": "An enterprise security audit mandates that all public web endpoints terminate TLS connections using at least TLS 1.2 or TLS 1.3, completely disabling outdated and vulnerable TLS 1.0 and TLS 1.1 protocols and weak cipher suites. What configuration should be planned on the Google Cloud Load Balancer?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "Cloud Load Balancing",
       "SSL Policies",
       "TLS 1.2",
-      "Cloud Load Balancing",
-      "Cipher Suites",
-      "Compliance"
+      "HTTPS Target Proxy"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning SSL Policy Minimum TLS Version for Load Balancers",
+    "scenario": "Your organization security policy requires that all public web applications exposed through external Application Load Balancers drop legacy SSL/TLS connections and enforce a minimum version of TLS 1.2 with secure cipher suites. You want to apply this constraint centrally with minimal administrative overhead. What should you configure?",
     "options": [
       {
         "letter": "A",
-        "text": "Create an SSL Policy with min-tls-version=TLS_1_2 and profile=MODERN (or RESTRICTED), and attach it to the Target HTTPS Proxy of the Load Balancer."
+        "text": "Configure a Cloud Armor security policy containing custom expression rules to drop legacy handshakes."
       },
       {
         "letter": "B",
-        "text": "Change the DNS records to point to an unencrypted HTTP port."
+        "text": "Configure backend Compute Engine VM web servers to reject incoming handshakes negotiating below TLS 1.2."
       },
       {
         "letter": "C",
-        "text": "Install TLS certificates directly on backend Compute Engine instances and bypass the load balancer."
+        "text": "Create a custom or modern SSL policy with minimum TLS 1.2 and attach it directly to the HTTPS target proxies."
       },
       {
         "letter": "D",
-        "text": "Write a firewall rule to reject TCP packets containing TLS 1.0 headers."
+        "text": "Create a VPC firewall rule on the frontend subnet that permits ingress traffic only on secure TCP port 443."
       }
     ],
-    "correct": "A",
-    "explanation": "Google Cloud Load Balancer SSL Policies allow controlling the SSL/TLS protocol versions and cipher suites accepted by the Target HTTPS or Target SSL proxy. Setting `--min-tls-version=TLS_1_2` with the `MODERN` or `RESTRICTED` profile drops legacy TLS 1.0/1.1 client connections at the Google edge.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Google Cloud SSL Policies allow you to specify the minimum TLS version (TLS 1.0, 1.1, or 1.2) and cipher profile (COMPATIBLE, MODERN, RESTRICTED, or CUSTOM) accepted by external Application Load Balancers. The SSL policy is associated directly with the target HTTPS or target SSL proxy.",
     "distractors": {
-      "D": "VPC firewall rules inspect L3/L4 headers and cannot decode or filter TLS handshake protocol versions.",
-      "C": "Managing certificates on hundreds of individual backend VMs eliminates centralized SSL offloading and Anycast edge caching.",
-      "B": "Downgrading to plain HTTP sends unencrypted plaintext traffic over the internet, causing critical security failure."
+      "A": "Cloud Armor evaluates HTTP request headers and Layer 7 attributes, but SSL/TLS handshake negotiation is managed by target proxies and SSL policies.",
+      "B": "Terminating TLS at the load balancer means client handshakes never reach backend VM web servers directly, so backend configuration does not control edge cipher negotiation.",
+      "D": "VPC firewall rules filter network packets by IP and port number, and cannot inspect or enforce SSL/TLS handshake protocol versions."
     },
-    "gcloudCommand": "gcloud compute ssl-policies create modern-tls-policy --profile=MODERN --min-tls-version=TLS_1_2 && gcloud compute target-https-proxies update global-https-proxy --ssl-policy=modern-tls-policy",
-    "architectureComponents": [
-      "Cloud Load Balancing"
-    ],
-    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/ssl-policies"
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/ssl-policies-concepts",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-047",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Private Google Access Architecture & Sizing",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Private Google Access for Cloud Storage Egress Optimization",
-    "scenario": "You have 100 private Compute Engine instances in subnet `10.50.0.0/20` in `us-west1` with no external IP addresses. The VMs need to download 20 TB of training data from a Cloud Storage bucket in `us-west1`. What network design provides the fastest throughput and zero NAT data processing charges?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "VPC Network",
       "Private Google Access",
-      "Subnet",
-      "Zero NAT Charges",
-      "High Throughput",
+      "Subnets",
       "Cloud Storage"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Private Google Access for Cloud Storage Egress Optimization",
+    "scenario": "You have several Compute Engine virtual machines deployed in a VPC subnet without external public IP addresses. These instances need to read and write dataset files stored in Google Cloud Storage buckets securely without sending traffic through the public internet or incurring Cloud NAT costs. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Assign public IPs to all 100 instances and allow internet egress."
+        "text": "Attach a Public NAT gateway to the VPC network to route Google Cloud Storage API calls through external gateways."
       },
       {
         "letter": "B",
-        "text": "Deploy a squid proxy VM with an external IP address."
+        "text": "Enable Private Google Access on the subnet containing the private Compute Engine virtual machines."
       },
       {
         "letter": "C",
-        "text": "Route all traffic through a Cloud NAT gateway with 10 static IPs."
+        "text": "Assign ephemeral external IP addresses to all instances and configure egress VPC firewall rules on the subnet."
       },
       {
         "letter": "D",
-        "text": "Enable Private Google Access on the subnet, allowing VMs to route directly to Google APIs over Google's high-speed internal network with no NAT gateway charges."
+        "text": "Create an internal Application Load Balancer with a serverless Network Endpoint Group for Cloud Storage buckets."
       }
     ],
-    "correct": "D",
-    "explanation": "Private Google Access allows instances with internal-only IP addresses to communicate directly with Google Cloud services (such as Cloud Storage and BigQuery) via Google's internal software-defined network. This avoids Cloud NAT data processing fees and maximizes data transfer speeds.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Enabling Private Google Access on a VPC subnet allows VM instances that only have internal private IP addresses to reach the external IP addresses of Google APIs and services (such as Cloud Storage and BigQuery) privately without traversing the public internet or requiring external IP addresses or Cloud NAT.",
     "distractors": {
-      "A": "Assigning public IPs introduces internet attack surface and incurs static IP reservation costs.",
-      "C": "Cloud NAT incurs data processing fees per GB and introduces unnecessary translation overhead for native Google APIs.",
-      "B": "Proxy VMs introduce network bandwidth bottlenecks, single points of failure, and operational maintenance."
+      "A": "Cloud NAT provides outbound connectivity to external internet endpoints and incurs data processing charges, which is unnecessary when Private Google Access is free.",
+      "C": "Assigning external IP addresses exposes VM interfaces to the public internet and violates least-privilege private networking standards.",
+      "D": "Internal Application Load Balancers do not act as client egress gateways for accessing standard Google Cloud Storage REST APIs."
     },
-    "gcloudCommand": "gcloud compute networks subnets update ml-private-sub --region=us-west1 --enable-private-ip-google-access",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Compute Engine",
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/private-google-access"
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/private-google-access",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-048",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud SQL Point-in-Time Recovery Planning",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Architecting Cloud SQL Point-in-Time Recovery (PITR) and Transaction Log Archival",
-    "scenario": "A database administrator is planning the backup strategy for a PostgreSQL database on Cloud SQL. The business requires the ability to restore the database to any specific second in time over the last 7 days in the event of an accidental SQL DROP TABLE statement. Which combination of features must be configured?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud SQL",
-      "Automated Backups",
       "Point-in-Time Recovery",
-      "PITR",
-      "WAL Logs"
+      "Binary Logging",
+      "Automated Backups"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Architecting Cloud SQL Point-in-Time Recovery (PITR) and Transaction Log Archival",
+    "scenario": "You are designing the backup and disaster recovery strategy for a production PostgreSQL instance on Cloud SQL. The business requires the ability to recover database state to any specific minute within the last 7 days in the event of accidental data corruption or human error. What configuration should you implement?",
     "options": [
       {
         "letter": "A",
-        "text": "Enable Cloud Storage Object Versioning on the database volume."
+        "text": "Enable automated daily backups and point-in-time recovery (PITR) with write-ahead log retention for recovery."
       },
       {
         "letter": "B",
-        "text": "Create a read replica and pause replication at midnight."
+        "text": "Configure Cloud Scheduler to trigger on-demand database export jobs to Cloud Storage every hour across regions."
       },
       {
         "letter": "C",
-        "text": "Take a manual SQL dump once every 24 hours using pg_dump."
+        "text": "Create daily disk snapshots of the underlying Compute Engine persistent disks using a snapshot schedule rule."
       },
       {
         "letter": "D",
-        "text": "Enable Automated Backups with a 7-day retention window and enable Point-in-Time Recovery (PITR) using write-ahead logging (WAL)."
+        "text": "Deploy a high-availability regional standby replica to synchronize all database transaction writes in real time."
       }
     ],
-    "correct": "D",
-    "explanation": "Point-in-Time Recovery (PITR) in Cloud SQL requires automated daily backups to provide base snapshots, combined with continuous transaction log archival (binary logs in MySQL or write-ahead logs in PostgreSQL). This allows rolling forward transactions to any exact minute and second within the retention window.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Point-in-Time Recovery (PITR) in Cloud SQL uses automated daily backups combined with continuous transaction logs (write-ahead logs in PostgreSQL, binary logs in MySQL) to allow restoration of the database instance to its exact state at any specific second within the retention window (up to 7 days).",
     "distractors": {
-      "A": "Object versioning applies to Cloud Storage buckets, not active Cloud SQL relational database transaction logs.",
-      "B": "Pausing read replicas stops replication and does not provide arbitrary second-level historical restoration.",
-      "C": "Daily dumps only restore to the exact time of the dump, losing all data created between dumps (up to 24 hours of data loss)."
+      "B": "Hourly exports create discrete dump files that consume extra I/O and cannot restore to an arbitrary minute between scheduled export intervals.",
+      "C": "Disk snapshots of managed Cloud SQL disks are not directly accessible or coordinated with database buffer caches, risking corrupt transaction states.",
+      "D": "High availability (HA) provides automatic instance failover in case of hardware failure, but replicates accidental deletions and corrupted data immediately to the standby."
     },
-    "gcloudCommand": "gcloud sql instances patch my-postgres-db --enable-point-in-time-recovery --backup-start-time=01:00",
-    "architectureComponents": [
-      "Cloud SQL"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sql/docs/postgres/backup-recovery/pitr"
+    "officialDocUrl": "https://cloud.google.com/sql/docs/postgres/backup-recovery/pitr",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-049",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Run Traffic Management & Rollout Strategy",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Cloud Run Traffic Allocation for Canary Releases and Blue-Green Deployments",
-    "scenario": "You are deploying a new version (Revision `v2`) of a microservice on Cloud Run. To validate performance and minimize blast radius before a full rollout, you want to route exactly 10% of live production traffic to `v2` and keep 90% of traffic on the stable `v1` revision. What gcloud command should you plan?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Cloud Run",
       "Traffic Splitting",
       "Canary Deployment",
-      "Blue-Green",
       "Revisions"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Cloud Run Traffic Allocation for Canary Releases and Blue-Green Deployments",
+    "scenario": "You are releasing version 2 of an API microservice deployed on Cloud Run. You want to execute a canary deployment by directing 10% of production traffic to the new revision while keeping 90% on the stable version. If anomalies occur, you must be able to roll back 100% of traffic immediately. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Create an nginx container in front of Cloud Run with a random number generator."
+        "text": "Deploy version 2 to a separate Cloud Run service and use Cloud DNS weighted records to distribute percentages."
       },
       {
         "letter": "B",
-        "text": "gcloud run deploy my-service --image=v2 --split-traffic=10"
+        "text": "Deploy version 2 to Compute Engine and configure an external load balancer backend service with weighted traffic."
       },
       {
         "letter": "C",
-        "text": "gcloud run services update-traffic my-service --to-revisions=my-service-v1=90,my-service-v2=10"
+        "text": "Deploy version 2 as a separate Cloud Run service and route traffic requests using a Cloud Tasks rate limit queue."
       },
       {
         "letter": "D",
-        "text": "Deploy two separate Cloud Run services and use DNS weights."
+        "text": "Deploy version 2 as a revision to the existing service and adjust traffic allocation percentages in Cloud Run."
       }
     ],
-    "correct": "C",
-    "explanation": "Cloud Run natively supports percentage-based traffic splitting across revisions using `gcloud run services update-traffic <service_name> --to-revisions=<rev1>=<pct1>,<rev2>=<pct2>`, enabling instant zero-downtime canary testing and instant rollback.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Run natively supports revision management and traffic splitting. When you deploy a new container version to an existing Cloud Run service without routing 100% of traffic, you can allocate 10% to the new revision and 90% to the previous revision, and roll back instantly with zero downtime.",
     "distractors": {
-      "B": "`--split-traffic` is not a valid flag on `gcloud run deploy`.",
-      "D": "DNS-based traffic splitting causes cache latency, TTL stickiness, and lacks instant rollback capabilities.",
-      "A": "Custom Nginx proxies add unnecessary infrastructure maintenance when Cloud Run provides native edge traffic splitting."
+      "A": "DNS-based traffic splitting suffers from client-side DNS caching and TTL delays, preventing instantaneous traffic shift or rollback.",
+      "B": "Deploying across separate Compute Engine VMs increases operational overhead and bypasses native Cloud Run serverless revision management.",
+      "C": "Cloud Tasks is an asynchronous message queuing service for background tasks, not an HTTP reverse proxy for live request traffic splitting."
     },
-    "gcloudCommand": "gcloud run services update-traffic my-service --to-revisions=my-service-v1=90,my-service-v2=10",
-    "architectureComponents": [
-      "Cloud Run"
-    ],
-    "officialDocUrl": "https://cloud.google.com/run/docs/rollouts-rollbacks-traffic-split"
+    "officialDocUrl": "https://cloud.google.com/run/docs/rollouts-rollbacks-traffic-split",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-050",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Spanner Sizing & Processing Units",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Evaluating Cloud Spanner Node Sizing and Processing Units (PU)",
-    "scenario": "A software company is deploying a small microservice on Cloud Spanner. The database will store 150 GB of data and experience low traffic (500 QPS). Management wants to minimize hourly infrastructure costs while still benefiting from Spanner's global ACID transactions. How should the instance be sized?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Spanner",
       "Processing Units",
-      "PU",
-      "Cost Optimization",
-      "Microservice Sizing"
+      "Node Sizing",
+      "Horizontal Scaling"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Evaluating Cloud Spanner Node Sizing and Processing Units (PU)",
+    "scenario": "You are provisioning a new Cloud Spanner database for an application with modest initial throughput requirements. The database needs full relational capabilities, global ACID transactions, and high availability, but provisioning a full 1-node instance (1,000 Processing Units) exceeds the initial development budget. What should you configure?",
     "options": [
       {
         "letter": "A",
-        "text": "Provision a 10-node Spanner cluster and shut it down every weekend."
+        "text": "Deploy a Cloud SQL instance and use database migration service to replicate tables to Cloud Spanner database."
       },
       {
         "letter": "B",
-        "text": "Store data in BigQuery and query it via Spanner federated queries."
+        "text": "Provision a Cloud Spanner instance with granular compute capacity using 100 to 500 Processing Units (PUs) scale."
       },
       {
         "letter": "C",
-        "text": "Deploy Cloud Spanner on a Compute Engine e2-micro instance."
+        "text": "Deploy a Bigtable cluster with HDD storage and configure an open-source relational SQL emulation layer for data."
       },
       {
         "letter": "D",
-        "text": "Provision the Cloud Spanner instance using Processing Units (e.g. 100 or 200 Processing Units, which represent fractional nodes) instead of a full 1-node instance."
+        "text": "Provision a Cloud Spanner multi-region instance configured with maximum auto-sharding and zero baseline nodes."
       }
     ],
-    "correct": "D",
-    "explanation": "Cloud Spanner supports granular sizing via Processing Units (1 node = 1,000 Processing Units). Customers with small databases or low QPS can provision fractional capacity (100, 200, 300, 400, or 500 PUs), significantly lowering the entry barrier cost while maintaining full ACID Spanner features.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Spanner supports fractional compute capacity measured in Processing Units (PUs), where 1 node equals 1,000 PUs. You can provision instances in increments of 100 PUs (e.g., 100, 200, up to 900 PUs), allowing workloads with smaller throughput requirements to run on Spanner at a proportional fraction of the full node cost.",
     "distractors": {
-      "B": "BigQuery is an analytical data warehouse and cannot support low-latency transactional microservice writes.",
-      "A": "A 10-node cluster is massively over-provisioned for 500 QPS and scheduled shutdown causes total service downtime.",
-      "C": "Cloud Spanner is a fully managed cloud service and cannot be installed on a self-hosted Compute Engine VM."
+      "A": "Replicating from Cloud SQL does not provide Spanner's native ACID global consistency or high availability for live application queries.",
+      "C": "Cloud Bigtable is a NoSQL wide-column database that lacks native relational features, foreign keys, and multi-row ACID transactions.",
+      "D": "Cloud Spanner does not support a serverless 'zero node' baseline tier; all active Spanner instances require at least 100 Processing Units."
     },
-    "gcloudCommand": "gcloud spanner instances create small-spanner --config=regional-us-central1 --processing-units=200 --description='Lightweight Spanner DB'",
-    "architectureComponents": [
-      "Cloud Spanner"
-    ],
-    "officialDocUrl": "https://cloud.google.com/spanner/docs/compute-capacity"
+    "officialDocUrl": "https://cloud.google.com/spanner/docs/compute-capacity",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-051",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Interconnect MACsec Layer 2 Encryption",
-    "difficulty": "advanced",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Cloud Interconnect MACsec Encryption for Physical Link Security",
-    "scenario": "A government defense agency is establishing a 100 Gbps Dedicated Interconnect between an on-premises data center and Google Cloud. Security compliance mandates that all data in transit across the physical fiber circuits must be hardware-encrypted at Layer 2 (Ethernet layer). What technology should you plan?",
-    "keywords": [
-      "Cloud Interconnect",
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
+      "Dedicated Interconnect",
       "MACsec",
       "Layer 2 Encryption",
-      "Dedicated Interconnect",
-      "Security"
+      "Network Security"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Cloud Interconnect MACsec Encryption for Physical Link Security",
+    "scenario": "A financial institution is establishing a high-bandwidth 100 Gbps Dedicated Interconnect between an on-premises data center and Google Cloud. Security compliance mandates that all network traffic traversing the physical fiber connection must be hardware-encrypted at Layer 2 (Ethernet layer) at line rate. What feature should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a software IPsec VPN VM inside Compute Engine."
+        "text": "Configure an IPsec VPN tunnel over the physical Dedicated Interconnect with high-availability dynamic routing."
       },
       {
         "letter": "B",
-        "text": "Enable Media Access Control Security (MACsec) on the Dedicated Interconnect physical links using pre-shared keys stored in Cloud KMS or Secret Manager."
+        "text": "Configure TLS 1.3 hardware encryption across all physical application services running on Compute Engine VMs."
       },
       {
         "letter": "C",
-        "text": "Convert the Interconnect into a public Cloud Storage bucket."
+        "text": "Enable Media Access Control Security (MACsec) on the physical Dedicated Interconnect router ports."
       },
       {
         "letter": "D",
-        "text": "Rely on standard TLS 1.3 at the application layer only."
+        "text": "Enable Cloud Armor adaptive protection and security policies on the ingress VPC physical interconnect gateway."
       }
     ],
-    "correct": "B",
-    "explanation": "Google Cloud supports MACsec (IEEE 802.1AE) Layer 2 point-to-point encryption on Dedicated Interconnect circuits. MACsec encrypts all Ethernet frames at line-rate speed (up to 100 Gbps) directly on router hardware between on-premises and Google edge routers.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Media Access Control Security (MACsec, IEEE 802.1AE) provides point-to-point hardware encryption at Layer 2 (Ethernet) on Dedicated Interconnect physical links between customer on-premises edge routers and Google edge routers. MACsec encrypts all traffic at full line rate (up to 100 Gbps) without the CPU throughput overhead of Layer 3 IPsec.",
     "distractors": {
-      "A": "Software IPsec VMs cap bandwidth at a fraction of 100 Gbps line rate and introduce severe CPU bottlenecks.",
-      "C": "Cloud Storage is an object storage service and cannot encrypt physical network transmission lines.",
-      "D": "Application-layer TLS does not encrypt network Layer 2/3 headers and fails strict physical transport encryption mandates."
+      "A": "IPsec VPN operates at Layer 3 (IP layer) and software-based IPsec gateways cannot match 100 Gbps line-rate throughput without significant CPU and packet overhead.",
+      "B": "TLS 1.3 operates at Layer 7 (application layer) and leaves lower-level network protocol headers unencrypted, failing the Layer 2 hardware encryption mandate.",
+      "D": "Cloud Armor is a web application firewall (WAF) for HTTP(S) load balancers and does not perform physical link layer encryption."
     },
-    "gcloudCommand": "gcloud compute interconnects create dedicated-macsec-conn --customer-name='Defense IT' --interconnect-type=DEDICATED --link-type=LINK_TYPE_ETHERNET_100G_LR --location=iad-zone1-1 --enable-macsec",
-    "architectureComponents": [
-      "Cloud Interconnect",
-      "Cloud KMS"
-    ],
-    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/macsec"
+    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/macsec",
+    "difficulty": "hard",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-052",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "BigQuery Editions & Slot Capacity Planning",
-    "difficulty": "advanced",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting BigQuery Reservations and Editions (Standard, Enterprise, Enterprise Plus)",
-    "scenario": "An enterprise runs hundreds of critical business intelligence dashboards with unpredictable query concurrency in BigQuery. Under the on-demand query pricing model ($6.25/TB scanned), monthly costs fluctuate wildly, and large complex queries occasionally fail due to query concurrency limits. Management wants predictable fixed monthly billing with dedicated compute slots and autoscaling capacity. What BigQuery model should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "BigQuery Editions",
       "Capacity Reservations",
-      "Slots",
-      "FinOps",
-      "Predictable Cost"
+      "Autoscaling Slots",
+      "Cost Management"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting BigQuery Reservations and Editions (Standard, Enterprise, Enterprise Plus)",
+    "scenario": "An enterprise runs mission-critical analytical dashboards in BigQuery with highly variable concurrency. Under the on-demand pricing model ($6.25 per TB scanned), monthly costs fluctuate unpredictably, and large queries occasionally face concurrency throttling. Management requires predictable monthly billing with dedicated compute slots and autoscaling. What should you plan?",
     "options": [
       {
         "letter": "A",
-        "text": "Purchase a BigQuery Enterprise Edition capacity reservation with autoscaling slots."
+        "text": "Migrate all analytical tables to Cloud Bigtable clusters provisioned with fixed node reservations and capacity."
       },
       {
         "letter": "B",
-        "text": "Export all data from BigQuery to a single PostgreSQL database."
+        "text": "Export analytical datasets to Cloud Storage and query them using external tables in on-demand mode with slots."
       },
       {
         "letter": "C",
-        "text": "Remain on on-demand pricing and ask analysts to query smaller datasets."
+        "text": "Configure physical Compute Engine VMs running Apache Spark to process queries and load to BigQuery datasets."
       },
       {
         "letter": "D",
-        "text": "Migrate all tables to Cloud Storage and query using Cloud Functions."
+        "text": "Purchase a BigQuery Enterprise Edition capacity reservation configured with autoscaling slot pools."
       }
     ],
-    "correct": "A",
-    "explanation": "BigQuery Editions (Standard, Enterprise, Enterprise Plus) provide capacity-based pricing with dedicated or autoscaling slot reservations. This delivers consistent query performance, isolated slot pools for mission-critical BI, and predictable, budget-controlled monthly costs.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "BigQuery Editions (Standard, Enterprise, Enterprise Plus) offer capacity-based pricing with dedicated compute slots. By setting up an Enterprise Edition reservation with autoscaling slots, organizations get predictable cost boundaries, dedicated slot pools that guarantee query execution for critical workloads, and automatic scaling during concurrency spikes.",
     "distractors": {
-      "C": "Verbal requests to data analysts do not guarantee cost caps and fail to prevent runaway scan costs.",
-      "B": "PostgreSQL cannot scale to handle multi-terabyte / petabyte enterprise analytical queries.",
-      "D": "Cloud Functions has memory and timeout limits and cannot replace a massively parallel analytical query engine."
+      "A": "Cloud Bigtable is a low-latency NoSQL database for operational time-series/key-value data, not an analytical SQL data warehouse for complex BI queries.",
+      "B": "External tables over Cloud Storage still incur on-demand scan charges and offer lower query performance than native BigQuery managed storage.",
+      "C": "Managing self-hosted Spark clusters on Compute Engine introduces high operational complexity and does not integrate natively with BigQuery BI dashboard tooling."
     },
-    "gcloudCommand": "gcloud bigquery reservations create prod-bi-reservation --project=analytics-corp --location=US --slots=500 --edition=ENTERPRISE",
-    "architectureComponents": [
-      "BigQuery"
-    ],
-    "officialDocUrl": "https://cloud.google.com/bigquery/docs/editions-intro"
+    "officialDocUrl": "https://cloud.google.com/bigquery/docs/editions-intro",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-053",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Cloud Storage Bucket Lock & WORM Planning",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Designing Cloud Storage Bucket Lock for Ransomware Protection and Immutable Compliance",
-    "scenario": "A legal compliance team requires that signed PDF contract agreements stored in a Cloud Storage bucket must remain completely immutable (cannot be deleted, modified, or overwritten) for exactly 3 years (94,608,000 seconds) to comply with regulatory document preservation laws. What Cloud Storage feature should be implemented?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.2",
+    "subsectionName": "Planning and configuring data storage options",
+    "conceptos": [
       "Cloud Storage",
       "Bucket Lock",
       "Retention Policy",
-      "WORM",
-      "Compliance"
+      "WORM Compliance"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Designing Cloud Storage Bucket Lock for Ransomware Protection and Immutable Compliance",
+    "scenario": "A financial compliance team requires that archived PDF transaction records stored in a Cloud Storage bucket must remain completely immutable (cannot be deleted, modified, or overwritten) for exactly 3 years (94,608,000 seconds). The policy must be irreversible even by project owners and administrators. Which two steps must you take? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "Configure a Retention Policy with a retention period of 94608000s and lock the policy using Bucket Lock."
+        "text": "Configure a Retention Policy on the Cloud Storage bucket with a duration of 94608000 seconds."
       },
       {
         "letter": "B",
-        "text": "Enable Object Versioning with 3 versions."
+        "text": "Enable Object Versioning on the bucket and configure a lifecycle rule to retain 3 object versions."
       },
       {
         "letter": "C",
-        "text": "Set the storage class to Coldline."
+        "text": "Permanently lock the bucket retention policy using the Bucket Lock feature to enforce WORM rules."
       },
       {
         "letter": "D",
-        "text": "Remove the storage.objects.delete permission from developers only."
+        "text": "Remove the storage.objects.delete IAM permission from all project principals and service accounts."
+      },
+      {
+        "letter": "E",
+        "text": "Set the default storage class of the bucket to Archive and configure customer-managed encryption."
       }
     ],
-    "correct": "A",
-    "explanation": "Cloud Storage Retention Policies with Bucket Lock enforce Write-Once-Read-Many (WORM) storage. Once a retention policy is locked, the retention duration cannot be reduced or deleted, ensuring objects cannot be modified or deleted by anyone until their individual retention period expires.",
-    "distractors": {
-      "D": "Removing developer permissions does not prevent Project Owners or compromised admin credentials from deleting objects.",
-      "B": "Object versioning retains prior versions when overwritten, but does not block deleting objects or versions.",
-      "C": "Storage classes govern pricing tiers and access frequency, not immutable deletion protection."
-    },
-    "gcloudCommand": "gcloud storage buckets update gs://contracts-vault --retention-period=94608000s && gcloud storage retention-policies lock gs://contracts-vault",
-    "architectureComponents": [
-      "Cloud Storage",
-      "Cloud IAM"
+    "correct": [
+      "A",
+      "C"
     ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/bucket-lock"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Enforcing immutable Write-Once-Read-Many (WORM) storage in Cloud Storage requires two sequential steps: (1) creating a Retention Policy specifying the required retention duration (e.g., 94,608,000 seconds), and (2) locking the retention policy using Bucket Lock. Once locked, the policy cannot be removed, the retention period cannot be reduced, and objects cannot be deleted by anyone (including root/owners) until their retention period expires.",
+    "distractors": {
+      "B": "Object Versioning preserves older versions when overwritten, but does not prevent users with appropriate permissions from deleting the bucket, current objects, or noncurrent versions.",
+      "D": "Modifying IAM permissions can easily be undone by any Project Owner or Administrator, failing strict compliance immutability standards.",
+      "E": "Archive storage class and CMEK govern storage cost tiers and encryption keys, but do not provide legal WORM immutability or deletion prevention."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage/docs/bucket-lock",
+    "difficulty": "hard",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-054",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compute Engine Startup Scripts & Metadata",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Planning Compute Engine Custom Metadata and Startup Script Execution",
-    "scenario": "You are deploying a Compute Engine VM from a standard Ubuntu base image. The VM needs to automatically install Apache web server, fetch code from a repository, and start the web service immediately upon initial boot without human intervention. How should you supply this configuration?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.1",
+    "subsectionName": "Planning and configuring compute resources",
+    "conceptos": [
       "Compute Engine",
-      "Startup Script",
       "Metadata",
-      "Automation",
-      "Instance Creation"
+      "Startup Scripts",
+      "Automation"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Planning Compute Engine Custom Metadata and Startup Script Execution",
+    "scenario": "You are designing an automated deployment process for Compute Engine virtual machines based on standard Debian images. Each new instance must automatically install runtime dependencies, pull application code, and launch background services during its initial boot sequence without manual human intervention. How should you design this configuration?",
     "options": [
       {
         "letter": "A",
-        "text": "Save the script in an Archive storage bucket and set an IAM deny rule."
+        "text": "Store the initialization script in a private bucket and execute it manually via SSH after instance startup completes."
       },
       {
         "letter": "B",
-        "text": "Create a custom VPC firewall rule that executes the script over port 22."
+        "text": "Specify the shell script via instance custom metadata using the startup-script or startup-script-url key."
       },
       {
         "letter": "C",
-        "text": "Pass the shell script via instance metadata using the startup-script or startup-script-url key during instance creation."
+        "text": "Configure an OS login IAM role on the instance template that triggers bash execution upon user connection session."
       },
       {
         "letter": "D",
-        "text": "SSH into the instance manually after boot and type the commands."
+        "text": "Create a custom VPC firewall rule that invokes the initialization commands over secure shell port 22 automatically."
       }
     ],
-    "correct": "C",
-    "explanation": "Compute Engine supports `startup-script` (inline code) and `startup-script-url` (Cloud Storage script URL) custom metadata keys. Compute Engine guest environment agents detect this metadata and execute the script automatically with root privileges during the operating system boot process.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Compute Engine provides native support for startup scripts through custom metadata keys (startup-script for inline scripts or startup-script-url for scripts hosted in Cloud Storage or public URLs). The Compute Engine guest agent automatically retrieves and executes the script with root privileges during the operating system boot process.",
     "distractors": {
-      "B": "Firewall rules inspect and filter network traffic; they cannot execute arbitrary bash commands inside guest VMs.",
-      "A": "Saving a script with an IAM deny rule blocks access and does not execute anything on boot.",
-      "D": "Manual SSH configuration cannot scale with autoscaling and requires human intervention."
+      "A": "Requiring manual SSH execution after boot violates the requirement for fully automated deployment without manual intervention.",
+      "C": "OS Login manages POSIX user accounts and SSH key authentication; it does not execute automated provisioning scripts on instance boot.",
+      "D": "VPC firewall rules control network traffic flow at the IP/port layer; they cannot run shell scripts inside guest operating systems."
     },
-    "gcloudCommand": "gcloud compute instances create web-server --zone=us-central1-a --image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud --metadata-from-file=startup-script=install-web.sh",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/startup-scripts/linux"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/startup-scripts/linux",
+    "difficulty": "medium",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D2-055",
     "certId": "ace",
-    "blockId": "BLOCK-6",
     "domainId": "ACE-D2",
-    "domainName": "Planning and configuring a cloud solution",
-    "subtopic": "Compliance Architecture: PCI-DSS & VPC Service Controls",
-    "difficulty": "advanced",
-    "bloomsLevel": "analyze",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Selecting Cloud Architecture for PCI-DSS Regulated Payment Gateway",
-    "scenario": "An enterprise is building a credit card processing payment microservice on Google Cloud. The system must comply with strict PCI-DSS Level 1 compliance requirements: 1) Isolate cardholder data environment (CDE) in a dedicated GCP project. 2) Block data exfiltration to unauthorized Google services or external public storage buckets. 3) Enforce end-to-end TLS encryption. What perimeter security capability should be planned?",
-    "keywords": [
+    "sectionId": "ACE-2",
+    "sectionName": "Planning and configuring a cloud solution",
+    "subsectionId": "ACE-2.3",
+    "subsectionName": "Planning and configuring network resources",
+    "conceptos": [
       "VPC Service Controls",
       "Service Perimeter",
-      "PCI-DSS",
-      "Data Exfiltration Prevention",
-      "Compliance"
+      "Data Exfiltration",
+      "PCI-DSS"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Selecting Cloud Architecture for PCI-DSS Regulated Payment Gateway",
+    "scenario": "An enterprise is deploying a credit card processing payment workload on Google Cloud subject to strict PCI-DSS regulatory compliance. You must isolate the Cardholder Data Environment (CDE) project so that sensitive data stored in Cloud Storage and BigQuery cannot be exfiltrated to external storage buckets or unauthorized networks, even if IAM credentials are compromised. What should you implement?",
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an unmanaged proxy server on a public subnet."
+        "text": "Configure standard IAM role bindings and enable Cloud Audit Logs across all project service accounts."
       },
       {
         "letter": "B",
-        "text": "Rely entirely on standard IAM permissions without perimeter boundaries."
+        "text": "Deploy an unmanaged network proxy VM in a public subnet to inspect and filter all outbound API traffic requests."
       },
       {
         "letter": "C",
-        "text": "Define a VPC Service Controls (VPC SC) Service Perimeter enclosing the CDE project, restricting Cloud Storage and BigQuery API access to authorized networks and identities."
+        "text": "Create a VPC Service Controls service perimeter enclosing the project and restricting protected APIs."
       },
       {
         "letter": "D",
-        "text": "Disable SSL certificates on internal database connections."
+        "text": "Configure Cloud NAT on the VPC network and attach egress firewall rules blocking outbound TCP port 80 traffic."
       }
     ],
     "correct": "C",
-    "explanation": "VPC Service Controls (VPC SC) creates security perimeters around Google Cloud resources (Cloud Storage, BigQuery, Cloud SQL) to prevent data exfiltration. Even if an attacker compromises a valid IAM credential, API calls attempting to copy data to external buckets or unauthorized networks outside the perimeter are blocked.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "VPC Service Controls (VPC SC) establishes a secure service perimeter around Google Cloud resources (such as Cloud Storage and BigQuery). It prevents data exfiltration by blocking API requests from within the perimeter that attempt to copy or write data to storage resources outside the perimeter, even if the caller has valid IAM credentials.",
     "distractors": {
-      "B": "IAM alone does not protect against insider data exfiltration to legitimate external GCP buckets or credential theft.",
-      "D": "Disabling SSL violates core PCI-DSS encryption-in-transit requirements.",
-      "A": "Public proxy servers introduce severe security vulnerabilities and expand the PCI-DSS audit scope unnecessarily."
+      "A": "IAM controls authorization within the project, but does not prevent an authorized principal from exfiltrating data to an external, unauthorized GCP bucket.",
+      "B": "Unmanaged proxy VMs introduce single points of failure, scaling bottlenecks, and do not protect against direct API invocations bypassing the proxy.",
+      "D": "Cloud NAT and firewall rules filter network-level IP packets, but do not understand or restrict Google API requests directed at external public buckets."
     },
-    "gcloudCommand": "gcloud access-context-manager perimeters create cde_perimeter --title='PCI-DSS CDE Perimeter' --resources='projects/123456789012' --restricted-services='storage.googleapis.com,bigquery.googleapis.com' --policy=9876543210",
-    "architectureComponents": [
-      "VPC Service Controls",
-      "Cloud Storage",
-      "BigQuery",
-      "Cloud IAM"
-    ],
-    "officialDocUrl": "https://cloud.google.com/vpc-service-controls/docs/overview"
+    "officialDocUrl": "https://cloud.google.com/vpc-service-controls/docs/overview",
+    "difficulty": "hard",
+    "blockId": "BLOCK-6"
   },
   {
     "id": "ACE-D3-001",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Compute Engine Instance Deployment & Automation",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Deploying Compute Engine Instances with Startup Scripts and Custom Metadata",
-    "scenario": "You need to deploy a Compute Engine VM named `web-prod-1` in zone `us-central1-a` attached to custom subnet `frontend-sub`. The VM must automatically execute a provisioning shell script located locally at `./bootstrap.sh` upon its first boot. Which gcloud command should you execute?",
-    "keywords": [
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "conceptos": [
       "Compute Engine",
-      "gcloud compute instances create",
-      "startup-script",
-      "Metadata",
-      "Subnet"
+      "gcloud CLI",
+      "Startup Scripts",
+      "Instance Deployment"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Deploying Compute Engine Instances with Startup Scripts and Custom Metadata",
+    "scenario": "You need to deploy a new Compute Engine virtual machine named web-prod-1 in zone us-central1-a on subnet frontend-sub. The instance must automatically execute a local initialization script ./bootstrap.sh during its initial operating system startup. Which gcloud command should you run to deploy this instance?",
     "options": [
       {
         "letter": "A",
@@ -5675,511 +5584,468 @@
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances start web-prod-1 --metadata=bootstrap=./bootstrap.sh"
+        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --metadata=startup-script=./bootstrap.sh"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --script=./bootstrap.sh"
+        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --startup-script-file=./bootstrap.sh"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --metadata=run=./bootstrap.sh"
+        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --guest-attributes=run-script=./bootstrap.sh"
       }
     ],
     "correct": "A",
-    "explanation": "The `--metadata-from-file` flag with key `startup-script` passes a local shell script file to the Compute Engine instance metadata service, which executes automatically with root privileges upon instance startup.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The --metadata-from-file=startup-script=./bootstrap.sh flag reads the contents of the local file ./bootstrap.sh and assigns it to the startup-script metadata key on the VM. When the instance boots, the guest environment agent reads this key and executes the script as root.",
     "distractors": {
-      "D": "`--metadata=run=...` sets an arbitrary metadata key `run` which is not recognized by the guest OS startup agent.",
-      "C": "`--script` is not a valid flag on `gcloud compute instances create`.",
-      "B": "`instances start` is used to start an existing stopped instance, not create a new VM."
+      "B": "The --metadata flag passes literal key-value strings; using it with ./bootstrap.sh stores the file path string rather than the script contents.",
+      "C": "--startup-script-file is not a valid flag for gcloud compute instances create.",
+      "D": "Guest attributes are for VM state storage, not automated boot script execution, and --guest-attributes does not execute scripts."
     },
-    "gcloudCommand": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --metadata-from-file=startup-script=./bootstrap.sh",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/startup-scripts/linux"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instances/startup-scripts/linux",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-002",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "GKE Private Cluster Deployment",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Deploying a Private GKE Cluster with Master Authorized Networks",
-    "scenario": "You are deploying a hardened production Google Kubernetes Engine (GKE) cluster in region `us-central1`. Security mandates: 1) Worker nodes must have private internal IP addresses only. 2) The Kubernetes API control plane must not be accessible to public internet scans. 3) Only corporate bastion jump hosts from CIDR `10.240.0.0/28` can reach the master API endpoint. What command creates this cluster?",
-    "keywords": [
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
       "GKE",
       "Private Cluster",
       "Master Authorized Networks",
-      "enable-private-nodes",
-      "CIDR"
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Deploying a Private GKE Cluster with Master Authorized Networks",
+    "scenario": "You are deploying a security-hardened Google Kubernetes Engine (GKE) cluster named prod-k8s in region us-central1. The cluster worker nodes must have private IP addresses only, the control plane must disable public internet access, and control plane management must be restricted to bastion hosts in CIDR 10.240.0.0/28. Which command should you run?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr=172.16.0.0/28 --enable-master-authorized-networks --master-authorized-networks=10.240.0.0/28"
+        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-master-authorized-networks --master-authorized-networks=10.240.0.0/28 --no-enable-ip-alias --async"
       },
       {
         "letter": "B",
-        "text": "gcloud container clusters create prod-k8s --zone=us-central1-a --disable-ip-alias"
+        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr=172.16.0.0/28 --master-authorized-networks=10.240.0.0/28"
       },
       {
         "letter": "C",
-        "text": "gcloud container clusters create prod-k8s --public-cluster --master-authorized-networks=0.0.0.0/0"
+        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --master-ipv4-cidr=172.16.0.0/28 --master-authorized-networks=10.240.0.0/28 --no-private-endpoint --quiet"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create prod-k8s-master --private-ip-only"
+        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --master-ipv4-cidr=172.16.0.0/28 --master-authorized-networks=10.240.0.0/28 --public-endpoint-only --async"
       }
     ],
-    "correct": "A",
-    "explanation": "Deploying a fully private GKE cluster requires `--enable-private-nodes` (private worker nodes), `--enable-private-endpoint` (disables public master endpoint), `--master-ipv4-cidr` (allocates a /28 CIDR for the Google-managed master plane), and `--enable-master-authorized-networks` (whitelists management CIDRs).",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Creating a private GKE cluster with private endpoints requires --enable-private-nodes (private worker nodes), --enable-private-endpoint (prevents public access to the Kubernetes API control plane), --master-ipv4-cidr (allocates an internal /28 range for the Google-managed control plane), and --master-authorized-networks (whitelists corporate CIDRs).",
     "distractors": {
-      "B": "Private clusters require VPC-native Alias IPs; disabling IP alias prevents private cluster creation.",
-      "D": "GKE master nodes are managed by Google Cloud and cannot be created via `gcloud compute instances create`.",
-      "C": "Public clusters assign external IPs to nodes and master-authorized-networks of 0.0.0.0/0 permits public internet access."
+      "A": "Private GKE clusters strictly require VPC-native Alias IP networking; using --no-enable-ip-alias causes cluster creation to fail.",
+      "C": "Specifying --no-private-endpoint leaves the Kubernetes API control plane exposed to public internet endpoints.",
+      "D": "--public-endpoint-only is an invalid flag that would contradict the requirement to disable public control plane access."
     },
-    "gcloudCommand": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr=172.16.0.0/28 --enable-master-authorized-networks --master-authorized-networks=10.240.0.0/28",
-    "architectureComponents": [
-      "Google Kubernetes Engine (GKE)",
-      "Virtual Private Cloud (VPC)"
-    ],
-    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters"
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters",
+    "difficulty": "hard",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-003",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Cloud Run Deployment & Ingress Settings",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Deploying a Serverless Container on Cloud Run with Least Privilege Ingress",
-    "scenario": "You have built a container image `gcr.io/my-corp/order-api:v1` for an internal order-processing service. You need to deploy this service to Cloud Run in `us-east4` such that it can ONLY receive traffic from internal VPC resources or Cloud Load Balancing, and is blocked from direct public internet invocations. Which command should you run?",
-    "keywords": [
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "conceptos": [
       "Cloud Run",
-      "Ingress Internal",
-      "Serverless",
-      "Security",
-      "Container Deployment"
+      "Ingress Controls",
+      "Internal Ingress",
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Deploying a Serverless Container on Cloud Run with Least Privilege Ingress",
+    "scenario": "You have packaged an internal ordering service into a container image us-docker.pkg.dev/my-proj/app-repo/order-api:v1. You need to deploy this container to Cloud Run in region us-east4 such that it accepts traffic ONLY from internal VPC clients and Cloud Load Balancing, while completely blocking direct public internet requests. Which command should you run?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=internal-and-cloud-load-balancing"
+        "text": "gcloud run deploy order-api --image=us-docker.pkg.dev/my-proj/app-repo/order-api:v1 --region=us-east4 --ingress=all --no-allow-unauthenticated"
       },
       {
         "letter": "B",
-        "text": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=all --allow-unauthenticated"
+        "text": "gcloud run deploy order-api --image=us-docker.pkg.dev/my-proj/app-repo/order-api:v1 --region=us-east4 --ingress=internal --vpc-egress=all-traffic --quiet"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create order-api --image=gcr.io/my-corp/order-api:v1"
+        "text": "gcloud run deploy order-api --image=us-docker.pkg.dev/my-proj/app-repo/order-api:v1 --region=us-east4 --ingress=internal-and-cloud-load-balancing"
       },
       {
         "letter": "D",
-        "text": "gcloud app deploy --image=gcr.io/my-corp/order-api:v1"
+        "text": "gcloud run deploy order-api --image=us-docker.pkg.dev/my-proj/app-repo/order-api:v1 --region=us-east4 --ingress=private --network=internal-vpc-net"
       }
     ],
-    "correct": "A",
-    "explanation": "Cloud Run supports `--ingress` settings: `all` (default, public internet), `internal` (VPC/Direct VPC egress only), and `internal-and-cloud-load-balancing` (allows traffic from internal VPCs and Cloud Load Balancing while rejecting direct public internet requests).",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The --ingress=internal-and-cloud-load-balancing setting on Cloud Run restricts incoming traffic so that the service can only be reached by resources within the same VPC network (or VPC Service Controls perimeter) and external/internal Cloud Load Balancers, blocking direct public internet requests to the *.run.app URL.",
     "distractors": {
-      "B": "`--ingress=all --allow-unauthenticated` exposes the microservice directly to the public internet.",
-      "D": "App Engine does not deploy raw GCR container images using `gcloud app deploy` without app.yaml.",
-      "C": "Compute Engine instance creation is for VMs, not fully managed serverless Cloud Run services."
+      "A": "Setting --ingress=all allows incoming requests directly from the public internet, relying solely on IAM authentication rather than network perimeter isolation.",
+      "B": "Setting --ingress=internal permits traffic only from VPC networks and blocks traffic routed through external Application Load Balancers.",
+      "D": "--ingress=private is not a valid ingress option for gcloud run deploy (the valid values are all, internal, and internal-and-cloud-load-balancing)."
     },
-    "gcloudCommand": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=internal-and-cloud-load-balancing",
-    "architectureComponents": [
-      "Cloud Run"
-    ],
-    "officialDocUrl": "https://cloud.google.com/run/docs/securing/ingress"
+    "officialDocUrl": "https://cloud.google.com/run/docs/securing/ingress",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-004",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "GKE Workload Identity Implementation",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Configuring Workload Identity Binding for Kubernetes Service Accounts",
-    "scenario": "A Kubernetes Deployment running in GKE namespace `backend` needs to read objects from a Cloud Storage bucket `corp-data-vault`. To avoid static JSON keys, you enabled Workload Identity on the GKE cluster. You created a Google IAM Service Account `gcs-reader@corp.iam.gserviceaccount.com` with Storage Object Viewer role, and a Kubernetes Service Account (KSA) `ksa-gcs` in namespace `backend`. What IAM binding must you apply?",
-    "keywords": [
-      "Workload Identity",
-      "roles/iam.workloadIdentityUser",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
       "GKE",
-      "KSA",
-      "Cloud Storage"
+      "Workload Identity",
+      "IAM Roles",
+      "Kubernetes Service Account"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Configuring Workload Identity Binding for Kubernetes Service Accounts",
+    "scenario": "A containerized workload in GKE namespace backend needs to read objects from Cloud Storage using a Google Service Account gsa-storage@my-proj.iam.gserviceaccount.com. Workload Identity is enabled on the cluster. You have created a Kubernetes Service Account ksa-gcs in namespace backend. Which two steps must you perform to link these identities? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "Create a JSON key for gcs-reader and mount it as a Kubernetes Secret in the Pod."
+        "text": "Generate a private JSON key for the GSA and mount it as a volume secret inside the application Pods."
       },
       {
         "letter": "B",
-        "text": "Grant roles/owner to ksa-gcs at the project level."
+        "text": "Grant roles/iam.workloadIdentityUser to member serviceAccount:my-proj.svc.id.goog[backend/ksa-gcs] on the GSA."
       },
       {
         "letter": "C",
-        "text": "Set the Cloud Storage bucket ACL to public read."
+        "text": "Grant roles/iam.serviceAccountTokenCreator to the default Compute Engine service account on the project."
       },
       {
         "letter": "D",
-        "text": "Grant roles/iam.workloadIdentityUser to the member 'serviceAccount:corp.svc.id.goog[backend/ksa-gcs]' on the Google Service Account gcs-reader@corp.iam.gserviceaccount.com."
+        "text": "Add the annotation iam.gke.io/gcp-service-account=gsa-storage@my-proj.iam.gserviceaccount.com to the ksa-gcs KSA."
+      },
+      {
+        "letter": "E",
+        "text": "Grant roles/storage.objectViewer to member user:backend-ksa-gcs@kubernetes.internal at the project IAM level."
       }
     ],
-    "correct": "D",
-    "explanation": "GKE Workload Identity bridges Kubernetes identities to GCP IAM. Binding `roles/iam.workloadIdentityUser` to `serviceAccount:<PROJECT_ID>.svc.id.goog[<NAMESPACE>/<KSA_NAME>]` on the target Google IAM Service Account authorizes the Kubernetes Pod to assume the GCP identity automatically.",
-    "distractors": {
-      "C": "Making the bucket public exposes sensitive data to the world.",
-      "B": "Kubernetes service accounts cannot be granted GCP IAM roles directly without Workload Identity pool bindings.",
-      "A": "Mounting JSON keys as secrets bypasses Workload Identity and reintroduces static key compromise risks."
-    },
-    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding gcs-reader@corp.iam.gserviceaccount.com --role=roles/iam.workloadIdentityUser --member='serviceAccount:corp.svc.id.goog[backend/ksa-gcs]'",
-    "architectureComponents": [
-      "Google Kubernetes Engine (GKE)",
-      "Cloud IAM",
-      "Cloud Storage"
+    "correct": [
+      "B",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "GKE Workload Identity links a Kubernetes Service Account (KSA) to a Google Service Account (GSA) through two required actions: (1) Granting the roles/iam.workloadIdentityUser IAM role on the GSA to the principal serviceAccount:<PROJECT_ID>.svc.id.goog[<NAMESPACE>/<KSA_NAME>], and (2) Annotating the KSA metadata with iam.gke.io/gcp-service-account=<GSA_EMAIL>.",
+    "distractors": {
+      "A": "Mounting static JSON private keys reintroduces security vulnerabilities and defeats the purpose of keyless Workload Identity.",
+      "C": "Granting token creation permissions to the node default service account grants excessive cluster-wide privilege to all node workloads.",
+      "E": "GCP IAM policies do not recognize raw Kubernetes service account names directly without Workload Identity pool principal notation."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+    "difficulty": "hard",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-005",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Cloud SQL Deployment & HA Configuration",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Deploying Regional Cloud SQL Instance with High Availability and Automated Backups",
-    "scenario": "You are deploying a production MySQL 8.0 instance on Cloud SQL in region `europe-west3`. The database must have High Availability (regional failover standby), 4 vCPUs, 16 GB RAM, SSD storage, and daily automated backups starting at 03:00 UTC with point-in-time recovery. Which command accomplishes this?",
-    "keywords": [
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
       "Cloud SQL",
-      "MySQL 8.0",
-      "Regional HA",
-      "Backups",
-      "PITR"
+      "MySQL",
+      "High Availability",
+      "Automated Backups",
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Deploying Regional Cloud SQL Instance with High Availability and Automated Backups",
+    "scenario": "You need to deploy a production MySQL 8.0 database instance named prod-mysql-db on Cloud SQL in region europe-west3. The database must have High Availability (regional standby failover), machine tier db-custom-4-16384, SSD storage, automated daily backups starting at 03:00 UTC, and point-in-time recovery enabled. Which command should you execute?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create prod-mysql-db --image-family=mysql-8"
+        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --backup-start-time=03:00 --enable-point-in-time-recovery"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-n1-standard-1 --availability-type=ZONAL"
+        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=ZONAL --backup-start-time=03:00 --enable-point-in-time-recovery --async"
       },
       {
         "letter": "C",
-        "text": "gcloud spanner instances create prod-mysql-db --config=regional-europe-west3"
+        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --maintenance-window-hour=03:00 --no-backup --quiet"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --backup-start-time=03:00 --enable-point-in-time-recovery --storage-type=SSD"
+        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --replication=SYNCHRONOUS --backup-window=03:00 --async"
       }
     ],
-    "correct": "D",
-    "explanation": "Deploying a production Cloud SQL instance with HA and backups requires `gcloud sql instances create` specifying `--availability-type=REGIONAL`, `--database-version=MYSQL_8_0`, `--tier=db-custom-4-16384`, `--backup-start-time=03:00`, and `--enable-point-in-time-recovery`.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "In gcloud sql instances create, configuring regional high availability with automated backups and PITR requires --availability-type=REGIONAL, --backup-start-time=03:00, --enable-point-in-time-recovery, and the appropriate --database-version and --tier parameters.",
     "distractors": {
-      "A": "Compute Engine instance creation provisions an unmanaged VM, not managed Cloud SQL.",
-      "C": "Cloud Spanner is a different database engine and does not run native MySQL 8.0.",
-      "B": "ZONAL availability lacks standby regional failover and n1-standard-1 does not meet the 4 vCPU / 16GB RAM spec."
+      "B": "--availability-type=ZONAL deploys a single-zone instance without an automatic regional failover standby replica.",
+      "C": "--no-backup disables automated daily backups, which also prevents point-in-time recovery from functioning.",
+      "D": "--replication=SYNCHRONOUS and --backup-window are invalid flags for gcloud sql instances create."
     },
-    "gcloudCommand": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --backup-start-time=03:00 --enable-point-in-time-recovery --storage-type=SSD",
-    "architectureComponents": [
-      "Cloud SQL"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/create-instance"
+    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/create-instance",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-006",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Cloud Functions Gen 2 Eventarc Storage Trigger",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Deploying Event-Driven Cloud Functions Gen 2 Triggered by Cloud Storage Uploads",
-    "scenario": "You are implementing an image processing pipeline. Whenever a new JPEG image object is finalized and uploaded to Cloud Storage bucket `gs://raw-user-photos`, an automated Python 3.11 Cloud Function must immediately resize the image and generate a thumbnail. Which gcloud command deploys this function?",
-    "keywords": [
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "conceptos": [
       "Cloud Functions",
-      "Gen 2",
+      "2nd gen",
+      "Cloud Storage",
       "Eventarc",
-      "Cloud Storage Trigger",
-      "google.cloud.storage.object.v1.finalized"
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Deploying Event-Driven Cloud Functions Gen 2 Triggered by Cloud Storage Uploads",
+    "scenario": "You are deploying an event-driven Python 3.11 Cloud Function named process-photo in region us-central1 using Cloud Functions (2nd gen). The function must execute automatically whenever a new image object is created or overwritten in Cloud Storage bucket raw-user-photos. Which command should you run to deploy this function?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --trigger-event-filters='type=google.cloud.storage.object.v1.finalized' --trigger-event-filters='bucket=raw-user-photos' --entry-point=handle_photo_upload"
+        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --source=. --trigger-http --allow-unauthenticated --set-env-vars=STORAGE_BUCKET=raw-user-photos --ingress-settings=all --quiet"
       },
       {
         "letter": "B",
-        "text": "gcloud run deploy process-photo --trigger-cron='* * * * *'"
+        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --source=. --trigger-event-filters=type=google.cloud.storage.object.v1.finalized --trigger-event-filters=bucket=raw-user-photos"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create process-photo --storage-trigger=raw-user-photos"
+        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --source=. --trigger-bucket=raw-user-photos --trigger-event=google.storage.object.finalize --set-env-vars=ENV=production --async"
       },
       {
         "letter": "D",
-        "text": "gcloud functions deploy process-photo --trigger-http --allow-unauthenticated"
+        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --source=. --trigger-topic=raw-user-photos-topic --trigger-event=providers/cloud.pubsub/eventTypes/topic.publish --quiet"
       }
     ],
-    "correct": "A",
-    "explanation": "Cloud Functions (2nd gen) leverages Eventarc for event-driven triggers. Specifying `--gen2`, `--trigger-event-filters='type=google.cloud.storage.object.v1.finalized'`, and `--trigger-event-filters='bucket=raw-user-photos'` wires the storage upload event directly to the function handler.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Functions (2nd gen) uses Eventarc for event-driven routing. To trigger a function on Cloud Storage object creation, you specify --gen2 along with the Eventarc event filters --trigger-event-filters=type=google.cloud.storage.object.v1.finalized and --trigger-event-filters=bucket=raw-user-photos.",
     "distractors": {
-      "D": "`--trigger-http` configures an HTTP endpoint, not an automated storage event trigger.",
-      "B": "Cloud Run does not accept `--trigger-cron` syntax directly in `gcloud run deploy`.",
-      "C": "Compute Engine instances do not support direct native Cloud Storage event triggers."
+      "A": "--trigger-http configures an HTTP endpoint for synchronous web requests, not an automated asynchronous Cloud Storage event trigger.",
+      "C": "--trigger-bucket is 1st gen syntax and is not used for configuring Eventarc event triggers in Cloud Functions (2nd gen).",
+      "D": "--trigger-topic with 1st gen provider syntax triggers on Pub/Sub topics rather than direct Cloud Storage object finalization events."
     },
-    "gcloudCommand": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --trigger-event-filters='type=google.cloud.storage.object.v1.finalized' --trigger-event-filters='bucket=raw-user-photos' --entry-point=handle_photo_upload",
-    "architectureComponents": [
-      "Cloud Functions",
-      "Cloud Storage",
-      "Eventarc"
-    ],
-    "officialDocUrl": "https://cloud.google.com/functions/docs/calling/storage"
+    "officialDocUrl": "https://cloud.google.com/functions/docs/calling/storage",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-007",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "VPC Network & Subnet Deployment",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Creating a Custom VPC Network and Subnets via gcloud CLI",
-    "scenario": "You are establishing a new landing zone in project `corp-net-101`. You must create a custom mode VPC network named `enterprise-vpc` and provision a subnet `app-subnet-uscentral1` in `us-central1` with CIDR block `10.10.0.0/24` and Private Google Access enabled. Which sequence of commands should you run?",
-    "keywords": [
-      "VPC",
-      "Custom Mode",
-      "Subnet Creation",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.5",
+    "subsectionName": "Deploying and implementing networking resources",
+    "conceptos": [
+      "VPC Network",
+      "Subnets",
       "Private Google Access",
-      "gcloud compute networks"
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Creating a Custom VPC Network and Subnets via gcloud CLI",
+    "scenario": "You are building a new landing zone in project corp-net-101. You must create a custom mode VPC network named enterprise-vpc and provision a subnet app-subnet-uscentral1 in us-central1 with CIDR block 10.10.0.0/24 and Private Google Access enabled. Which two commands should you run? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute subnets create app-subnet-uscentral1 --network=default --cidr=10.10.0.0/24"
+        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=custom --bgp-routing-mode=regional --description=enterprise-vpc-network"
       },
       {
         "letter": "B",
-        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=auto"
+        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=auto --bgp-routing-mode=regional --description=enterprise-vpc-network"
       },
       {
         "letter": "C",
-        "text": "gcloud organizations networks create enterprise-vpc --range=10.10.0.0/24"
+        "text": "gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access"
       },
       {
         "letter": "D",
-        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=custom && gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access"
+        "text": "gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --no-enable-private-ip-google-access"
+      },
+      {
+        "letter": "E",
+        "text": "gcloud compute networks subnets create app-subnet-uscentral1 --network=default --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access"
       }
     ],
-    "correct": "D",
-    "explanation": "Creating a custom VPC network requires `gcloud compute networks create <name> --subnet-mode=custom`. Subnets are then added with `gcloud compute networks subnets create <subnet_name> --network=<net> --region=<region> --range=<cidr> --enable-private-ip-google-access`.",
-    "distractors": {
-      "C": "`gcloud organizations networks create` is a non-existent command.",
-      "B": "`--subnet-mode=auto` creates default automatic /20 subnets in every region, violating the custom IP architecture.",
-      "A": "`gcloud compute subnets create` is invalid syntax; the command group is `compute networks subnets`."
-    },
-    "gcloudCommand": "gcloud compute networks create enterprise-vpc --subnet-mode=custom && gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)"
+    "correct": [
+      "A",
+      "C"
     ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/create-modify-vpc-networks"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Creating a custom VPC network and provisioning a private subnet requires two steps: (1) gcloud compute networks create enterprise-vpc --subnet-mode=custom, which prevents automatic subnet creation, and (2) gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access, which creates the subnet in us-central1 with Private Google Access enabled.",
+    "distractors": {
+      "B": "--subnet-mode=auto creates default automatic /20 subnets in every Google Cloud region, violating custom IP schema requirements.",
+      "D": "Using --no-enable-private-ip-google-access leaves Private Google Access disabled on the subnet.",
+      "E": "Attaching the subnet to --network=default places the subnet in the default legacy VPC rather than the new enterprise-vpc."
+    },
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/create-modify-vpc-networks",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-008",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Compute Engine Instance Template Creation",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Creating an Instance Template for Auto-Scaling Managed Instance Groups",
-    "scenario": "You are preparing an automated scaling architecture for a microservice. You need to create a Compute Engine Instance Template named `api-server-template` specifying an `e2-standard-4` machine type, Debian 11 boot disk of 50 GB balanced SSD, network tag `api-server`, and service account `api-sa@corp.iam.gserviceaccount.com`. Which command creates the template?",
-    "keywords": [
-      "Instance Template",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "conceptos": [
       "Compute Engine",
-      "e2-standard-4",
-      "pd-balanced",
-      "Service Account"
+      "Instance Templates",
+      "Managed Instance Groups",
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Creating an Instance Template for Auto-Scaling Managed Instance Groups",
+    "scenario": "You are configuring automated scaling for a backend microservice. You need to create a Compute Engine Instance Template named api-server-template specifying machine type e2-standard-4, boot disk of 50 GB pd-balanced, network tag api-server, and service account api-sa@corp.iam.gserviceaccount.com. Which command creates this template?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --image-family=debian-11 --image-project=debian-cloud --boot-disk-size=50GB --boot-disk-type=pd-balanced --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com --scopes=cloud-platform"
+        "text": "gcloud compute instance-groups managed create api-server-template --region=us-central1 --size=3 --template=api-server-template --service-account=api-sa@corp.iam.gserviceaccount.com"
       },
       {
         "letter": "B",
-        "text": "gcloud compute disks snapshot create api-server-template --type=template"
+        "text": "gcloud compute instances create api-server-template --zone=us-central1-a --machine-type=e2-standard-4 --boot-disk-type=pd-balanced --service-account=api-sa@corp.iam.gserviceaccount.com"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create api-server-template --template-mode=true"
+        "text": "gcloud compute machine-images create api-server-template --source-instance=api-server-vm --source-instance-zone=us-central1-a --service-account=api-sa@corp.iam.gserviceaccount.com"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instance-groups managed create api-server-template --size=5"
+        "text": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --boot-disk-type=pd-balanced --boot-disk-size=50GB --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com"
       }
     ],
-    "correct": "A",
-    "explanation": "`gcloud compute instance-templates create` defines the instance blueprint (machine type, image family, disk type/size, network tags, service account, and OAuth scopes) used by Managed Instance Groups to instantiate identical VM instances.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "gcloud compute instance-templates create is the dedicated command to create an instance template (a non-running VM blueprint defining machine type, boot disk, network tags, service account, and metadata) used by Managed Instance Groups for automated scaling and rolling deployments.",
     "distractors": {
-      "D": "`instance-groups managed create` creates the MIG itself, which requires an existing template reference.",
-      "B": "`disks snapshot` creates persistent disk point-in-time backups, not instance templates.",
-      "C": "`--template-mode` is not a valid flag on `gcloud compute instances create`."
+      "A": "gcloud compute instance-groups managed create creates the Managed Instance Group itself, which consumes an existing template rather than creating one.",
+      "B": "gcloud compute instances create creates an individual, standalone VM instance, not a reusable template for automated group management.",
+      "C": "gcloud compute machine-images create captures a machine image from an existing running VM rather than provisioning an instance template from base specs."
     },
-    "gcloudCommand": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --image-family=debian-11 --image-project=debian-cloud --boot-disk-size=50GB --boot-disk-type=pd-balanced --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com --scopes=cloud-platform",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-templates/create-instance-templates"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-templates/create-instance-templates",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-009",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Compute Engine MIG Rolling Action Start-Update",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Executing a Zero-Downtime Rolling Update on a Managed Instance Group",
-    "scenario": "You have updated your application instance template to `web-template-v2`. You need to deploy this new version across an active Managed Instance Group (MIG) named `web-mig` in region `us-central1`. The deployment must proceed gradually, replacing 20% of instances at a time with 0 allowed downtime during the rollout. Which command executes the rolling update?",
-    "keywords": [
-      "MIG Rolling Update",
-      "start-update",
-      "max-surge",
-      "max-unavailable",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "conceptos": [
+      "Compute Engine",
+      "Managed Instance Groups",
+      "Rolling Update",
       "Zero Downtime"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Executing a Zero-Downtime Rolling Update on a Managed Instance Group",
+    "scenario": "You updated an instance template to web-template-v2 for a production web application. You need to deploy this new version across an active regional Managed Instance Group (MIG) named web-mig in region us-central1. The rollout must maintain 100% capacity at all times with 0 allowed downtime during the update. Which command should you run?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances reset-all --group=web-mig --template=web-template-v2"
-      },
-      {
-        "letter": "B",
         "text": "gcloud compute instance-groups managed rolling-action start-update web-mig --region=us-central1 --version=template=web-template-v2 --max-surge=20% --max-unavailable=0%"
       },
       {
+        "letter": "B",
+        "text": "gcloud compute instance-groups managed rolling-action start-update web-mig --region=us-central1 --version=template=web-template-v2 --max-surge=0% --max-unavailable=20%"
+      },
+      {
         "letter": "C",
-        "text": "gcloud compute instance-groups managed delete web-mig && gcloud compute instance-groups managed create web-mig --template=web-template-v2"
+        "text": "gcloud compute instance-groups managed set-instance-template web-mig --region=us-central1 --template=web-template-v2 --all-instances-immediate-restart"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instance-groups managed set-template web-mig --force-restart"
+        "text": "gcloud compute instance-groups managed replace-instances web-mig --region=us-central1 --template=web-template-v2 --replacement-method=substitute-all"
       }
     ],
-    "correct": "B",
-    "explanation": "`gcloud compute instance-groups managed rolling-action start-update` initiates a gradual rolling deployment. Setting `--max-surge=20%` (creates new VMs first) and `--max-unavailable=0%` ensures that full capacity is maintained throughout the update with zero downtime.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The gcloud compute instance-groups managed rolling-action start-update command initiates an automated rolling update. Setting --max-unavailable=0% ensures that no existing instances are taken offline until new healthy instances are running, and --max-surge=20% allows the MIG to provision temporary extra instances to maintain full service capacity.",
     "distractors": {
-      "C": "Deleting the MIG causes complete outage and destroys active customer sessions.",
-      "A": "`instances reset-all` is non-existent syntax.",
-      "D": "`set-template` only updates the template pointer for future instances; it does not automatically roll out changes to existing VMs without `rolling-action`."
+      "B": "Setting --max-unavailable=20% allows up to 20% of instances to be stopped before replacements become healthy, which reduces service capacity and violates zero-downtime requirements.",
+      "C": "set-instance-template only updates the default template pointer for future instances; --all-instances-immediate-restart is not a valid flag and does not perform a safe rolling rollout.",
+      "D": "--replacement-method=substitute-all is non-existent CLI syntax and replace-instances restarts instances simultaneously rather than managing surge and availability."
     },
-    "gcloudCommand": "gcloud compute instance-groups managed rolling-action start-update web-mig --region=us-central1 --version=template=web-template-v2 --max-surge=20% --max-unavailable=0%",
-    "architectureComponents": [
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-010",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D3",
-    "domainName": "Deploying and implementing a cloud solution",
-    "subtopic": "Cloud Build Container Compilation & Storage",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Building Container Images with Google Cloud Build and Artifact Registry",
-    "scenario": "You have written a Dockerfile in your local application repository. You need to build the container image using Google's serverless build infrastructure and store the resulting artifact in Google Artifact Registry repository `us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0`. Which command executes this build?",
-    "keywords": [
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.6",
+    "subsectionName": "Implementing resources through infrastructure as code",
+    "conceptos": [
       "Cloud Build",
       "Artifact Registry",
-      "gcloud builds submit",
-      "Docker Image"
+      "Container Images",
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Building Container Images with Google Cloud Build and Artifact Registry",
+    "scenario": "You have created a Dockerfile in your local application directory. You need to build the container image using Google Cloud's managed build infrastructure and push the resulting image to Artifact Registry repository us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 without running Docker locally. Which command should you execute?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud container images compile --source=. --repo=app-repo"
+        "text": "gcloud artifacts docker images push us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 --source=. --build-remote --async"
       },
       {
         "letter": "B",
-        "text": "docker build . && gsutil cp image.tar gs://my-proj-artifacts/"
+        "text": "gcloud container images build-and-push --repository=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 --source=. --quiet"
       },
       {
         "letter": "C",
-        "text": "gcloud artifacts docker push us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0"
+        "text": "gcloud builds submit --tag=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 --region=us-central1 ."
       },
       {
         "letter": "D",
-        "text": "gcloud builds submit --tag=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 ."
+        "text": "gcloud artifacts repositories create-image us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 --source-context=. --async"
       }
     ],
-    "correct": "D",
-    "explanation": "`gcloud builds submit --tag=<IMAGE_URL> .` compresses the local directory, uploads it to Cloud Build, executes `docker build` remotely on managed build workers, and automatically pushes the final image to the designated Artifact Registry repository.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The gcloud builds submit --tag=<IMAGE_TAG> . command packages the local source directory, uploads it to Cloud Storage, executes the build steps inside a Google Cloud Build managed worker environment, and automatically uploads the output image to the specified Artifact Registry repository.",
     "distractors": {
-      "A": "`gcloud container images compile` is non-existent CLI syntax.",
-      "B": "Building locally requires local Docker daemon overhead and copying tarballs to Cloud Storage is not an OCI container registry.",
-      "C": "`gcloud artifacts docker push` requires local Docker daemon authentication and manual prior build."
+      "A": "gcloud artifacts docker images push is for pushing locally built Docker images using the local Docker client, not for building remote images with Cloud Build.",
+      "B": "gcloud container images build-and-push is a non-existent gcloud command group.",
+      "D": "gcloud artifacts repositories create-image is non-existent syntax (repositories are created with gcloud artifacts repositories create)."
     },
-    "gcloudCommand": "gcloud builds submit --tag=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 .",
-    "architectureComponents": [
-      "Cloud Build",
-      "Artifact Registry"
-    ],
-    "officialDocUrl": "https://cloud.google.com/build/docs/building/build-containers"
+    "officialDocUrl": "https://cloud.google.com/build/docs/building/build-containers",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D3-011",
