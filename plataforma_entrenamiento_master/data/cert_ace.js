@@ -1,1559 +1,1205 @@
-/**
- * Google Cloud Associate Cloud Engineer (ACE) Question Bank
- * 300 Tactical High-Fidelity Practice Questions
- * 6 Full-Length Blocks (50 Qs / block)
- */
-if (typeof window === 'undefined') {
-  global.window = {};
-}
+(function (global) {
+  'use strict';
 
-window.GCP_ACE_QUESTIONS = [
+  const GCP_ACE_QUESTIONS = [
   {
     "id": "ACE-D1-001",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "IAM Organization Hierarchy & Security Reviewer",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Auditing Organization IAM Policies Across All Projects",
-    "scenario": "Your organization manages over 80 GCP projects structured under departmental folders. The central compliance and security audit team requires read-only visibility into IAM policies, asset metadata, and audit configurations across all existing and future projects. You must grant access following the principle of least privilege and minimizing operational maintenance overhead.",
-    "keywords": [
-      "IAM Hierarchy",
-      "Least Privilege",
-      "Google Groups",
-      "Organization Level",
-      "Security Reviewer"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "Resource Hierarchy",
+      "IAM Policies",
+      "Cloud Asset Inventory"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Auditing Organization IAM Policies Across All Projects",
+    "scenario": "You need to generate an inventory report of all IAM policy bindings across 150 projects in your Google Cloud organization. You want to retrieve this metadata efficiently with minimal API rate-limiting issues and without iterating through each project individually with custom scripts. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a Google Group containing all security auditors and grant the group the roles/iam.securityReviewer role at the Organization node.",
-        "isTrap": false
+        "text": "Run gcloud projects get-iam-policy sequentially across all 150 individual project IDs."
       },
       {
         "letter": "B",
-        "text": "Assign the roles/viewer role to each auditor's corporate email address on every project individually.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Assign roles/viewer at the organization level and download the IAM console CSV export."
       },
       {
         "letter": "C",
-        "text": "Create a service account with roles/owner at the Organization level and distribute its downloaded private JSON key to the auditors.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Use Cloud Asset Inventory export to analyze IAM policies across the organization hierarchy."
       },
       {
         "letter": "D",
-        "text": "Assign the roles/iam.securityAdmin role to individual auditor accounts at the root Organization level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Query Cloud Logging for recent SetIamPolicy audit log entries across all active folders."
       }
     ],
-    "correct": "A",
-    "explanation": "Granting roles/iam.securityReviewer to a Google Group at the Organization node allows inherited read-only security auditing across all existing and future child folders and projects. Using Google Groups eliminates manual per-user permission management.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Asset Inventory provides a centralized inventory service that allows you to export all resource metadata and IAM policies across an entire organization, folder, or project hierarchy in a single operation without making per-resource API calls.",
     "distractors": {
-      "A": "Correct. Inherited at the Organization node, roles/iam.securityReviewer provides dedicated read-only security visibility without management overhead.",
-      "B": "Primitive roles/viewer grants excessive data inspection permissions and project-by-project assignment fails to cover newly created projects automatically.",
-      "C": "Service accounts are designed for workloads, not human users. Sharing JSON keys creates severe credential leak risks, and roles/owner violates least privilege.",
-      "D": "roles/iam.securityAdmin grants write/mutation permissions to modify IAM policies, violating least privilege for read-only auditors."
+      "A": "Executing gcloud projects get-iam-policy per project generates excessive API calls, hits rate limits, and requires custom scripting.",
+      "B": "The Cloud Console IAM page does not provide an automated full-hierarchy CSV export across 150 distinct projects.",
+      "D": "Cloud Logging audit logs only capture point-in-time modification events and do not provide a complete point-in-time inventory of all effective policies."
     },
-    "gcloudCommand": "gcloud organizations add-iam-policy-binding 123456789012 --member='group:sec-auditors@example.com' --role='roles/iam.securityReviewer'",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Resource Manager",
-      "Google Cloud Organization"
-    ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/understanding-roles#security-roles"
+    "officialDocUrl": "https://cloud.google.com/asset-inventory/docs/exporting-to-cloud-storage",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-002",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Service Account Security & Impersonation",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Enforcing Keyless Service Account Impersonation for Developers",
-    "scenario": "A software engineering team needs to run automated database migration scripts from their local machines against Cloud SQL in the staging project. Corporate security policy strictly forbids the generation and download of static Service Account JSON keys to engineer laptops. You need to enable developers to execute the scripts securely.",
-    "keywords": [
-      "Service Account Impersonation",
-      "No JSON Keys",
-      "Service Account Token Creator",
-      "gcloud auth"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "Service Accounts",
+      "IAM Roles",
+      "Impersonation",
+      "gcloud CLI"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Enforcing Keyless Service Account Impersonation for Developers",
+    "scenario": "Your organization security policy prohibits downloading service account private JSON keys to local developer workstations. A developer needs to deploy Cloud Functions using the dedicated service account deployer@project-id.iam.gserviceaccount.com. You want to grant them the necessary permissions to authenticate securely using service account impersonation. Which two actions should you take? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "Assign developers the roles/iam.serviceAccountUser role at the project level and instruct them to export GOOGLE_APPLICATION_CREDENTIALS.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create and download a service account JSON key file to the developer workstation."
       },
       {
         "letter": "B",
-        "text": "Create a service account with Cloud SQL Client role, grant developers roles/iam.serviceAccountTokenCreator on that service account, and instruct them to use gcloud with --impersonate-service-account.",
-        "isTrap": false
+        "text": "Grant the developer roles/iam.serviceAccountTokenCreator on the service account."
       },
       {
         "letter": "C",
-        "text": "Generate short-lived JSON keys using gcloud iam service-accounts keys create and configure a cron script to delete them every 24 hours.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant the developer roles/iam.serviceAccountUser at the project resource level."
       },
       {
         "letter": "D",
-        "text": "Grant developers the roles/cloudsql.admin role directly on their user accounts in the staging project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Configure the developer's gcloud CLI using --impersonate-service-account."
+      },
+      {
+        "letter": "E",
+        "text": "Grant the developer roles/iam.workloadIdentityUser on the default GCE account."
       }
     ],
-    "correct": "B",
-    "explanation": "Binding roles/iam.serviceAccountTokenCreator to the developer user/group on the target service account allows them to generate short-lived OAuth 2.0 access tokens and impersonate the service account via gcloud CLI without ever creating or exporting static JSON private keys.",
-    "distractors": {
-      "A": "roles/iam.serviceAccountUser allows attaching the service account to compute resources (e.g., VMs), not generating direct short-lived tokens for local execution.",
-      "B": "Correct. Service Account impersonation via roles/iam.serviceAccountTokenCreator eliminates static credentials and fulfills enterprise security requirements.",
-      "C": "Downloading JSON keys to developer laptops violates the security prohibition, even if scripted deletion is attempted.",
-      "D": "Granting direct admin permissions to developers violates least privilege and bypasses workload-specific identity isolation."
-    },
-    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding migration-sa@proj-staging.iam.gserviceaccount.com --member='group:developers@example.com' --role='roles/iam.serviceAccountTokenCreator'",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Cloud SQL",
-      "Cloud SDK"
+    "correct": [
+      "B",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-overview#impersonation"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Service account impersonation allows users to generate short-lived credentials for a service account without downloading long-lived private keys. The user needs the Service Account Token Creator role (roles/iam.serviceAccountTokenCreator) on the target service account and must pass the --impersonate-service-account flag in gcloud (or set it in gcloud config).",
+    "distractors": {
+      "A": "Downloading JSON private key files violates the corporate security policy prohibiting long-lived local keys.",
+      "C": "The Service Account User role (roles/iam.serviceAccountUser) allows attaching a service account to resources like Compute Engine, but does not permit generating tokens for CLI impersonation.",
+      "E": "Workload Identity User is designed for Kubernetes workloads and external IdPs to assume service accounts, not local gcloud workstation impersonation."
+    },
+    "officialDocUrl": "https://cloud.google.com/iam/docs/impersonating-service-accounts",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-003",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud Billing Budgets & Programmatic Notifications",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Automating Billing Budget Notifications via Pub/Sub",
-    "scenario": "The finance department wants real-time programmatic notifications when cloud spend across the enterprise reaches 50%, 90%, and 100% of the $50,000 monthly budget. When the 100% threshold is exceeded, an automated Cloud Function must disable non-essential compute instances. How should you configure the billing alert pipeline?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.2",
+    "subsectionName": "Managing billing configuration",
+    "conceptos": [
       "Cloud Billing",
-      "Budget Alerts",
-      "Cloud Pub/Sub",
-      "Cloud Functions",
-      "Cost Control"
-    ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
-    "options": [
-      {
-        "letter": "A",
-        "text": "Create a billing budget in the Cloud Console, define threshold rules at 50%, 90%, and 100%, and configure the budget to publish messages to a Cloud Pub/Sub topic connected to your Cloud Function.",
-        "isTrap": false
-      },
-      {
-        "letter": "B",
-        "text": "Write a custom Python script running on a Compute Engine VM that polls gcloud billing budgets list every hour and publishes to Pub/Sub.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
-      },
-      {
-        "letter": "C",
-        "text": "Configure standard email notifications to billing administrators and configure an email parser to trigger Cloud Functions.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
-      },
-      {
-        "letter": "D",
-        "text": "Set up a Cloud Monitoring uptime check that queries the Billing API every 5 minutes and triggers a webhook notification.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
-      }
-    ],
-    "correct": "A",
-    "explanation": "Google Cloud Billing allows linking a budget directly to a Cloud Pub/Sub topic. Whenever a threshold is reached or spend updates occur, Cloud Billing publishes JSON budget status messages to the topic, which can trigger Cloud Functions for automated remediation.",
-    "distractors": {
-      "A": "Correct. Native Pub/Sub integration on Cloud Billing budgets provides immediate, reliable programmatic event delivery to downstream serverless functions.",
-      "B": "Polling the Billing API via a continuous VM introduces infrastructure cost, maintenance overhead, and delayed alerting compared to native budget Pub/Sub pushes.",
-      "C": "Parsing emails is fragile, unstandardized, and introduces unacceptable operational latency compared to direct Pub/Sub topic integration.",
-      "D": "Cloud Monitoring uptime checks verify web endpoint availability, not billing account spend metrics."
-    },
-    "gcloudCommand": "gcloud billing budgets create --billing-account=012345-6789AB-CDEF01 --display-name='Enterprise-Monthly-Budget' --budget-amount=50000USD --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0 --notifications-rule-pubsub-topic='projects/corp-billing/topics/billing-alerts'",
-    "architectureComponents": [
-      "Cloud Billing",
+      "Budgets and Alerts",
       "Cloud Pub/Sub",
       "Cloud Functions"
     ],
-    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/notify"
+    "title": "Automating Billing Budget Notifications via Pub/Sub",
+    "scenario": "You manage a development Google Cloud project with a monthly budget limit of $2,000. If spending reaches 100% of the budget, you must automatically disable billing or cap resources programmatically to prevent further cloud charges without waiting for manual human email triage. What architecture should you implement?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Configure a Cloud Billing budget to publish alerts to a Pub/Sub topic triggering Cloud Functions."
+      },
+      {
+        "letter": "B",
+        "text": "Configure an email alert in Cloud Billing with an automated webhook to the Compute Engine API."
+      },
+      {
+        "letter": "C",
+        "text": "Create a Cloud Monitoring metric alert on billing.googleapis.com to stop active instances."
+      },
+      {
+        "letter": "D",
+        "text": "Configure an Organization Policy with a hard financial quota to terminate running resources."
+      }
+    ],
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloud Billing budgets can be configured to publish programmatic notifications to a Cloud Pub/Sub topic whenever budget thresholds are reached. A Cloud Function subscribed to that Pub/Sub topic can execute automated remediation, such as disabling billing or scaling down instances.",
+    "distractors": {
+      "B": "Cloud Billing email alerts only send notifications to human recipients and cannot directly trigger automated API webhooks without Pub/Sub.",
+      "C": "Cloud Monitoring billing metrics are delayed and not designed for immediate programmatic spend capping.",
+      "D": "Organization Policies control resource configuration and governance rules, not dynamic real-time financial spend thresholds."
+    },
+    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/notify",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-004",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud Billing Export to BigQuery",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Configuring Daily Cloud Billing Export to BigQuery for FinOps Analysis",
-    "scenario": "Your FinOps team needs to perform granular, SQL-based cost analysis, resource-level SKU breakdown, and pricing attribution across 20 distinct projects. You must establish an automated, continuous export of detailed usage billing data into BigQuery with minimal latency and zero custom ETL scripting.",
-    "keywords": [
-      "Billing Export",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.2",
+    "subsectionName": "Managing billing configuration",
+    "conceptos": [
+      "Cloud Billing",
       "BigQuery",
-      "Standard Usage",
-      "Detailed Usage",
+      "Billing Export",
       "FinOps"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Configuring Daily Cloud Billing Export to BigQuery for FinOps Analysis",
+    "scenario": "Your finance team requires historical daily cost breakdown and resource label attribution across all projects in the organization. You need to configure automated, continuous export of detailed Cloud Billing data to BigQuery for analytical SQL reporting. Which two configuration steps must you complete? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "Write a daily Cloud Scheduler job that exports CSV billing reports to Cloud Storage and runs a bq load command into BigQuery.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure a Cloud Storage transfer job to export monthly billing invoice files."
       },
       {
         "letter": "B",
-        "text": "Create a BigQuery dataset in a dedicated billing analysis project, navigate to Billing > Billing Export in the Cloud Console, and enable Detailed usage cost export to that dataset.",
-        "isTrap": false
+        "text": "Create a BigQuery dataset in a dedicated centralized administration project."
       },
       {
         "letter": "C",
-        "text": "Configure a Cloud Logging sink that filters for billing log entries and routes them to a BigQuery dataset.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant the finance analytics team roles/billing.admin on all active projects."
       },
       {
         "letter": "D",
-        "text": "Use the Google Sheets Data Connector to pull billing records daily and stream them into BigQuery tables.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Export Cloud Logging audit logs directly into a multi-region Cloud Spanner DB."
+      },
+      {
+        "letter": "E",
+        "text": "Enable Detailed usage cost export in the Google Cloud Billing export console."
       }
     ],
-    "correct": "B",
-    "explanation": "Google Cloud Billing provides native BigQuery Export. Enabling 'Detailed usage cost export' (and standard usage cost export) automatically streams itemized daily and real-time cost, resource tags, project hierarchy, and SKU metrics into partitioned BigQuery tables natively.",
-    "distractors": {
-      "A": "Building custom Cloud Scheduler CSV export pipelines creates unnecessary maintenance and lacks the real-time continuous streaming of native billing export.",
-      "B": "Correct. Native BigQuery Billing Export provides zero-code, real-time, resource-level data ingestion into BigQuery for automated FinOps SQL querying.",
-      "C": "Cloud Logging does not capture granular monetary SKU cost metrics or itemized pricing calculation details.",
-      "D": "Google Sheets connectors have strict row limits, lack automated schema evolution, and are not suitable for enterprise billing ingestion."
-    },
-    "gcloudCommand": "bq mk --dataset --location=US corp-billing-analytics:gcp_billing_export",
-    "architectureComponents": [
-      "Cloud Billing",
-      "BigQuery",
-      "Resource Manager"
+    "correct": [
+      "B",
+      "E"
     ],
-    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/export-data-bigquery"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "To set up continuous Cloud Billing export to BigQuery, you must first create a target BigQuery dataset in a project, and then enable detailed usage cost export in the Cloud Billing console pointing to that dataset. Detailed export includes SKU-level costs and resource labels.",
+    "distractors": {
+      "A": "Cloud Storage transfer jobs for invoice PDFs do not provide raw, queryable granular billing data with resource label attribution.",
+      "C": "Granting roles/billing.admin gives excessive management permissions and does not configure automated data export to BigQuery.",
+      "D": "Cloud Logging audit logs do not contain the calculated pricing, discounts, and SKU metadata required for FinOps cost analysis."
+    },
+    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/export-data-bigquery",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-005",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "gcloud CLI Named Configurations",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Managing Multiple GCP Environments with gcloud Named Configurations",
-    "scenario": "As a Cloud Engineer, you frequently switch between three different client GCP environments: 'dev-corp', 'staging-corp', and 'prod-corp'. Each environment uses different default project IDs, target compute regions, and distinct corporate IAM service accounts. You want to switch between these environments quickly and reliably in your CLI without re-entering parameters.",
-    "keywords": [
-      "gcloud config configurations",
-      "CLI Contexts",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "gcloud CLI",
       "Named Configurations",
-      "Cloud SDK"
+      "SDK Management"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Managing Multiple GCP Environments with gcloud Named Configurations",
+    "scenario": "You regularly switch between managing resources in a staging project (proj-staging-101) and a production project (proj-prod-202). You need a fast, error-free method to switch your active gcloud account, default project, and compute region in the terminal without re-authenticating every time. What command should you use?",
     "options": [
       {
         "letter": "A",
-        "text": "Pass --project, --zone, and --account flags explicitly in every single gcloud command you run.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud auth login --update-adc interactively each time you switch between project environments."
       },
       {
         "letter": "B",
-        "text": "Maintain separate shell script files that run gcloud auth login and gcloud config set project every time you switch context.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set the CLOUDSDK_CORE_PROJECT shell environment variable manually before running commands."
       },
       {
         "letter": "C",
-        "text": "Create distinct named configurations using gcloud config configurations create for each environment, set their properties, and switch between them using gcloud config configurations activate.",
-        "isTrap": false
+        "text": "Create named configurations and switch profiles with gcloud config configurations activate."
       },
       {
         "letter": "D",
-        "text": "Create three different user profiles on your operating system and log in with different OS accounts.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Install separate Google Cloud SDK binary directories for each target project environment."
       }
     ],
     "correct": "C",
-    "explanation": "gcloud CLI configurations (named configurations) allow defining groups of properties (account, project, compute region/zone). You can create them with `gcloud config configurations create <name>` and switch instantly using `gcloud config configurations activate <name>`.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Named configurations in the Google Cloud CLI allow you to define, maintain, and quickly switch between distinct groups of settings (such as authenticated account, active project, compute region, and zone) using gcloud config configurations activate.",
     "distractors": {
-      "A": "Manually typing explicit flags for every command is slow, tedious, and highly prone to human error.",
-      "B": "Writing custom shell scripts for re-authentication is slow, requires constant browser interaction, and is error-prone.",
-      "C": "Correct. Named configurations represent the official, standard mechanism for managing distinct project/credential contexts in gcloud SDK.",
-      "D": "Creating separate OS user accounts is excessive, slow, and adds unnecessary operating system overhead."
+      "A": "Re-running gcloud auth login requires manual interactive browser authentication each time you switch contexts.",
+      "B": "Setting CLOUDSDK_CORE_PROJECT only changes the project, leaving region, zone, and account unchanged.",
+      "D": "Maintaining separate binary installations is complex, error-prone, and unnecessary when named configurations exist natively."
     },
-    "gcloudCommand": "gcloud config configurations create prod-corp && gcloud config set project prod-corp-10293 && gcloud config set compute/region us-central1 && gcloud config configurations activate prod-corp",
-    "architectureComponents": [
-      "Cloud SDK",
-      "Compute Engine",
-      "Cloud IAM"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/config/configurations"
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/config/configurations",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-006",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "gcloud CLI Properties & Defaults",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Setting Default Region and Zone Properties in gcloud SDK",
-    "scenario": "You are setting up a newly provisioned developer workstation. The developer will exclusively deploy Compute Engine resources into the us-east4 region and us-east4-c zone for project ecommerce-web-prod. You need to configure the developer's gcloud environment so they do not have to specify the region and zone on every command.",
-    "keywords": [
-      "gcloud config set",
-      "compute/region",
-      "compute/zone",
-      "CLI Properties"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "gcloud CLI",
+      "SDK Configuration",
+      "Compute Engine Defaults"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Setting Default Region and Zone Properties in gcloud SDK",
+    "scenario": "You are provisioning multiple Compute Engine VMs in us-central1-a using the gcloud CLI. To streamline operations and avoid typing the --zone and --region flags on every single command, you want to set persistent default compute properties for your active CLI profile. Which command should you execute?",
     "options": [
       {
         "letter": "A",
-        "text": "Create an instance template in Compute Engine with us-east4-c hardcoded in the metadata.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Run gcloud compute zones set-default us-central1-a --region=us-central1 in the shell."
       },
       {
         "letter": "B",
-        "text": "Run gcloud compute instances set-defaults --region=us-east4 --zone=us-east4-c.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Define DEFAULT_ZONE=us-central1-a in the /etc/gcloud/properties configuration file."
       },
       {
         "letter": "C",
-        "text": "Edit the /etc/hosts file on the local machine and add DNS entries for us-east4 and us-east4-c.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud projects add-metadata --metadata=default-zone=us-central1-a on the project."
       },
       {
         "letter": "D",
-        "text": "Run gcloud config set compute/region us-east4 and gcloud config set compute/zone us-east4-c.",
-        "isTrap": false
+        "text": "Run gcloud config set compute/zone us-central1-a in your active configuration profile."
       }
     ],
     "correct": "D",
-    "explanation": "The standard command to set default properties in gcloud is `gcloud config set <section>/<property> <value>`. Setting `compute/region` and `compute/zone` configures the defaults for all subsequent Compute Engine CLI operations in the active configuration.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The gcloud config set command modifies the active configuration profile properties. Setting compute/zone and compute/region provides default values for all compute commands without requiring explicit CLI flags.",
     "distractors": {
-      "A": "Instance templates do not set client-side gcloud CLI default parameter settings.",
-      "B": "The command `gcloud compute instances set-defaults` is invalid syntax; properties are configured via `gcloud config set`.",
-      "C": "Editing /etc/hosts has no effect on gcloud CLI API target parameter resolution.",
-      "D": "Correct. `gcloud config set compute/region` and `compute/zone` establish persistent default regional/zonal targets for the CLI."
+      "A": "The command gcloud compute zones set-default is not a valid gcloud command syntax.",
+      "B": "Setting variables in /etc/gcloud/properties is non-standard and does not update user-level named CLI configurations.",
+      "C": "Project metadata sets instance-level metadata attributes inside the project, not local CLI client default properties."
     },
-    "gcloudCommand": "gcloud config set compute/region us-east4 && gcloud config set compute/zone us-east4-c",
-    "architectureComponents": [
-      "Cloud SDK",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/config/set"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/regions-zones/changing-default-zone-region",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-007",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud Storage Uniform Bucket-Level Access",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Enforcing Uniform Bucket-Level Access for Simplified Object Permissions",
-    "scenario": "A financial application stores customer statement PDFs in a Google Cloud Storage bucket. Compliance standards require that access permissions must be managed strictly and uniformly via Cloud IAM policies across all objects in the bucket, completely disabling legacy per-object Access Control Lists (ACLs) to prevent accidental data exposure. What should you do?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
       "Cloud Storage",
       "Uniform Bucket-Level Access",
-      "IAM",
-      "ACLs Disabled",
-      "Compliance"
+      "IAM Security"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Enforcing Uniform Bucket-Level Access for Simplified Object Permissions",
+    "scenario": "Your organization's security policy requires standardizing Cloud Storage permissions so that object access is managed exclusively via IAM policies rather than individual object Access Control Lists (ACLs). You must enforce this on an existing bucket gs://corp-financial-records. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Enable Uniform Bucket-Level Access on the Cloud Storage bucket using gcloud storage buckets update --uniform-bucket-level-access.",
-        "isTrap": false
+        "text": "Enable uniform bucket-level access on the Cloud Storage bucket using gcloud storage."
       },
       {
         "letter": "B",
-        "text": "Run a daily cron job with gsutil acl ch -d AllUsers gs://bucket/*.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set default object ACLs to private and remove all individual user ACL assignments."
       },
       {
         "letter": "C",
-        "text": "Apply a Retention Policy with Bucket Lock to the storage bucket.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Configure an Object Lifecycle Management rule to expire object-level ACLs daily."
       },
       {
         "letter": "D",
-        "text": "Change the default storage class of the bucket to Archive.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a Customer-Managed Encryption Key (CMEK) to enforce KMS decrypt permissions."
       }
     ],
     "correct": "A",
-    "explanation": "Uniform Bucket-Level Access (UBLA) disables per-object ACLs on the bucket and forces all access decisions to be evaluated solely through Cloud IAM roles. This simplifies permission auditing and prevents object-level ACL overrides.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Enabling uniform bucket-level access disables object-level ACLs across the entire bucket, ensuring that access to all objects is controlled solely through IAM roles and permissions.",
     "distractors": {
-      "A": "Correct. Enabling uniform bucket-level access disables legacy object ACLs and enforces centralized Cloud IAM governance.",
-      "B": "Running periodic ACL alteration scripts is error-prone, does not prevent newly uploaded objects from having ACLs, and is an operational anti-pattern.",
-      "C": "Bucket Lock prevents object deletion or modification for a retention duration, but does not control ACL versus IAM access evaluation.",
-      "D": "Storage class defines durability/cost tier, not access control mechanisms."
+      "B": "Setting default ACLs to private still permits object-level ACL modifications and does not disable ACLs uniformly.",
+      "C": "Object Lifecycle Management manages object retention, transition, and deletion, not IAM or ACL security policies.",
+      "D": "CMEK encrypts object data with customer-managed keys but does not disable Cloud Storage object ACL evaluation."
     },
-    "gcloudCommand": "gcloud storage buckets update gs://customer-statements-corp-101 --uniform-bucket-level-access",
-    "architectureComponents": [
-      "Cloud Storage",
-      "Cloud IAM"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/uniform-bucket-level-access"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/uniform-bucket-level-access",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-008",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "VPC Subnet IP Planning & CIDR Expansion",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Expanding Subnet CIDR Range in a Custom Mode VPC Network",
-    "scenario": "Your production VPC network was created in custom mode with a subnet 10.0.0.0/24 in us-central1. Due to rapid growth in Compute Engine workloads, the subnet has run out of available private IP addresses. You need to expand the subnet capacity to at least 1,000 IP addresses with zero downtime and without disrupting existing instances. What should you do?",
-    "keywords": [
-      "VPC",
-      "Custom Subnet",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "VPC Networks",
+      "Subnets",
       "CIDR Expansion",
-      "Zero Downtime",
-      "Subnet Expansion"
+      "Compute Engine"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Expanding Subnet CIDR Range in a Custom Mode VPC Network",
+    "scenario": "A custom mode subnet in us-east4 has the IP range 10.10.0.0/24 (256 addresses) and is running out of available IP addresses due to rapid VM growth. You need to expand the primary IP range to accommodate at least 500 VMs with zero downtime and without re-creating existing instances. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Convert the VPC from custom mode to auto mode so Google automatically handles subnet sizing.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Delete the existing subnet and recreate it with 10.10.0.0/22 in the same region."
       },
       {
         "letter": "B",
-        "text": "Use gcloud compute networks subnets expand-ip-range to expand the subnet prefix from /24 to /22 (e.g., 10.0.0.0/22).",
-        "isTrap": false
+        "text": "Run gcloud compute networks subnets expand-ip-range with prefix 10.10.0.0/23."
       },
       {
         "letter": "C",
-        "text": "Delete the existing subnet and recreate it with 10.0.0.0/20.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud compute networks subnets update to shrink the prefix to 10.10.0.0/25."
       },
       {
         "letter": "D",
-        "text": "Create a secondary IP range on the subnet and migrate all existing VMs to the secondary range.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Add an alias secondary IP range of 10.20.0.0/24 to serve as the primary network."
       }
     ],
     "correct": "B",
-    "explanation": "In Google Cloud VPCs, you can expand the primary CIDR range of any custom mode subnet dynamically without downtime by reducing the subnet mask prefix (e.g., /24 to /22). The new IP range must encompass the original range and must not overlap with other subnets in the VPC.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The command gcloud compute networks subnets expand-ip-range allows increasing the size of an existing subnet IP range (e.g. from /24 to /23) without recreating the subnet, affecting running instances, or causing network downtime.",
     "distractors": {
-      "A": "You cannot convert a custom mode VPC network back to auto mode, and auto mode uses fixed /20 subnets without flexibility.",
-      "B": "Correct. `expand-ip-range` allows expanding the primary IPv4 range seamlessly without recreating the subnet or stopping running VMs.",
-      "C": "A subnet cannot be deleted while active instances or network interfaces are attached to it.",
-      "D": "Secondary IP ranges in Google Cloud VPC are used for GKE Pods and Services or Alias IPs, not primary VM network interfaces."
+      "A": "You cannot delete a subnet while active Compute Engine instances are attached to it without causing downtime.",
+      "C": "VPC subnets cannot be shrunk in Google Cloud, and /25 provides fewer IP addresses (128) rather than expanding capacity.",
+      "D": "Secondary IP ranges are used for alias IPs or GKE Pods/Services, not for the primary VM network interface range."
     },
-    "gcloudCommand": "gcloud compute networks subnets expand-ip-range prod-sub-uscentral1 --region=us-central1 --prefix-length=22",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/use-subnets#expand-subnet"
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/use-vpc#expand-subnet",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-009",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "VPC Subnets & GKE Secondary Ranges",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Configuring Secondary IP Ranges for GKE Pods and Services",
-    "scenario": "You are preparing a dedicated custom VPC subnet in europe-west1 to host a high-density VPC-native Google Kubernetes Engine (GKE) cluster. The cluster will host up to 200 nodes and thousands of Pods. How must you configure the subnet before deploying the GKE cluster?",
-    "keywords": [
-      "VPC Subnet",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "VPC Networks",
+      "GKE",
       "Secondary IP Ranges",
-      "GKE VPC-Native",
-      "Alias IPs",
-      "Pod CIDR"
+      "VPC-native"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Configuring Secondary IP Ranges for GKE Pods and Services",
+    "scenario": "You are preparing a custom VPC subnet 10.0.0.0/20 in europe-west1 to host a VPC-native Google Kubernetes Engine (GKE) cluster. The cluster requires dedicated, non-overlapping IP address ranges allocated for Kubernetes Pods and Services. How should you configure the subnet before deploying the cluster?",
     "options": [
       {
         "letter": "A",
-        "text": "Configure a single /16 primary CIDR and enable Cloud NAT on the subnet without secondary ranges.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Create two separate VPC networks and connect them using VPC Network Peering."
       },
       {
         "letter": "B",
-        "text": "Deploy a Cloud Router with BGP in the subnet to dynamically allocate IP ranges to Pods on demand.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Expand the primary subnet CIDR range from 10.0.0.0/20 to 10.0.0.0/16 directly."
       },
       {
         "letter": "C",
-        "text": "Create a subnet with a primary IPv4 CIDR range for node VMs, and define two secondary IPv4 ranges: one dedicated for Pods and one for Services.",
-        "isTrap": false
+        "text": "Add two secondary IP ranges to the subnet designated for Pods and Services."
       },
       {
         "letter": "D",
-        "text": "Create three separate VPC networks and connect them via VPC Peering to isolate Nodes, Pods, and Services.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure Cloud NAT on the subnet to dynamically translate internal Pod IPs."
       }
     ],
     "correct": "C",
-    "explanation": "VPC-native GKE clusters use Alias IPs which require secondary IP ranges defined on the subnet: the primary range assigns internal IPs to Node VMs, while secondary ranges are allocated for Pod IP addresses and Service ClusterIP addresses.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "VPC-native GKE clusters use secondary IP ranges on the subnet for Kubernetes Pods and Services (via Alias IP ranges), allowing Pods to be first-class citizens on the VPC network without overlay encapsulation.",
     "distractors": {
-      "A": "Without secondary IP ranges, a VPC-native GKE cluster cannot be instantiated in the subnet.",
-      "B": "Cloud Router and BGP are for hybrid WAN/VPN routing, not internal Kubernetes Pod IP allocation.",
-      "C": "Correct. VPC-native GKE clusters require a primary range for node instances and secondary ranges for Pod and Service IP allocations.",
-      "D": "GKE VPC-native clusters operate within a single subnet utilizing secondary ranges, not across three peered VPCs."
+      "A": "GKE VPC-native clusters allocate Pod and Service addresses from secondary ranges within the same subnet, not across peered VPCs.",
+      "B": "Expanding the primary range expands node IP capacity, but VPC-native GKE explicitly requires secondary IP ranges for Pods and Services.",
+      "D": "Cloud NAT translates internal private IPs to public IPs for outbound internet access, not internal cluster Pod and Service routing."
     },
-    "gcloudCommand": "gcloud compute networks subnets create gke-subnet-eu1 --network=prod-vpc --region=europe-west1 --range=10.100.0.0/24 --secondary-range=pods=10.101.0.0/16,services=10.102.0.0/20",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Google Kubernetes Engine (GKE)"
-    ],
-    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips"
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-010",
     "certId": "ace",
-    "blockId": "BLOCK-1",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Resource Manager Folder Hierarchy & Policy Inheritance",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Structuring Resource Manager Folder Hierarchy for Multi-Environment Governance",
-    "scenario": "A retail enterprise is onboarding to Google Cloud. They have two independent business units: 'Retail Operations' and 'Online E-Commerce'. Each business unit requires strict isolation between Development, Staging, and Production environments, with distinct billing tracking and environment-specific IAM policies. How should you design the resource hierarchy?",
-    "keywords": [
-      "Resource Hierarchy",
-      "Organization",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "Resource Manager",
       "Folders",
-      "Projects",
-      "IAM Inheritance"
+      "Hierarchy",
+      "Governance"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Structuring Resource Manager Folder Hierarchy for Multi-Environment Governance",
+    "scenario": "An enterprise is organizing 80 Google Cloud projects across Development, Staging, and Production environments for three distinct business units. They need to enforce different IAM access controls and Organization Policies per environment while allowing policy inheritance from the organization root. How should they structure the Resource Manager hierarchy?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a separate Google Cloud Organization for each environment (Dev Org, Staging Org, Prod Org).",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create folders for business units, nest environment folders, and place projects inside."
       },
       {
         "letter": "B",
-        "text": "Place all Projects directly under the root Organization node and use project naming conventions to manage permissions.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Place all projects in a flat organization root and assign IAM policies project by project."
       },
       {
         "letter": "C",
-        "text": "Create a single Project for Retail and a single Project for Online, and use IAM tags inside the project to separate environments.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create separate Google Cloud organization nodes for each business unit and environment."
       },
       {
         "letter": "D",
-        "text": "Under the Organization node, create top-level Folders for each Business Unit, create subfolders for Dev, Staging, and Prod under each Business Unit folder, and place individual Projects inside these subfolders.",
-        "isTrap": false
+        "text": "Use Cloud Billing sub-accounts to control IAM inheritance and Organization Policies."
       }
     ],
-    "correct": "D",
-    "explanation": "Google Cloud best practices recommend a single root Organization with a nested Folder structure reflecting Business Units and Lifecycle Environments (Dev/Staging/Prod). Projects reside within these leaf folders, allowing seamless IAM policy and Organization Policy inheritance.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Using nested folders under the Organization node allows delegating administration and applying IAM policies and Organization Policies hierarchically across business units and environment tiers (dev, stage, prod) with full inheritance.",
     "distractors": {
-      "A": "An enterprise should use a single Organization node tied to their primary Cloud Identity/Google Workspace domain to maintain unified governance.",
-      "B": "Flat project layouts under the root node eliminate the power of folder-level policy inheritance and create unmanageable operational overhead.",
-      "C": "Single projects mixing Dev and Prod breach critical security blast-radius isolation, quota separation, and billing boundaries.",
-      "D": "Correct. Multi-tier folder hierarchy allows applying environment-specific IAM policies and org constraints with clean billing export grouping."
+      "B": "A flat structure eliminates policy inheritance, requiring high-maintenance per-project policy configuration across 80 projects.",
+      "C": "Creating separate organizations fragments billing, centralized IAM administration, and Cloud Identity directory integration.",
+      "D": "Cloud Billing sub-accounts are used for cost management and invoice routing, not resource access control or Organization Policies."
     },
-    "gcloudCommand": "gcloud resource-manager folders create --display-name='E-Commerce' --organization=123456789012 && gcloud resource-manager folders create --display-name='Production' --folder=987654321098",
-    "architectureComponents": [
-      "Resource Manager",
-      "Cloud IAM",
-      "Cloud Billing"
-    ],
-    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/creating-managing-folders"
+    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/creating-managing-folders",
+    "difficulty": "medium",
+    "blockId": "BLOCK-1"
   },
   {
     "id": "ACE-D1-011",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Predefined vs Primitive IAM Roles",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Transitioning from Primitive Roles to Predefined IAM Roles",
-    "scenario": "A junior engineer was granted the primitive Editor role on a production project. During an audit, security discovered that the engineer has permission to delete critical Cloud Storage buckets and modify firewall rules. You must restrict their permissions so they can only manage Compute Engine virtual machines without having access to network security or storage assets.",
-    "keywords": [
-      "Cloud IAM",
-      "Primitive Roles",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "IAM",
       "Predefined Roles",
       "Least Privilege",
-      "Compute Instance Admin"
+      "Compute Engine"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Transitioning from Primitive Roles to Predefined IAM Roles",
+    "scenario": "A junior developer currently has the primitive Editor role on a production project. Security audit findings mandate adhering strictly to the principle of least privilege. The developer only needs to view project settings and manage Compute Engine instances (create, start, stop, delete), without modifying firewall rules or Cloud Storage buckets. Which IAM role should you grant?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a custom role from scratch by manually selecting all 4,000 Compute Engine permissions.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant roles/compute.admin and roles/owner on the production project."
       },
       {
         "letter": "B",
-        "text": "Remove the Editor role and grant the predefined roles/compute.instanceAdmin.v1 role on the project.",
-        "isTrap": false
+        "text": "Grant roles/compute.networkAdmin and roles/storage.admin on the project."
       },
       {
         "letter": "C",
-        "text": "Keep the Editor role and add an IAM Deny policy on storage.buckets.*.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Maintain roles/editor and apply an IAM Deny rule for Cloud Storage buckets."
       },
       {
         "letter": "D",
-        "text": "Change the role to primitive Viewer and assign Compute Network Admin.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/compute.instanceAdmin.v1 and roles/viewer on the project."
       }
     ],
-    "correct": "B",
-    "explanation": "Primitive roles (Owner, Editor, Viewer) grant coarse, overly broad access across all services. Predefined roles such as roles/compute.instanceAdmin.v1 grant full control over Compute Engine instances while preventing modification of networking firewalls or Cloud Storage buckets, adhering to least privilege.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The Compute Instance Admin (v1) role (roles/compute.instanceAdmin.v1) provides full control over Compute Engine instances without granting rights to modify VPC firewalls or network configurations. Pairing it with Viewer allows viewing overall project resources.",
     "distractors": {
-      "A": "Predefined roles are maintained and updated by Google; creating custom roles with thousands of permissions creates severe maintenance overhead.",
-      "B": "Correct. Predefined roles/compute.instanceAdmin.v1 scopes permissions specifically to Compute Engine VM lifecycle operations.",
-      "C": "Relying on primitive Editor plus complex Deny policies is difficult to audit and maintains overly broad permissions across un-denied services.",
-      "D": "Viewer role provides read-only access and Compute Network Admin grants network modification rather than VM lifecycle control."
+      "A": "roles/owner is a primitive role with full control over all resources, and roles/compute.admin allows modifying firewall rules and networks.",
+      "B": "roles/compute.networkAdmin and roles/storage.admin grant network and storage management, but not VM instance creation/deletion.",
+      "C": "Keeping the primitive Editor role violates least privilege principles and still grants broad modify permissions across other services."
     },
-    "gcloudCommand": "gcloud projects add-iam-policy-binding prod-app-992 --member='user:dev@example.com' --role='roles/compute.instanceAdmin.v1' && gcloud projects remove-iam-policy-binding prod-app-992 --member='user:dev@example.com' --role='roles/editor'",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/understanding-roles#compute-engine-roles"
+    "officialDocUrl": "https://cloud.google.com/iam/docs/understanding-roles#compute-engine-roles",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-012",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Service Account User Role Scoping",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Granting Service Account User Role on Specific Service Accounts",
-    "scenario": "A CI/CD automated pipeline needs to launch Compute Engine VMs configured to run with a highly privileged database proxy service account db-proxy-sa@prod.iam.gserviceaccount.com. You need to allow the CI/CD service account cicd-runner@prod.iam.gserviceaccount.com to attach this proxy identity to new VMs without allowing it to attach or misuse any other service account in the project.",
-    "keywords": [
-      "roles/iam.serviceAccountUser",
-      "Least Privilege",
-      "Service Account Level Binding",
-      "Compute Engine"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "Service Accounts",
+      "IAM Roles",
+      "Compute Engine",
+      "Least Privilege"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Granting Service Account User Role on Specific Service Accounts",
+    "scenario": "A software engineer needs to deploy Compute Engine VM instances in project proj-backend and attach a dedicated service account api-sa@proj-backend.iam.gserviceaccount.com to those instances. In accordance with least privilege, the engineer must not be able to use or manage any other service accounts in the project. Which two IAM roles should you grant to the engineer? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/iam.serviceAccountAdmin to cicd-runner at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/iam.serviceAccountUser on the target service account resource."
       },
       {
         "letter": "B",
-        "text": "Download the JSON private key of db-proxy-sa and pass it to cicd-runner in the VM startup script.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/iam.serviceAccountUser at the target project resource level."
       },
       {
         "letter": "C",
-        "text": "Grant roles/iam.serviceAccountUser to cicd-runner@prod.iam.gserviceaccount.com specifically on the resource db-proxy-sa@prod.iam.gserviceaccount.com.",
-        "isTrap": false
+        "text": "Grant roles/iam.serviceAccountAdmin on the target service account resource."
       },
       {
         "letter": "D",
-        "text": "Grant roles/iam.serviceAccountUser to cicd-runner at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/compute.instanceAdmin.v1 at the target project resource level."
+      },
+      {
+        "letter": "E",
+        "text": "Grant roles/compute.admin and roles/iam.securityAdmin at the project level."
       }
     ],
-    "correct": "C",
-    "explanation": "Granting roles/iam.serviceAccountUser at the resource level (on the specific target service account) allows the user/caller to attach only that specific identity to Compute Engine instances or services, preventing privilege escalation to other service accounts in the project.",
-    "distractors": {
-      "A": "roles/iam.serviceAccountAdmin allows creating, deleting, and altering service accounts, which is unnecessary and overprivileged.",
-      "B": "Storing and embedding static JSON keys inside startup scripts exposes private credentials in metadata.",
-      "C": "Correct. Resource-level binding of roles/iam.serviceAccountUser strictly limits identity attachment to the designated service account.",
-      "D": "Granting serviceAccountUser at the project level allows the runner to attach any service account in the project, including high-privilege project owner accounts."
-    },
-    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding db-proxy-sa@prod.iam.gserviceaccount.com --member='serviceAccount:cicd-runner@prod.iam.gserviceaccount.com' --role='roles/iam.serviceAccountUser'",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Compute Engine"
+    "correct": [
+      "A",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-permissions#user-role"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "To attach a specific service account to a VM instance, the user needs roles/compute.instanceAdmin.v1 at the project level to create VMs, and roles/iam.serviceAccountUser granted directly on the target service account resource (rather than at the project level).",
+    "distractors": {
+      "B": "Granting Service Account User at the project level permits using all service accounts in the project, violating least privilege.",
+      "C": "roles/iam.serviceAccountAdmin allows deleting and modifying the service account itself, which is not required to attach it to VMs.",
+      "E": "roles/compute.admin and roles/iam.securityAdmin provide excessive administrative power over networking and IAM security policies."
+    },
+    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-permissions#user-role",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-013",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Organization Policy Constraints & VM Security",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Restricting VM External IP Addresses via Organization Policies",
-    "scenario": "To prevent accidental internet exposure of backend infrastructure, your Chief Information Security Officer (CISO) mandates that no Compute Engine instance in the development folder may be assigned an external public IP address. How should you enforce this guardrail centrally?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
       "Organization Policy",
-      "compute.vmExternalIpAccess",
-      "Constraints",
-      "Security Guardrail"
+      "Compute Engine",
+      "External IP Restriction",
+      "Security"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Restricting VM External IP Addresses via Organization Policies",
+    "scenario": "Your organization requires that no Compute Engine virtual machine instances in the dev-folder folder are assigned public external IP addresses, preventing unauthorized public internet exposure. You need to enforce this guardrail centrally across all current and future projects in that folder. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Apply the Organization Policy constraint constraints/compute.vmExternalIpAccess with a deny-all policy at the Development folder level.",
-        "isTrap": false
+        "text": "Create a VPC firewall rule with priority 1 blocking all traffic to 0.0.0.0/0."
       },
       {
         "letter": "B",
-        "text": "Create an egress firewall rule with priority 1000 denying all traffic to 0.0.0.0/0.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Set the compute.vmExternalIpAccess organization policy constraint on the folder."
       },
       {
         "letter": "C",
-        "text": "Write a weekly Cloud Function to scan all VMs and delete public IP addresses.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Remove roles/compute.networkAdmin from all user accounts across the folder."
       },
       {
         "letter": "D",
-        "text": "Remove the roles/compute.networkAdmin role from all developers in the project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Deploy a Cloud Function to automatically terminate any VM launched with a public IP."
       }
     ],
-    "correct": "A",
-    "explanation": "Organization Policy constraints provide declarative governance. The constraints/compute.vmExternalIpAccess constraint applied with 'Deny all' on a folder or organization completely blocks the creation or attachment of external IP addresses on any VM instance in that scope.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The Organization Policy constraint compute.vmExternalIpAccess defines whether VM instances can have external IP addresses. Applying this constraint with Deny All at the folder level ensures that no current or future VM in any project in that folder can receive an external IP.",
     "distractors": {
-      "A": "Correct. Organization Policy compute.vmExternalIpAccess enforces preventative control at the API level, blocking external IP allocation.",
-      "B": "Egress firewall rules do not prevent public IPs from being assigned or receiving inbound traffic.",
-      "C": "Reactive scanning scripts allow a window of vulnerability and incur ongoing operational maintenance.",
-      "D": "Even without networkAdmin, instance admins can attach ephemeral external IPs during VM creation unless blocked by org policy."
+      "A": "VPC firewall rules filter traffic packets but do not prevent instances from being provisioned with external public IP addresses.",
+      "C": "Users with instance admin roles can still launch VMs with external IPs even without the networkAdmin role.",
+      "D": "A reactive Cloud Function introduces operational latency and does not proactively block VM creation at the API level."
     },
-    "gcloudCommand": "gcloud resource-manager org-policies set-policy --folder=456789123012 policy-deny-external-ips.yaml",
-    "architectureComponents": [
-      "Resource Manager",
-      "Organization Policies",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#org-policy"
+    "officialDocUrl": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#restrict_external_ip",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-014",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Organization Policy Resource Locations",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Enforcing Data Sovereignty with Resource Location Constraint",
-    "scenario": "Due to European Union GDPR compliance requirements, all cloud resources (Compute Engine disks, Cloud Storage buckets, Cloud SQL instances) created under the 'EU-Operations' folder must strictly reside in European Google Cloud regions (europe-west1, europe-west3, europe-west4). How should you enforce this?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
       "Organization Policy",
-      "constraints/gcp.resourceLocations",
-      "GDPR",
-      "Data Sovereignty"
+      "Resource Location",
+      "Data Sovereignty",
+      "Compliance"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Enforcing Data Sovereignty with Resource Location Constraint",
+    "scenario": "Strict data residency regulations mandate that all cloud storage and compute services across your organization must be provisioned exclusively within European Union boundaries (europe-west1 and europe-west3). You need to prevent developers from provisioning resources in any non-EU regions. What should you configure?",
     "options": [
       {
         "letter": "A",
-        "text": "Create VPC subnets only in europe-west1 and delete all global VPC routes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure the gcp.resourceLocations organization policy constraint for EU regions."
       },
       {
         "letter": "B",
-        "text": "Set the Organization Policy constraint constraints/gcp.resourceLocations on the EU-Operations folder with an allowlist restricted to in:europe-locations.",
-        "isTrap": false
+        "text": "Delete all non-EU Google Cloud region configurations via the Resource Manager API."
       },
       {
         "letter": "C",
-        "text": "Configure DNS routing policies in Cloud DNS to drop traffic routed to US IP addresses.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Assign IAM conditions checking request.location.region.startsWith('europe-') globally."
       },
       {
         "letter": "D",
-        "text": "Instruct all developers to only select European regions in the console UI.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create Cloud Monitoring alert policies to notify admins when non-EU VMs are launched."
       }
     ],
-    "correct": "B",
-    "explanation": "The Organization Policy constraint constraints/gcp.resourceLocations enforces data residency and sovereignty by restricting the physical geographic locations where GCP resources can be provisioned. Setting the value to European locations blocks creation of resources in US/Asia.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The gcp.resourceLocations organization policy constraint restricts the set of Google Cloud locations (regions and multi-regions) in which location-based resources can be created, enforcing compliance and data sovereignty at provisioning time.",
     "distractors": {
-      "A": "VPC subnets do not restrict Cloud Storage multi-region or global service provisioning.",
-      "B": "Correct. constraints/gcp.resourceLocations declaratively restricts resource provisioning to approved geographic regions.",
-      "C": "Cloud DNS cannot restrict where developers spin up VMs or create storage buckets.",
-      "D": "Manual verbal instructions lack automated enforcement and fail compliance audit standards."
+      "B": "Google Cloud regions are managed by Google infrastructure and cannot be deleted or disabled via API.",
+      "C": "IAM conditions do not evaluate the physical geographic deployment region of provisioned backend resources.",
+      "D": "Cloud Monitoring alerts are reactive notifications and do not enforce preventative compliance at provisioning time."
     },
-    "gcloudCommand": "gcloud resource-manager org-policies set-policy --folder=789012345678 policy-resource-locations.yaml",
-    "architectureComponents": [
-      "Resource Manager",
-      "Organization Policies",
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/organization-policy/defining-locations"
+    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/organization-policy/defining-locations",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-015",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud Billing Roles & Permissions",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Assigning Billing Account User Role to Project Creators",
-    "scenario": "Your organization wants project leads to be able to create new GCP projects and link them to the corporate Cloud Billing account, without giving them permission to view financial invoices, alter payment credit cards, or modify billing account settings. What role should you assign them on the Cloud Billing account?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.2",
+    "subsectionName": "Managing billing configuration",
+    "conceptos": [
       "Cloud Billing",
-      "roles/billing.user",
-      "Project Creator",
-      "Least Privilege"
+      "IAM Roles",
+      "Billing Account User",
+      "Project Creation"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Assigning Billing Account User Role to Project Creators",
+    "scenario": "Developers in your engineering department have permission to create new Google Cloud projects. When creating a project, they must link it to the corporate Cloud Billing account 01A2B3-45C6D7-89E0F1. However, they must not be allowed to view spending across other projects or modify billing terms. Which role should you assign?",
     "options": [
       {
         "letter": "A",
-        "text": "roles/billing.viewer",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/billing.admin on the corporate Cloud Billing account."
       },
       {
         "letter": "B",
-        "text": "roles/resourcemanager.organizationAdmin",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/billing.viewer on the corporate Cloud Billing account."
       },
       {
         "letter": "C",
-        "text": "roles/billing.user",
-        "isTrap": false
+        "text": "Grant roles/resourcemanager.projectCreator on the billing account."
       },
       {
         "letter": "D",
-        "text": "roles/billing.admin",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/billing.user on the corporate Cloud Billing account."
       }
     ],
-    "correct": "C",
-    "explanation": "roles/billing.user (Billing Account User) allows principals to associate (link) projects to the billing account and view basic account metadata, without granting permissions to view payment instruments, modify billing admins, or cancel the billing account.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The Billing Account User role (roles/billing.user) allows users to link projects to a Cloud Billing account without granting permissions to view spend across other projects, modify payment instruments, or manage billing account administrators.",
     "distractors": {
-      "A": "roles/billing.viewer allows viewing invoices and spend data but does not grant permission to link new projects to the billing account.",
-      "B": "Organization Admin grants full control over the entire resource hierarchy, massively violating least privilege.",
-      "C": "Correct. roles/billing.user grants exact permission to link projects to the billing account without administrative or invoice access.",
-      "D": "roles/billing.admin grants full control over the billing account, including modifying payment methods and managing billing roles."
+      "A": "roles/billing.admin grants full administrative control over payment methods, billing accounts, and org-wide spend.",
+      "B": "roles/billing.viewer allows viewing all cost details across all linked projects in the billing account, but does not allow linking projects.",
+      "C": "roles/resourcemanager.projectCreator applies to organizations and folders, not Cloud Billing accounts."
     },
-    "gcloudCommand": "gcloud billing accounts add-iam-policy-binding 012345-6789AB-CDEF01 --member='group:project-creators@example.com' --role='roles/billing.user'",
-    "architectureComponents": [
-      "Cloud Billing",
-      "Cloud IAM"
-    ],
-    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/billing-access"
+    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/billing-access",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-016",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Application Default Credentials (ADC)",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Authenticating Local Development Workstation for Google Cloud Client Libraries",
-    "scenario": "A developer is writing a local Python script that uses the official @google-cloud/storage client library to read objects from a Cloud Storage bucket. When running the script locally, it throws an AuthMetadataPluginError: Application Default Credentials not found. How should the developer authenticate their local workstation?",
-    "keywords": [
-      "gcloud auth application-default login",
-      "ADC",
-      "Client Libraries",
-      "Cloud Storage SDK"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "gcloud CLI",
+      "Application Default Credentials",
+      "Authentication",
+      "SDK"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Authenticating Local Development Workstation for Google Cloud Client Libraries",
+    "scenario": "A software developer is testing a Python application locally on their workstation. The application uses the official Google Cloud Storage client library to access buckets in proj-data-dev. What is the recommended, secure command to authenticate their local environment without creating or downloading service account keys?",
     "options": [
       {
         "letter": "A",
-        "text": "Run gcloud auth login and copy the OAuth token into the Python source code.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud auth login and set GOOGLE_APPLICATION_CREDENTIALS to the raw token string."
       },
       {
         "letter": "B",
-        "text": "Download the project owner's service account JSON key to ~/.gcp/credentials.json.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Generate a service account key and export GOOGLE_APPLICATION_CREDENTIALS in the shell."
       },
       {
         "letter": "C",
-        "text": "Change the bucket permissions to public (allUsers:objectViewer) so authentication is not needed.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Run gcloud auth application-default login to generate local default credentials."
       },
       {
         "letter": "D",
-        "text": "Run gcloud auth application-default login in the terminal to obtain user credentials for Application Default Credentials (ADC).",
-        "isTrap": false
+        "text": "Run gcloud config set auth/disable_ssl_validation true in your active CLI profile."
       }
     ],
-    "correct": "D",
-    "explanation": "gcloud auth application-default login acquires user credentials and writes them to the standard Application Default Credentials (ADC) well-known file path, allowing Google Cloud client libraries to automatically authenticate local API calls.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Running gcloud auth application-default login obtains user access credentials via a web flow and writes them to a well-known local path for Application Default Credentials (ADC), allowing client libraries to authenticate without managing service account keys.",
     "distractors": {
-      "A": "gcloud auth login sets credentials for the gcloud CLI itself, but does not configure ADC for code SDKs/libraries.",
-      "B": "Downloading service account keys to local machines violates credential security guidelines.",
-      "C": "Making the bucket public exposes sensitive data and causes severe security compliance violations.",
-      "D": "Correct. gcloud auth application-default login configures the standard ADC file used by all Google Cloud client libraries."
+      "A": "GOOGLE_APPLICATION_CREDENTIALS must point to a file path, not an access token string, and tokens expire after one hour.",
+      "B": "Downloading service account keys creates long-lived secret management overhead and security risks.",
+      "D": "Disabling SSL validation is a critical security vulnerability and does not establish Google Cloud API authentication."
     },
-    "gcloudCommand": "gcloud auth application-default login",
-    "architectureComponents": [
-      "Cloud SDK",
-      "Cloud Storage",
-      "Cloud IAM"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login"
+    "officialDocUrl": "https://cloud.google.com/docs/authentication/provide-credentials-adc",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-017",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud Storage Classes & Resiliency",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Creating a Cloud Storage Bucket with Archive Class and Dual-Region Redundancy",
-    "scenario": "A healthcare compliance system requires creating a Cloud Storage bucket for long-term medical image archival. The images will be retained for 10 years, accessed less than once a year, and must be geo-redundantly protected across two specific US regions (us-central1 and us-east1). What gcloud command should you execute?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
       "Cloud Storage",
-      "Archive Class",
+      "Storage Classes",
       "Dual-Region",
-      "gcloud storage",
-      "Compliance"
+      "gcloud storage"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Creating a Cloud Storage Bucket with Archive Class and Dual-Region Redundancy",
+    "scenario": "A healthcare regulatory compliance mandate requires creating a Cloud Storage bucket for long-term clinical data retention. Data will be retained for 7 years, accessed less than once a year, and must be geo-redundantly protected across two specific regions (us-central1 and us-east1). Which gcloud command should you execute?",
     "options": [
       {
         "letter": "A",
-        "text": "gcloud storage buckets create gs://medical-archive-10yr --location=us-central1,us-east1 --default-storage-class=ARCHIVE",
-        "isTrap": false
+        "text": "gcloud storage buckets create gs://med-archive --location=US --default-storage-class=COLDLINE"
       },
       {
         "letter": "B",
-        "text": "gcloud storage buckets create gs://medical-archive-10yr --location=global --default-storage-class=NEARLINE",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets create gs://med-archive --location=us-central1,us-east1 --default-storage-class=ARCHIVE"
       },
       {
         "letter": "C",
-        "text": "gcloud storage buckets create gs://medical-archive-10yr --location=US --default-storage-class=COLDLINE",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets create gs://med-archive --location=us-central1 --default-storage-class=ARCHIVE"
       },
       {
         "letter": "D",
-        "text": "gsutil mb -c STANDARD -l us-central1 gs://medical-archive-10yr",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets create gs://med-archive --location=global --default-storage-class=NEARLINE"
       }
     ],
-    "correct": "A",
-    "explanation": "The gcloud storage buckets create command supports specifying dual-region locations (--location=us-central1,us-east1) and setting --default-storage-class=ARCHIVE for optimal multi-year cold archive storage costs.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The gcloud storage buckets create command accepts predefined or custom dual-region pairs (e.g. location=us-central1,us-east1) and sets the default storage class to ARCHIVE, which is optimized for data accessed less than once a year.",
     "distractors": {
-      "A": "Correct. Dual-region location pairing with ARCHIVE storage class fulfills the long-term geo-redundancy and cost requirements.",
-      "B": "There is no 'global' location for Cloud Storage buckets; buckets are regional, dual-region, or multi-region.",
-      "C": "US multi-region is broader than the two requested regions and COLDLINE is more expensive for 10-year archival than ARCHIVE.",
-      "D": "STANDARD class is designed for active data and single region us-central1 lacks cross-region disaster recovery."
+      "A": "Location US is a multi-region spanning all US data centers rather than specific dual-region redundancy, and COLDLINE has higher storage costs than ARCHIVE.",
+      "C": "Specifying a single region location=us-central1 does not provide dual-region geo-redundancy across us-east1.",
+      "D": "Location global is not a valid Cloud Storage bucket location, and NEARLINE is designed for monthly access."
     },
-    "gcloudCommand": "gcloud storage buckets create gs://medical-archive-10yr --location=us-central1,us-east1 --default-storage-class=ARCHIVE",
-    "architectureComponents": [
-      "Cloud Storage"
-    ],
-    "officialDocUrl": "https://cloud.google.com/storage/docs/creating-buckets"
+    "officialDocUrl": "https://cloud.google.com/storage/docs/creating-buckets",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-018",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "VPC Network Modes & Architecture",
-    "difficulty": "foundational",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Converting Auto Mode VPC Network to Custom Mode for Production Best Practices",
-    "scenario": "A development project was initially launched using an Auto Mode VPC network (default). The network architecture team mandates that all VPC networks connected to enterprise on-premises networks must be in Custom Mode to prevent IP address overlaps with on-prem subnets. What should you do?",
-    "keywords": [
-      "VPC Auto Mode",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "VPC Networks",
+      "Auto Mode",
       "Custom Mode",
-      "Subnet Overlap",
-      "gcloud compute networks switch-mode"
+      "Subnets"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Converting Auto Mode VPC Network to Custom Mode for Production Best Practices",
+    "scenario": "A development environment project was created with an Auto Mode VPC network. Enterprise networking guidelines require all VPC networks connected to on-premises via Cloud VPN or Interconnect to operate in Custom Mode to avoid IP subnet conflicts. How should you convert this VPC network to Custom Mode with zero downtime?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a new custom VPC and use VPC Peering to route between Auto and Custom VPCs.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud compute networks switch-mode default --mode=custom to convert the network."
       },
       {
         "letter": "B",
-        "text": "Switch the VPC network from auto mode to custom mode using gcloud compute networks switch-mode default --mode=custom.",
-        "isTrap": false
+        "text": "Delete the default VPC network and create a new custom VPC network with custom subnets."
       },
       {
         "letter": "C",
-        "text": "Auto mode VPCs cannot be converted; you must delete the entire project and start over.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create a new custom VPC network and configure VPC Network Peering to the default VPC."
       },
       {
         "letter": "D",
-        "text": "Delete all subnets in the auto VPC and recreate the auto VPC.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud compute networks subnets update on each regional subnet to modify its mode."
       }
     ],
-    "correct": "B",
-    "explanation": "Google Cloud allows a one-way conversion of an Auto Mode VPC to a Custom Mode VPC using `gcloud compute networks switch-mode <network_name> --mode=custom`. Existing subnets and IP ranges remain intact, but no new automatic subnets will be created in future regions.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "An Auto Mode VPC network can be converted to Custom Mode using the command gcloud compute networks switch-mode <NETWORK_NAME> --mode=custom. This conversion is permanent, preserves all existing subnets and running VM instances, and involves zero downtime.",
     "distractors": {
-      "A": "Converting the existing VPC is a single non-disruptive command; setting up new VPCs and peerings adds unnecessary complexity.",
-      "B": "Correct. gcloud compute networks switch-mode converts auto mode VPCs to custom mode in-place without deleting resources.",
-      "C": "Auto mode networks can be converted to custom mode (though the reverse conversion from custom to auto is not supported).",
-      "D": "Deleting subnets does not convert the network mode property of the VPC network."
+      "B": "Deleting the default VPC network requires terminating all active resources and causes substantial downtime.",
+      "C": "Peering does not convert the auto mode VPC, and its predefined CIDR ranges still create potential IP overlap issues.",
+      "D": "VPC network mode is a network-level configuration property, not a per-subnet setting."
     },
-    "gcloudCommand": "gcloud compute networks switch-mode default --mode=custom",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)"
-    ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/use-vpc#switch-mode"
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/use-vpc#switch-mode",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-019",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Shared VPC Architecture & Service Projects",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Configuring Shared VPC Host and Service Projects",
-    "scenario": "You are setting up a Shared VPC architecture where the centralized networking team manages the VPC network in project net-host-prod, and the application team deploys Compute Engine instances in project app-service-prod. How should you configure this relationship?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
       "Shared VPC",
       "Host Project",
       "Service Project",
-      "Network Admin",
-      "Centralized Networking"
+      "VPC Networking"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Configuring Shared VPC Host and Service Projects",
+    "scenario": "You are implementing a centralized Shared VPC topology. The network engineering team manages all VPC subnets in project net-host-prod, while the application team provisions Compute Engine instances in project app-service-prod. Which two configuration steps are required to establish this architecture? (Choose 2.)",
     "options": [
       {
         "letter": "A",
-        "text": "Configure VPC Network Peering between net-host-prod and app-service-prod.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure VPC Network Peering between VPC networks in both projects."
       },
       {
         "letter": "B",
-        "text": "Create an IPsec Cloud VPN tunnel between net-host-prod and app-service-prod.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable project net-host-prod as a centralized Shared VPC host project."
       },
       {
         "letter": "C",
-        "text": "Enable Shared VPC host in net-host-prod, and associate app-service-prod as a service project to net-host-prod.",
-        "isTrap": false
+        "text": "Establish an IPsec Cloud VPN tunnel between subnets in both projects."
       },
       {
         "letter": "D",
-        "text": "Grant the application team roles/owner on the net-host-prod project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Attach project app-service-prod as a service project to net-host-prod."
+      },
+      {
+        "letter": "E",
+        "text": "Grant the roles/owner role on net-host-prod to the application team."
       }
     ],
-    "correct": "C",
-    "explanation": "Shared VPC allows an organization to connect resources from multiple service projects to a common VPC network in a host project. The Shared VPC Admin enables the host project (shared-vpc enable) and attaches the service project (shared-vpc service-projects associate).",
-    "distractors": {
-      "A": "VPC Peering connects two separate VPCs with distinct administrative domains, whereas Shared VPC allows instances in service projects to share subnets directly.",
-      "B": "Cloud VPN is designed for hybrid or inter-cloud IPsec connectivity, not intra-organization multi-project network sharing.",
-      "C": "Correct. Enabling the host project and associating the service project establishes the native Shared VPC structure.",
-      "D": "Granting Owner on the host project violates separation of duties between central network engineers and application developers."
-    },
-    "gcloudCommand": "gcloud compute shared-vpc enable net-host-prod && gcloud compute shared-vpc service-projects associate app-service-prod --host-project=net-host-prod",
-    "architectureComponents": [
-      "Virtual Private Cloud (VPC)",
-      "Compute Engine",
-      "Resource Manager"
+    "correct": [
+      "B",
+      "D"
     ],
-    "officialDocUrl": "https://cloud.google.com/vpc/docs/shared-vpc"
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Configuring Shared VPC requires two primary steps: (1) Enabling the centralized project (net-host-prod) as a Shared VPC host project, and (2) Associating the service project (app-service-prod) with that host project so instances can attach to the host subnets.",
+    "distractors": {
+      "A": "VPC Peering connects independent VPC networks but does not configure centralized Shared VPC host/service project relationships.",
+      "C": "IPsec Cloud VPN tunnels are used for encrypted inter-network or hybrid connections, not Shared VPC attachment.",
+      "E": "Granting roles/owner to application developers grants total project control and violates centralized security governance."
+    },
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/shared-vpc",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-020",
     "certId": "ace",
-    "blockId": "BLOCK-2",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Custom IAM Roles & YAML Definitions",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Creating a Custom IAM Role from Predefined Role Definition",
-    "scenario": "Your security team requires a specialized IAM role for tier-1 helpdesk support that allows starting, stopping, and resetting Compute Engine instances, but prevents creating instances, deleting instances, or modifying instance metadata. How should you create this role efficiently?",
-    "keywords": [
-      "Custom IAM Role",
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "IAM",
+      "Custom Roles",
       "Least Privilege",
-      "gcloud iam roles create",
-      "YAML Definition"
+      "Compute Engine"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Creating a Custom IAM Role from Predefined Role Definition",
+    "scenario": "Your security team requires a custom IAM role for tier-1 support technicians. The role must permit starting, stopping, and resetting Compute Engine instances, but must strictly prohibit creating new instances, deleting existing instances, or modifying instance metadata. No predefined role matches these exact requirements. How should you create this role?",
     "options": [
       {
         "letter": "A",
-        "text": "Create a Service Account with Owner permissions and share the password with helpdesk staff.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Assign roles/compute.instanceAdmin.v1 and use Cloud Armor to block delete API calls."
       },
       {
         "letter": "B",
-        "text": "Assign the primitive Viewer role and instruct users never to click the delete button in the console.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Assign roles/viewer and grant temporary local root sudo privileges on the guest VMs."
       },
       {
         "letter": "C",
-        "text": "Assign roles/compute.instanceAdmin.v1 and write a Cloud Armor rule to block deletion API calls.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/compute.admin combined with an IAM Condition restricting business hours."
       },
       {
         "letter": "D",
-        "text": "Create a custom IAM role at the project or organization level using gcloud iam roles create with specific permissions (compute.instances.start, compute.instances.stop, compute.instances.reset, compute.instances.get, compute.instances.list).",
-        "isTrap": false
+        "text": "Create a custom IAM role at the project level containing only the required permissions."
       }
     ],
     "correct": "D",
-    "explanation": "When predefined roles grant excessive permissions, creating a Custom IAM Role with specific granular permissions (e.g. compute.instances.start, compute.instances.stop, compute.instances.reset) enforces precise least-privilege access.",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "When no predefined role satisfies the principle of least privilege for a specific workload or team, you create a custom IAM role containing only the exact permissions needed (e.g. compute.instances.start, compute.instances.stop, compute.instances.reset).",
     "distractors": {
-      "A": "Sharing service accounts with Owner permissions violates basic security identity and auditing requirements.",
-      "B": "Viewer role does not permit starting, stopping, or resetting instances, and verbal policies are unenforceable.",
-      "C": "Cloud Armor is an HTTP/WAF security tool for load balancers, not an IAM API policy gate.",
-      "D": "Correct. A custom IAM role with exact VM lifecycle operation permissions satisfies the security constraint without excess rights."
+      "A": "Cloud Armor filters incoming HTTP traffic to load balancers, not Google Cloud management API calls.",
+      "B": "roles/viewer does not permit starting or stopping VMs via the Cloud Console, and guest OS access does not grant cloud API control.",
+      "C": "roles/compute.admin with time conditions still allows full VM creation and deletion during allowed hours."
     },
-    "gcloudCommand": "gcloud iam roles create helpdeskVMOperator --project=prod-app-992 --title='Helpdesk VM Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.get,compute.instances.list --stage=GA",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Compute Engine"
-    ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/creating-custom-roles"
+    "officialDocUrl": "https://cloud.google.com/iam/docs/creating-custom-roles",
+    "difficulty": "medium",
+    "blockId": "BLOCK-2"
   },
   {
     "id": "ACE-D1-021",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Service Account Token Generation & Impersonation",
-    "difficulty": "advanced",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Delegating Short-Lived Token Generation with Service Account Token Creator",
-    "scenario": "A deployment script running in Cloud Build needs to call an external API that requires a signed JWT assertion signed by a specific service account jwt-signer@corp.iam.gserviceaccount.com. How should you authorize Cloud Build without exporting private keys?",
-    "keywords": [
-      "Cloud Build",
-      "Service Account Token Creator",
-      "JWT Signing",
-      "Keyless Auth"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "Service Accounts",
+      "IAM Roles",
+      "Token Creator",
+      "Cloud Build"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Delegating Short-Lived Token Generation with Service Account Token Creator",
+    "scenario": "A CI/CD deployment pipeline in Cloud Build needs to generate short-lived signed JWT tokens using a dedicated service account jwt-signer@corp.iam.gserviceaccount.com. In accordance with Google Cloud security best practices, no long-lived private key files should be generated or stored. How should you configure authorization?",
     "options": [
       {
         "letter": "A",
-        "text": "Assign roles/owner to the Cloud Build service account at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/iam.serviceAccountTokenCreator to Cloud Build on the target service account."
       },
       {
         "letter": "B",
-        "text": "Enable Google Workspace Domain-Wide Delegation on the Cloud Build service account.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Generate a service account JSON key file and store it encrypted inside Secret Manager."
       },
       {
         "letter": "C",
-        "text": "Grant roles/iam.serviceAccountTokenCreator to the Cloud Build service account on jwt-signer@corp.iam.gserviceaccount.com.",
-        "isTrap": false
+        "text": "Grant roles/iam.serviceAccountUser and roles/owner to Cloud Build at the project level."
       },
       {
         "letter": "D",
-        "text": "Generate a JSON key for jwt-signer and store it in Secret Manager, then download it during build.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure Workload Identity Federation between Cloud Build and Google Workspace domains."
       }
     ],
-    "correct": "C",
-    "explanation": "The roles/iam.serviceAccountTokenCreator role allows a principal (such as the Cloud Build service account) to create short-lived OAuth 2.0 access tokens, OpenID Connect (OIDC) ID tokens, and sign JWT payloads on behalf of the target service account directly via the IAM Credentials API without private keys.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The Service Account Token Creator role (roles/iam.serviceAccountTokenCreator) allows principals to generate short-lived OAuth 2.0 access tokens, OpenID Connect (OIDC) ID tokens, and sign JWT assertions without managing long-lived private JSON keys.",
     "distractors": {
-      "A": "roles/owner does not automatically grant IAM Credentials API signing permissions and severely violates least privilege.",
-      "B": "Domain-Wide Delegation is for Google Workspace OAuth scopes, not GCP internal IAM token creation.",
-      "C": "Correct. roles/iam.serviceAccountTokenCreator allows programmatic keyless JWT signing via the IAM Credentials API.",
-      "D": "Storing static JSON keys in Secret Manager still relies on static credentials that require rotation."
+      "B": "Exporting JSON keys creates long-lived credentials that must be managed, rotated, and secured, violating keyless best practices.",
+      "C": "roles/owner is overly broad, and Service Account User allows attaching service accounts to resources, not signing tokens.",
+      "D": "Workload Identity Federation connects external identity providers (AWS, Azure, GitHub) rather than internal Cloud Build service accounts."
     },
-    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding jwt-signer@corp.iam.gserviceaccount.com --member='serviceAccount:1234567890@cloudbuild.gserviceaccount.com' --role='roles/iam.serviceAccountTokenCreator'",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Cloud Build"
-    ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-overview#token-creator-role"
+    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-overview#token-creator-role",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D1-022",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud Identity & Directory Sync (GCDS)",
-    "difficulty": "intermediate",
-    "bloomsLevel": "understand",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Synchronizing On-Premises Active Directory Users with Google Cloud Directory Sync",
-    "scenario": "An enterprise maintains 5,000 corporate identities in an on-premises Microsoft Active Directory. They are adopting Google Cloud and want all employee accounts, groups, and membership changes in Active Directory to automatically synchronize to Cloud Identity in one direction without exposing user passwords to the cloud. Which tool should they deploy?",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
       "Cloud Identity",
-      "GCDS",
+      "Directory Sync",
       "Active Directory",
-      "User Provisioning",
-      "SAML SSO"
+      "GCDS"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Synchronizing On-Premises Active Directory Users with Google Cloud Directory Sync",
+    "scenario": "An enterprise maintains 4,000 employee identities in on-premises Microsoft Active Directory. As part of their Google Cloud adoption, they need to synchronize users and security groups to Cloud Identity in an automated, one-way fashion without synchronizing or exposing Active Directory password hashes to Google Cloud. Which tool should they deploy?",
     "options": [
       {
         "letter": "A",
-        "text": "Write a PowerShell script that exports AD users to CSV and runs gcloud iam service-accounts create.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy Azure AD Connect with password hash synchronization to Google Cloud."
       },
       {
         "letter": "B",
-        "text": "Configure Anthos Config Management to mirror Active Directory LDAP trees.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Deploy Google Cloud Directory Sync (GCDS) in the on-premises environment."
       },
       {
         "letter": "C",
-        "text": "Grant all on-prem users individual personal Gmail accounts and add them to IAM policies.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Configure Anthos Config Management to mirror on-premises LDAP directories."
       },
       {
         "letter": "D",
-        "text": "Install and configure Google Cloud Directory Sync (GCDS) in the on-premises environment.",
-        "isTrap": false
+        "text": "Create individual Cloud Identity accounts using the Admin Console CSV upload."
       }
     ],
-    "correct": "D",
-    "explanation": "Google Cloud Directory Sync (GCDS) is Google's authoritative tool for one-way synchronization of users, groups, and organizational units from Microsoft Active Directory / LDAP to Google Cloud Identity / Google Workspace.",
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Google Cloud Directory Sync (GCDS) is an on-premises tool that synchronizes users, groups, and non-password metadata from Microsoft Active Directory or LDAP directories to Cloud Identity in a one-way, automated fashion without transmitting passwords.",
     "distractors": {
-      "A": "Employees are human users in Cloud Identity, not GCP service accounts, and custom scripts lack delta sync and conflict resolution.",
-      "B": "Anthos Config Management manages Kubernetes cluster configurations from Git, not Active Directory identity synchronization.",
-      "C": "Using personal consumer Gmail accounts for enterprise infrastructure access violates corporate governance and security auditing.",
-      "D": "Correct. GCDS performs one-way automated synchronization of users and groups from Active Directory to Cloud Identity."
+      "A": "Azure AD Connect is used to synchronize with Microsoft Entra ID (Azure AD), not directly to Google Cloud Identity.",
+      "C": "Anthos Config Management manages Kubernetes cluster policies via Git repositories, not enterprise LDAP identity synchronization.",
+      "D": "Admin Console CSV upload is a one-time manual process that does not automate ongoing employee onboarding and offboarding."
     },
-    "gcloudCommand": "gcloud identity groups memberships search --group-email='all-engineers@corp.com'",
-    "architectureComponents": [
-      "Cloud Identity",
-      "Cloud IAM",
-      "Resource Manager"
-    ],
-    "officialDocUrl": "https://cloud.google.com/architecture/identity/syncing-active-directory-to-cloud-identity"
+    "officialDocUrl": "https://cloud.google.com/architecture/identity/syncing-active-directory-to-cloud-identity",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D1-023",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "gcloud CLI Project & Billing Operations",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Creating a Project and Linking to Billing Account via CLI",
-    "scenario": "You are writing an automated onboarding script. The script must create a new project named 'mobile-analytics-prod', place it under folder ID 9876543210, and link it to the corporate billing account '01A2B3-45C6D7-89E0F1'. Which sequence of gcloud commands accomplishes this?",
-    "keywords": [
-      "gcloud projects create",
-      "gcloud beta billing projects link",
-      "CLI Automation"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.2",
+    "subsectionName": "Managing billing configuration",
+    "conceptos": [
+      "gcloud CLI",
+      "Resource Manager",
+      "Cloud Billing",
+      "Project Creation"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Creating a Project and Linking to Billing Account via CLI",
+    "scenario": "You are developing an infrastructure automation script using the gcloud CLI. The script must create a new project analytics-prod-99, place it under folder ID 1234567890, and associate it with billing account 01A2B3-45C6D7-89E0F1. Which sequence of commands should your script execute?",
     "options": [
       {
         "letter": "A",
-        "text": "Run gcloud projects create mobile-analytics-prod --folder=9876543210 followed by gcloud billing projects link mobile-analytics-prod --billing-account=01A2B3-45C6D7-89E0F1.",
-        "isTrap": false
+        "text": "Run gcloud compute projects create analytics-prod-99 --folder=1234567890 --billing-account=01A2B3-45C6D7-89E0F1."
       },
       {
         "letter": "B",
-        "text": "Run gcloud resource-manager folders add-project mobile-analytics-prod --billing-account=01A2B3-45C6D7-89E0F1.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run gcloud organizations create-project analytics-prod-99 --folder=1234567890 --billing=01A2B3-45C6D7-89E0F1."
       },
       {
         "letter": "C",
-        "text": "Run gcloud compute projects create mobile-analytics-prod --billing=01A2B3-45C6D7-89E0F1.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run gcloud projects create analytics-prod-99 --folder=1234567890 then gcloud billing projects link analytics-prod-99."
       },
       {
         "letter": "D",
-        "text": "Run gcloud organizations create mobile-analytics-prod and attach the billing card.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud resource-manager folders add-project 1234567890 --project=analytics-prod-99 --billing-account=01A2B3-45C6D7."
       }
     ],
-    "correct": "A",
-    "explanation": "Creating a project under a folder uses `gcloud projects create <PROJECT_ID> --folder=<FOLDER_ID>`, and associating a billing account uses `gcloud billing projects link <PROJECT_ID> --billing-account=<ACCOUNT_ID>`.",
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Projects are created with gcloud projects create <PROJECT_ID> --folder=<FOLDER_ID>. Once created, the project is linked to the billing account using gcloud billing projects link <PROJECT_ID> --billing-account=<ACCOUNT_ID>.",
     "distractors": {
-      "A": "Correct. `gcloud projects create` creates the resource in the hierarchy, and `gcloud billing projects link` links the billing account.",
-      "B": "`gcloud resource-manager folders add-project` is invalid CLI syntax.",
-      "C": "`gcloud compute projects create` is invalid syntax; project creation belongs to the `projects` command group.",
-      "D": "`gcloud organizations create` is invalid; organizations are provisioned via Cloud Identity/Workspace, not CLI commands."
+      "A": "gcloud compute projects create is not a valid command for creating Google Cloud projects.",
+      "B": "The gcloud organizations group does not provide a create-project command.",
+      "D": "gcloud resource-manager folders add-project is invalid syntax; project creation and placement are handled under gcloud projects create."
     },
-    "gcloudCommand": "gcloud projects create mobile-analytics-prod --folder=9876543210 && gcloud billing projects link mobile-analytics-prod --billing-account=01A2B3-45C6D7-89E0F1",
-    "architectureComponents": [
-      "Resource Manager",
-      "Cloud Billing",
-      "Cloud SDK"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/billing/projects/link"
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/billing/projects/link",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D1-024",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "Cloud IAM Conditions & Temporary Access",
-    "difficulty": "intermediate",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Applying IAM Conditions for Time-Bound Temporary Contractor Access",
-    "scenario": "An external database consultant is hired to assist with performance tuning for a 48-hour maintenance window ending on September 30, 2026 at 23:59 UTC. You must grant them roles/cloudsql.admin on project finance-prod that automatically expires precisely at the deadline without requiring manual admin intervention.",
-    "keywords": [
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "IAM",
       "IAM Conditions",
-      "Time-Bound Access",
-      "request.time",
-      "Least Privilege",
-      "Cloud SQL"
+      "Cloud SQL",
+      "Temporary Access"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Applying IAM Conditions for Time-Bound Temporary Contractor Access",
+    "scenario": "An external consultant is hired to perform database maintenance on project finance-prod. The maintenance window starts immediately and ends on September 30, 2026 at 23:59:59 UTC. You must grant them roles/cloudsql.admin such that access expires automatically at the deadline without requiring manual administrator intervention. What should you do?",
     "options": [
       {
         "letter": "A",
-        "text": "Issue a Service Account key with an expiration date embedded in the JSON file header.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Generate a service account JSON key file configured with an expiration header timestamp."
       },
       {
         "letter": "B",
-        "text": "Grant roles/cloudsql.admin with an IAM Condition expression checking request.time < timestamp('2026-09-30T23:59:59Z').",
-        "isTrap": false
+        "text": "Assign the role on the project and configure a Cloud Scheduler job to revoke permissions."
       },
       {
         "letter": "C",
-        "text": "Assign the role on a VM instance metadata tag rather than IAM.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Grant roles/cloudsql.client on the project combined with a Cloud Armor access filter."
       },
       {
         "letter": "D",
-        "text": "Create a calendar reminder for the administrator to manually revoke the role on September 30.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant roles/cloudsql.admin with an IAM Condition checking request.time < timestamp('2026-09-30T23:59:59Z')."
       }
     ],
-    "correct": "B",
-    "explanation": "IAM Conditions allow attaching conditional logic to IAM role bindings. Using the built-in attribute `request.time < timestamp('...')` guarantees that the permission is automatically denied once the timestamp passes, with zero administrative overhead.",
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "IAM Conditions allow attaching attribute-based conditional expressions to role bindings. Using request.time < timestamp(\"2026-09-30T23:59:59Z\") grants temporary access that automatically and immediately expires at the specified timestamp without administrative action.",
     "distractors": {
-      "A": "Standard Service Account JSON private keys do not have built-in client-side expiration headers enforced by GCP IAM.",
-      "B": "Correct. Native IAM Conditions evaluate `request.time` on every API request and automatically deactivate access after the expiration timestamp.",
-      "C": "IAM permissions are evaluated on IAM policy bindings, not arbitrary VM metadata tags.",
-      "D": "Manual reminders introduce severe risk of orphaned privileges if an administrator forgets or is delayed."
+      "A": "Service account JSON key files do not support embedded expiration dates to automatically invalidate themselves.",
+      "B": "Cloud Scheduler jobs introduce custom operational complexity and potential failure points compared to native declarative IAM Conditions.",
+      "C": "roles/cloudsql.client does not grant database admin privileges, and Cloud Armor filters web requests rather than Google Cloud IAM APIs."
     },
-    "gcloudCommand": "gcloud projects add-iam-policy-binding finance-prod --member='user:consultant@partner.com' --role='roles/cloudsql.admin' --condition='expression=request.time < timestamp(\"2026-09-30T23:59:59Z\"),title=Temporary_Tuning_Access'",
-    "architectureComponents": [
-      "Cloud IAM",
-      "Cloud SQL",
-      "Resource Manager"
-    ],
-    "officialDocUrl": "https://cloud.google.com/iam/docs/conditions-overview"
+    "officialDocUrl": "https://cloud.google.com/iam/docs/conditions-overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D1-025",
     "certId": "ace",
-    "blockId": "BLOCK-3",
     "domainId": "ACE-D1",
-    "domainName": "Setting up a cloud solution environment",
-    "subtopic": "gcloud Components Management",
-    "difficulty": "foundational",
-    "bloomsLevel": "apply",
-    "timeEstimateSeconds": 120,
-    "caseStudy": "none",
-    "title": "Updating and Installing gcloud CLI Additional Components",
-    "scenario": "You installed the Google Cloud SDK on your Linux workstation. You now need to deploy and manage a Google Kubernetes Engine (GKE) cluster, which requires the kubectl CLI and the GKE authentication plugin (gke-gcloud-auth-plugin). How should you install these components?",
-    "keywords": [
-      "gcloud components install",
-      "kubectl",
-      "gke-gcloud-auth-plugin",
-      "Cloud SDK"
+    "sectionId": "ACE-1",
+    "sectionName": "Setting up a cloud solution environment",
+    "subsectionId": "ACE-1.1",
+    "subsectionName": "Setting up cloud projects and accounts",
+    "conceptos": [
+      "gcloud CLI",
+      "Components",
+      "GKE",
+      "kubectl"
     ],
-    "isMultiSelect": false,
-    "expectedSelectCount": 1,
+    "title": "Updating and Installing gcloud CLI Additional Components",
+    "scenario": "You installed the Google Cloud CLI on a Linux workstation to administer Google Kubernetes Engine (GKE) clusters. You need to install kubectl and the required gke-gcloud-auth-plugin component using the native CLI package manager to begin managing clusters. Which command should you execute?",
     "options": [
       {
         "letter": "A",
-        "text": "Download kubectl from Docker Hub and copy it into the /tmp directory.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud components install kubectl gke-gcloud-auth-plugin in the shell."
       },
       {
         "letter": "B",
-        "text": "Reinstall the entire Google Cloud SDK from scratch choosing the Kubernetes bundle.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud config set components/enable kubectl gke-gcloud-auth-plugin."
       },
       {
         "letter": "C",
-        "text": "Run gcloud components install kubectl gke-gcloud-auth-plugin.",
-        "isTrap": false
+        "text": "Run gcloud compute instances add-metadata --metadata=components=kubectl."
       },
       {
         "letter": "D",
-        "text": "Run gcloud config set components/enable kubectl.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run gcloud alpha kubernetes install-plugins --all-components in the shell."
       }
     ],
-    "correct": "C",
-    "explanation": "`gcloud components install <component_id>` is the standard command to install additional tools and utilities bundled with the Google Cloud SDK, including `kubectl`, `gke-gcloud-auth-plugin`, `cbt`, and `bq`.",
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The command gcloud components install installs additional Google Cloud CLI components (such as kubectl and gke-gcloud-auth-plugin) that are not included in the default installation bundle.",
     "distractors": {
-      "A": "Downloading random binaries from third-party hubs bypasses package management and official version compatibility.",
-      "B": "Reinstalling the entire SDK is unnecessary when `gcloud components install` adds packages dynamically.",
-      "C": "Correct. `gcloud components install` installs officially supported SDK tools and dependencies.",
-      "D": "`gcloud config set components/enable` is invalid syntax."
+      "B": "gcloud config set is used to modify local CLI configuration settings, not to install or update binary components.",
+      "C": "compute instances add-metadata applies metadata attributes to Compute Engine VM instances, not the local client machine.",
+      "D": "gcloud alpha kubernetes install-plugins is not a valid gcloud command group or syntax."
     },
-    "gcloudCommand": "gcloud components install kubectl gke-gcloud-auth-plugin",
-    "architectureComponents": [
-      "Cloud SDK",
-      "Google Kubernetes Engine (GKE)"
-    ],
-    "officialDocUrl": "https://cloud.google.com/sdk/docs/components"
+    "officialDocUrl": "https://cloud.google.com/sdk/docs/components",
+    "difficulty": "medium",
+    "blockId": "BLOCK-3"
   },
   {
     "id": "ACE-D1-026",
@@ -1580,35 +1226,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Apply a CMEK encryption key and destroy the key after writing the data.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Apply a CMEK encryption key and destroy the key after writing the data."
       },
       {
         "letter": "B",
-        "text": "Remove the storage.objects.delete permission from all IAM roles on the project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Remove the storage.objects.delete permission from all IAM roles on the project."
       },
       {
         "letter": "C",
-        "text": "Enable Object Versioning on the bucket with 10 maximum versions.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set a Retention Policy of 220752000s on the bucket and permanently lock it using gcloud storage retention-policies lock."
       },
       {
         "letter": "D",
-        "text": "Set a Retention Policy of 220752000s on the bucket and permanently lock it using gcloud storage retention-policies lock.",
-        "isTrap": false
+        "text": "Enable Object Versioning on the bucket with 10 maximum versions."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Cloud Storage Retention Policies enforce Write Once, Read Many (WORM) compliance. Once a retention policy is locked using Bucket Lock (`gcloud storage retention-policies lock`), the policy becomes permanent and immutable: no one, not even Project Owners, can delete the policy or delete objects until their individual retention period expires.",
     "distractors": {
       "A": "Destroying the CMEK key renders the data unreadable, destroying the business records rather than preserving them for audit.",
       "B": "Removing IAM delete permissions can be undone at any time by Project Owners and does not satisfy SEC WORM immutable compliance.",
-      "C": "Object Versioning retains older versions but allows deleting the bucket or objects if permissions exist.",
-      "D": "Correct. Applying a retention policy and locking it guarantees immutable WORM storage compliance."
+      "D": "Object Versioning retains older versions but allows deleting the bucket or objects if permissions exist."
     },
     "gcloudCommand": "gcloud storage buckets update gs://trading-records-immutable --retention-period=220752000s && gcloud storage retention-policies lock gs://trading-records-immutable",
     "architectureComponents": [
@@ -1642,35 +1280,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "VPC Network Peering is non-transitive; VPC-A cannot reach VPC-C through VPC-B without a direct peering connection between VPC-A and VPC-C.",
-        "isTrap": false
+        "text": "VPC Peering only supports ICMP ping packets, not TCP/UDP traffic."
       },
       {
         "letter": "B",
-        "text": "VPC-B requires an external HTTP load balancer to proxy the traffic.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "VPC-B requires an external HTTP load balancer to proxy the traffic."
       },
       {
         "letter": "C",
-        "text": "VPC Peering requires both networks to share the exact same CIDR range.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "VPC Network Peering is non-transitive; VPC-A cannot reach VPC-C through VPC-B without a direct peering connection between VPC-A and VPC-C."
       },
       {
         "letter": "D",
-        "text": "VPC Peering only supports ICMP ping packets, not TCP/UDP traffic.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "VPC Peering requires both networks to share the exact same CIDR range."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Google Cloud VPC Network Peering is strictly non-transitive. If VPC-A is peered with VPC-B, and VPC-B is peered with VPC-C, routes from VPC-C are NOT advertised to VPC-A. Direct communication requires creating a direct peering between VPC-A and VPC-C (or using a VPN/Interconnect hub-and-spoke or Network Connectivity Center).",
     "distractors": {
-      "A": "Correct. VPC Network Peering is non-transitive by design in Google Cloud.",
       "B": "VPC Peering is a private L3 routing mechanism, not an L7 HTTP proxying requirement.",
-      "C": "Peered VPCs must have non-overlapping IP address ranges; identical CIDRs cause peering creation to fail.",
-      "D": "VPC Peering supports all standard IP protocols (TCP, UDP, ICMP, ESP, etc.), not just ICMP."
+      "D": "Peered VPCs must have non-overlapping IP address ranges; identical CIDRs cause peering creation to fail.",
+      "A": "VPC Peering supports all standard IP protocols (TCP, UDP, ICMP, ESP, etc.), not just ICMP."
     },
     "gcloudCommand": "gcloud compute networks peerings create peer-a-to-c --network=vpc-a --peer-network=vpc-c --auto-create-routes",
     "architectureComponents": [
@@ -1703,35 +1333,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "The deletion request will succeed because the primitive Owner role has absolute override authority over Deny policies.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "The deletion request will succeed because the primitive Owner role has absolute override authority over Deny policies."
       },
       {
         "letter": "B",
-        "text": "The deletion request will be denied because IAM Deny policies are evaluated first and always override any allow policies, including Owner role permissions.",
-        "isTrap": false
+        "text": "The deletion request will be denied because IAM Deny policies are evaluated first and always override any allow policies, including Owner role permissions."
       },
       {
         "letter": "C",
-        "text": "The deletion request will succeed because project-level Allow policies take precedence over folder-level Deny policies.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "The Cloud SQL instance will enter a suspended state for 24 hours before being deleted."
       },
       {
         "letter": "D",
-        "text": "The Cloud SQL instance will enter a suspended state for 24 hours before being deleted.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "The deletion request will succeed because project-level Allow policies take precedence over folder-level Deny policies."
       }
     ],
     "correct": "B",
     "explanation": "In Google Cloud IAM policy evaluation, Deny policies take precedence over all Allow policies. When an API call is made, GCP evaluates Deny policies first: if a matching Deny rule applies to the principal, access is immediately denied regardless of any Allow rules (even primitive roles like Owner or Editor).",
     "distractors": {
       "A": "Primitive Owner role does NOT bypass IAM Deny policies.",
-      "B": "Correct. IAM Deny policies always override Allow policies in the evaluation hierarchy.",
-      "C": "Resource hierarchy inheritance does not allow child Allow policies to override parent Deny policies.",
-      "D": "Cloud SQL deletion is rejected immediately by the IAM control plane with HTTP 403 Forbidden."
+      "D": "Resource hierarchy inheritance does not allow child Allow policies to override parent Deny policies.",
+      "C": "Cloud SQL deletion is rejected immediately by the IAM control plane with HTTP 403 Forbidden."
     },
     "gcloudCommand": "gcloud iam deny-policies create deny-sql-delete --folder=9876543210 --policy-file=deny-sql-rule.json",
     "architectureComponents": [
@@ -1765,34 +1387,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Set the Artifact Registry repository permissions to public read/write.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Set the Artifact Registry repository permissions to public read/write."
       },
       {
         "letter": "B",
-        "text": "Generate a 1-year service account key and encrypt it using GitHub Secrets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure a Workload Identity Pool and Provider for GitHub OIDC, and grant the GitHub repository identity permission to impersonate the deployment Service Account."
       },
       {
         "letter": "C",
-        "text": "Configure a Workload Identity Pool and Provider for GitHub OIDC, and grant the GitHub repository identity permission to impersonate the deployment Service Account.",
-        "isTrap": false
+        "text": "Generate a 1-year service account key and encrypt it using GitHub Secrets."
       },
       {
         "letter": "D",
-        "text": "Store the GCP root administrator credentials in GitHub Actions environment variables.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Store the GCP root administrator credentials in GitHub Actions environment variables."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Workload Identity Federation enables external workloads (GitHub Actions, AWS, Azure, GitLab) to authenticate to Google Cloud using short-lived OpenID Connect (OIDC) tokens. GCP verifies the token via the Workload Identity Pool Provider and exchanges it for a temporary GCP STS token, completely eliminating static JSON keys.",
     "distractors": {
       "A": "Making the artifact repository public allows anyone on the internet to push malicious code into your production registry.",
-      "B": "Storing long-lived JSON keys in GitHub Secrets still carries risk of secret exfiltration and requires key rotation.",
-      "C": "Correct. Workload Identity Federation allows keyless OIDC token exchange directly between GitHub Actions and Google Cloud IAM.",
+      "C": "Storing long-lived JSON keys in GitHub Secrets still carries risk of secret exfiltration and requires key rotation.",
       "D": "Root admin credentials in CI/CD pipeline variables creates a catastrophic security vulnerability."
     },
     "gcloudCommand": "gcloud iam workload-identity-pools providers create-oidc github-provider --workload-identity-pool=ci-pool --location=global --issuer-uri='https://token.actions.githubusercontent.com' --attribute-mapping='google.subject=assertion.sub,attribute.repository=assertion.repository'",
@@ -1827,35 +1441,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "roles/logging.admin",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "roles/logging.privateLogViewer"
       },
       {
         "letter": "B",
-        "text": "roles/viewer",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "roles/logging.viewer"
       },
       {
         "letter": "C",
-        "text": "roles/logging.privateLogViewer",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "roles/viewer"
       },
       {
         "letter": "D",
-        "text": "roles/logging.viewer",
-        "isTrap": false
+        "text": "roles/logging.admin"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "roles/logging.viewer (Logs Viewer) grants access to standard system and application logs, but explicitly does NOT grant access to sensitive Data Access audit logs in the _Default or _Required log views. Accessing Data Access audit logs requires the elevated roles/logging.privateLogViewer role.",
     "distractors": {
-      "A": "roles/logging.admin grants full read/write/delete permissions across all logs and log sinks.",
-      "B": "Primitive Viewer role grants broad viewing across many other unrelated GCP services.",
-      "C": "roles/logging.privateLogViewer grants explicit access to view sensitive Data Access audit logs, which violates the restriction.",
-      "D": "Correct. roles/logging.viewer excludes sensitive Data Access audit logs, satisfying least privilege."
+      "D": "roles/logging.admin grants full read/write/delete permissions across all logs and log sinks.",
+      "C": "Primitive Viewer role grants broad viewing across many other unrelated GCP services.",
+      "A": "roles/logging.privateLogViewer grants explicit access to view sensitive Data Access audit logs, which violates the restriction."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding prod-core-1102 --member='user:analyst@corp.com' --role='roles/logging.viewer'",
     "architectureComponents": [
@@ -1888,35 +1494,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a separate Cloud Billing account for the experimental project tied to a standard corporate credit card, keeping production projects linked to the credit-funded billing account.",
-        "isTrap": false
+        "text": "Use IAM deny policies to block billing charges on the experimental project."
       },
       {
         "letter": "B",
-        "text": "Link all projects to the same billing account and rely on monthly budget alerts to stop VMs.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set the maximum spend limit to $0 in the project metadata."
       },
       {
         "letter": "C",
-        "text": "Set the maximum spend limit to $0 in the project metadata.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Link all projects to the same billing account and rely on monthly budget alerts to stop VMs."
       },
       {
         "letter": "D",
-        "text": "Use IAM deny policies to block billing charges on the experimental project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create a separate Cloud Billing account for the experimental project tied to a standard corporate credit card, keeping production projects linked to the credit-funded billing account."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Promotional credits are applied at the Cloud Billing account level across all linked projects. To prevent experimental workloads from consuming promotional credits, you must create a distinct billing account backed by a separate payment method and link the experimental project to it.",
     "distractors": {
-      "A": "Correct. Creating separate billing accounts provides complete financial isolation and prevents credit burn by non-eligible projects.",
-      "B": "Promotional credits apply automatically across all projects on that billing account regardless of alerts.",
-      "C": "GCP does not support hard spending caps via project metadata.",
-      "D": "IAM policies control API authorization, not monetary billing credit consumption."
+      "C": "Promotional credits apply automatically across all projects on that billing account regardless of alerts.",
+      "B": "GCP does not support hard spending caps via project metadata.",
+      "A": "IAM policies control API authorization, not monetary billing credit consumption."
     },
     "gcloudCommand": "gcloud billing projects link experimental-ai-lab --billing-account=01B890-CDEF12-345678",
     "architectureComponents": [
@@ -1949,35 +1547,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Access is blocked until the Organization Admin approves a role exception.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "No access because conflicting roles cancel each other out."
       },
       {
         "letter": "B",
-        "text": "Read-only viewer permissions because higher-level Organization permissions always override lower-level project permissions.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Access is blocked until the Organization Admin approves a role exception."
       },
       {
         "letter": "C",
-        "text": "No access because conflicting roles cancel each other out.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Read-only viewer permissions because higher-level Organization permissions always override lower-level project permissions."
       },
       {
         "letter": "D",
-        "text": "Full administrative control over Compute Engine instances in frontend-dev because IAM permissions are additive (union of all inherited roles).",
-        "isTrap": false
+        "text": "Full administrative control over Compute Engine instances in frontend-dev because IAM permissions are additive (union of all inherited roles)."
       }
     ],
     "correct": "D",
     "explanation": "In Google Cloud IAM, permissions are strictly additive (the union of all policy bindings applied at the organization, folder, project, and resource levels). Granting Viewer at the org level and Instance Admin at the project level results in the developer having full Instance Admin rights in that project.",
     "distractors": {
-      "A": "IAM evaluates immediately without manual per-action approval queues.",
-      "B": "Higher-level policies do not restrict or override more permissive child allow policies.",
-      "C": "IAM roles do not cancel each other out; permissions are the union of all granted roles.",
-      "D": "Correct. IAM policy evaluation combines all inherited and direct role bindings additively."
+      "B": "IAM evaluates immediately without manual per-action approval queues.",
+      "C": "Higher-level policies do not restrict or override more permissive child allow policies.",
+      "A": "IAM roles do not cancel each other out; permissions are the union of all granted roles."
     },
     "gcloudCommand": "gcloud projects get-iam-policy frontend-dev --format=json",
     "architectureComponents": [
@@ -2010,35 +1600,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a new secondary JSON key for the service account, deploy the new key to the application, verify successful uploads, and delete the old key.",
-        "isTrap": false
+        "text": "Delete the existing key first, then create a new key and update the application."
       },
       {
         "letter": "B",
-        "text": "Change the password of the service account in Cloud Identity.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create a new secondary JSON key for the service account, deploy the new key to the application, verify successful uploads, and delete the old key."
       },
       {
         "letter": "C",
-        "text": "Rotate the Cloud KMS master encryption key.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Rotate the Cloud KMS master encryption key."
       },
       {
         "letter": "D",
-        "text": "Delete the existing key first, then create a new key and update the application.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Change the password of the service account in Cloud Identity."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "A service account can have multiple active user-managed keys concurrently. Zero-downtime rotation involves: 1) creating the new key, 2) deploying the new key to the client application, 3) verifying application functionality, and 4) deleting the retired old key.",
     "distractors": {
-      "A": "Correct. Staged key rotation with dual active keys ensures uninterrupted application operation.",
-      "B": "Service accounts do not have passwords in Cloud Identity; they authenticate via cryptographic keys or tokens.",
+      "D": "Service accounts do not have passwords in Cloud Identity; they authenticate via cryptographic keys or tokens.",
       "C": "Cloud KMS keys encrypt data at rest, but do not authenticate the service account to the Cloud Storage API.",
-      "D": "Deleting the existing key prior to deployment immediately breaks running workloads."
+      "A": "Deleting the existing key prior to deployment immediately breaks running workloads."
     },
     "gcloudCommand": "gcloud iam service-accounts keys create ./new-key.json --iam-account=uploader-sa@corp-data.iam.gserviceaccount.com && gcloud iam service-accounts keys delete OLD_KEY_ID --iam-account=uploader-sa@corp-data.iam.gserviceaccount.com",
     "architectureComponents": [
@@ -2072,35 +1654,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "export GCP_ACTIVE_PROJECT=billing-pipeline-prod",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "export GOOGLE_CLOUD_PROJECT_ID=billing-pipeline-prod"
       },
       {
         "letter": "B",
-        "text": "export CLOUDSDK_CORE_PROJECT=billing-pipeline-prod",
-        "isTrap": false
+        "text": "export GCP_ACTIVE_PROJECT=billing-pipeline-prod"
       },
       {
         "letter": "C",
-        "text": "export GOOGLE_CLOUD_PROJECT_ID=billing-pipeline-prod",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "export GCLOUD_PROJECT_DEFAULT=billing-pipeline-prod"
       },
       {
         "letter": "D",
-        "text": "export GCLOUD_PROJECT_DEFAULT=billing-pipeline-prod",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "export CLOUDSDK_CORE_PROJECT=billing-pipeline-prod"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "The Google Cloud SDK recognizes `CLOUDSDK_CORE_PROJECT` as the authoritative environment variable to override the active project property for all executing gcloud commands in the process environment.",
     "distractors": {
-      "A": "`GCP_ACTIVE_PROJECT` is not an official gcloud CLI recognized environment variable.",
-      "B": "Correct. `CLOUDSDK_CORE_PROJECT` is the official SDK environment variable for overriding the core/project configuration.",
-      "C": "`GOOGLE_CLOUD_PROJECT_ID` is not recognized by standard gcloud CLI tools (though some client libraries recognize `GOOGLE_CLOUD_PROJECT`).",
-      "D": "`GCLOUD_PROJECT_DEFAULT` is invalid."
+      "B": "`GCP_ACTIVE_PROJECT` is not an official gcloud CLI recognized environment variable.",
+      "A": "`GOOGLE_CLOUD_PROJECT_ID` is not recognized by standard gcloud CLI tools (though some client libraries recognize `GOOGLE_CLOUD_PROJECT`).",
+      "C": "`GCLOUD_PROJECT_DEFAULT` is invalid."
     },
     "gcloudCommand": "export CLOUDSDK_CORE_PROJECT=billing-pipeline-prod && gcloud compute instances list",
     "architectureComponents": [
@@ -2133,35 +1707,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Change the default storage class to Coldline.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Object Versioning on the bucket and configure a Lifecycle rule with condition 'DaysSinceNoncurrentTime: 30' and action 'Delete'."
       },
       {
         "letter": "B",
-        "text": "Enable Bucket Lock with a 30-day retention duration.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Schedule a daily cron job running gsutil rm -r gs://bucket/**."
       },
       {
         "letter": "C",
-        "text": "Enable Object Versioning on the bucket and configure a Lifecycle rule with condition 'DaysSinceNoncurrentTime: 30' and action 'Delete'.",
-        "isTrap": false
+        "text": "Change the default storage class to Coldline."
       },
       {
         "letter": "D",
-        "text": "Schedule a daily cron job running gsutil rm -r gs://bucket/**.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable Bucket Lock with a 30-day retention duration."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Object Versioning keeps historical versions of objects when overwritten or deleted. Combining Object Versioning with a lifecycle rule utilizing `DaysSinceNoncurrentTime: 30` (or `NumNewerVersions` / `Age`) automatically purges noncurrent versions after 30 days to optimize cost.",
     "distractors": {
-      "A": "Changing storage class does not manage object version retention or deletion.",
-      "B": "Bucket Lock prevents deletion of all objects (including live ones) and does not manage version lifecycles.",
-      "C": "Correct. Object versioning preserves deleted/overwritten objects while lifecycle rules clean up aged noncurrent versions.",
-      "D": "Running recursive delete scripts deletes active live objects and risks total data loss."
+      "C": "Changing storage class does not manage object version retention or deletion.",
+      "D": "Bucket Lock prevents deletion of all objects (including live ones) and does not manage version lifecycles.",
+      "B": "Running recursive delete scripts deletes active live objects and risks total data loss."
     },
     "gcloudCommand": "gcloud storage buckets update gs://media-cms-bucket --versioning && gcloud storage buckets update gs://media-cms-bucket --lifecycle-file=lifecycle-noncurrent.json",
     "architectureComponents": [
@@ -2194,35 +1760,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a squid proxy VM with a public IP in the subnet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy a squid proxy VM with a public IP in the subnet."
       },
       {
         "letter": "B",
-        "text": "Assign an ephemeral public IP address to each VM and create an ingress firewall rule.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create a Cloud NAT Gateway and attach an external static IP."
       },
       {
         "letter": "C",
-        "text": "Create a Cloud NAT Gateway and attach an external static IP.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Enable Private Google Access on the subnet us-east1 in the VPC network."
       },
       {
         "letter": "D",
-        "text": "Enable Private Google Access on the subnet us-east1 in the VPC network.",
-        "isTrap": false
+        "text": "Assign an ephemeral public IP address to each VM and create an ingress firewall rule."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Private Google Access allows Compute Engine instances with only internal IP addresses in a subnet to reach Google APIs and services (Cloud Storage, BigQuery, Pub/Sub) via internal Google routing without requiring external public IP addresses or NAT.",
     "distractors": {
       "A": "Third-party proxy VMs introduce single points of failure and operational maintenance.",
-      "B": "Assigning public IPs violates the security constraint and exposes instances to inbound scans.",
-      "C": "Cloud NAT is for outbound internet access to general 3rd-party websites, not internal Google API access.",
-      "D": "Correct. Private Google Access enabled on the subnet enables private routing to Google APIs directly."
+      "D": "Assigning public IPs violates the security constraint and exposes instances to inbound scans.",
+      "B": "Cloud NAT is for outbound internet access to general 3rd-party websites, not internal Google API access."
     },
     "gcloudCommand": "gcloud compute networks subnets update prod-sub-useast1 --region=us-east1 --enable-private-ip-google-access",
     "architectureComponents": [
@@ -2257,35 +1815,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an ingress firewall rule with priority 1000, target tag 'web-frontend', allowed protocol/port tcp:443, source IP range 0.0.0.0/0, and rely on the implied default deny ingress rule (priority 65535).",
-        "isTrap": false
+        "text": "Create an egress rule allowing 443 and attach it to the VPC route table."
       },
       {
         "letter": "B",
-        "text": "Create a single firewall rule allowing port 443 with priority 65535 and no target tags.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Delete the default VPC ingress deny rule and add a custom deny rule at priority 0."
       },
       {
         "letter": "C",
-        "text": "Delete the default VPC ingress deny rule and add a custom deny rule at priority 0.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a single firewall rule allowing port 443 with priority 65535 and no target tags."
       },
       {
         "letter": "D",
-        "text": "Create an egress rule allowing 443 and attach it to the VPC route table.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create an ingress firewall rule with priority 1000, target tag 'web-frontend', allowed protocol/port tcp:443, source IP range 0.0.0.0/0, and rely on the implied default deny ingress rule (priority 65535)."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "VPC networks have an implied default deny ingress rule with priority 65535. Creating an allow ingress rule with higher priority (e.g. 1000) targeting specific network tags (`--target-tags=web-frontend`) permits traffic strictly to tagged instances while all untagged instances remain protected.",
     "distractors": {
-      "A": "Correct. Specific allow rule targeting tags at priority 1000 combined with implied deny rule (priority 65535) provides secure isolation.",
-      "B": "A rule with no target tags applies to all instances in the VPC, exposing backend instances.",
-      "C": "Implied default rules cannot be deleted, and priority 0 deny blocks all traffic including management.",
-      "D": "Inbound web traffic requires an ingress rule, not an egress rule."
+      "C": "A rule with no target tags applies to all instances in the VPC, exposing backend instances.",
+      "B": "Implied default rules cannot be deleted, and priority 0 deny blocks all traffic including management.",
+      "A": "Inbound web traffic requires an ingress rule, not an egress rule."
     },
     "gcloudCommand": "gcloud compute firewall-rules create allow-https-web --network=prod-vpc --allow=tcp:443 --target-tags=web-frontend --source-ranges=0.0.0.0/0 --direction=INGRESS --priority=1000",
     "architectureComponents": [
@@ -2318,34 +1868,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure Cloud Build to scan developer code repositories for JSON strings.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Revoke the roles/owner role from all project administrators."
       },
       {
         "letter": "B",
-        "text": "Enforce the Organization Policy constraint constraints/iam.disableServiceAccountKeyCreation at the Organization root node.",
-        "isTrap": false
+        "text": "Configure Cloud Build to scan developer code repositories for JSON strings."
       },
       {
         "letter": "C",
-        "text": "Revoke the roles/owner role from all project administrators.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Enforce the Organization Policy constraint constraints/iam.disableServiceAccountKeyCreation at the Organization root node."
       },
       {
         "letter": "D",
-        "text": "Write a Cloud Function to poll IAM API and delete service accounts when keys are detected.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Write a Cloud Function to poll IAM API and delete service accounts when keys are detected."
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "The boolean Organization Policy constraint `constraints/iam.disableServiceAccountKeyCreation` set to `enforced: true` at the Organization level completely blocks any API request attempting to generate user-managed service account keys across all projects.",
     "distractors": {
-      "A": "Scanning Git repositories only detects committed keys after they have already been created and possibly leaked.",
-      "B": "Correct. `constraints/iam.disableServiceAccountKeyCreation` is the authoritative Google-recommended org constraint to eliminate SA key generation.",
-      "C": "Revoking Owner role disrupts operations and does not prevent users with Service Account Key Admin from creating keys.",
+      "B": "Scanning Git repositories only detects committed keys after they have already been created and possibly leaked.",
+      "A": "Revoking Owner role disrupts operations and does not prevent users with Service Account Key Admin from creating keys.",
       "D": "Reactive scanning is imperfect and allows a window of credential exposure before deletion."
     },
     "gcloudCommand": "gcloud resource-manager org-policies enable-enforce iam.disableServiceAccountKeyCreation --organization=123456789012",
@@ -2380,35 +1922,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Disable Cloud IAM audit logging to silence recommender warnings.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Review recommendations in the IAM section of Cloud Console or run gcloud recommender recommendations list, inspect the suggested predefined roles, and apply the policy binding update."
       },
       {
         "letter": "B",
-        "text": "Convert all project users to Organization Admins.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Delete the flagged user accounts and require users to submit new access request tickets."
       },
       {
         "letter": "C",
-        "text": "Review recommendations in the IAM section of Cloud Console or run gcloud recommender recommendations list, inspect the suggested predefined roles, and apply the policy binding update.",
-        "isTrap": false
+        "text": "Disable Cloud IAM audit logging to silence recommender warnings."
       },
       {
         "letter": "D",
-        "text": "Delete the flagged user accounts and require users to submit new access request tickets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Convert all project users to Organization Admins."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Google Cloud IAM Recommender analyzes role grant usage over a 90-day window using machine learning and provides actionable recommendations to replace overly permissive roles (like Editor or Owner) with least-privilege predefined roles.",
     "distractors": {
-      "A": "Disabling logging hides security issues and destroys compliance audit trails.",
-      "B": "Granting Org Admin drastically expands attack surface and completely violates security policy.",
-      "C": "Correct. IAM Recommender provides ML-driven, right-sized role recommendations based on actual observed permission usage.",
-      "D": "Deleting active user accounts abruptly breaks ongoing business tasks and team productivity."
+      "C": "Disabling logging hides security issues and destroys compliance audit trails.",
+      "D": "Granting Org Admin drastically expands attack surface and completely violates security policy.",
+      "B": "Deleting active user accounts abruptly breaks ongoing business tasks and team productivity."
     },
     "gcloudCommand": "gcloud recommender recommendations list --project=prod-core-1102 --location=global --recommender=google.iam.policy.Recommender",
     "architectureComponents": [
@@ -2441,35 +1975,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create 50 separate billing accounts with the same bank account details.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Link all 50 projects to the same centralized Cloud Billing Account."
       },
       {
         "letter": "B",
-        "text": "Merge all 50 projects into a single massive GCP project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Merge all 50 projects into a single massive GCP project."
       },
       {
         "letter": "C",
-        "text": "Transfer project ownership to a third-party billing reseller.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create 50 separate billing accounts with the same bank account details."
       },
       {
         "letter": "D",
-        "text": "Link all 50 projects to the same centralized Cloud Billing Account.",
-        "isTrap": false
+        "text": "Transfer project ownership to a third-party billing reseller."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "A single Cloud Billing account can be linked to hundreds of Google Cloud projects across an organization, producing a unified consolidated invoice with itemized sub-charges while maximizing enterprise volume discounts.",
     "distractors": {
-      "A": "Multiple billing accounts result in 50 separate monthly invoices and fragmented credit card management.",
+      "C": "Multiple billing accounts result in 50 separate monthly invoices and fragmented credit card management.",
       "B": "Merging projects destroys critical resource isolation, blast radius boundaries, and quota limits.",
-      "C": "Involving third-party resellers is unnecessary for standard consolidated internal billing.",
-      "D": "Correct. A 1-to-many relationship between a Billing Account and Projects allows unified consolidated invoicing."
+      "D": "Involving third-party resellers is unnecessary for standard consolidated internal billing."
     },
     "gcloudCommand": "gcloud billing projects link analytics-prod --billing-account=012345-6789AB-CDEF01",
     "architectureComponents": [
@@ -2503,32 +2029,24 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances list --filter='status=RUNNING' --format='table(name,zone.basename(),networkInterfaces[0].networkIP:label=INTERNAL_IP,status)'",
-        "isTrap": false
+        "text": "gcloud compute instances list --filter='status=RUNNING' --format='table(name,zone.basename(),networkInterfaces[0].networkIP:label=INTERNAL_IP,status)'"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances list --only-running --columns=name,zone,ip",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances list --only-running --columns=name,zone,ip"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances list | grep RUNNING | awk '{print $1, $2, $4}'",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances list | grep RUNNING | awk '{print $1, $2, $4}'"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances describe all --format=csv",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances describe all --format=csv"
       }
     ],
     "correct": "A",
     "explanation": "The gcloud CLI has built-in server-side and client-side filtering (`--filter`) and output transformations (`--format`). The `table()` format with column projections (like `zone.basename()` and nested slice `networkInterfaces[0].networkIP`) provides robust, scriptable structured formatting.",
     "distractors": {
-      "A": "Correct. Using native `--filter` and `--format='table(...)'` is robust, structured, and resilient to CLI output changes.",
       "B": "`--only-running` and `--columns` are non-existent flags in gcloud compute instances list.",
       "C": "Piping through grep/awk is brittle, relies on positional column assumptions, and fails when output formatting shifts.",
       "D": "`describe all` is invalid syntax; `describe` operates on a single instance."
@@ -2564,35 +2082,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A Multi-Region US bucket with lifecycle rules deleting files in us-west1.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A Multi-Region US bucket with lifecycle rules deleting files in us-west1."
       },
       {
         "letter": "B",
-        "text": "A predefined Dual-Region such as nam4 (us-central1 and us-east1) or custom dual-region pairing us-central1 and us-east1.",
-        "isTrap": false
+        "text": "A single Regional bucket in us-central1 with a Cloud Function to copy files to us-east1."
       },
       {
         "letter": "C",
-        "text": "Two independent regional buckets configured with cross-bucket IAM sync.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Two independent regional buckets configured with cross-bucket IAM sync."
       },
       {
         "letter": "D",
-        "text": "A single Regional bucket in us-central1 with a Cloud Function to copy files to us-east1.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A predefined Dual-Region such as nam4 (us-central1 and us-east1) or custom dual-region pairing us-central1 and us-east1."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Cloud Storage Dual-Region buckets provide geo-redundant storage with automatic cross-region replication and transparent failover between two designated regions (e.g. `us-central1` and `us-east1`) under a single bucket namespace.",
     "distractors": {
       "A": "Multi-Region buckets distribute data across all US data centers, not just two designated regions, and lifecycle rules cannot restrict region placement.",
-      "B": "Correct. Dual-Region buckets provide native active-active geo-redundancy across two specific regions with a single unified bucket URL.",
       "C": "Cloud Storage does not offer 'cross-bucket IAM sync' for automated object synchronization.",
-      "D": "Custom replication scripts introduce lag, high operational maintenance, and lack transparent failover."
+      "B": "Custom replication scripts introduce lag, high operational maintenance, and lack transparent failover."
     },
     "gcloudCommand": "gcloud storage buckets create gs://game-player-profiles --location=us-central1,us-east1 --default-storage-class=STANDARD",
     "architectureComponents": [
@@ -2625,35 +2135,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure firewall rules to target specific Service Accounts rather than Network Tags, and restrict permissions to grant those Service Accounts.",
-        "isTrap": false
+        "text": "Disable all firewall rules and rely exclusively on Linux iptables inside each VM."
       },
       {
         "letter": "B",
-        "text": "Disable all firewall rules and rely exclusively on Linux iptables inside each VM.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure firewall rules to target specific Service Accounts rather than Network Tags, and restrict permissions to grant those Service Accounts."
       },
       {
         "letter": "C",
-        "text": "Set the firewall rule priority to 0 for all tagged rules.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Use Cloud Armor security policies on the internal VPC subnets."
       },
       {
         "letter": "D",
-        "text": "Use Cloud Armor security policies on the internal VPC subnets.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Set the firewall rule priority to 0 for all tagged rules."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Network tags can be modified by anyone with Compute Instance Admin permissions on a VM. In contrast, target Service Accounts in firewall rules provide cryptographically enforced, IAM-governed identity: only users with `roles/iam.serviceAccountUser` on the authorized service account can attach it to an instance, preventing tag-tampering privilege escalation.",
     "distractors": {
-      "A": "Correct. Firewall rules based on Service Accounts enforce strict IAM access control over who can deploy instances subject to the rule.",
-      "B": "Relying on in-guest iptables is unmanageable at scale and lacks centralized cloud perimeter enforcement.",
-      "C": "Changing priority does not prevent unauthorized developers from applying the target tag to arbitrary VMs.",
-      "D": "Cloud Armor is designed for HTTP/HTTPS Load Balancers, not subnet-level L3/L4 VPC packet filtering."
+      "A": "Relying on in-guest iptables is unmanageable at scale and lacks centralized cloud perimeter enforcement.",
+      "D": "Changing priority does not prevent unauthorized developers from applying the target tag to arbitrary VMs.",
+      "C": "Cloud Armor is designed for HTTP/HTTPS Load Balancers, not subnet-level L3/L4 VPC packet filtering."
     },
     "gcloudCommand": "gcloud compute firewall-rules create allow-db-ingress --network=prod-vpc --allow=tcp:5432 --source-service-accounts=web-app-sa@prod.iam.gserviceaccount.com --target-service-accounts=db-sa@prod.iam.gserviceaccount.com",
     "architectureComponents": [
@@ -2687,34 +2189,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a Custom Role for each individual developer named after their employee ID.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create Google Groups (e.g. backend-devs@corp.com, frontend-devs@corp.com), assign IAM roles to the groups, and manage user access by adding/removing users from the groups in Cloud Identity."
       },
       {
         "letter": "B",
-        "text": "Create Google Groups (e.g. backend-devs@corp.com, frontend-devs@corp.com), assign IAM roles to the groups, and manage user access by adding/removing users from the groups in Cloud Identity.",
-        "isTrap": false
+        "text": "Assign predefined IAM roles directly to each developer's individual email address on each project."
       },
       {
         "letter": "C",
-        "text": "Assign predefined IAM roles directly to each developer's individual email address on each project.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a Custom Role for each individual developer named after their employee ID."
       },
       {
         "letter": "D",
-        "text": "Create a shared service account and distribute the private key file to all 200 developers.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create a shared service account and distribute the private key file to all 200 developers."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Google's authoritative IAM best practice is to assign roles to Google Groups rather than individual users. Adding or removing a user from a Google Group automatically grants or revokes all associated GCP permissions across all projects, drastically reducing operational overhead and preventing orphaned permissions.",
     "distractors": {
-      "A": "Creating hundreds of per-user custom roles is unmaintainable and hits GCP project custom role limits.",
-      "B": "Correct. Google Groups centralize identity lifecycle management without requiring per-project IAM policy updates.",
-      "C": "Per-user direct bindings create administrative chaos, policy bloat, and high risk of lingering permissions during offboarding.",
+      "C": "Creating hundreds of per-user custom roles is unmaintainable and hits GCP project custom role limits.",
+      "B": "Per-user direct bindings create administrative chaos, policy bloat, and high risk of lingering permissions during offboarding.",
       "D": "Sharing service account keys completely destroys audit attribution and creates catastrophic security risks."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding backend-dev-project --member='group:backend-devs@corp.com' --role='roles/developer'",
@@ -2749,34 +2243,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "GCP Organization Admins can reset user passwords in Google Workspace.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "A project Owner can delete the Organization Administrator role from the root node."
       },
       {
         "letter": "B",
-        "text": "A project Owner can delete the Organization Administrator role from the root node.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "A Cloud Identity Super Admin can assign the roles/resourcemanager.organizationAdmin role to themselves or others, but does not automatically possess GCP project-level permissions unless explicitly assigned."
       },
       {
         "letter": "C",
-        "text": "A Cloud Identity Super Admin can assign the roles/resourcemanager.organizationAdmin role to themselves or others, but does not automatically possess GCP project-level permissions unless explicitly assigned.",
-        "isTrap": false
+        "text": "GCP Organization Admins can reset user passwords in Google Workspace."
       },
       {
         "letter": "D",
-        "text": "The Organization Administrator is automatically granted full admin rights in Microsoft Active Directory.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "The Organization Administrator is automatically granted full admin rights in Microsoft Active Directory."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Cloud Identity / Google Workspace Super Admins have root authority over user accounts and domains. When an Organization is first created, Super Admins can assign the `roles/resourcemanager.organizationAdmin` role to manage GCP resource hierarchy, but they do not automatically hold resource-level roles (like Compute Admin or Storage Admin) unless granted.",
     "distractors": {
-      "A": "GCP Org Admin manages cloud resources and IAM, not Workspace/Cloud Identity user account password resets.",
-      "B": "Project-level owners have no permission on parent Organization or Folder nodes.",
-      "C": "Correct. Super Admin manages the Identity directory and delegates the initial GCP Org Admin role.",
+      "C": "GCP Org Admin manages cloud resources and IAM, not Workspace/Cloud Identity user account password resets.",
+      "A": "Project-level owners have no permission on parent Organization or Folder nodes.",
       "D": "GCP Organization Admin has no authority over on-premises Active Directory."
     },
     "gcloudCommand": "gcloud organizations add-iam-policy-binding 123456789012 --member='user:admin@corp.com' --role='roles/resourcemanager.organizationAdmin'",
@@ -2811,35 +2297,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "All installed apt packages and system root files are permanently retained forever across all VM restarts.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "The $HOME directory is backed by 5 GB of persistent disk storage that persists across sessions, but installed packages outside $HOME and the underlying container VM are ephemeral."
       },
       {
         "letter": "B",
-        "text": "Cloud Shell deletes all files in $HOME immediately when the browser tab is closed.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Cloud Shell deletes all files in $HOME immediately when the browser tab is closed."
       },
       {
         "letter": "C",
-        "text": "Cloud Shell allocates a dedicated n2-standard-32 VM that runs 24/7 continuously without timeout.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "All installed apt packages and system root files are permanently retained forever across all VM restarts."
       },
       {
         "letter": "D",
-        "text": "The $HOME directory is backed by 5 GB of persistent disk storage that persists across sessions, but installed packages outside $HOME and the underlying container VM are ephemeral.",
-        "isTrap": false
+        "text": "Cloud Shell allocates a dedicated n2-standard-32 VM that runs 24/7 continuously without timeout."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud Shell provisions an ephemeral Debian-based Docker container VM. Each user is allocated 5 GB of persistent disk storage mounted as `$HOME` which persists between sessions, while changes outside `$HOME` (such as `/usr` or `/etc`) are reset when the session terminates.",
     "distractors": {
-      "A": "System-wide packages installed in root directories outside `$HOME` are lost after session inactivity shutdown.",
+      "C": "System-wide packages installed in root directories outside `$HOME` are lost after session inactivity shutdown.",
       "B": "Files inside `$HOME` are saved persistently and not deleted upon closing the browser tab.",
-      "C": "Cloud Shell uses lightweight VMs with an inactivity timeout (terminating after 20-120 minutes of idle time).",
-      "D": "Correct. Cloud Shell provides 5 GB persistent `$HOME` storage while the execution VM container is ephemeral."
+      "D": "Cloud Shell uses lightweight VMs with an inactivity timeout (terminating after 20-120 minutes of idle time)."
     },
     "gcloudCommand": "echo 'export CLOUDSDK_CORE_PROJECT=my-project' >> ~/.bashrc",
     "architectureComponents": [
@@ -2873,35 +2351,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Requester Pays on the bucket using gcloud storage buckets update gs://genomics-data --requester-pays.",
-        "isTrap": false
+        "text": "Host the files on Compute Engine web servers with PayPal integration."
       },
       {
         "letter": "B",
-        "text": "Host the files on Compute Engine web servers with PayPal integration.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Attach a Cloud Armor security policy requiring credit card authentication."
       },
       {
         "letter": "C",
-        "text": "Create individual IAM service accounts for all researchers worldwide.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable Requester Pays on the bucket using gcloud storage buckets update gs://genomics-data --requester-pays."
       },
       {
         "letter": "D",
-        "text": "Attach a Cloud Armor security policy requiring credit card authentication.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create individual IAM service accounts for all researchers worldwide."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Enabling 'Requester Pays' on a Cloud Storage bucket ensures that the requester (downloading user/project) pays all network transfer, data access, and API request costs, while the bucket owner pays only for the base storage of the data.",
     "distractors": {
-      "A": "Correct. Requester Pays requires callers to provide their own billing project flag (`--billing-project`) to cover egress costs.",
-      "B": "Custom web servers add unnecessary infrastructure cost and operational overhead compared to native Cloud Storage.",
-      "C": "Managing manual credentials for thousands of external researchers is completely unscalable.",
-      "D": "Cloud Armor does not process credit cards or manage Cloud Storage billing attribution."
+      "A": "Custom web servers add unnecessary infrastructure cost and operational overhead compared to native Cloud Storage.",
+      "D": "Managing manual credentials for thousands of external researchers is completely unscalable.",
+      "B": "Cloud Armor does not process credit cards or manage Cloud Storage billing attribution."
     },
     "gcloudCommand": "gcloud storage buckets update gs://genomics-open-data --requester-pays",
     "architectureComponents": [
@@ -2934,34 +2404,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a secondary VPC network and route between them with Cloud Router.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Secondary ranges can only be configured at subnet creation time; you must migrate to a new region."
       },
       {
         "letter": "B",
-        "text": "Run gcloud compute networks subnets update with --add-secondary-ranges to append the Pod and Service ranges to the subnet.",
-        "isTrap": false
+        "text": "Run gcloud compute networks subnets update with --add-secondary-ranges to append the Pod and Service ranges to the subnet."
       },
       {
         "letter": "C",
-        "text": "Secondary ranges can only be configured at subnet creation time; you must migrate to a new region.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create a secondary VPC network and route between them with Cloud Router."
       },
       {
         "letter": "D",
-        "text": "Delete the subnet and recreate it with the secondary ranges included.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete the subnet and recreate it with the secondary ranges included."
       }
     ],
     "correct": "B",
     "explanation": "Google Cloud VPC allows adding secondary IPv4 ranges to existing subnets dynamically without downtime using `gcloud compute networks subnets update <subnet_name> --add-secondary-ranges=<range_name>=<cidr>`.",
     "distractors": {
-      "A": "GKE secondary ranges reside within the local subnet, not across separate VPC networks.",
-      "B": "Correct. `subnets update --add-secondary-ranges` dynamically attaches new secondary IP blocks to existing subnets.",
-      "C": "Secondary ranges can be added to existing subnets at any time.",
+      "C": "GKE secondary ranges reside within the local subnet, not across separate VPC networks.",
+      "A": "Secondary ranges can be added to existing subnets at any time.",
       "D": "Deleting the subnet causes total outage for all existing workloads running on that subnet."
     },
     "gcloudCommand": "gcloud compute networks subnets update prod-subnet --region=us-central1 --add-secondary-ranges=gke-pods=10.200.0.0/16,gke-services=10.201.0.0/20",
@@ -2995,34 +2457,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Generate a long-lived service account key and copy it into Kubernetes Secrets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Generate a long-lived service account key and copy it into Kubernetes Secrets."
       },
       {
         "letter": "B",
-        "text": "Deploy a dedicated Cloud VPN tunnel and route all IAM traffic through on-prem.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a Workload Identity Pool in the project using gcloud iam workload-identity-pools create."
       },
       {
         "letter": "C",
-        "text": "Create a Workload Identity Pool in the project using gcloud iam workload-identity-pools create.",
-        "isTrap": false
+        "text": "Deploy a dedicated Cloud VPN tunnel and route all IAM traffic through on-prem."
       },
       {
         "letter": "D",
-        "text": "Grant the Kubernetes cluster public IP address access in the IAM policy.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Grant the Kubernetes cluster public IP address access in the IAM policy."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "To federate external identities (such as on-prem OIDC, AWS, or Azure) into GCP IAM, you must first create a Workload Identity Pool (`gcloud iam workload-identity-pools create`), which acts as the container and trust boundary for external identity providers.",
     "distractors": {
       "A": "Static keys violate keyless security best practices.",
-      "B": "Workload Identity Federation operates at the application/OIDC identity layer via HTTPS, not requiring VPN tunnels.",
-      "C": "Correct. Creating a Workload Identity Pool is the foundational first step for configuring keyless external federation.",
+      "C": "Workload Identity Federation operates at the application/OIDC identity layer via HTTPS, not requiring VPN tunnels.",
       "D": "IAM does not authenticate client requests based on source IP address whitelisting."
     },
     "gcloudCommand": "gcloud iam workload-identity-pools create onprem-k8s-pool --location=global --display-name='On-Premises K8s Pool'",
@@ -3056,35 +2510,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an IAM Deny policy on compute.instances.delete.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create a Project Lien on the project with restriction 'resourcemanager.projects.delete' using gcloud alpha resource-manager liens create."
       },
       {
         "letter": "B",
-        "text": "Enable Object Versioning on all disks in the project.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Remove the roles/billing.admin role from all users."
       },
       {
         "letter": "C",
-        "text": "Remove the roles/billing.admin role from all users.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Enable Object Versioning on all disks in the project."
       },
       {
         "letter": "D",
-        "text": "Create a Project Lien on the project with restriction 'resourcemanager.projects.delete' using gcloud alpha resource-manager liens create.",
-        "isTrap": false
+        "text": "Create an IAM Deny policy on compute.instances.delete."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "A Google Cloud Project Lien (`resourcemanager.projects.delete`) places a protective lock on a project, completely preventing anyone from deleting the project until the lien is intentionally removed by an authorized principal.",
     "distractors": {
-      "A": "Denying instance deletion prevents deleting individual VMs, but does not block deleting the entire project.",
-      "B": "Object Versioning applies to Cloud Storage, not project-level deletion protection.",
-      "C": "Billing admin roles manage financial accounts, but do not prevent project owners from deleting projects.",
-      "D": "Correct. Project Liens explicitly protect critical projects from accidental or unauthorized deletion."
+      "D": "Denying instance deletion prevents deleting individual VMs, but does not block deleting the entire project.",
+      "C": "Object Versioning applies to Cloud Storage, not project-level deletion protection.",
+      "B": "Billing admin roles manage financial accounts, but do not prevent project owners from deleting projects."
     },
     "gcloudCommand": "gcloud alpha resource-manager liens create --project=finance-ledger-prod --restrictions='resourcemanager.projects.delete' --reason='Mission critical ledger project'",
     "architectureComponents": [
@@ -3117,35 +2563,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Switch your gcloud configuration account to a Google employee email address.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Switch your gcloud configuration account to a Google employee email address."
       },
       {
         "letter": "B",
-        "text": "Download the raw source code of gcloud from GitHub and compile it locally.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Install a third-party Python package from PyPI."
       },
       {
         "letter": "C",
-        "text": "Run gcloud components install alpha and gcloud components install beta.",
-        "isTrap": false
+        "text": "Run gcloud components install alpha and gcloud components install beta."
       },
       {
         "letter": "D",
-        "text": "Install a third-party Python package from PyPI.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Download the raw source code of gcloud from GitHub and compile it locally."
       }
     ],
     "correct": "C",
     "explanation": "The `alpha` and `beta` command groups in Google Cloud SDK are packaged as optional SDK components. You can install them directly using `gcloud components install alpha` and `gcloud components install beta`.",
     "distractors": {
       "A": "Alpha/Beta CLI features are available to all GCP customers by installing the corresponding CLI component.",
-      "B": "Compiling from source is unnecessary and unsupported for the gcloud binary distribution.",
-      "C": "Correct. Installing the `alpha` and `beta` components enables preview CLI command trees.",
-      "D": "gcloud components are distributed and managed via the official Google Cloud SDK package manager, not PyPI."
+      "D": "Compiling from source is unnecessary and unsupported for the gcloud binary distribution.",
+      "B": "gcloud components are distributed and managed via the official Google Cloud SDK package manager, not PyPI."
     },
     "gcloudCommand": "gcloud components install alpha beta",
     "architectureComponents": [
@@ -3177,35 +2615,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Run a recursive gsutil rm command to remove all files and re-upload them.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Apply an egress firewall rule blocking Google Cloud Storage API."
       },
       {
         "letter": "B",
-        "text": "Change bucket storage class from Nearline to Standard.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Uniform Bucket-Level Access on all buckets, which immediately nullifies and ignores all existing object ACLs."
       },
       {
         "letter": "C",
-        "text": "Apply an egress firewall rule blocking Google Cloud Storage API.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run a recursive gsutil rm command to remove all files and re-upload them."
       },
       {
         "letter": "D",
-        "text": "Enable Uniform Bucket-Level Access on all buckets, which immediately nullifies and ignores all existing object ACLs.",
-        "isTrap": false
+        "text": "Change bucket storage class from Nearline to Standard."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Enabling Uniform Bucket-Level Access (UBLA) uniformly enforces IAM policies across all objects in the bucket, immediately disabling fine-grained ACLs and preventing object-level public grants from taking effect.",
     "distractors": {
-      "A": "Deleting and re-uploading objects causes massive operational overhead, high bandwidth costs, and downtime.",
-      "B": "Storage class changes have zero impact on access control or ACL evaluation.",
-      "C": "Firewall rules govern VPC IP packets, not Cloud Storage API authorization models.",
-      "D": "Correct. Enabling UBLA disables object ACLs in-place without deleting or re-uploading data."
+      "C": "Deleting and re-uploading objects causes massive operational overhead, high bandwidth costs, and downtime.",
+      "D": "Storage class changes have zero impact on access control or ACL evaluation.",
+      "A": "Firewall rules govern VPC IP packets, not Cloud Storage API authorization models."
     },
     "gcloudCommand": "gcloud storage buckets update gs://audit-target-bucket --uniform-bucket-level-access",
     "architectureComponents": [
@@ -3239,35 +2669,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure the VPC Peering connection on VPC-A to export custom routes, and configure the peering connection on VPC-B to import custom routes.",
-        "isTrap": false
+        "text": "Configure the VPC Peering connection on VPC-A to export custom routes, and configure the peering connection on VPC-B to import custom routes."
       },
       {
         "letter": "B",
-        "text": "Change the MTU of both VPC networks to 9000 bytes.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create an Unmanaged Instance Group in VPC-A to forward packets."
       },
       {
         "letter": "C",
-        "text": "Deploy a Cloud NAT gateway in VPC-B.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Deploy a Cloud NAT gateway in VPC-B."
       },
       {
         "letter": "D",
-        "text": "Create an Unmanaged Instance Group in VPC-A to forward packets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Change the MTU of both VPC networks to 9000 bytes."
       }
     ],
     "correct": "A",
     "explanation": "By default, VPC Peering only exchanges subnet routes. To allow a peered VPC (VPC-B) to reach on-premises networks routed via Cloud Interconnect/Cloud Router in VPC-A, you must explicitly enable 'Export custom routes' on VPC-A's peering configuration and 'Import custom routes' on VPC-B's peering configuration.",
     "distractors": {
-      "A": "Correct. Exporting custom routes from VPC-A and importing them in VPC-B propagates dynamic BGP on-prem routes across the peering.",
-      "B": "MTU changes adjust packet payload sizing, but do not advertise network routing tables.",
+      "D": "MTU changes adjust packet payload sizing, but do not advertise network routing tables.",
       "C": "Cloud NAT is for outbound internet traffic, not private hybrid RFC 1918 on-premises routing.",
-      "D": "Software packet forwarders create performance bottlenecks and unnecessary maintenance."
+      "B": "Software packet forwarders create performance bottlenecks and unnecessary maintenance."
     },
     "gcloudCommand": "gcloud compute networks peerings update peer-a-to-b --network=vpc-a --export-custom-routes && gcloud compute networks peerings update peer-b-to-a --network=vpc-b --import-custom-routes",
     "architectureComponents": [
@@ -3301,35 +2723,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Delete all external users from the Google Cloud Platform Console.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enforce the Organization Policy constraint constraints/iam.allowedPolicyMemberDomains specifying your Cloud Identity Customer ID."
       },
       {
         "letter": "B",
-        "text": "Enforce the Organization Policy constraint constraints/iam.allowedPolicyMemberDomains specifying your Cloud Identity Customer ID.",
-        "isTrap": false
+        "text": "Write a weekly audit script using gcloud projects get-iam-policy to email violators."
       },
       {
         "letter": "C",
-        "text": "Configure Cloud Armor IP filtering on Google Workspace.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Configure Cloud Armor IP filtering on Google Workspace."
       },
       {
         "letter": "D",
-        "text": "Write a weekly audit script using gcloud projects get-iam-policy to email violators.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete all external users from the Google Cloud Platform Console."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "The Organization Policy constraint `constraints/iam.allowedPolicyMemberDomains` (Domain-Restricted Sharing) restricts IAM policy member grants to only authorized Cloud Identity / Google Workspace domain customer IDs (e.g. `C01234567`), preventing accidental grants to external `@gmail.com` or third-party domain accounts.",
     "distractors": {
-      "A": "Manually deleting users does not prevent future accidental grants to external email addresses.",
-      "B": "Correct. `iam.allowedPolicyMemberDomains` provides declarative preventive enforcement blocking external identities from being added to IAM policies.",
+      "D": "Manually deleting users does not prevent future accidental grants to external email addresses.",
       "C": "Cloud Armor is an HTTP WAF and cannot govern IAM policy identity memberships.",
-      "D": "Audit scripts detect violations after they happen, leaving a window of exposure."
+      "B": "Audit scripts detect violations after they happen, leaving a window of exposure."
     },
     "gcloudCommand": "gcloud resource-manager org-policies set-policy --organization=123456789012 policy-domain-restricted.yaml",
     "architectureComponents": [
@@ -3364,35 +2778,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a Compute Engine agent on every storage bucket to stream access logs.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable VPC Flow Logs on all subnets."
       },
       {
         "letter": "B",
-        "text": "Enable VPC Flow Logs on all subnets.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Data Access audit logging for Google Cloud Storage in the project's IAM Audit Config, and create a Cloud Logging sink routing the logs to a BigQuery dataset."
       },
       {
         "letter": "C",
-        "text": "Enable Data Access audit logging for Google Cloud Storage in the project's IAM Audit Config, and create a Cloud Logging sink routing the logs to a BigQuery dataset.",
-        "isTrap": false
+        "text": "Turn on Cloud Storage Object Versioning."
       },
       {
         "letter": "D",
-        "text": "Turn on Cloud Storage Object Versioning.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a Compute Engine agent on every storage bucket to stream access logs."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Data Access audit logs (DATA_READ, DATA_WRITE) must be explicitly enabled in IAM Audit Configuration because they are off by default. Once enabled, a Cloud Logging Sink (`gcloud logging sinks create`) routes the generated audit logs to a BigQuery dataset for long-term analytics and retention.",
     "distractors": {
-      "A": "Compute Engine agents cannot be installed on serverless Cloud Storage buckets.",
-      "B": "VPC Flow Logs record network packet 5-tuples (IP/port), not application-level Cloud Storage object read/write operations.",
-      "C": "Correct. Enabling Data Access logs in IAM Audit Config and creating a Logging sink to BigQuery satisfies the compliance requirement natively.",
-      "D": "Object Versioning retains object payloads, but does not generate structured caller audit logs."
+      "D": "Compute Engine agents cannot be installed on serverless Cloud Storage buckets.",
+      "A": "VPC Flow Logs record network packet 5-tuples (IP/port), not application-level Cloud Storage object read/write operations.",
+      "C": "Object Versioning retains object payloads, but does not generate structured caller audit logs."
     },
     "gcloudCommand": "gcloud logging sinks create storage-audit-sink bigquery.googleapis.com/projects/healthcare-pii/datasets/audit_logs --log-filter='protoPayload.serviceName=\"storage.googleapis.com\"'",
     "architectureComponents": [
@@ -3427,35 +2833,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Use Cloud Armor to block HTTP traffic to the testing VMs.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Write a cron script in a developer laptop that checks billing every 10 minutes."
       },
       {
         "letter": "B",
-        "text": "Write a cron script in a developer laptop that checks billing every 10 minutes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set up a Cloud Monitoring alert that sends an SMS to the developer."
       },
       {
         "letter": "C",
-        "text": "Set up a Cloud Monitoring alert that sends an SMS to the developer.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Use Cloud Armor to block HTTP traffic to the testing VMs."
       },
       {
         "letter": "D",
-        "text": "Configure the Cloud Billing Budget with a 100% threshold publishing to a Pub/Sub topic that triggers an event-driven Cloud Function to update project IAM policies.",
-        "isTrap": false
+        "text": "Configure the Cloud Billing Budget with a 100% threshold publishing to a Pub/Sub topic that triggers an event-driven Cloud Function to update project IAM policies."
       }
     ],
     "correct": "D",
     "explanation": "Cloud Billing budgets natively publish notification payloads to Cloud Pub/Sub topics. Connecting an event-driven Cloud Function (or Cloud Run service) to that topic allows executing immediate programmatic remediation (such as disabling billing, scaling down MIGs, or removing IAM roles) when budget thresholds are breached.",
     "distractors": {
-      "A": "Cloud Armor protects HTTP applications against web attacks, not project financial budget overflows.",
-      "B": "Running scripts on developer laptops is unreliable, unmonitored, and prone to laptop sleep/offline states.",
-      "C": "SMS alerts require manual human action and do not provide immediate automated circuit-breaking.",
-      "D": "Correct. Budget -> Pub/Sub -> Cloud Function is the official Google architecture pattern for automated billing circuit breakers."
+      "C": "Cloud Armor protects HTTP applications against web attacks, not project financial budget overflows.",
+      "A": "Running scripts on developer laptops is unreliable, unmonitored, and prone to laptop sleep/offline states.",
+      "B": "SMS alerts require manual human action and do not provide immediate automated circuit-breaking."
     },
     "gcloudCommand": "gcloud functions deploy budget-circuit-breaker --runtime=python311 --trigger-topic=billing-budget-alerts --entry-point=handle_budget_event",
     "architectureComponents": [
@@ -3490,33 +2888,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud auth activate-service-account app-deployer@prod.iam.gserviceaccount.com --key-file=/etc/jenkins/gcp-deployer-key.json",
-        "isTrap": false
+        "text": "gcloud config set account /etc/jenkins/gcp-deployer-key.json"
       },
       {
         "letter": "B",
-        "text": "gcloud config set account /etc/jenkins/gcp-deployer-key.json",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud auth activate-service-account app-deployer@prod.iam.gserviceaccount.com --key-file=/etc/jenkins/gcp-deployer-key.json"
       },
       {
         "letter": "C",
-        "text": "cat /etc/jenkins/gcp-deployer-key.json | gcloud init --force",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "cat /etc/jenkins/gcp-deployer-key.json | gcloud init --force"
       },
       {
         "letter": "D",
-        "text": "gcloud auth login --interactive=false --key=/etc/jenkins/gcp-deployer-key.json",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud auth login --interactive=false --key=/etc/jenkins/gcp-deployer-key.json"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "The standard, non-interactive command to authenticate the Google Cloud SDK using a service account private key file is `gcloud auth activate-service-account [ACCOUNT] --key-file=[PATH_TO_KEY_FILE]`.",
     "distractors": {
-      "A": "Correct. `gcloud auth activate-service-account` is the official command for headless CLI authentication.",
-      "B": "`gcloud config set account` sets an active email identity, but does not perform cryptographic key authentication.",
+      "A": "`gcloud config set account` sets an active email identity, but does not perform cryptographic key authentication.",
       "C": "`gcloud init` is an interactive guided setup wizard and cannot accept raw key JSON via standard input.",
       "D": "`gcloud auth login` is intended for browser-based interactive human user logins."
     },
@@ -3552,35 +2942,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an IAM Condition requiring developers to pass the key header.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Upload all files as ZIP archives encrypted with standard AES-256."
       },
       {
         "letter": "B",
-        "text": "Set the default KMS key on the bucket using gcloud storage buckets update gs://finance-vault --default-encryption-key=projects/corp-sec/locations/us/keyRings/vault-ring/cryptoKeys/finance-key.",
-        "isTrap": false
+        "text": "Create an IAM Condition requiring developers to pass the key header."
       },
       {
         "letter": "C",
-        "text": "Upload all files as ZIP archives encrypted with standard AES-256.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure Cloud Armor to inject the KMS key into HTTP headers."
       },
       {
         "letter": "D",
-        "text": "Configure Cloud Armor to inject the KMS key into HTTP headers.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Set the default KMS key on the bucket using gcloud storage buckets update gs://finance-vault --default-encryption-key=projects/corp-sec/locations/us/keyRings/vault-ring/cryptoKeys/finance-key."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Cloud Storage allows setting a default Customer-Managed Encryption Key (`--default-encryption-key`) on a bucket. Once configured, all newly uploaded objects are automatically encrypted with the specified Cloud KMS key without requiring client-side encryption flags on each upload.",
     "distractors": {
-      "A": "IAM Conditions cannot validate custom HTTP object upload headers.",
-      "B": "Correct. Setting `--default-encryption-key` enforces automatic CMEK encryption on all new objects at the bucket level.",
-      "C": "Client-side ZIP encryption adds operational overhead and loses native Cloud Storage server-side encryption management.",
-      "D": "Cloud Armor does not interface with Cloud Storage bucket encryption settings."
+      "B": "IAM Conditions cannot validate custom HTTP object upload headers.",
+      "A": "Client-side ZIP encryption adds operational overhead and loses native Cloud Storage server-side encryption management.",
+      "C": "Cloud Armor does not interface with Cloud Storage bucket encryption settings."
     },
     "gcloudCommand": "gcloud storage buckets update gs://finance-vault --default-encryption-key=projects/corp-sec/locations/us/keyRings/vault-ring/cryptoKeys/finance-key",
     "architectureComponents": [
@@ -3614,35 +2996,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create two separate Shared VPC Host projects.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant the roles/compute.networkUser role to the Service Project A service account / developers on subnet-a specifically in the Host Project."
       },
       {
         "letter": "B",
-        "text": "Grant roles/compute.networkAdmin on the entire Host Project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/compute.networkAdmin on the entire Host Project."
       },
       {
         "letter": "C",
-        "text": "Grant the roles/compute.networkUser role to the Service Project A service account / developers on subnet-a specifically in the Host Project.",
-        "isTrap": false
+        "text": "Grant roles/compute.networkUser at the root Organization level."
       },
       {
         "letter": "D",
-        "text": "Grant roles/compute.networkUser at the root Organization level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create two separate Shared VPC Host projects."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "In Shared VPC, the `roles/compute.networkUser` role can be granted at the individual subnet level in the host project. This allows service project users to consume only authorized subnets while preventing access to unassigned subnets.",
     "distractors": {
-      "A": "Creating multiple host projects duplicates infrastructure unnecessarily when subnet-level IAM natively solves this.",
+      "D": "Creating multiple host projects duplicates infrastructure unnecessarily when subnet-level IAM natively solves this.",
       "B": "Granting `compute.networkAdmin` gives full rights to create, delete, and alter the entire VPC network.",
-      "C": "Correct. Subnet-level assignment of `roles/compute.networkUser` enforces fine-grained subnet isolation in Shared VPC.",
-      "D": "Granting `networkUser` at the org level permits attaching VMs to every subnet in every project across the company."
+      "C": "Granting `networkUser` at the org level permits attaching VMs to every subnet in every project across the company."
     },
     "gcloudCommand": "gcloud compute networks subnets add-iam-policy-binding subnet-a --region=us-central1 --member='serviceAccount:1234567890@cloudservices.gserviceaccount.com' --role='roles/compute.networkUser'",
     "architectureComponents": [
@@ -3676,35 +3050,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Assign the primitive Editor role to all QA engineers on the entire Organization.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create network firewall rules filtering staging IP addresses."
       },
       {
         "letter": "B",
-        "text": "Create network firewall rules filtering staging IP addresses.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Assign the primitive Editor role to all QA engineers on the entire Organization."
       },
       {
         "letter": "C",
-        "text": "Add a manual cron script to check project names every night.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Add a manual cron script to check project names every night."
       },
       {
         "letter": "D",
-        "text": "Grant roles/compute.admin to group:qa-team@corp.com at the Organization or Folder level with an IAM Condition checking resource.matchTag('123456/environment', 'staging').",
-        "isTrap": false
+        "text": "Grant roles/compute.admin to group:qa-team@corp.com at the Organization or Folder level with an IAM Condition checking resource.matchTag('123456/environment', 'staging')."
       }
     ],
     "correct": "D",
     "explanation": "Resource Manager Tags combined with IAM Conditions allow attribute-based access control (ABAC). Binding `roles/compute.admin` with a condition `resource.matchTag('TAG_KEY_ID', 'TAG_VALUE_ID')` at a parent folder or organization level automatically grants permissions on any project inheriting or bound to that tag.",
     "distractors": {
-      "A": "Granting Editor at the organization level exposes all production systems to unauthorized changes.",
-      "B": "Firewall rules govern network IP routing, not GCP Cloud IAM resource permissions.",
-      "C": "Custom scripts are reactive and lack native atomic IAM evaluation.",
-      "D": "Correct. Tag-based IAM Conditions automatically enforce least-privilege governance across dynamically provisioned resources."
+      "B": "Granting Editor at the organization level exposes all production systems to unauthorized changes.",
+      "A": "Firewall rules govern network IP routing, not GCP Cloud IAM resource permissions.",
+      "C": "Custom scripts are reactive and lack native atomic IAM evaluation."
     },
     "gcloudCommand": "gcloud organizations add-iam-policy-binding 123456789012 --member='group:qa-team@corp.com' --role='roles/compute.admin' --condition='expression=resource.matchTag(\"123456/env\", \"staging\"),title=Staging_Compute_Admin'",
     "architectureComponents": [
@@ -3738,35 +3104,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Compute-optimized (C2 or C2D) machine series.",
-        "isTrap": false
+        "text": "Compute-optimized (C2 or C2D) machine series."
       },
       {
         "letter": "B",
-        "text": "Memory-optimized (M1 or M2) machine series.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Accelerator-optimized (A2) GPU machine series."
       },
       {
         "letter": "C",
-        "text": "General-purpose (E2) shared-core machine series.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "General-purpose (E2) shared-core machine series."
       },
       {
         "letter": "D",
-        "text": "Accelerator-optimized (A2) GPU machine series.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Memory-optimized (M1 or M2) machine series."
       }
     ],
     "correct": "A",
     "explanation": "Compute-optimized C2 instances offer the highest per-core performance with sustained high all-core turbo clock frequencies (up to 3.8 GHz) and dedicated L3 cache per core, making them ideal for compute-intensive, CPU-bound, and single-threaded financial models.",
     "distractors": {
-      "A": "Correct. C2 compute-optimized instances deliver the highest clock speed and execution performance for CPU-bound computations.",
-      "B": "Memory-optimized (M-series) machines are designed for massive in-memory databases (SAP HANA), not ultra-high per-core clock speeds.",
+      "D": "Memory-optimized (M-series) machines are designed for massive in-memory databases (SAP HANA), not ultra-high per-core clock speeds.",
       "C": "E2 machines are cost-effective general-purpose instances with variable/shared vCPUs unsuitable for high-frequency low-jitter workloads.",
-      "D": "A2 instances are built for GPU-accelerated machine learning with NVIDIA Ampere GPUs, not single-threaded CPU execution."
+      "B": "A2 instances are built for GPU-accelerated machine learning with NVIDIA Ampere GPUs, not single-threaded CPU execution."
     },
     "gcloudCommand": "gcloud compute instances create hft-pricing-engine --zone=us-central1-a --machine-type=c2-standard-4 --image-family=debian-11 --image-project=debian-cloud",
     "architectureComponents": [
@@ -3800,35 +3158,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Store all logs on standard Persistent Disks attached to a Compute Engine VM.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a bucket with default Standard class and configure an Object Lifecycle Management rule to transition objects to Nearline after 30 days, to Archive after 90 days, and delete them after 1825 days (5 years)."
       },
       {
         "letter": "B",
-        "text": "Create a bucket with default Standard class and configure an Object Lifecycle Management rule to transition objects to Nearline after 30 days, to Archive after 90 days, and delete them after 1825 days (5 years).",
-        "isTrap": false
+        "text": "Store data in Standard class and run a monthly cron script to move objects to Coldline using gsutil mv."
       },
       {
         "letter": "C",
-        "text": "Store all data in Archive class from day 1 and accept retrieval fees during the first 30 days.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Store all data in Archive class from day 1 and accept retrieval fees during the first 30 days."
       },
       {
         "letter": "D",
-        "text": "Store data in Standard class and run a monthly cron script to move objects to Coldline using gsutil mv.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Store all logs on standard Persistent Disks attached to a Compute Engine VM."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Object Lifecycle Management transitions objects automatically based on age: Standard (days 1-30, zero retrieval fee for high-frequency reads), Nearline (days 31-90), Archive (days 91-1825, lowest GB/month cost), and deletion at 5 years (1825 days).",
     "distractors": {
-      "A": "Persistent Disks cost significantly more per GB/month than Cloud Storage Archive class and lack automated tiered archival.",
-      "B": "Correct. Automated lifecycle transitions optimize cost according to access frequency without retrieval penalties.",
+      "D": "Persistent Disks cost significantly more per GB/month than Cloud Storage Archive class and lack automated tiered archival.",
       "C": "Archive storage incurs substantial retrieval fees ($0.05/GB) and minimum storage duration penalties if accessed frequently in the first 30 days.",
-      "D": "Manual scripts create unnecessary operational risk, cron failure points, and data egress overhead."
+      "B": "Manual scripts create unnecessary operational risk, cron failure points, and data egress overhead."
     },
     "gcloudCommand": "gcloud storage buckets update gs://company-audit-logs --lifecycle-file=lifecycle-policy.json",
     "architectureComponents": [
@@ -3861,35 +3211,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a single Zonal Cloud SQL instance with SSD storage and 100 Read Replicas.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Configure the Cloud SQL instance as Regional with High Availability (HA) enabled, automated daily backups, and Point-in-Time Recovery (PITR) enabled via transaction write-ahead logs."
       },
       {
         "letter": "B",
-        "text": "Use Cloud Spanner configured with a single read-only replica.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Deploy two independent Zonal Cloud SQL instances in different regions and synchronize them using custom pg_dump scripts."
       },
       {
         "letter": "C",
-        "text": "Configure the Cloud SQL instance as Regional with High Availability (HA) enabled, automated daily backups, and Point-in-Time Recovery (PITR) enabled via transaction write-ahead logs.",
-        "isTrap": false
+        "text": "Use Cloud Spanner configured with a single read-only replica."
       },
       {
         "letter": "D",
-        "text": "Deploy two independent Zonal Cloud SQL instances in different regions and synchronize them using custom pg_dump scripts.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy a single Zonal Cloud SQL instance with SSD storage and 100 Read Replicas."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Cloud SQL High Availability (HA) configuration provisions a primary instance in one zone and a synchronous standby replica in a secondary zone within the same region. If the primary zone fails, Cloud SQL automatically triggers failover to the standby with no endpoint IP changes. PITR uses binary logs/WAL to restore to any exact second.",
     "distractors": {
-      "A": "Read replicas offload read queries but do not provide automated master write failover during zonal failure.",
-      "B": "Cloud Spanner is a globally distributed database that is over-engineered and requires application rewriting for standard PostgreSQL apps.",
-      "C": "Correct. Regional HA paired with automated backups and PITR fulfills 99.95% HA SLA and point-in-time disaster recovery.",
-      "D": "Manual pg_dump replication is asynchronous, introduces data loss, and lacks automated zero-touch failover."
+      "D": "Read replicas offload read queries but do not provide automated master write failover during zonal failure.",
+      "C": "Cloud Spanner is a globally distributed database that is over-engineered and requires application rewriting for standard PostgreSQL apps.",
+      "B": "Manual pg_dump replication is asynchronous, introduces data loss, and lacks automated zero-touch failover."
     },
     "gcloudCommand": "gcloud sql instances create checkout-db-ha --database-version=POSTGRES_15 --tier=db-custom-4-16384 --region=us-central1 --availability-type=REGIONAL --backup-start-time=02:00 --enable-point-in-time-recovery",
     "architectureComponents": [
@@ -3922,35 +3264,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud SQL for MySQL configured with cross-region read replicas.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Firestore in Datastore mode."
       },
       {
         "letter": "B",
-        "text": "Cloud Bigtable with multi-cluster replication.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud SQL for MySQL configured with cross-region read replicas."
       },
       {
         "letter": "C",
-        "text": "Firestore in Datastore mode.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud Spanner configured with a Multi-Region instance configuration."
       },
       {
         "letter": "D",
-        "text": "Cloud Spanner configured with a Multi-Region instance configuration.",
-        "isTrap": false
+        "text": "Cloud Bigtable with multi-cluster replication."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Cloud Spanner is Google's globally distributed, horizontally scalable NewSQL relational database that delivers external consistency, full ACID transactions, multi-region write scalability, and up to 99.999% availability SLA.",
     "distractors": {
-      "A": "Cloud SQL is a single-node write architecture and cannot scale relational writes horizontally across continents.",
-      "B": "Cloud Bigtable is a NoSQL wide-column store and does not support multi-table relational ACID transactions or SQL joins.",
-      "C": "Firestore is a NoSQL document database, not a distributed SQL relational database.",
-      "D": "Correct. Cloud Spanner provides horizontal relational write scalability and global multi-region ACID consistency."
+      "B": "Cloud SQL is a single-node write architecture and cannot scale relational writes horizontally across continents.",
+      "D": "Cloud Bigtable is a NoSQL wide-column store and does not support multi-table relational ACID transactions or SQL joins.",
+      "A": "Firestore is a NoSQL document database, not a distributed SQL relational database."
     },
     "gcloudCommand": "gcloud spanner instances create global-bank-spanner --config=nam-eur-asia1 --nodes=3 --description='Global Core Banking Spanner'",
     "architectureComponents": [
@@ -3983,35 +3317,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Set the minimum number of ports per VM (`--min-ports-per-vm`) to 256 and enable dynamic port allocation on the Cloud NAT gateway.",
-        "isTrap": false
+        "text": "Assign a dedicated public IP address to each of the 500 VMs."
       },
       {
         "letter": "B",
-        "text": "Disable Cloud NAT and route outbound traffic through a single e2-micro VM running iptables.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Disable Cloud NAT and route outbound traffic through a single e2-micro VM running iptables."
       },
       {
         "letter": "C",
-        "text": "Assign a dedicated public IP address to each of the 500 VMs.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Set min-ports-per-vm to 64,000 so one IP covers all VMs."
       },
       {
         "letter": "D",
-        "text": "Set min-ports-per-vm to 64,000 so one IP covers all VMs.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Set the minimum number of ports per VM (`--min-ports-per-vm`) to 256 and enable dynamic port allocation on the Cloud NAT gateway."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Cloud NAT assigns a fixed block of source NAT ports to each private VM based on `--min-ports-per-vm` (default is 64). Sizing it to 256 (or enabling Dynamic Port Allocation) ensures VMs requiring up to 120 concurrent connections never experience SNAT port exhaustion while minimizing the number of required external NAT IPs.",
     "distractors": {
-      "A": "Correct. Sizing `--min-ports-per-vm` appropriately (or enabling dynamic port allocation) prevents packet drops caused by port exhaustion.",
       "B": "A single e2-micro proxy is a severe bottleneck, lacks high availability, and caps network throughput at 1 Gbps.",
-      "C": "Public IPs on private backend microservices violate security isolation and incur high static IP reservation costs.",
-      "D": "A single IPv4 address only has 64,512 usable NAT ports total; allocating 64,000 ports per VM would limit the entire NAT gateway to 1 VM per IP."
+      "A": "Public IPs on private backend microservices violate security isolation and incur high static IP reservation costs.",
+      "C": "A single IPv4 address only has 64,512 usable NAT ports total; allocating 64,000 ports per VM would limit the entire NAT gateway to 1 VM per IP."
     },
     "gcloudCommand": "gcloud compute routers nats create nat-gateway --router=nat-router --region=us-central1 --auto-allocate-nat-external-ips --min-ports-per-vm=256 --enable-dynamic-port-allocation",
     "architectureComponents": [
@@ -4046,35 +3372,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Internal HTTP(S) Load Balancer.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Network Load Balancer (External Passthrough)."
       },
       {
         "letter": "B",
-        "text": "Global External HTTP(S) Load Balancer (Application Load Balancer).",
-        "isTrap": false
+        "text": "TCP Proxy Load Balancer with port 443."
       },
       {
         "letter": "C",
-        "text": "TCP Proxy Load Balancer with port 443.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Internal HTTP(S) Load Balancer."
       },
       {
         "letter": "D",
-        "text": "Network Load Balancer (External Passthrough).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Global External HTTP(S) Load Balancer (Application Load Balancer)."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "The Global External Application Load Balancer (HTTP/HTTPS) uses Google's Anycast IP routing to terminate client TLS connections at the nearest Google edge PoP, supports URL path routing, and natively integrates with Cloud CDN and Cloud Armor WAF security policies.",
     "distractors": {
-      "A": "Internal Load Balancers are only accessible from within the private VPC, not the public internet.",
-      "B": "Correct. Global External HTTPS Load Balancer provides Anycast IP, edge SSL termination, Cloud CDN caching, and Cloud Armor WAF.",
-      "C": "TCP Proxy operates at Layer 4 and does not support HTTP URL-map path routing, Cloud CDN, or HTTP-layer Cloud Armor rules.",
-      "D": "Network Load Balancer is regional, non-proxied (passthrough), does not terminate SSL at the edge, and cannot integrate with Cloud CDN or Cloud Armor."
+      "C": "Internal Load Balancers are only accessible from within the private VPC, not the public internet.",
+      "B": "TCP Proxy operates at Layer 4 and does not support HTTP URL-map path routing, Cloud CDN, or HTTP-layer Cloud Armor rules.",
+      "A": "Network Load Balancer is regional, non-proxied (passthrough), does not terminate SSL at the edge, and cannot integrate with Cloud CDN or Cloud Armor."
     },
     "gcloudCommand": "gcloud compute target-https-proxies create global-https-proxy --url-map=web-url-map --ssl-certificates=managed-cert",
     "architectureComponents": [
@@ -4108,35 +3426,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a standard HDD (pd-standard) disk and share it using NFS over the public internet.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Use Cloud Storage FUSE on both VMs."
       },
       {
         "letter": "B",
-        "text": "Attach a Local SSD NVMe drive to both VMs simultaneously.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create an SSD Persistent Disk (pd-ssd) or Balanced Persistent Disk (pd-balanced) in multi-writer mode (READ_WRITE_MANY) and attach it to both instances in the same zone."
       },
       {
         "letter": "C",
-        "text": "Create an SSD Persistent Disk (pd-ssd) or Balanced Persistent Disk (pd-balanced) in multi-writer mode (READ_WRITE_MANY) and attach it to both instances in the same zone.",
-        "isTrap": false
+        "text": "Create a standard HDD (pd-standard) disk and share it using NFS over the public internet."
       },
       {
         "letter": "D",
-        "text": "Use Cloud Storage FUSE on both VMs.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Attach a Local SSD NVMe drive to both VMs simultaneously."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Compute Engine allows attaching SSD Persistent Disks (`pd-ssd`) or Extreme Persistent Disks to up to two instances simultaneously in multi-writer mode (`--mode=rw` with multi-writer enabled). The application must utilize a cluster-aware filesystem to prevent filesystem corruption.",
     "distractors": {
-      "A": "NFS over the public internet introduces high latency, security vulnerabilities, and lacks native disk attachment.",
-      "B": "Local SSDs are physically tied to a single physical host server and cannot be attached to multiple independent VM instances.",
-      "C": "Correct. Multi-writer persistent disks provide native shared block-level storage for clustered active-passive applications.",
-      "D": "Cloud Storage FUSE provides object-to-file semantics, but is not a POSIX block-level disk suitable for low-latency database clustering."
+      "C": "NFS over the public internet introduces high latency, security vulnerabilities, and lacks native disk attachment.",
+      "D": "Local SSDs are physically tied to a single physical host server and cannot be attached to multiple independent VM instances.",
+      "A": "Cloud Storage FUSE provides object-to-file semantics, but is not a POSIX block-level disk suitable for low-latency database clustering."
     },
     "gcloudCommand": "gcloud compute instances attach-disk vm-node-1 --disk=shared-cluster-disk --mode=rw --zone=us-central1-a",
     "architectureComponents": [
@@ -4169,35 +3479,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Storage with 1 JSON file written per sensor event.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Bigtable with SSD storage."
       },
       {
         "letter": "B",
-        "text": "Cloud SQL for PostgreSQL with 10 read replicas.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud SQL for PostgreSQL with 10 read replicas."
       },
       {
         "letter": "C",
-        "text": "Firestore in Native Mode.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Firestore in Native Mode."
       },
       {
         "letter": "D",
-        "text": "Cloud Bigtable with SSD storage.",
-        "isTrap": false
+        "text": "Cloud Storage with 1 JSON file written per sensor event."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud Bigtable is Google's NoSQL wide-column store designed for high-throughput (millions of QPS), low-latency (<10ms) streaming writes, IoT sensor data, and time-series telemetry.",
     "distractors": {
-      "A": "Writing 500k individual JSON files per second to Cloud Storage produces extreme API request charges and is an architectural anti-pattern.",
+      "D": "Writing 500k individual JSON files per second to Cloud Storage produces extreme API request charges and is an architectural anti-pattern.",
       "B": "Cloud SQL cannot handle 500,000 streaming writes per second due to single-master write concurrency bottlenecks.",
-      "C": "Firestore is designed for mobile/web app state and document hierarchies; it cannot ingest 500k writes/sec cost-effectively.",
-      "D": "Correct. Cloud Bigtable with SSD storage excels at massive-scale streaming writes and low-latency time-series queries."
+      "C": "Firestore is designed for mobile/web app state and document hierarchies; it cannot ingest 500k writes/sec cost-effectively."
     },
     "gcloudCommand": "gcloud bigtable instances create telemetry-cluster --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=10 --cluster-storage-type=SSD --display-name='IoT Telemetry Cluster'",
     "architectureComponents": [
@@ -4229,35 +3531,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Partner Interconnect through a certified service provider.",
-        "isTrap": false
+        "text": "Direct Peering over the public internet."
       },
       {
         "letter": "B",
-        "text": "Direct Peering over the public internet.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Standard Cloud VPN with a single tunnel."
       },
       {
         "letter": "C",
-        "text": "Standard Cloud VPN with a single tunnel.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Dedicated Interconnect with 100 Gbps circuits."
       },
       {
         "letter": "D",
-        "text": "Dedicated Interconnect with 100 Gbps circuits.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Partner Interconnect through a certified service provider."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Dedicated Interconnect requires customer routing equipment to physically colocate in a designated Google colocation facility. When a customer's data center is outside Google colocation facilities, Partner Interconnect provides private, SLA-backed, high-bandwidth (50 Mbps to 10 Gbps) connectivity through a supported third-party carrier.",
     "distractors": {
-      "A": "Correct. Partner Interconnect connects on-prem data centers to Google Cloud through supported third-party telecommunications partners.",
-      "B": "Direct Peering provides public Google Workspace access, not private RFC 1918 VPC routing, and carries no SLA.",
-      "C": "Standard Cloud VPN tunnels are capped at 3 Gbps per tunnel, travel across the public internet, and do not provide 5 Gbps private line SLA.",
-      "D": "Dedicated Interconnect requires direct physical fiber connection in a Google colocation facility, which the customer lacks."
+      "A": "Direct Peering provides public Google Workspace access, not private RFC 1918 VPC routing, and carries no SLA.",
+      "B": "Standard Cloud VPN tunnels are capped at 3 Gbps per tunnel, travel across the public internet, and do not provide 5 Gbps private line SLA.",
+      "C": "Dedicated Interconnect requires direct physical fiber connection in a Google colocation facility, which the customer lacks."
     },
     "gcloudCommand": "gcloud compute interconnects attachments partner create my-vlan-attachment --region=us-east4 --router=corp-router --edge-availability-domain=AVAILABILITY_DOMAIN_1",
     "architectureComponents": [
@@ -4292,35 +3586,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Spot VMs within a Regional Managed Instance Group configured with autoscaling.",
-        "isTrap": false
+        "text": "On-demand M2 memory-optimized instances."
       },
       {
         "letter": "B",
-        "text": "Sole-tenant nodes with 3-year committed use discounts.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Unmanaged Instance Group of e2-micro instances with no restart policy."
       },
       {
         "letter": "C",
-        "text": "On-demand M2 memory-optimized instances.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Sole-tenant nodes with 3-year committed use discounts."
       },
       {
         "letter": "D",
-        "text": "Unmanaged Instance Group of e2-micro instances with no restart policy.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Spot VMs within a Regional Managed Instance Group configured with autoscaling."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Spot VMs (and Preemptible VMs) offer massive discounts (60-91%) compared to standard on-demand pricing. Because the transcoding jobs are stateless, idempotent, and frequently checkpointed, preemption can be tolerated seamlessly, especially when managed by a Regional MIG.",
     "distractors": {
-      "A": "Correct. Spot VMs in a Regional MIG provide maximum cost savings and automatic instance replacement upon preemption.",
-      "B": "Sole-tenant nodes are dedicated physical servers designed for licensing/compliance, not cheap disposable batch processing.",
-      "C": "M2 instances are ultra-expensive memory-optimized hosts designed for huge in-memory databases, not batch video encoding.",
-      "D": "Unmanaged instance groups lack autoscaling, autohealing, and automated replacement upon node reclamation."
+      "C": "Sole-tenant nodes are dedicated physical servers designed for licensing/compliance, not cheap disposable batch processing.",
+      "A": "M2 instances are ultra-expensive memory-optimized hosts designed for huge in-memory databases, not batch video encoding.",
+      "B": "Unmanaged instance groups lack autoscaling, autohealing, and automated replacement upon node reclamation."
     },
     "gcloudCommand": "gcloud compute instance-templates create video-worker-template --provisioning-model=SPOT --machine-type=e2-standard-8 --image-family=debian-11 --image-project=debian-cloud",
     "architectureComponents": [
@@ -4353,35 +3639,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud SQL for PostgreSQL with polling.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Firestore in Native mode."
       },
       {
         "letter": "B",
-        "text": "Firestore in Native mode.",
-        "isTrap": false
+        "text": "Cloud Bigtable with SSD storage."
       },
       {
         "letter": "C",
-        "text": "Firestore in Datastore mode.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Firestore in Datastore mode."
       },
       {
         "letter": "D",
-        "text": "Cloud Bigtable with SSD storage.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud SQL for PostgreSQL with polling."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Firestore in Native mode provides client-side SDKs with built-in real-time listeners, offline data persistence, and security rules for direct web/mobile access. Datastore mode is intended for backend server-to-server workloads and does not support client real-time synchronization.",
     "distractors": {
-      "A": "Polling Cloud SQL introduces high database load, latency, and lacks native client offline sync libraries.",
-      "B": "Correct. Firestore Native mode includes web/mobile SDKs with real-time listeners and offline sync capabilities.",
+      "D": "Polling Cloud SQL introduces high database load, latency, and lacks native client offline sync libraries.",
       "C": "Datastore mode is designed for legacy App Engine server backends and lacks mobile SDKs and real-time listeners.",
-      "D": "Cloud Bigtable is a heavy NoSQL engine that cannot be accessed directly from mobile/web clients."
+      "B": "Cloud Bigtable is a heavy NoSQL engine that cannot be accessed directly from mobile/web clients."
     },
     "gcloudCommand": "gcloud firestore databases create --location=nam5 --type=firestore-native",
     "architectureComponents": [
@@ -4413,35 +3691,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy BIND DNS servers on Compute Engine VMs in each VPC and synchronize zone files manually.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a Public Managed Zone and create an IAM deny policy on external IPs."
       },
       {
         "letter": "B",
-        "text": "Modify the /etc/hosts file across all VMs using a startup script.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy BIND DNS servers on Compute Engine VMs in each VPC and synchronize zone files manually."
       },
       {
         "letter": "C",
-        "text": "Create a Cloud DNS Private Managed Zone for domain 'corp.internal' and authorize vpc-dev, vpc-staging, and vpc-prod to resolve from the zone.",
-        "isTrap": false
+        "text": "Modify the /etc/hosts file across all VMs using a startup script."
       },
       {
         "letter": "D",
-        "text": "Create a Public Managed Zone and create an IAM deny policy on external IPs.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create a Cloud DNS Private Managed Zone for domain 'corp.internal' and authorize vpc-dev, vpc-staging, and vpc-prod to resolve from the zone."
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Cloud DNS Private Managed Zones provide managed internal DNS resolution for private domains. You can bind a single Private Managed Zone to multiple VPC networks within a project, enabling unified, secure internal DNS resolution across all attached networks.",
     "distractors": {
-      "A": "Self-managed BIND servers add unnecessary maintenance overhead, scaling issues, and single points of failure.",
-      "B": "Static `/etc/hosts` files cannot scale with dynamic autoscaled instances and lack automated updates.",
-      "C": "Correct. Cloud DNS Private Managed Zones authorized across multiple VPCs provide zero-maintenance internal DNS.",
-      "D": "Public zones publish DNS records to authoritative internet root servers, exposing internal hostnames to external recon."
+      "B": "Self-managed BIND servers add unnecessary maintenance overhead, scaling issues, and single points of failure.",
+      "C": "Static `/etc/hosts` files cannot scale with dynamic autoscaled instances and lack automated updates.",
+      "A": "Public zones publish DNS records to authoritative internet root servers, exposing internal hostnames to external recon."
     },
     "gcloudCommand": "gcloud dns managed-zones create corp-internal-zone --dns-name='corp.internal.' --description='Internal DNS' --visibility=private --networks=vpc-dev,vpc-staging,vpc-prod",
     "architectureComponents": [
@@ -4475,35 +3745,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Standard Tier",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Direct Peering Tier"
       },
       {
         "letter": "B",
-        "text": "Cloud CDN Tier",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Standard Tier"
       },
       {
         "letter": "C",
-        "text": "Direct Peering Tier",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Cloud CDN Tier"
       },
       {
         "letter": "D",
-        "text": "Premium Tier",
-        "isTrap": false
+        "text": "Premium Tier"
       }
     ],
     "correct": "D",
     "explanation": "Premium Tier routes user traffic over Google's global, private, low-latency fiber network, ingesting traffic at the Google edge point of presence (PoP) nearest to the user. Standard Tier routes traffic over the public transit ISP network and enters Google's network only in the destination region.",
     "distractors": {
-      "A": "Standard Tier uses the public internet for long-haul transport, resulting in variable latency and higher jitter.",
-      "B": "There is no 'Cloud CDN Tier' in Google Cloud Network Service Tiers.",
-      "C": "Direct Peering is a physical peering agreement, not a Compute Engine network service tier option.",
-      "D": "Correct. Premium Tier delivers highest performance and lowest latency by leveraging Google's private global fiber network."
+      "B": "Standard Tier uses the public internet for long-haul transport, resulting in variable latency and higher jitter.",
+      "C": "There is no 'Cloud CDN Tier' in Google Cloud Network Service Tiers.",
+      "A": "Direct Peering is a physical peering agreement, not a Compute Engine network service tier option."
     },
     "gcloudCommand": "gcloud compute addresses create saas-vip --region=us-central1 --network-tier=PREMIUM",
     "architectureComponents": [
@@ -4537,34 +3799,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Memorystore for Redis with Standard Tier (High Availability).",
-        "isTrap": false
+        "text": "Cloud Storage in Standard class."
       },
       {
         "letter": "B",
-        "text": "Cloud Storage in Standard class.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Memorystore for Memcached."
       },
       {
         "letter": "C",
-        "text": "Cloud Memorystore for Memcached.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Memorystore for Redis with Standard Tier (High Availability)."
       },
       {
         "letter": "D",
-        "text": "Cloud Bigtable with SSD storage.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud Bigtable with SSD storage."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Cloud Memorystore for Redis Standard Tier provides fully managed, highly available in-memory caching with automatic cross-zone failover, 99.9% availability SLA, and native support for rich data structures (hashes, lists, sets, pub/sub). Memcached is a simple multithreaded key-value cache without persistence or complex data structures.",
     "distractors": {
-      "A": "Correct. Memorystore for Redis Standard Tier provides HA failover and rich data structure support for session caching.",
-      "B": "Cloud Storage is object storage with latency in tens to hundreds of milliseconds, unsuitable for real-time web sessions.",
-      "C": "Memcached does not support complex data structures (sets, hashes, sorted sets) or automated HA failover replicas.",
+      "A": "Cloud Storage is object storage with latency in tens to hundreds of milliseconds, unsuitable for real-time web sessions.",
+      "B": "Memcached does not support complex data structures (sets, hashes, sorted sets) or automated HA failover replicas.",
       "D": "Cloud Bigtable latency is 5-10ms, which is higher than in-memory sub-millisecond RAM caching."
     },
     "gcloudCommand": "gcloud redis instances create session-cache --size=5 --region=us-central1 --tier=STANDARD --redis-version=redis_6_x",
@@ -4598,34 +3852,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Use Local SSDs and configure rsync cron jobs between zones every 5 minutes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a multi-region Cloud Storage bucket and mount it as a block device."
       },
       {
         "letter": "B",
-        "text": "Use a Regional Persistent Disk (pd-balanced or pd-ssd) synchronously replicated across two zones in the same region, and attach it with --force-attach to a standby VM if the primary zone fails.",
-        "isTrap": false
+        "text": "Use Local SSDs and configure rsync cron jobs between zones every 5 minutes."
       },
       {
         "letter": "C",
-        "text": "Create a multi-region Cloud Storage bucket and mount it as a block device.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Use a Regional Persistent Disk (pd-balanced or pd-ssd) synchronously replicated across two zones in the same region, and attach it with --force-attach to a standby VM if the primary zone fails."
       },
       {
         "letter": "D",
-        "text": "Take daily snapshots of a Zonal Persistent Disk and restore them in the secondary zone.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Take daily snapshots of a Zonal Persistent Disk and restore them in the secondary zone."
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Regional Persistent Disks provide synchronous block-level replication across two zones in the same region with zero RPO. If the active instance or primary zone crashes, the disk can be forcibly attached (`--force-attach`) to a standby VM in the secondary zone in seconds.",
     "distractors": {
-      "A": "Local SSDs cannot survive host termination and rsync scripts cause data loss and operational overhead.",
-      "B": "Correct. Regional PDs provide synchronous active-active block replication between two zones, guaranteeing zero data loss (RPO = 0).",
-      "C": "Cloud Storage cannot be mounted as a native high-performance POSIX block device with atomic disk locks.",
+      "B": "Local SSDs cannot survive host termination and rsync scripts cause data loss and operational overhead.",
+      "A": "Cloud Storage cannot be mounted as a native high-performance POSIX block device with atomic disk locks.",
       "D": "Daily snapshots result in up to 24 hours of data loss, failing the zero-RPO requirement."
     },
     "gcloudCommand": "gcloud compute disks create db-regional-disk --region=us-central1 --replica-zones=us-central1-a,us-central1-b --size=500GB --type=pd-ssd",
@@ -4659,35 +3905,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Preemptible N2 instances with Shielded VM enabled.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Preemptible N2 instances with Shielded VM enabled."
       },
       {
         "letter": "B",
-        "text": "Standard multi-tenant E2 instances with custom machine types.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Google Kubernetes Engine with Autopilot mode."
       },
       {
         "letter": "C",
-        "text": "Sole-Tenant Node Groups.",
-        "isTrap": false
+        "text": "Standard multi-tenant E2 instances with custom machine types."
       },
       {
         "letter": "D",
-        "text": "Google Kubernetes Engine with Autopilot mode.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Sole-Tenant Node Groups."
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Sole-tenant nodes provide dedicated physical Compute Engine servers allocated exclusively to a single customer's VMs, ensuring physical hardware isolation for regulatory compliance (HIPAA/PCI) and enabling Bring-Your-Own-License (BYOL) based on physical core and socket counts.",
     "distractors": {
       "A": "Preemptible VMs run on shared multi-tenant physical hardware and are subject to termination at any time.",
-      "B": "Standard instances share underlying physical hardware hosts with other cloud tenants, violating strict physical isolation.",
-      "C": "Correct. Sole-tenant nodes guarantee dedicated physical hardware isolation and support core-based software licensing compliance.",
-      "D": "GKE Autopilot runs on shared multi-tenant infrastructure and does not provide physical server core visibility for legacy BYOL."
+      "C": "Standard instances share underlying physical hardware hosts with other cloud tenants, violating strict physical isolation.",
+      "B": "GKE Autopilot runs on shared multi-tenant infrastructure and does not provide physical server core visibility for legacy BYOL."
     },
     "gcloudCommand": "gcloud compute node-templates create sole-tenant-tmpl --region=us-central1 --node-type=c2-node-60-240 && gcloud compute node-groups create my-node-group --zone=us-central1-a --template=sole-tenant-tmpl --target-size=2",
     "architectureComponents": [
@@ -4719,26 +3957,19 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Single massive project containing all 15 business unit workloads without project separation.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Single massive project containing all 15 business unit workloads without project separation."
       },
       {
         "letter": "B",
-        "text": "VPC Network Peering mesh between all 15 independent VPCs.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "VPC Network Peering mesh between all 15 independent VPCs."
       },
       {
         "letter": "C",
-        "text": "Cloud VPN tunnels interconnecting 15 separate VPCs.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Cloud VPN tunnels interconnecting 15 separate VPCs."
       },
       {
         "letter": "D",
-        "text": "Shared VPC with a central Host project and business unit Service projects.",
-        "isTrap": false
+        "text": "Shared VPC with a central Host project and business unit Service projects."
       }
     ],
     "correct": "D",
@@ -4746,8 +3977,7 @@ window.GCP_ACE_QUESTIONS = [
     "distractors": {
       "A": "A single project destroys billing boundaries, IAM isolation, and project resource quotas.",
       "B": "A full 15-project VPC Peering mesh requires configuring and maintaining dozens of bidirectional peering links and decentralizes firewall administration.",
-      "C": "Cloud VPN introduces bandwidth costs, encryption overhead, and 3 Gbps tunnel caps for intra-cloud networking.",
-      "D": "Correct. Shared VPC centralizes network governance in a single host project while preserving project isolation for developers."
+      "C": "Cloud VPN introduces bandwidth costs, encryption overhead, and 3 Gbps tunnel caps for intra-cloud networking."
     },
     "gcloudCommand": "gcloud compute shared-vpc enable host-net-proj && gcloud compute shared-vpc service-projects associate bu1-service-proj --host-project=host-net-proj",
     "architectureComponents": [
@@ -4782,34 +4012,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Coldline storage has a 90-day minimum storage duration; deleting objects after 10 days incurs an early deletion fee equivalent to the remaining 80 days of storage.",
-        "isTrap": false
+        "text": "Objects in Coldline cannot be deleted until 1 year has passed."
       },
       {
         "letter": "B",
-        "text": "Cloud Logging automatically replicates all Coldline buckets to BigQuery.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Cloud Logging automatically replicates all Coldline buckets to BigQuery."
       },
       {
         "letter": "C",
-        "text": "Objects in Coldline cannot be deleted until 1 year has passed.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Coldline storage has a 90-day minimum storage duration; deleting objects after 10 days incurs an early deletion fee equivalent to the remaining 80 days of storage."
       },
       {
         "letter": "D",
-        "text": "Coldline storage charges $100 per GB for object deletion requests.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Coldline storage charges $100 per GB for object deletion requests."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Cloud Storage infrequency tiers enforce minimum storage duration commitments: Nearline (30 days), Coldline (90 days), and Archive (365 days). Deleting or overwriting an object before its minimum duration incurs an early deletion charge for the remaining unfulfilled days.",
     "distractors": {
-      "A": "Correct. Coldline requires a 90-day minimum retention; deleting at day 10 triggers an early deletion fee for the remaining 80 days.",
       "B": "Cloud Logging does not automatically replicate Cloud Storage object payloads to BigQuery.",
-      "C": "Objects can be deleted at any time, but early deletion penalties apply if deleted before the minimum duration.",
+      "A": "Objects can be deleted at any time, but early deletion penalties apply if deleted before the minimum duration.",
       "D": "Delete API calls themselves are free; the charge is the prorated remaining minimum duration storage cost."
     },
     "gcloudCommand": "gcloud storage buckets update gs://debug-temp-logs --default-storage-class=STANDARD",
@@ -4844,34 +4066,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Assign a primary subnet CIDR of 10.0.0.0/24 for instance primary IPs, and allocate an Alias IP range (/27) to each instance from a secondary subnet range (10.1.0.0/16).",
-        "isTrap": false
+        "text": "Deploy 30 network interface controllers (NICs) on each VM instance."
       },
       {
         "letter": "B",
-        "text": "Assign 30 external public IP addresses to each VM instance.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Assign 30 external public IP addresses to each VM instance."
       },
       {
         "letter": "C",
-        "text": "Deploy 30 network interface controllers (NICs) on each VM instance.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Assign a primary subnet CIDR of 10.0.0.0/24 for instance primary IPs, and allocate an Alias IP range (/27) to each instance from a secondary subnet range (10.1.0.0/16)."
       },
       {
         "letter": "D",
-        "text": "Create 30 separate VPC networks connected via Cloud VPN.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create 30 separate VPC networks connected via Cloud VPN."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Alias IP ranges allow attaching multiple internal IP addresses (or secondary CIDR blocks) to a single VM's primary network interface (`nic0`). This allows containers or services running inside the VM to be directly routable on the VPC without requiring multiple physical NICs or public IPs.",
     "distractors": {
-      "A": "Correct. Alias IP ranges allocate internal IP blocks from secondary subnet ranges directly to individual VM interfaces for container addressing.",
       "B": "Public IPs expose internal containers to the internet and exhaust IPv4 quotas.",
-      "C": "Compute Engine supports a maximum of 8 network interfaces (NICs) per instance, so 30 NICs is physically impossible.",
+      "A": "Compute Engine supports a maximum of 8 network interfaces (NICs) per instance, so 30 NICs is physically impossible.",
       "D": "Multiple VPCs with VPNs add massive latency, routing complexity, and cost."
     },
     "gcloudCommand": "gcloud compute instances network-interfaces update my-vm --zone=us-central1-a --aliases='10.1.0.0/27'",
@@ -4906,34 +4120,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Armor Managed Proxy.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Cloud Armor Managed Proxy."
       },
       {
         "letter": "B",
-        "text": "External Passthrough Network Load Balancer (backend service based).",
-        "isTrap": false
+        "text": "Global External HTTPS Load Balancer."
       },
       {
         "letter": "C",
-        "text": "Global External HTTPS Load Balancer.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "External Passthrough Network Load Balancer (backend service based)."
       },
       {
         "letter": "D",
-        "text": "SSL Proxy Load Balancer.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "SSL Proxy Load Balancer."
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "The External Passthrough Network Load Balancer is a Layer 4 regional load balancer built on Google Maglev. It routes TCP and UDP traffic directly to backend VMs without proxy termination, preserves client source IP, and uses Direct Server Return (DSR) for maximum throughput and minimum latency.",
     "distractors": {
       "A": "Cloud Armor is a security policy layer on proxies, not a standalone passthrough load balancer.",
-      "B": "Correct. External Passthrough Network Load Balancer supports UDP/TCP, preserves source IP, and utilizes DSR.",
-      "C": "External HTTPS LB terminates HTTP/HTTPS proxy traffic at Layer 7 and does not support arbitrary UDP game traffic.",
+      "B": "External HTTPS LB terminates HTTP/HTTPS proxy traffic at Layer 7 and does not support arbitrary UDP game traffic.",
       "D": "SSL Proxy terminates TLS connections and only supports TCP port 443 (not UDP)."
     },
     "gcloudCommand": "gcloud compute forwarding-rules create udp-game-forwarding-rule --region=us-central1 --ports=7777 --backend-service=udp-game-backend",
@@ -4968,34 +4174,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a single HA VPN tunnel with static routes.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Use VPC Peering over the public internet."
       },
       {
         "letter": "B",
-        "text": "Use VPC Peering over the public internet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy a Cloud HA VPN gateway with two active tunnels configured against an on-premises peer gateway across two separate IPsec interfaces, using dynamic routing with Cloud Router and BGP."
       },
       {
         "letter": "C",
-        "text": "Deploy a Cloud HA VPN gateway with two active tunnels configured against an on-premises peer gateway across two separate IPsec interfaces, using dynamic routing with Cloud Router and BGP.",
-        "isTrap": false
+        "text": "Deploy a single HA VPN tunnel with static routes."
       },
       {
         "letter": "D",
-        "text": "Deploy two Classic VPN gateways with static routes.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Deploy two Classic VPN gateways with static routes."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Google Cloud HA VPN provides a 99.99% availability SLA when configured with two tunnels (one on each of the HA VPN gateway's two public IP interfaces: `interface 0` and `interface 1`) paired with dynamic routing via Cloud Router and BGP.",
     "distractors": {
-      "A": "A single tunnel provides only 99.9% SLA; two active tunnels are required for 99.99% SLA.",
-      "B": "VPC Peering connects two GCP VPCs, not an on-premises data center.",
-      "C": "Correct. Cloud HA VPN with dual interfaces and BGP dynamic routing is mandatory to qualify for the 99.99% SLA.",
+      "C": "A single tunnel provides only 99.9% SLA; two active tunnels are required for 99.99% SLA.",
+      "A": "VPC Peering connects two GCP VPCs, not an on-premises data center.",
       "D": "Classic VPN is deprecated for new designs and only carries a 99.9% SLA."
     },
     "gcloudCommand": "gcloud compute vpn-gateways create corp-ha-vpn --network=prod-vpc --region=us-central1",
@@ -5030,35 +4228,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create 365 separate daily tables (sharded tables) named table_YYYYMMDD.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create 365 separate daily tables (sharded tables) named table_YYYYMMDD."
       },
       {
         "letter": "B",
-        "text": "Cluster the table by event_timestamp without any partitioning.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Partition the table by day on the event_timestamp column, and cluster the table by customer_id and region."
       },
       {
         "letter": "C",
-        "text": "Store the data in Cloud Storage and query it using BigQuery external tables with no schema.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cluster the table by event_timestamp without any partitioning."
       },
       {
         "letter": "D",
-        "text": "Partition the table by day on the event_timestamp column, and cluster the table by customer_id and region.",
-        "isTrap": false
+        "text": "Store the data in Cloud Storage and query it using BigQuery external tables with no schema."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "BigQuery Partitioning by timestamp segments the data by date boundaries, allowing BigQuery to prune unread partitions and drastically reduce scanned bytes. Adding Clustering on high-cardinality query filter columns (`customer_id`, `region`) further collocates related data within partitions, maximizing query speed and minimizing cost.",
     "distractors": {
       "A": "Date-sharded tables (`table_YYYYMMDD`) are a legacy anti-pattern with higher query latency, schema maintenance headaches, and partition limits.",
-      "B": "Clustering alone without partitioning does not prune whole date blocks cleanly for time-windowed queries.",
-      "C": "External tables over Cloud Storage have significantly slower query performance and lack metadata indexing.",
-      "D": "Correct. Partitioning by date plus clustering by high-cardinality filter fields is the standard best practice for cost and performance optimization in BigQuery."
+      "C": "Clustering alone without partitioning does not prune whole date blocks cleanly for time-windowed queries.",
+      "D": "External tables over Cloud Storage have significantly slower query performance and lack metadata indexing."
     },
     "gcloudCommand": "bq mk --table --time_partitioning_field=event_timestamp --clustering_fields=customer_id,region corp_analytics:telemetry_events schema.json",
     "architectureComponents": [
@@ -5091,32 +4281,24 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Local SSD NVMe disks attached to the VM.",
-        "isTrap": false
+        "text": "Local SSD NVMe disks attached to the VM."
       },
       {
         "letter": "B",
-        "text": "Cloud Storage bucket mounted with gcsfuse.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Storage bucket mounted with gcsfuse."
       },
       {
         "letter": "C",
-        "text": "Standard Persistent Disk (pd-standard).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Standard Persistent Disk (pd-standard)."
       },
       {
         "letter": "D",
-        "text": "Balanced Persistent Disk (pd-balanced).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Balanced Persistent Disk (pd-balanced)."
       }
     ],
     "correct": "A",
     "explanation": "Local SSDs are physically attached to the host server running the VM instance, delivering sub-millisecond latency and up to millions of IOPS. However, because Local SSDs are ephemeral (data is lost on VM stop/terminate), they are specifically engineered for temporary scratch spaces, caches, and ML processing buffers.",
     "distractors": {
-      "A": "Correct. Local SSD delivers maximum IOPS and lowest latency for ephemeral scratch and training data.",
       "B": "Cloud Storage FUSE introduces high network overhead and lacks microsecond IOPS performance.",
       "C": "pd-standard is HDD-backed storage capped at low IOPS, completely unable to achieve 800k IOPS.",
       "D": "pd-balanced is network-attached and capped at much lower IOPS limits compared to directly attached Local NVMe SSDs."
@@ -5151,35 +4333,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Provision an m2-ultramem instance.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a Custom Machine Type specifying 6 vCPUs and 45 GB of memory (e.g. custom-6-46080)."
       },
       {
         "letter": "B",
-        "text": "Create a Custom Machine Type specifying 6 vCPUs and 45 GB of memory (e.g. custom-6-46080).",
-        "isTrap": false
+        "text": "Deploy two n2-standard-4 instances and split the application logic across them."
       },
       {
         "letter": "C",
-        "text": "Attach 10 Local SSDs to make up for the RAM shortage.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Provision an m2-ultramem instance."
       },
       {
         "letter": "D",
-        "text": "Deploy two n2-standard-4 instances and split the application logic across them.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Attach 10 Local SSDs to make up for the RAM shortage."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Compute Engine allows configuring Custom Machine Types (`--custom-cpu` and `--custom-memory`), allowing exact matching of required vCPU and memory ratios to right-size workloads and prevent overpaying for unnecessary predefined vCPUs or RAM.",
     "distractors": {
-      "A": "M2 instances are massively oversized and cost thousands of dollars per month.",
-      "B": "Correct. Custom machine types allow tailoring vCPU and RAM to match exact application requirements without paying for unused cores.",
-      "C": "SSDs are disk storage, not system RAM, and cannot substitute for memory requirements.",
-      "D": "Rewriting single-node applications for multi-VM distribution introduces development overhead and architecture complexity."
+      "C": "M2 instances are massively oversized and cost thousands of dollars per month.",
+      "D": "SSDs are disk storage, not system RAM, and cannot substitute for memory requirements.",
+      "B": "Rewriting single-node applications for multi-VM distribution introduces development overhead and architecture complexity."
     },
     "gcloudCommand": "gcloud compute instances create custom-workload --zone=us-central1-a --custom-cpu=6 --custom-memory=45GB",
     "architectureComponents": [
@@ -5211,34 +4385,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Convert the database to Cloud Datastore.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Convert the database to Cloud Datastore."
       },
       {
         "letter": "B",
-        "text": "Increase the backup frequency of the primary instance to every 10 minutes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy one or more Cloud SQL Read Replicas and configure the reporting dashboard to query the Read Replica endpoints exclusively."
       },
       {
         "letter": "C",
-        "text": "Deploy one or more Cloud SQL Read Replicas and configure the reporting dashboard to query the Read Replica endpoints exclusively.",
-        "isTrap": false
+        "text": "Increase the backup frequency of the primary instance to every 10 minutes."
       },
       {
         "letter": "D",
-        "text": "Deploy an unmanaged PostgreSQL VM and configure manual daily CSV exports.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an unmanaged PostgreSQL VM and configure manual daily CSV exports."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Cloud SQL Read Replicas replicate data asynchronously from the primary instance. Directing heavy reporting, BI, and analytical read queries to read replicas offloads read I/O from the primary master, safeguarding OLTP write transaction performance.",
     "distractors": {
       "A": "Converting a relational schema to NoSQL requires complete application rewrites.",
-      "B": "Frequent backups increase disk I/O load on the primary instance, worsening the performance issue.",
-      "C": "Correct. Read replicas isolate analytical read traffic, protecting primary database write capacity.",
+      "C": "Frequent backups increase disk I/O load on the primary instance, worsening the performance issue.",
       "D": "Manual CSV exports provide stale data and add continuous operational maintenance."
     },
     "gcloudCommand": "gcloud sql instances create reporting-replica-1 --master-instance-name=primary-oltp-db --region=us-central1 --tier=db-custom-4-16384",
@@ -5271,35 +4437,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Archive bucket in europe-west1.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Multi-Region location (e.g. US multi-region)."
       },
       {
         "letter": "B",
-        "text": "Single Region location (e.g. us-central1).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Single Region location (e.g. us-central1)."
       },
       {
         "letter": "C",
-        "text": "Zonal Persistent Disk mounted over NFS.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Archive bucket in europe-west1."
       },
       {
         "letter": "D",
-        "text": "Multi-Region location (e.g. US multi-region).",
-        "isTrap": false
+        "text": "Zonal Persistent Disk mounted over NFS."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Multi-Region Cloud Storage buckets replicate data across at least two geographic locations separated by at least 160 km within a multi-region area (e.g. US, EU, ASIA), providing 99.95% availability SLA and disaster recovery against full regional outages.",
     "distractors": {
-      "A": "Archive class is for long-term cold data with heavy retrieval penalties, completely unsuitable for high-frequency web assets.",
+      "C": "Archive class is for long-term cold data with heavy retrieval penalties, completely unsuitable for high-frequency web assets.",
       "B": "Single Region buckets do not provide cross-region redundancy if the entire region experiences an outage.",
-      "C": "Zonal Persistent Disks are tied to a single datacenter zone and cannot serve global web traffic directly.",
-      "D": "Correct. Multi-Region buckets provide geo-redundant durability and high availability across an entire continent."
+      "D": "Zonal Persistent Disks are tied to a single datacenter zone and cannot serve global web traffic directly."
     },
     "gcloudCommand": "gcloud storage buckets create gs://global-static-assets --location=US --default-storage-class=STANDARD",
     "architectureComponents": [
@@ -5332,35 +4490,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Run (fully managed).",
-        "isTrap": false
+        "text": "Compute Engine unmanaged VMs with cron shutdown."
       },
       {
         "letter": "B",
-        "text": "GKE Standard with custom node pools.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "GKE Standard with custom node pools."
       },
       {
         "letter": "C",
-        "text": "Compute Engine unmanaged VMs with cron shutdown.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Cloud Functions (1st gen)."
       },
       {
         "letter": "D",
-        "text": "Cloud Functions (1st gen).",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Cloud Run (fully managed)."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Cloud Run is a fully managed serverless platform that runs container images, automatically scales to zero, and uniquely supports multi-concurrency (handling up to 1,000 concurrent requests per container instance), drastically reducing instance count and eliminating per-request cold starts.",
     "distractors": {
-      "A": "Correct. Cloud Run supports arbitrary container images, multi-request concurrency per container, and automatic scale-to-zero.",
       "B": "GKE Standard requires configuring and paying for underlying VM nodes even when idle, and does not scale to zero VMs automatically without cluster autoscaler scale-down delays.",
-      "C": "Compute Engine VMs do not natively scale on HTTP request concurrency and require heavy operational maintenance.",
-      "D": "Cloud Functions 1st gen handles only 1 concurrent request per function instance, resulting in frequent cold starts under bursty load."
+      "A": "Compute Engine VMs do not natively scale on HTTP request concurrency and require heavy operational maintenance.",
+      "C": "Cloud Functions 1st gen handles only 1 concurrent request per function instance, resulting in frequent cold starts under bursty load."
     },
     "gcloudCommand": "gcloud run deploy rest-microservice --image=gcr.io/corp-proj/api:v1 --platform=managed --concurrency=80 --min-instances=0",
     "architectureComponents": [
@@ -5393,35 +4543,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Shielded VM with Secure Boot, Virtual Trusted Platform Module (vTPM), and Integrity Monitoring.",
-        "isTrap": false
+        "text": "Enable Shielded VM with Secure Boot, Virtual Trusted Platform Module (vTPM), and Integrity Monitoring."
       },
       {
         "letter": "B",
-        "text": "Attach a Cloud KMS key to the serial port.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a third-party antivirus scanner in the VM startup script."
       },
       {
         "letter": "C",
-        "text": "Deploy a third-party antivirus scanner in the VM startup script.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Encrypt the VPC subnet using Cloud VPN."
       },
       {
         "letter": "D",
-        "text": "Encrypt the VPC subnet using Cloud VPN.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Attach a Cloud KMS key to the serial port."
       }
     ],
     "correct": "A",
     "explanation": "Shielded VMs provide verifiable boot integrity using Secure Boot (ensures only signed kernel and drivers load), vTPM (validates guest OS pre-boot and boot measurements), and Integrity Monitoring (generates alerts if the baseline measurements change).",
     "distractors": {
-      "A": "Correct. Shielded VM with Secure Boot and vTPM verifies kernel signature and boot integrity against kernel rootkits.",
-      "B": "Cloud KMS does not monitor or cryptographically verify VM guest boot sequences.",
-      "C": "In-guest antivirus runs after the operating system boots and cannot prevent rootkits loaded prior to the kernel.",
-      "D": "Cloud VPN encrypts network transit packets, but does not protect VM host hypervisor or guest boot integrity."
+      "D": "Cloud KMS does not monitor or cryptographically verify VM guest boot sequences.",
+      "B": "In-guest antivirus runs after the operating system boots and cannot prevent rootkits loaded prior to the kernel.",
+      "C": "Cloud VPN encrypts network transit packets, but does not protect VM host hypervisor or guest boot integrity."
     },
     "gcloudCommand": "gcloud compute instances create secure-fin-vm --zone=us-central1-a --shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring",
     "architectureComponents": [
@@ -5453,35 +4595,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Run for Anthos on-premises.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Cloud Run for Anthos on-premises."
       },
       {
         "letter": "B",
-        "text": "GKE Autopilot mode.",
-        "isTrap": false
+        "text": "GKE Standard mode with custom node pools."
       },
       {
         "letter": "C",
-        "text": "GKE Standard mode with custom node pools.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Compute Engine unmanaged instances with kubeadm."
       },
       {
         "letter": "D",
-        "text": "Compute Engine unmanaged instances with kubeadm.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "GKE Autopilot mode."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "GKE Autopilot is a fully managed mode of operation where Google manages the cluster configuration, node provisioning, autoscaling, and security hardening. Users pay strictly for the compute resources requested by their running Pods rather than whole VM worker nodes.",
     "distractors": {
       "A": "Cloud Run for Anthos requires managing underlying Anthos clusters and is intended for hybrid deployments.",
-      "B": "Correct. GKE Autopilot eliminates worker node operational overhead and bills per running Pod resource request.",
-      "C": "GKE Standard requires users to manage node pools, machine sizing, OS upgrades, and pay for whole node VM capacity.",
-      "D": "Self-managed Kubernetes via kubeadm adds immense operational maintenance and patching burden."
+      "B": "GKE Standard requires users to manage node pools, machine sizing, OS upgrades, and pay for whole node VM capacity.",
+      "C": "Self-managed Kubernetes via kubeadm adds immense operational maintenance and patching burden."
     },
     "gcloudCommand": "gcloud container clusters create-auto production-k8s --region=us-central1",
     "architectureComponents": [
@@ -5515,35 +4649,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an Nginx proxy VM in front of each Compute Engine instance.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create VPC firewall rules on port 80/443 for each individual malicious IP address."
       },
       {
         "letter": "B",
-        "text": "Disable external public IP addresses on the load balancer forwarding rule.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Disable external public IP addresses on the load balancer forwarding rule."
       },
       {
         "letter": "C",
-        "text": "Attach a Cloud Armor Security Policy to the Load Balancer Backend Service with pre-configured WAF rules (OWASP Top 10), rate limiting, and geo-blocking rules.",
-        "isTrap": false
+        "text": "Attach a Cloud Armor Security Policy to the Load Balancer Backend Service with pre-configured WAF rules (OWASP Top 10), rate limiting, and geo-blocking rules."
       },
       {
         "letter": "D",
-        "text": "Create VPC firewall rules on port 80/443 for each individual malicious IP address.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an Nginx proxy VM in front of each Compute Engine instance."
       }
     ],
     "correct": "C",
     "explanation": "Google Cloud Armor provides enterprise DDoS defense and Web Application Firewall (WAF) capabilities integrated natively into the Global External HTTP(S) Load Balancer. It supports preconfigured OWASP Top 10 rules (SQLi, XSS), IP allow/denylists, geographic filtering, and rate limiting at Google's edge.",
     "distractors": {
-      "A": "Self-managed Nginx proxies create bottlenecks and cannot absorb multi-terabit edge DDoS volume.",
+      "D": "Self-managed Nginx proxies create bottlenecks and cannot absorb multi-terabit edge DDoS volume.",
       "B": "Disabling the public IP on the load balancer takes the entire public e-commerce website offline.",
-      "C": "Correct. Cloud Armor attached to backend services provides edge filtering against Layer 7 attacks, geo-blocking, and WAF rules.",
-      "D": "VPC firewall rules cannot evaluate HTTP request payloads (SQLi/XSS), geo-location headers, or Layer 7 rate limits."
+      "A": "VPC firewall rules cannot evaluate HTTP request payloads (SQLi/XSS), geo-location headers, or Layer 7 rate limits."
     },
     "gcloudCommand": "gcloud compute security-policies create edge-waf-policy && gcloud compute backend-services update web-backend-svc --security-policy=edge-waf-policy --global",
     "architectureComponents": [
@@ -5577,35 +4703,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Have the frontend web app write orders directly into a shared MySQL database table with locks.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Create a single Cloud Pub/Sub topic for orders, and create separate independent Pub/Sub subscriptions for Inventory, Billing, Shipping, and Analytics."
       },
       {
         "letter": "B",
-        "text": "Use synchronous REST HTTP POST calls from the frontend directly to each microservice sequentially.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Use synchronous REST HTTP POST calls from the frontend directly to each microservice sequentially."
       },
       {
         "letter": "C",
-        "text": "Create a Cloud Storage bucket and write 1 file per order.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a Cloud Storage bucket and write 1 file per order."
       },
       {
         "letter": "D",
-        "text": "Create a single Cloud Pub/Sub topic for orders, and create separate independent Pub/Sub subscriptions for Inventory, Billing, Shipping, and Analytics.",
-        "isTrap": false
+        "text": "Have the frontend web app write orders directly into a shared MySQL database table with locks."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud Pub/Sub provides a fully managed, durable, highly available publish/subscribe messaging system. A 1-to-many fan-out architecture is achieved by attaching multiple independent subscriptions to a single topic, allowing each downstream consumer to pull messages at its own pace without coupling.",
     "distractors": {
-      "A": "Writing directly to a shared SQL database creates severe write contention, tight schema coupling, and database connection exhaustion.",
+      "D": "Writing directly to a shared SQL database creates severe write contention, tight schema coupling, and database connection exhaustion.",
       "B": "Synchronous REST chains create cascading failure risks: if Billing is slow or down, frontend checkouts fail immediately.",
-      "C": "Cloud Storage object creation is not an asynchronous event-driven messaging queue.",
-      "D": "Correct. 1 topic with multiple subscriptions implements the classic scalable fan-out asynchronous pattern."
+      "C": "Cloud Storage object creation is not an asynchronous event-driven messaging queue."
     },
     "gcloudCommand": "gcloud pubsub topics create order-events && gcloud pubsub subscriptions create inventory-sub --topic=order-events",
     "architectureComponents": [
@@ -5637,35 +4755,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Automatic Storage Increase on the Cloud SQL instance.",
-        "isTrap": false
+        "text": "Migrate the database to Cloud Memorystore."
       },
       {
         "letter": "B",
-        "text": "Migrate the database to Cloud Memorystore.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Automatic Storage Increase on the Cloud SQL instance."
       },
       {
         "letter": "C",
-        "text": "Allocate a 64 TB persistent disk upfront immediately.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Write a cron script that polls df -h and runs gcloud sql instances patch."
       },
       {
         "letter": "D",
-        "text": "Write a cron script that polls df -h and runs gcloud sql instances patch.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Allocate a 64 TB persistent disk upfront immediately."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Cloud SQL 'Automatic Storage Increase' monitors available disk space. When free space falls below a safe threshold (typically 10-20%), Cloud SQL automatically increases the storage capacity in-place without restarting the database or interrupting application traffic.",
     "distractors": {
-      "A": "Correct. Automatic Storage Increase scales disk capacity dynamically without downtime or manual intervention.",
-      "B": "Cloud Memorystore is an ephemeral in-memory cache, not a durable relational database.",
-      "C": "Allocating 64 TB upfront incurs unnecessary high persistent disk costs for unallocated space.",
-      "D": "Custom polling scripts are fragile and can trigger disk resize API rate limits or delayed scaling."
+      "A": "Cloud Memorystore is an ephemeral in-memory cache, not a durable relational database.",
+      "D": "Allocating 64 TB upfront incurs unnecessary high persistent disk costs for unallocated space.",
+      "C": "Custom polling scripts are fragile and can trigger disk resize API rate limits or delayed scaling."
     },
     "gcloudCommand": "gcloud sql instances patch my-sql-instance --enable-storage-auto-increase",
     "architectureComponents": [
@@ -5698,35 +4808,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Compute Engine Sole-Tenant Node.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "App Engine Standard Environment."
       },
       {
         "letter": "B",
-        "text": "App Engine Standard Environment.",
-        "isTrap": false
+        "text": "Compute Engine Sole-Tenant Node."
       },
       {
         "letter": "C",
-        "text": "GKE Standard with N2D nodes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "App Engine Flexible Environment."
       },
       {
         "letter": "D",
-        "text": "App Engine Flexible Environment.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "GKE Standard with N2D nodes."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "App Engine Standard runs applications in fine-grained sandbox environments that scale up in milliseconds, scale down to 0 instances when idle, and include a daily free tier. App Engine Flexible runs inside Docker containers on Compute Engine VMs, which take minutes to scale and cannot scale to zero.",
     "distractors": {
-      "A": "Sole-tenant nodes are dedicated physical servers with high monthly fixed costs.",
-      "B": "Correct. App Engine Standard provides rapid millisecond scaling and true scale-to-zero for standard runtimes.",
-      "C": "GKE Standard requires continuous cluster and node pool operational management.",
-      "D": "App Engine Flexible provisions underlying Compute Engine VM instances, taking several minutes to start up and cannot scale to 0 instances."
+      "B": "Sole-tenant nodes are dedicated physical servers with high monthly fixed costs.",
+      "D": "GKE Standard requires continuous cluster and node pool operational management.",
+      "C": "App Engine Flexible provisions underlying Compute Engine VM instances, taking several minutes to start up and cannot scale to 0 instances."
     },
     "gcloudCommand": "gcloud app deploy app.yaml",
     "architectureComponents": [
@@ -5758,34 +4860,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Bucket names only need to be unique within a single VPC subnet.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Bucket names can contain uppercase letters and underscore characters at any position."
       },
       {
         "letter": "B",
-        "text": "Bucket names can contain uppercase letters and underscore characters at any position.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Bucket names reside in a single global namespace across all Google Cloud customers, must be DNS-compliant (3-63 characters, lowercase, numbers, hyphens), and cannot be duplicated by any other project globally."
       },
       {
         "letter": "C",
-        "text": "Bucket names reside in a single global namespace across all Google Cloud customers, must be DNS-compliant (3-63 characters, lowercase, numbers, hyphens), and cannot be duplicated by any other project globally.",
-        "isTrap": false
+        "text": "Bucket names only need to be unique within a single VPC subnet."
       },
       {
         "letter": "D",
-        "text": "Bucket names must start with the string 'gcp-bucket-'.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Bucket names must start with the string 'gcp-bucket-'."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Google Cloud Storage bucket names are globally unique across all GCP accounts worldwide because buckets can be addressed via global DNS URLs (`storage.googleapis.com/<bucket_name>`). Bucket names must be 3 to 63 characters long, contain only lowercase letters, numbers, and hyphens.",
     "distractors": {
-      "A": "Bucket namespace is global, not scoped to individual VPC subnets or projects.",
-      "B": "Uppercase characters are strictly forbidden in Cloud Storage bucket names.",
-      "C": "Correct. Bucket names are globally unique and strictly DNS-compliant across the entire platform.",
+      "C": "Bucket namespace is global, not scoped to individual VPC subnets or projects.",
+      "A": "Uppercase characters are strictly forbidden in Cloud Storage bucket names.",
       "D": "There is no mandatory prefix requirement for bucket naming."
     },
     "gcloudCommand": "gcloud storage buckets create gs://corp-tenant-alpha-storage-101 --location=us-central1",
@@ -5819,35 +4913,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Attach an extreme persistent disk.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set the OnHostMaintenance policy to TERMINATE."
       },
       {
         "letter": "B",
-        "text": "Set the OnHostMaintenance policy to TERMINATE.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Attach an extreme persistent disk."
       },
       {
         "letter": "C",
-        "text": "Enable Spot VM provisioning.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set the OnHostMaintenance policy to MIGRATE (Live Migration)."
       },
       {
         "letter": "D",
-        "text": "Set the OnHostMaintenance policy to MIGRATE (Live Migration).",
-        "isTrap": false
+        "text": "Enable Spot VM provisioning."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "By default, standard Compute Engine instances have `onHostMaintenance` set to `MIGRATE`. During infrastructure maintenance, Google live-migrates the running VM to another physical host in the same zone without restarting the guest OS or dropping network connections.",
     "distractors": {
-      "A": "Disk type has no effect on host hypervisor live migration policies.",
-      "B": "`TERMINATE` stops or restarts the VM on a new host, causing reboot downtime and cache state loss.",
-      "C": "Spot VMs do not support Live Migration and are terminated during host events.",
-      "D": "Correct. Live Migration (`MIGRATE`) seamlessly moves active running VMs during host maintenance events."
+      "B": "Disk type has no effect on host hypervisor live migration policies.",
+      "A": "`TERMINATE` stops or restarts the VM on a new host, causing reboot downtime and cache state loss.",
+      "D": "Spot VMs do not support Live Migration and are terminated during host events."
     },
     "gcloudCommand": "gcloud compute instances create stateful-cache --zone=us-central1-a --maintenance-policy=MIGRATE",
     "architectureComponents": [
@@ -5879,35 +4965,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Regional Internal Application Load Balancer (Internal HTTP(S) Load Balancer).",
-        "isTrap": false
+        "text": "Global External HTTPS Load Balancer."
       },
       {
         "letter": "B",
-        "text": "Cloud Armor with public VIP.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Regional Internal Application Load Balancer (Internal HTTP(S) Load Balancer)."
       },
       {
         "letter": "C",
-        "text": "DNS Round-Robin using public DNS records.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "DNS Round-Robin using public DNS records."
       },
       {
         "letter": "D",
-        "text": "Global External HTTPS Load Balancer.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Cloud Armor with public VIP."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "The Regional Internal Application Load Balancer (Internal HTTP(S) LB) is an Envoy proxy-based private load balancer that operates inside your VPC using private RFC 1918 IP addresses. It supports Layer 7 URL routing, path matching, and health checking without exposing backends to external networks.",
     "distractors": {
-      "A": "Correct. Internal HTTP(S) Load Balancer provides Layer 7 routing and load distribution strictly within the private VPC.",
-      "B": "Cloud Armor protects public external endpoints, not private internal VPC communication.",
+      "D": "Cloud Armor protects public external endpoints, not private internal VPC communication.",
       "C": "DNS round-robin lacks instant health checking, fails over slowly, and public DNS records expose internal topology.",
-      "D": "Global External Load Balancer allocates a public Anycast IP reachable from the internet, violating the private isolation requirement."
+      "A": "Global External Load Balancer allocates a public Anycast IP reachable from the internet, violating the private isolation requirement."
     },
     "gcloudCommand": "gcloud compute forwarding-rules create app-internal-lb --region=us-central1 --load-balancing-scheme=INTERNAL_MANAGED --network=prod-vpc --subnet=app-subnet --ports=80 --backend-service=app-backend-svc",
     "architectureComponents": [
@@ -5942,32 +5020,24 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "NVIDIA A100 (or H100) Tensor Core GPUs attached to A2 (or A3) machine types.",
-        "isTrap": false
+        "text": "NVIDIA A100 (or H100) Tensor Core GPUs attached to A2 (or A3) machine types."
       },
       {
         "letter": "B",
-        "text": "NVIDIA T4 GPUs on E2 shared-core machines.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "NVIDIA T4 GPUs on E2 shared-core machines."
       },
       {
         "letter": "C",
-        "text": "Cloud Bigtable with GPU indexing.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud Bigtable with GPU indexing."
       },
       {
         "letter": "D",
-        "text": "Sole-tenant N1 instances with no attached accelerators.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Sole-tenant N1 instances with no attached accelerators."
       }
     ],
     "correct": "A",
     "explanation": "NVIDIA A100 and H100 GPUs provide high-bandwidth HBM2e memory and high-speed NVLink GPU-to-GPU mesh interconnects, offered natively on Compute Engine Accelerator-Optimized (A2 / A3) machine series for large-scale distributed deep learning training.",
     "distractors": {
-      "A": "Correct. NVIDIA A100/H100 GPUs on A2/A3 instances provide optimal tensor core architecture and NVLink memory bandwidth for large AI model training.",
       "B": "NVIDIA T4 is intended for cost-effective inference and lightweight graphics, not massive large-model training, and E2 does not support GPUs.",
       "C": "Cloud Bigtable is a NoSQL database and does not provide GPU compute accelerators.",
       "D": "Sole-tenant N1 without GPUs lacks tensor cores and hardware matrix accelerators."
@@ -6003,35 +5073,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Three standalone VMs with manual snapshot restores.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A Regional Managed Instance Group (MIG) with an application Health Check for autohealing, CPU/HTTP autoscaling policy, and instance distribution across three zones."
       },
       {
         "letter": "B",
-        "text": "A Regional Managed Instance Group (MIG) with an application Health Check for autohealing, CPU/HTTP autoscaling policy, and instance distribution across three zones.",
-        "isTrap": false
+        "text": "A Zonal MIG with a cron script that restarts instances at midnight."
       },
       {
         "letter": "C",
-        "text": "An Unmanaged Instance Group spanning three regions.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Three standalone VMs with manual snapshot restores."
       },
       {
         "letter": "D",
-        "text": "A Zonal MIG with a cron script that restarts instances at midnight.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "An Unmanaged Instance Group spanning three regions."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "A Regional Managed Instance Group (Regional MIG) automatically spreads instances evenly across multiple zones within a region. Pairing the MIG with a specialized application Health Check enables automated Autohealing (recreating unhealthy instances), while autoscaling dynamically adjusts instance count to match demand.",
     "distractors": {
-      "A": "Manual standalone VMs require human intervention during failures and lack automated load scaling.",
-      "B": "Correct. Regional MIG + Application Health Check Autohealing + Autoscaling provides complete high availability, self-healing, and elastic scaling.",
-      "C": "Unmanaged Instance Groups do not support autohealing, autoscaling, or automated rolling updates.",
-      "D": "Zonal MIGs cannot survive a complete zone outage, and scheduled cron restarts do not detect application deadlocks in real-time."
+      "C": "Manual standalone VMs require human intervention during failures and lack automated load scaling.",
+      "D": "Unmanaged Instance Groups do not support autohealing, autoscaling, or automated rolling updates.",
+      "B": "Zonal MIGs cannot survive a complete zone outage, and scheduled cron restarts do not detect application deadlocks in real-time."
     },
     "gcloudCommand": "gcloud compute instance-groups managed create web-mig-regional --region=us-central1 --template=web-tmpl --size=3 --health-check=web-health-check --initial-delay=300",
     "architectureComponents": [
@@ -6065,35 +5127,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Bucket Lock with 15-minute retention.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Turbo Replication (enabled via gcloud storage buckets update --turbo-replication)."
       },
       {
         "letter": "B",
-        "text": "Standard Multi-Region storage class.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Bucket Lock with 15-minute retention."
       },
       {
         "letter": "C",
-        "text": "Turbo Replication (enabled via gcloud storage buckets update --turbo-replication).",
-        "isTrap": false
+        "text": "Object Versioning with 10 versions."
       },
       {
         "letter": "D",
-        "text": "Object Versioning with 10 versions.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Standard Multi-Region storage class."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Turbo Replication is a feature for Dual-Region Cloud Storage buckets that provides a 15-minute Recovery Point Objective (RPO) backed by a 99.9% service level agreement, ensuring that 100% of newly written objects replicate across paired regions in under 15 minutes.",
     "distractors": {
-      "A": "Bucket Lock enforces retention duration, not inter-regional replication speed.",
-      "B": "Standard Multi-Region replicates asynchronously without the contractual 15-minute RPO SLA of Turbo Replication.",
-      "C": "Correct. Turbo Replication guarantees 15-minute RPO replication between paired dual regions backed by Google SLA.",
-      "D": "Object Versioning preserves overwritten objects but does not accelerate cross-region replication speed."
+      "B": "Bucket Lock enforces retention duration, not inter-regional replication speed.",
+      "D": "Standard Multi-Region replicates asynchronously without the contractual 15-minute RPO SLA of Turbo Replication.",
+      "C": "Object Versioning preserves overwritten objects but does not accelerate cross-region replication speed."
     },
     "gcloudCommand": "gcloud storage buckets update gs://bank-mortgage-vault --turbo-replication",
     "architectureComponents": [
@@ -6126,35 +5180,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Bigtable.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud Bigtable with HDD disks."
       },
       {
         "letter": "B",
-        "text": "Cloud Storage CSV files.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Firestore in Native mode."
       },
       {
         "letter": "C",
-        "text": "Cloud Bigtable with HDD disks.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Cloud Storage CSV files."
       },
       {
         "letter": "D",
-        "text": "Firestore in Native mode.",
-        "isTrap": false
+        "text": "Cloud Bigtable."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Firestore Native mode is a document-oriented NoSQL database that offers native mobile/web SDKs, automatic scaling, and ACID multi-document transactions (crucial for atomic player inventory item transfers and purchases).",
     "distractors": {
-      "A": "Cloud Bigtable does not support multi-row ACID transactions, lacks direct mobile client SDKs, and requires backend API servers.",
-      "B": "Cloud Storage CSV files lack transactional atomicity, concurrency controls, and real-time query capabilities.",
-      "C": "Bigtable with HDD is intended for cold batch analytics, not transactional interactive mobile gaming.",
-      "D": "Correct. Firestore Native mode provides document JSON storage, native mobile client SDKs, and multi-document ACID transactions."
+      "D": "Cloud Bigtable does not support multi-row ACID transactions, lacks direct mobile client SDKs, and requires backend API servers.",
+      "C": "Cloud Storage CSV files lack transactional atomicity, concurrency controls, and real-time query capabilities.",
+      "A": "Bigtable with HDD is intended for cold batch analytics, not transactional interactive mobile gaming."
     },
     "gcloudCommand": "gcloud firestore databases create --location=nam5 --type=firestore-native",
     "architectureComponents": [
@@ -6187,35 +5233,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Add a Rate Limiting rule to the Cloud Armor Security Policy with threshold 100 requests / 60 seconds, conform action 'allow', and exceed action 'deny-429'.",
-        "isTrap": false
+        "text": "Deploy an API Gateway with an IAM Deny policy on all users."
       },
       {
         "letter": "B",
-        "text": "Deploy an API Gateway with an IAM Deny policy on all users.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Add a Rate Limiting rule to the Cloud Armor Security Policy with threshold 100 requests / 60 seconds, conform action 'allow', and exceed action 'deny-429'."
       },
       {
         "letter": "C",
-        "text": "Create a VPC firewall rule blocking IP addresses that send more than 100 packets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure Cloud CDN to cache all POST requests."
       },
       {
         "letter": "D",
-        "text": "Configure Cloud CDN to cache all POST requests.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a VPC firewall rule blocking IP addresses that send more than 100 packets."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Google Cloud Armor Rate Limiting rules allow administrators to define request thresholds per client IP (or cookie/header key). When a client exceeds the defined rate (e.g. 100 reqs/min), Cloud Armor automatically throttles or blocks the client returning HTTP 429 (Too Many Requests) or HTTP 403 at Google's edge.",
     "distractors": {
-      "A": "Correct. Cloud Armor rate limiting rule with `deny-429` action enforces client IP throttling at the Google edge.",
-      "B": "Denying all users blocks legitimate application traffic completely.",
-      "C": "VPC firewall rules operate at Layer 3/4 and cannot count or rate-limit HTTP request application rates.",
-      "D": "Cloud CDN does not cache mutable REST POST/PUT requests by default, nor does it enforce client rate limits."
+      "A": "Denying all users blocks legitimate application traffic completely.",
+      "D": "VPC firewall rules operate at Layer 3/4 and cannot count or rate-limit HTTP request application rates.",
+      "C": "Cloud CDN does not cache mutable REST POST/PUT requests by default, nor does it enforce client rate limits."
     },
     "gcloudCommand": "gcloud compute security-policies rules create 1000 --security-policy=api-protection-policy --rate-limit-threshold-count=100 --rate-limit-threshold-interval-sec=60 --action=rate-based-ban --ban-duration-sec=300 --conform-action=allow --exceed-action=deny-429 --enforce-on-key=IP",
     "architectureComponents": [
@@ -6249,35 +5287,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Balanced Persistent Disk (pd-balanced).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Balanced Persistent Disk (pd-balanced)."
       },
       {
         "letter": "B",
-        "text": "Extreme Persistent Disk (pd-extreme) or Hyperdisk Extreme.",
-        "isTrap": false
+        "text": "Standard Persistent Disk (pd-standard)."
       },
       {
         "letter": "C",
-        "text": "Cloud Storage Archive bucket.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Storage Archive bucket."
       },
       {
         "letter": "D",
-        "text": "Standard Persistent Disk (pd-standard).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Extreme Persistent Disk (pd-extreme) or Hyperdisk Extreme."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`pd-extreme` (and Hyperdisk Extreme) is Google Cloud's highest performance block storage tier, allowing provisioning of custom target IOPS (up to 120,000+ IOPS) independently of disk capacity for extreme database workloads like SAP HANA and Oracle.",
     "distractors": {
       "A": "pd-balanced caps IOPS and throughput well below extreme SAP HANA requirements unless provisioned with massive multi-terabyte sizes.",
-      "B": "Correct. `pd-extreme` / Hyperdisk Extreme allows provisioning dedicated high IOPS targets for extreme enterprise database workloads.",
       "C": "Cloud Storage Archive is object storage for cold multi-year backups and cannot act as a VM block disk.",
-      "D": "pd-standard is mechanical HDD storage capped at very low IOPS (<1,000 IOPS)."
+      "B": "pd-standard is mechanical HDD storage capped at very low IOPS (<1,000 IOPS)."
     },
     "gcloudCommand": "gcloud compute disks create sap-db-disk --zone=us-central1-a --size=1000GB --type=pd-extreme --provisioned-iops=100000",
     "architectureComponents": [
@@ -6310,34 +5340,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Run Service with HTTP health checks.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Cloud Functions 1st gen."
       },
       {
         "letter": "B",
-        "text": "Cloud Functions 1st gen.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Run Service with HTTP health checks."
       },
       {
         "letter": "C",
-        "text": "Cloud Run Jobs, triggered on a schedule via Cloud Scheduler.",
-        "isTrap": false
+        "text": "Cloud Run Jobs, triggered on a schedule via Cloud Scheduler."
       },
       {
         "letter": "D",
-        "text": "Compute Engine 24/7 VM with no shutdown script.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Compute Engine 24/7 VM with no shutdown script."
       }
     ],
     "correct": "C",
     "explanation": "Cloud Run Jobs are built specifically for containerized run-to-completion batch processing tasks that do not listen for HTTP requests and can execute for up to 24 hours. Triggering the job via Cloud Scheduler provides serverless scheduled automation.",
     "distractors": {
-      "A": "Cloud Run Services require listening on an HTTP port and are intended for persistent web servers/APIs.",
-      "B": "Cloud Functions 1st gen has a maximum execution timeout of 9 minutes, failing the 45-minute runtime requirement.",
-      "C": "Correct. Cloud Run Jobs run containerized batch workloads to completion without requiring an HTTP web server.",
+      "B": "Cloud Run Services require listening on an HTTP port and are intended for persistent web servers/APIs.",
+      "A": "Cloud Functions 1st gen has a maximum execution timeout of 9 minutes, failing the 45-minute runtime requirement.",
       "D": "Running a 24/7 Compute Engine VM wastes compute budget for 23+ idle hours per day."
     },
     "gcloudCommand": "gcloud run jobs create nightly-finance-batch --image=gcr.io/corp/finance-batch:latest --max-retries=3 --task-timeout=3600s --region=us-central1",
@@ -6372,35 +5394,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A Classic VPN connection paired with static routes.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "A Classic VPN connection paired with static routes."
       },
       {
         "letter": "B",
-        "text": "A single Dedicated Interconnect 100 Gbps circuit in one colocation facility.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A single Dedicated Interconnect 100 Gbps circuit in one colocation facility."
       },
       {
         "letter": "C",
-        "text": "Two circuits connected to the same physical switch in a single facility.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "At least four Dedicated Interconnect circuits deployed across two distinct Google Cloud Colocation Facilities (two circuits per metro facility in separate Edge Availability Domains), connected to redundant Cloud Routers in a multi-region or regional VPC configuration with dynamic BGP routing."
       },
       {
         "letter": "D",
-        "text": "At least four Dedicated Interconnect circuits deployed across two distinct Google Cloud Colocation Facilities (two circuits per metro facility in separate Edge Availability Domains), connected to redundant Cloud Routers in a multi-region or regional VPC configuration with dynamic BGP routing.",
-        "isTrap": false
+        "text": "Two circuits connected to the same physical switch in a single facility."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "To qualify for Google's 99.99% SLA on Dedicated Interconnect, the architecture requires 4 physical circuits: 2 connections in Colocation Facility A (in Edge Availability Domain 1 and 2) and 2 connections in Colocation Facility B (in Edge Availability Domain 1 and 2), with dynamic BGP routing across dual Cloud Routers.",
     "distractors": {
       "A": "Classic VPN is deprecated, travels over the public internet, and does not provide 99.99% enterprise physical line SLA.",
       "B": "A single circuit has no physical hardware redundancy and carries no SLA.",
-      "C": "Two circuits in a single facility provide only 99.9% SLA (vulnerable to facility-wide power/fiber loss).",
-      "D": "Correct. 4 circuits spanning two physical metropolitan colocation facilities is the mandatory Google architecture for 99.99% Interconnect SLA."
+      "D": "Two circuits in a single facility provide only 99.9% SLA (vulnerable to facility-wide power/fiber loss)."
     },
     "gcloudCommand": "gcloud compute interconnects create prod-interconnect-metro1-a --customer-name='Corp IT' --interconnect-type=DEDICATED --link-type=LINK_TYPE_ETHERNET_100G_LR --location=iad-zone1-1",
     "architectureComponents": [
@@ -6435,35 +5449,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A predefined Dual-Region pairing Frankfurt (europe-west3) and Berlin (europe-west10), or dual-region strictly within Germany.",
-        "isTrap": false
+        "text": "A predefined Dual-Region pairing Frankfurt (europe-west3) and Berlin (europe-west10), or dual-region strictly within Germany."
       },
       {
         "letter": "B",
-        "text": "A single zonal persistent disk in us-central1.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A single zonal persistent disk in us-central1."
       },
       {
         "letter": "C",
-        "text": "The US Multi-Region location.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "The standard EU Multi-Region location."
       },
       {
         "letter": "D",
-        "text": "The standard EU Multi-Region location.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "The US Multi-Region location."
       }
     ],
     "correct": "A",
     "explanation": "EU Multi-Region spreads data across data centers in Germany, Netherlands, Belgium, Finland, etc., which violates the national residency constraint. Selecting a custom or predefined Dual-Region strictly within Germany (e.g. `europe-west3` and `europe-west10`) provides geo-redundancy while strictly confining data to German soil.",
     "distractors": {
-      "A": "Correct. In-country Dual-Region provides disaster recovery failover while respecting strict national data sovereignty boundaries.",
       "B": "Zonal disks in the US violate both German residency laws and cross-zone disaster recovery standards.",
-      "C": "US Multi-Region stores data in North America, completely breaching European GDPR and German legal mandates.",
-      "D": "EU Multi-Region places data replicas in multiple European countries outside Germany, violating German sovereignty laws."
+      "D": "US Multi-Region stores data in North America, completely breaching European GDPR and German legal mandates.",
+      "C": "EU Multi-Region places data replicas in multiple European countries outside Germany, violating German sovereignty laws."
     },
     "gcloudCommand": "gcloud storage buckets create gs://german-legal-vault --location=europe-west3,europe-west10 --default-storage-class=STANDARD",
     "architectureComponents": [
@@ -6496,35 +5502,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Write a firewall rule to reject TCP packets containing TLS 1.0 headers.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create an SSL Policy with min-tls-version=TLS_1_2 and profile=MODERN (or RESTRICTED), and attach it to the Target HTTPS Proxy of the Load Balancer."
       },
       {
         "letter": "B",
-        "text": "Create an SSL Policy with min-tls-version=TLS_1_2 and profile=MODERN (or RESTRICTED), and attach it to the Target HTTPS Proxy of the Load Balancer.",
-        "isTrap": false
+        "text": "Change the DNS records to point to an unencrypted HTTP port."
       },
       {
         "letter": "C",
-        "text": "Install TLS certificates directly on backend Compute Engine instances and bypass the load balancer.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Install TLS certificates directly on backend Compute Engine instances and bypass the load balancer."
       },
       {
         "letter": "D",
-        "text": "Change the DNS records to point to an unencrypted HTTP port.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Write a firewall rule to reject TCP packets containing TLS 1.0 headers."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Google Cloud Load Balancer SSL Policies allow controlling the SSL/TLS protocol versions and cipher suites accepted by the Target HTTPS or Target SSL proxy. Setting `--min-tls-version=TLS_1_2` with the `MODERN` or `RESTRICTED` profile drops legacy TLS 1.0/1.1 client connections at the Google edge.",
     "distractors": {
-      "A": "VPC firewall rules inspect L3/L4 headers and cannot decode or filter TLS handshake protocol versions.",
-      "B": "Correct. Attaching an SSL policy with `min-tls-version=TLS_1_2` to the target proxy enforces modern cryptographic compliance at Google's edge.",
+      "D": "VPC firewall rules inspect L3/L4 headers and cannot decode or filter TLS handshake protocol versions.",
       "C": "Managing certificates on hundreds of individual backend VMs eliminates centralized SSL offloading and Anycast edge caching.",
-      "D": "Downgrading to plain HTTP sends unencrypted plaintext traffic over the internet, causing critical security failure."
+      "B": "Downgrading to plain HTTP sends unencrypted plaintext traffic over the internet, causing critical security failure."
     },
     "gcloudCommand": "gcloud compute ssl-policies create modern-tls-policy --profile=MODERN --min-tls-version=TLS_1_2 && gcloud compute target-https-proxies update global-https-proxy --ssl-policy=modern-tls-policy",
     "architectureComponents": [
@@ -6557,35 +5555,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Private Google Access on the subnet, allowing VMs to route directly to Google APIs over Google's high-speed internal network with no NAT gateway charges.",
-        "isTrap": false
+        "text": "Assign public IPs to all 100 instances and allow internet egress."
       },
       {
         "letter": "B",
-        "text": "Assign public IPs to all 100 instances and allow internet egress.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Deploy a squid proxy VM with an external IP address."
       },
       {
         "letter": "C",
-        "text": "Route all traffic through a Cloud NAT gateway with 10 static IPs.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Route all traffic through a Cloud NAT gateway with 10 static IPs."
       },
       {
         "letter": "D",
-        "text": "Deploy a squid proxy VM with an external IP address.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable Private Google Access on the subnet, allowing VMs to route directly to Google APIs over Google's high-speed internal network with no NAT gateway charges."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Private Google Access allows instances with internal-only IP addresses to communicate directly with Google Cloud services (such as Cloud Storage and BigQuery) via Google's internal software-defined network. This avoids Cloud NAT data processing fees and maximizes data transfer speeds.",
     "distractors": {
-      "A": "Correct. Private Google Access is free of NAT processing fees and provides direct high-throughput line-rate access to Google APIs.",
-      "B": "Assigning public IPs introduces internet attack surface and incurs static IP reservation costs.",
+      "A": "Assigning public IPs introduces internet attack surface and incurs static IP reservation costs.",
       "C": "Cloud NAT incurs data processing fees per GB and introduces unnecessary translation overhead for native Google APIs.",
-      "D": "Proxy VMs introduce network bandwidth bottlenecks, single points of failure, and operational maintenance."
+      "B": "Proxy VMs introduce network bandwidth bottlenecks, single points of failure, and operational maintenance."
     },
     "gcloudCommand": "gcloud compute networks subnets update ml-private-sub --region=us-west1 --enable-private-ip-google-access",
     "architectureComponents": [
@@ -6620,35 +5610,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Cloud Storage Object Versioning on the database volume.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Cloud Storage Object Versioning on the database volume."
       },
       {
         "letter": "B",
-        "text": "Enable Automated Backups with a 7-day retention window and enable Point-in-Time Recovery (PITR) using write-ahead logging (WAL).",
-        "isTrap": false
+        "text": "Create a read replica and pause replication at midnight."
       },
       {
         "letter": "C",
-        "text": "Create a read replica and pause replication at midnight.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Take a manual SQL dump once every 24 hours using pg_dump."
       },
       {
         "letter": "D",
-        "text": "Take a manual SQL dump once every 24 hours using pg_dump.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable Automated Backups with a 7-day retention window and enable Point-in-Time Recovery (PITR) using write-ahead logging (WAL)."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Point-in-Time Recovery (PITR) in Cloud SQL requires automated daily backups to provide base snapshots, combined with continuous transaction log archival (binary logs in MySQL or write-ahead logs in PostgreSQL). This allows rolling forward transactions to any exact minute and second within the retention window.",
     "distractors": {
       "A": "Object versioning applies to Cloud Storage buckets, not active Cloud SQL relational database transaction logs.",
-      "B": "Correct. Automated backups + PITR provides continuous transactional recovery to any exact point in time.",
-      "C": "Pausing read replicas stops replication and does not provide arbitrary second-level historical restoration.",
-      "D": "Daily dumps only restore to the exact time of the dump, losing all data created between dumps (up to 24 hours of data loss)."
+      "B": "Pausing read replicas stops replication and does not provide arbitrary second-level historical restoration.",
+      "C": "Daily dumps only restore to the exact time of the dump, losing all data created between dumps (up to 24 hours of data loss)."
     },
     "gcloudCommand": "gcloud sql instances patch my-postgres-db --enable-point-in-time-recovery --backup-start-time=01:00",
     "architectureComponents": [
@@ -6681,35 +5663,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud run deploy my-service --image=v2 --split-traffic=10",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Create an nginx container in front of Cloud Run with a random number generator."
       },
       {
         "letter": "B",
-        "text": "Deploy two separate Cloud Run services and use DNS weights.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud run deploy my-service --image=v2 --split-traffic=10"
       },
       {
         "letter": "C",
-        "text": "gcloud run services update-traffic my-service --to-revisions=my-service-v1=90,my-service-v2=10",
-        "isTrap": false
+        "text": "gcloud run services update-traffic my-service --to-revisions=my-service-v1=90,my-service-v2=10"
       },
       {
         "letter": "D",
-        "text": "Create an nginx container in front of Cloud Run with a random number generator.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy two separate Cloud Run services and use DNS weights."
       }
     ],
     "correct": "C",
     "explanation": "Cloud Run natively supports percentage-based traffic splitting across revisions using `gcloud run services update-traffic <service_name> --to-revisions=<rev1>=<pct1>,<rev2>=<pct2>`, enabling instant zero-downtime canary testing and instant rollback.",
     "distractors": {
-      "A": "`--split-traffic` is not a valid flag on `gcloud run deploy`.",
-      "B": "DNS-based traffic splitting causes cache latency, TTL stickiness, and lacks instant rollback capabilities.",
-      "C": "Correct. `gcloud run services update-traffic` assigns precise percentage-based traffic splits across revisions natively.",
-      "D": "Custom Nginx proxies add unnecessary infrastructure maintenance when Cloud Run provides native edge traffic splitting."
+      "B": "`--split-traffic` is not a valid flag on `gcloud run deploy`.",
+      "D": "DNS-based traffic splitting causes cache latency, TTL stickiness, and lacks instant rollback capabilities.",
+      "A": "Custom Nginx proxies add unnecessary infrastructure maintenance when Cloud Run provides native edge traffic splitting."
     },
     "gcloudCommand": "gcloud run services update-traffic my-service --to-revisions=my-service-v1=90,my-service-v2=10",
     "architectureComponents": [
@@ -6742,35 +5716,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Store data in BigQuery and query it via Spanner federated queries.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Provision a 10-node Spanner cluster and shut it down every weekend."
       },
       {
         "letter": "B",
-        "text": "Provision a 10-node Spanner cluster and shut it down every weekend.",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "Store data in BigQuery and query it via Spanner federated queries."
       },
       {
         "letter": "C",
-        "text": "Deploy Cloud Spanner on a Compute Engine e2-micro instance.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Deploy Cloud Spanner on a Compute Engine e2-micro instance."
       },
       {
         "letter": "D",
-        "text": "Provision the Cloud Spanner instance using Processing Units (e.g. 100 or 200 Processing Units, which represent fractional nodes) instead of a full 1-node instance.",
-        "isTrap": false
+        "text": "Provision the Cloud Spanner instance using Processing Units (e.g. 100 or 200 Processing Units, which represent fractional nodes) instead of a full 1-node instance."
       }
     ],
     "correct": "D",
     "explanation": "Cloud Spanner supports granular sizing via Processing Units (1 node = 1,000 Processing Units). Customers with small databases or low QPS can provision fractional capacity (100, 200, 300, 400, or 500 PUs), significantly lowering the entry barrier cost while maintaining full ACID Spanner features.",
     "distractors": {
-      "A": "BigQuery is an analytical data warehouse and cannot support low-latency transactional microservice writes.",
-      "B": "A 10-node cluster is massively over-provisioned for 500 QPS and scheduled shutdown causes total service downtime.",
-      "C": "Cloud Spanner is a fully managed cloud service and cannot be installed on a self-hosted Compute Engine VM.",
-      "D": "Correct. Processing Units allow cost-effective fractional node provisioning (down to 100 PUs) for smaller workloads."
+      "B": "BigQuery is an analytical data warehouse and cannot support low-latency transactional microservice writes.",
+      "A": "A 10-node cluster is massively over-provisioned for 500 QPS and scheduled shutdown causes total service downtime.",
+      "C": "Cloud Spanner is a fully managed cloud service and cannot be installed on a self-hosted Compute Engine VM."
     },
     "gcloudCommand": "gcloud spanner instances create small-spanner --config=regional-us-central1 --processing-units=200 --description='Lightweight Spanner DB'",
     "architectureComponents": [
@@ -6803,33 +5769,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Media Access Control Security (MACsec) on the Dedicated Interconnect physical links using pre-shared keys stored in Cloud KMS or Secret Manager.",
-        "isTrap": false
+        "text": "Deploy a software IPsec VPN VM inside Compute Engine."
       },
       {
         "letter": "B",
-        "text": "Deploy a software IPsec VPN VM inside Compute Engine.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Media Access Control Security (MACsec) on the Dedicated Interconnect physical links using pre-shared keys stored in Cloud KMS or Secret Manager."
       },
       {
         "letter": "C",
-        "text": "Convert the Interconnect into a public Cloud Storage bucket.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Convert the Interconnect into a public Cloud Storage bucket."
       },
       {
         "letter": "D",
-        "text": "Rely on standard TLS 1.3 at the application layer only.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Rely on standard TLS 1.3 at the application layer only."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Google Cloud supports MACsec (IEEE 802.1AE) Layer 2 point-to-point encryption on Dedicated Interconnect circuits. MACsec encrypts all Ethernet frames at line-rate speed (up to 100 Gbps) directly on router hardware between on-premises and Google edge routers.",
     "distractors": {
-      "A": "Correct. MACsec provides wire-speed Layer 2 hardware encryption directly on Dedicated Interconnect physical circuits.",
-      "B": "Software IPsec VMs cap bandwidth at a fraction of 100 Gbps line rate and introduce severe CPU bottlenecks.",
+      "A": "Software IPsec VMs cap bandwidth at a fraction of 100 Gbps line rate and introduce severe CPU bottlenecks.",
       "C": "Cloud Storage is an object storage service and cannot encrypt physical network transmission lines.",
       "D": "Application-layer TLS does not encrypt network Layer 2/3 headers and fails strict physical transport encryption mandates."
     },
@@ -6865,34 +5823,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Remain on on-demand pricing and ask analysts to query smaller datasets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Purchase a BigQuery Enterprise Edition capacity reservation with autoscaling slots."
       },
       {
         "letter": "B",
-        "text": "Purchase a BigQuery Enterprise Edition capacity reservation with autoscaling slots.",
-        "isTrap": false
+        "text": "Export all data from BigQuery to a single PostgreSQL database."
       },
       {
         "letter": "C",
-        "text": "Export all data from BigQuery to a single PostgreSQL database.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Remain on on-demand pricing and ask analysts to query smaller datasets."
       },
       {
         "letter": "D",
-        "text": "Migrate all tables to Cloud Storage and query using Cloud Functions.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Migrate all tables to Cloud Storage and query using Cloud Functions."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "BigQuery Editions (Standard, Enterprise, Enterprise Plus) provide capacity-based pricing with dedicated or autoscaling slot reservations. This delivers consistent query performance, isolated slot pools for mission-critical BI, and predictable, budget-controlled monthly costs.",
     "distractors": {
-      "A": "Verbal requests to data analysts do not guarantee cost caps and fail to prevent runaway scan costs.",
-      "B": "Correct. BigQuery Enterprise Edition slot reservations deliver predictable monthly FinOps budgeting and guaranteed query compute capacity.",
-      "C": "PostgreSQL cannot scale to handle multi-terabyte / petabyte enterprise analytical queries.",
+      "C": "Verbal requests to data analysts do not guarantee cost caps and fail to prevent runaway scan costs.",
+      "B": "PostgreSQL cannot scale to handle multi-terabyte / petabyte enterprise analytical queries.",
       "D": "Cloud Functions has memory and timeout limits and cannot replace a massively parallel analytical query engine."
     },
     "gcloudCommand": "gcloud bigquery reservations create prod-bi-reservation --project=analytics-corp --location=US --slots=500 --edition=ENTERPRISE",
@@ -6926,35 +5876,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Remove the storage.objects.delete permission from developers only.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Configure a Retention Policy with a retention period of 94608000s and lock the policy using Bucket Lock."
       },
       {
         "letter": "B",
-        "text": "Enable Object Versioning with 3 versions.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Object Versioning with 3 versions."
       },
       {
         "letter": "C",
-        "text": "Configure a Retention Policy with a retention period of 94608000s and lock the policy using Bucket Lock.",
-        "isTrap": false
+        "text": "Set the storage class to Coldline."
       },
       {
         "letter": "D",
-        "text": "Set the storage class to Coldline.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Remove the storage.objects.delete permission from developers only."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Cloud Storage Retention Policies with Bucket Lock enforce Write-Once-Read-Many (WORM) storage. Once a retention policy is locked, the retention duration cannot be reduced or deleted, ensuring objects cannot be modified or deleted by anyone until their individual retention period expires.",
     "distractors": {
-      "A": "Removing developer permissions does not prevent Project Owners or compromised admin credentials from deleting objects.",
+      "D": "Removing developer permissions does not prevent Project Owners or compromised admin credentials from deleting objects.",
       "B": "Object versioning retains prior versions when overwritten, but does not block deleting objects or versions.",
-      "C": "Correct. Retention Policy locked with Bucket Lock enforces irreversible immutable retention for the specified 3-year duration.",
-      "D": "Storage classes govern pricing tiers and access frequency, not immutable deletion protection."
+      "C": "Storage classes govern pricing tiers and access frequency, not immutable deletion protection."
     },
     "gcloudCommand": "gcloud storage buckets update gs://contracts-vault --retention-period=94608000s && gcloud storage retention-policies lock gs://contracts-vault",
     "architectureComponents": [
@@ -6988,35 +5930,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a custom VPC firewall rule that executes the script over port 22.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Save the script in an Archive storage bucket and set an IAM deny rule."
       },
       {
         "letter": "B",
-        "text": "Save the script in an Archive storage bucket and set an IAM deny rule.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a custom VPC firewall rule that executes the script over port 22."
       },
       {
         "letter": "C",
-        "text": "SSH into the instance manually after boot and type the commands.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Pass the shell script via instance metadata using the startup-script or startup-script-url key during instance creation."
       },
       {
         "letter": "D",
-        "text": "Pass the shell script via instance metadata using the startup-script or startup-script-url key during instance creation.",
-        "isTrap": false
+        "text": "SSH into the instance manually after boot and type the commands."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Compute Engine supports `startup-script` (inline code) and `startup-script-url` (Cloud Storage script URL) custom metadata keys. Compute Engine guest environment agents detect this metadata and execute the script automatically with root privileges during the operating system boot process.",
     "distractors": {
-      "A": "Firewall rules inspect and filter network traffic; they cannot execute arbitrary bash commands inside guest VMs.",
-      "B": "Saving a script with an IAM deny rule blocks access and does not execute anything on boot.",
-      "C": "Manual SSH configuration cannot scale with autoscaling and requires human intervention.",
-      "D": "Correct. Setting `startup-script` metadata automatically executes provisioning commands during VM boot."
+      "B": "Firewall rules inspect and filter network traffic; they cannot execute arbitrary bash commands inside guest VMs.",
+      "A": "Saving a script with an IAM deny rule blocks access and does not execute anything on boot.",
+      "D": "Manual SSH configuration cannot scale with autoscaling and requires human intervention."
     },
     "gcloudCommand": "gcloud compute instances create web-server --zone=us-central1-a --image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud --metadata-from-file=startup-script=install-web.sh",
     "architectureComponents": [
@@ -7049,35 +5983,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Define a VPC Service Controls (VPC SC) Service Perimeter enclosing the CDE project, restricting Cloud Storage and BigQuery API access to authorized networks and identities.",
-        "isTrap": false
+        "text": "Deploy an unmanaged proxy server on a public subnet."
       },
       {
         "letter": "B",
-        "text": "Rely entirely on standard IAM permissions without perimeter boundaries.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Rely entirely on standard IAM permissions without perimeter boundaries."
       },
       {
         "letter": "C",
-        "text": "Disable SSL certificates on internal database connections.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Define a VPC Service Controls (VPC SC) Service Perimeter enclosing the CDE project, restricting Cloud Storage and BigQuery API access to authorized networks and identities."
       },
       {
         "letter": "D",
-        "text": "Deploy an unmanaged proxy server on a public subnet.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Disable SSL certificates on internal database connections."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "VPC Service Controls (VPC SC) creates security perimeters around Google Cloud resources (Cloud Storage, BigQuery, Cloud SQL) to prevent data exfiltration. Even if an attacker compromises a valid IAM credential, API calls attempting to copy data to external buckets or unauthorized networks outside the perimeter are blocked.",
     "distractors": {
-      "A": "Correct. VPC Service Controls establishes cryptographic and network perimeters around sensitive PCI-DSS cardholder data environments.",
       "B": "IAM alone does not protect against insider data exfiltration to legitimate external GCP buckets or credential theft.",
-      "C": "Disabling SSL violates core PCI-DSS encryption-in-transit requirements.",
-      "D": "Public proxy servers introduce severe security vulnerabilities and expand the PCI-DSS audit scope unnecessarily."
+      "D": "Disabling SSL violates core PCI-DSS encryption-in-transit requirements.",
+      "A": "Public proxy servers introduce severe security vulnerabilities and expand the PCI-DSS audit scope unnecessarily."
     },
     "gcloudCommand": "gcloud access-context-manager perimeters create cde_perimeter --title='PCI-DSS CDE Perimeter' --resources='projects/123456789012' --restricted-services='storage.googleapis.com,bigquery.googleapis.com' --policy=9876543210",
     "architectureComponents": [
@@ -7113,35 +6039,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --metadata=run=./bootstrap.sh",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --metadata-from-file=startup-script=./bootstrap.sh"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --metadata-from-file=startup-script=./bootstrap.sh",
-        "isTrap": false
+        "text": "gcloud compute instances start web-prod-1 --metadata=bootstrap=./bootstrap.sh"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --script=./bootstrap.sh",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --script=./bootstrap.sh"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances start web-prod-1 --metadata=bootstrap=./bootstrap.sh",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create web-prod-1 --zone=us-central1-a --metadata=run=./bootstrap.sh"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "The `--metadata-from-file` flag with key `startup-script` passes a local shell script file to the Compute Engine instance metadata service, which executes automatically with root privileges upon instance startup.",
     "distractors": {
-      "A": "`--metadata=run=...` sets an arbitrary metadata key `run` which is not recognized by the guest OS startup agent.",
-      "B": "Correct. `--metadata-from-file=startup-script=./bootstrap.sh` is the standard syntax for passing startup scripts to new VM instances.",
+      "D": "`--metadata=run=...` sets an arbitrary metadata key `run` which is not recognized by the guest OS startup agent.",
       "C": "`--script` is not a valid flag on `gcloud compute instances create`.",
-      "D": "`instances start` is used to start an existing stopped instance, not create a new VM."
+      "B": "`instances start` is used to start an existing stopped instance, not create a new VM."
     },
     "gcloudCommand": "gcloud compute instances create web-prod-1 --zone=us-central1-a --subnet=frontend-sub --metadata-from-file=startup-script=./bootstrap.sh",
     "architectureComponents": [
@@ -7174,35 +6092,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud container clusters create prod-k8s --zone=us-central1-a --disable-ip-alias",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr=172.16.0.0/28 --enable-master-authorized-networks --master-authorized-networks=10.240.0.0/28"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances create prod-k8s-master --private-ip-only",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud container clusters create prod-k8s --zone=us-central1-a --disable-ip-alias"
       },
       {
         "letter": "C",
-        "text": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr=172.16.0.0/28 --enable-master-authorized-networks --master-authorized-networks=10.240.0.0/28",
-        "isTrap": false
+        "text": "gcloud container clusters create prod-k8s --public-cluster --master-authorized-networks=0.0.0.0/0"
       },
       {
         "letter": "D",
-        "text": "gcloud container clusters create prod-k8s --public-cluster --master-authorized-networks=0.0.0.0/0",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "gcloud compute instances create prod-k8s-master --private-ip-only"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Deploying a fully private GKE cluster requires `--enable-private-nodes` (private worker nodes), `--enable-private-endpoint` (disables public master endpoint), `--master-ipv4-cidr` (allocates a /28 CIDR for the Google-managed master plane), and `--enable-master-authorized-networks` (whitelists management CIDRs).",
     "distractors": {
-      "A": "Private clusters require VPC-native Alias IPs; disabling IP alias prevents private cluster creation.",
-      "B": "GKE master nodes are managed by Google Cloud and cannot be created via `gcloud compute instances create`.",
-      "C": "Correct. Private nodes, private endpoint, master CIDR, and master authorized networks provide complete GKE network hardening.",
-      "D": "Public clusters assign external IPs to nodes and master-authorized-networks of 0.0.0.0/0 permits public internet access."
+      "B": "Private clusters require VPC-native Alias IPs; disabling IP alias prevents private cluster creation.",
+      "D": "GKE master nodes are managed by Google Cloud and cannot be created via `gcloud compute instances create`.",
+      "C": "Public clusters assign external IPs to nodes and master-authorized-networks of 0.0.0.0/0 permits public internet access."
     },
     "gcloudCommand": "gcloud container clusters create prod-k8s --region=us-central1 --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr=172.16.0.0/28 --enable-master-authorized-networks --master-authorized-networks=10.240.0.0/28",
     "architectureComponents": [
@@ -7236,35 +6146,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=all --allow-unauthenticated",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=internal-and-cloud-load-balancing"
       },
       {
         "letter": "B",
-        "text": "gcloud app deploy --image=gcr.io/my-corp/order-api:v1",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=all --allow-unauthenticated"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create order-api --image=gcr.io/my-corp/order-api:v1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create order-api --image=gcr.io/my-corp/order-api:v1"
       },
       {
         "letter": "D",
-        "text": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=internal-and-cloud-load-balancing",
-        "isTrap": false
+        "text": "gcloud app deploy --image=gcr.io/my-corp/order-api:v1"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud Run supports `--ingress` settings: `all` (default, public internet), `internal` (VPC/Direct VPC egress only), and `internal-and-cloud-load-balancing` (allows traffic from internal VPCs and Cloud Load Balancing while rejecting direct public internet requests).",
     "distractors": {
-      "A": "`--ingress=all --allow-unauthenticated` exposes the microservice directly to the public internet.",
-      "B": "App Engine does not deploy raw GCR container images using `gcloud app deploy` without app.yaml.",
-      "C": "Compute Engine instance creation is for VMs, not fully managed serverless Cloud Run services.",
-      "D": "Correct. `--ingress=internal-and-cloud-load-balancing` blocks direct public internet access while enabling internal and load balanced routing."
+      "B": "`--ingress=all --allow-unauthenticated` exposes the microservice directly to the public internet.",
+      "D": "App Engine does not deploy raw GCR container images using `gcloud app deploy` without app.yaml.",
+      "C": "Compute Engine instance creation is for VMs, not fully managed serverless Cloud Run services."
     },
     "gcloudCommand": "gcloud run deploy order-api --image=gcr.io/my-corp/order-api:v1 --region=us-east4 --ingress=internal-and-cloud-load-balancing",
     "architectureComponents": [
@@ -7297,35 +6199,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/iam.workloadIdentityUser to the member 'serviceAccount:corp.svc.id.goog[backend/ksa-gcs]' on the Google Service Account gcs-reader@corp.iam.gserviceaccount.com.",
-        "isTrap": false
+        "text": "Create a JSON key for gcs-reader and mount it as a Kubernetes Secret in the Pod."
       },
       {
         "letter": "B",
-        "text": "Set the Cloud Storage bucket ACL to public read.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Grant roles/owner to ksa-gcs at the project level."
       },
       {
         "letter": "C",
-        "text": "Grant roles/owner to ksa-gcs at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Set the Cloud Storage bucket ACL to public read."
       },
       {
         "letter": "D",
-        "text": "Create a JSON key for gcs-reader and mount it as a Kubernetes Secret in the Pod.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant roles/iam.workloadIdentityUser to the member 'serviceAccount:corp.svc.id.goog[backend/ksa-gcs]' on the Google Service Account gcs-reader@corp.iam.gserviceaccount.com."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "GKE Workload Identity bridges Kubernetes identities to GCP IAM. Binding `roles/iam.workloadIdentityUser` to `serviceAccount:<PROJECT_ID>.svc.id.goog[<NAMESPACE>/<KSA_NAME>]` on the target Google IAM Service Account authorizes the Kubernetes Pod to assume the GCP identity automatically.",
     "distractors": {
-      "A": "Correct. `roles/iam.workloadIdentityUser` binding to the `corp.svc.id.goog[namespace/ksa]` principal establishes keyless Workload Identity federation.",
-      "B": "Making the bucket public exposes sensitive data to the world.",
-      "C": "Kubernetes service accounts cannot be granted GCP IAM roles directly without Workload Identity pool bindings.",
-      "D": "Mounting JSON keys as secrets bypasses Workload Identity and reintroduces static key compromise risks."
+      "C": "Making the bucket public exposes sensitive data to the world.",
+      "B": "Kubernetes service accounts cannot be granted GCP IAM roles directly without Workload Identity pool bindings.",
+      "A": "Mounting JSON keys as secrets bypasses Workload Identity and reintroduces static key compromise risks."
     },
     "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding gcs-reader@corp.iam.gserviceaccount.com --role=roles/iam.workloadIdentityUser --member='serviceAccount:corp.svc.id.goog[backend/ksa-gcs]'",
     "architectureComponents": [
@@ -7360,35 +6254,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create prod-mysql-db --image-family=mysql-8",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances create prod-mysql-db --image-family=mysql-8"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --backup-start-time=03:00 --enable-point-in-time-recovery --storage-type=SSD",
-        "isTrap": false
+        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-n1-standard-1 --availability-type=ZONAL"
       },
       {
         "letter": "C",
-        "text": "gcloud spanner instances create prod-mysql-db --config=regional-europe-west3",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "gcloud spanner instances create prod-mysql-db --config=regional-europe-west3"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-n1-standard-1 --availability-type=ZONAL",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --backup-start-time=03:00 --enable-point-in-time-recovery --storage-type=SSD"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Deploying a production Cloud SQL instance with HA and backups requires `gcloud sql instances create` specifying `--availability-type=REGIONAL`, `--database-version=MYSQL_8_0`, `--tier=db-custom-4-16384`, `--backup-start-time=03:00`, and `--enable-point-in-time-recovery`.",
     "distractors": {
       "A": "Compute Engine instance creation provisions an unmanaged VM, not managed Cloud SQL.",
-      "B": "Correct. Complete gcloud command setting regional HA, custom sizing, SSD storage, and PITR backups.",
       "C": "Cloud Spanner is a different database engine and does not run native MySQL 8.0.",
-      "D": "ZONAL availability lacks standby regional failover and n1-standard-1 does not meet the 4 vCPU / 16GB RAM spec."
+      "B": "ZONAL availability lacks standby regional failover and n1-standard-1 does not meet the 4 vCPU / 16GB RAM spec."
     },
     "gcloudCommand": "gcloud sql instances create prod-mysql-db --database-version=MYSQL_8_0 --tier=db-custom-4-16384 --region=europe-west3 --availability-type=REGIONAL --backup-start-time=03:00 --enable-point-in-time-recovery --storage-type=SSD",
     "architectureComponents": [
@@ -7421,35 +6307,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud functions deploy process-photo --trigger-http --allow-unauthenticated",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --trigger-event-filters='type=google.cloud.storage.object.v1.finalized' --trigger-event-filters='bucket=raw-user-photos' --entry-point=handle_photo_upload"
       },
       {
         "letter": "B",
-        "text": "gcloud run deploy process-photo --trigger-cron='* * * * *'",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud run deploy process-photo --trigger-cron='* * * * *'"
       },
       {
         "letter": "C",
-        "text": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --trigger-event-filters='type=google.cloud.storage.object.v1.finalized' --trigger-event-filters='bucket=raw-user-photos' --entry-point=handle_photo_upload",
-        "isTrap": false
+        "text": "gcloud compute instances create process-photo --storage-trigger=raw-user-photos"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create process-photo --storage-trigger=raw-user-photos",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud functions deploy process-photo --trigger-http --allow-unauthenticated"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Cloud Functions (2nd gen) leverages Eventarc for event-driven triggers. Specifying `--gen2`, `--trigger-event-filters='type=google.cloud.storage.object.v1.finalized'`, and `--trigger-event-filters='bucket=raw-user-photos'` wires the storage upload event directly to the function handler.",
     "distractors": {
-      "A": "`--trigger-http` configures an HTTP endpoint, not an automated storage event trigger.",
+      "D": "`--trigger-http` configures an HTTP endpoint, not an automated storage event trigger.",
       "B": "Cloud Run does not accept `--trigger-cron` syntax directly in `gcloud run deploy`.",
-      "C": "Correct. Gen 2 Eventarc event filter syntax triggers function execution on object finalization in the specified bucket.",
-      "D": "Compute Engine instances do not support direct native Cloud Storage event triggers."
+      "C": "Compute Engine instances do not support direct native Cloud Storage event triggers."
     },
     "gcloudCommand": "gcloud functions deploy process-photo --gen2 --runtime=python311 --region=us-central1 --trigger-event-filters='type=google.cloud.storage.object.v1.finalized' --trigger-event-filters='bucket=raw-user-photos' --entry-point=handle_photo_upload",
     "architectureComponents": [
@@ -7484,35 +6362,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud organizations networks create enterprise-vpc --range=10.10.0.0/24",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute subnets create app-subnet-uscentral1 --network=default --cidr=10.10.0.0/24"
       },
       {
         "letter": "B",
-        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=auto",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=auto"
       },
       {
         "letter": "C",
-        "text": "gcloud compute subnets create app-subnet-uscentral1 --network=default --cidr=10.10.0.0/24",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud organizations networks create enterprise-vpc --range=10.10.0.0/24"
       },
       {
         "letter": "D",
-        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=custom && gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access",
-        "isTrap": false
+        "text": "gcloud compute networks create enterprise-vpc --subnet-mode=custom && gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access"
       }
     ],
     "correct": "D",
     "explanation": "Creating a custom VPC network requires `gcloud compute networks create <name> --subnet-mode=custom`. Subnets are then added with `gcloud compute networks subnets create <subnet_name> --network=<net> --region=<region> --range=<cidr> --enable-private-ip-google-access`.",
     "distractors": {
-      "A": "`gcloud organizations networks create` is a non-existent command.",
+      "C": "`gcloud organizations networks create` is a non-existent command.",
       "B": "`--subnet-mode=auto` creates default automatic /20 subnets in every region, violating the custom IP architecture.",
-      "C": "`gcloud compute subnets create` is invalid syntax; the command group is `compute networks subnets`.",
-      "D": "Correct. `networks create --subnet-mode=custom` followed by `subnets create` with `--enable-private-ip-google-access`."
+      "A": "`gcloud compute subnets create` is invalid syntax; the command group is `compute networks subnets`."
     },
     "gcloudCommand": "gcloud compute networks create enterprise-vpc --subnet-mode=custom && gcloud compute networks subnets create app-subnet-uscentral1 --network=enterprise-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access",
     "architectureComponents": [
@@ -7545,35 +6415,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --image-family=debian-11 --image-project=debian-cloud --boot-disk-size=50GB --boot-disk-type=pd-balanced --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com --scopes=cloud-platform",
-        "isTrap": false
+        "text": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --image-family=debian-11 --image-project=debian-cloud --boot-disk-size=50GB --boot-disk-type=pd-balanced --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com --scopes=cloud-platform"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instance-groups managed create api-server-template --size=5",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute disks snapshot create api-server-template --type=template"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks snapshot create api-server-template --type=template",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances create api-server-template --template-mode=true"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create api-server-template --template-mode=true",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instance-groups managed create api-server-template --size=5"
       }
     ],
     "correct": "A",
     "explanation": "`gcloud compute instance-templates create` defines the instance blueprint (machine type, image family, disk type/size, network tags, service account, and OAuth scopes) used by Managed Instance Groups to instantiate identical VM instances.",
     "distractors": {
-      "A": "Correct. Standard syntax for provisioning instance templates with disk sizing, network tags, and service account bindings.",
-      "B": "`instance-groups managed create` creates the MIG itself, which requires an existing template reference.",
-      "C": "`disks snapshot` creates persistent disk point-in-time backups, not instance templates.",
-      "D": "`--template-mode` is not a valid flag on `gcloud compute instances create`."
+      "D": "`instance-groups managed create` creates the MIG itself, which requires an existing template reference.",
+      "B": "`disks snapshot` creates persistent disk point-in-time backups, not instance templates.",
+      "C": "`--template-mode` is not a valid flag on `gcloud compute instances create`."
     },
     "gcloudCommand": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --image-family=debian-11 --image-project=debian-cloud --boot-disk-size=50GB --boot-disk-type=pd-balanced --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com --scopes=cloud-platform",
     "architectureComponents": [
@@ -7606,34 +6468,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instance-groups managed delete web-mig && gcloud compute instance-groups managed create web-mig --template=web-template-v2",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances reset-all --group=web-mig --template=web-template-v2"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instance-groups managed rolling-action start-update web-mig --region=us-central1 --version=template=web-template-v2 --max-surge=20% --max-unavailable=0%",
-        "isTrap": false
+        "text": "gcloud compute instance-groups managed rolling-action start-update web-mig --region=us-central1 --version=template=web-template-v2 --max-surge=20% --max-unavailable=0%"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances reset-all --group=web-mig --template=web-template-v2",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instance-groups managed delete web-mig && gcloud compute instance-groups managed create web-mig --template=web-template-v2"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instance-groups managed set-template web-mig --force-restart",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instance-groups managed set-template web-mig --force-restart"
       }
     ],
     "correct": "B",
     "explanation": "`gcloud compute instance-groups managed rolling-action start-update` initiates a gradual rolling deployment. Setting `--max-surge=20%` (creates new VMs first) and `--max-unavailable=0%` ensures that full capacity is maintained throughout the update with zero downtime.",
     "distractors": {
-      "A": "Deleting the MIG causes complete outage and destroys active customer sessions.",
-      "B": "Correct. `rolling-action start-update` with `--max-unavailable=0%` ensures seamless zero-downtime rolling upgrades.",
-      "C": "`instances reset-all` is non-existent syntax.",
+      "C": "Deleting the MIG causes complete outage and destroys active customer sessions.",
+      "A": "`instances reset-all` is non-existent syntax.",
       "D": "`set-template` only updates the template pointer for future instances; it does not automatically roll out changes to existing VMs without `rolling-action`."
     },
     "gcloudCommand": "gcloud compute instance-groups managed rolling-action start-update web-mig --region=us-central1 --version=template=web-template-v2 --max-surge=20% --max-unavailable=0%",
@@ -7666,35 +6520,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud container images compile --source=. --repo=app-repo",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud container images compile --source=. --repo=app-repo"
       },
       {
         "letter": "B",
-        "text": "docker build . && gsutil cp image.tar gs://my-proj-artifacts/",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "docker build . && gsutil cp image.tar gs://my-proj-artifacts/"
       },
       {
         "letter": "C",
-        "text": "gcloud builds submit --tag=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 .",
-        "isTrap": false
+        "text": "gcloud artifacts docker push us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0"
       },
       {
         "letter": "D",
-        "text": "gcloud artifacts docker push us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud builds submit --tag=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 ."
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "`gcloud builds submit --tag=<IMAGE_URL> .` compresses the local directory, uploads it to Cloud Build, executes `docker build` remotely on managed build workers, and automatically pushes the final image to the designated Artifact Registry repository.",
     "distractors": {
       "A": "`gcloud container images compile` is non-existent CLI syntax.",
       "B": "Building locally requires local Docker daemon overhead and copying tarballs to Cloud Storage is not an OCI container registry.",
-      "C": "Correct. `gcloud builds submit --tag=...` executes serverless container builds and pushes to Artifact Registry in a single step.",
-      "D": "`gcloud artifacts docker push` requires local Docker daemon authentication and manual prior build."
+      "C": "`gcloud artifacts docker push` requires local Docker daemon authentication and manual prior build."
     },
     "gcloudCommand": "gcloud builds submit --tag=us-docker.pkg.dev/my-proj/app-repo/web-svc:v1.0 .",
     "architectureComponents": [
@@ -7727,35 +6573,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Upload frontend-app.yaml to a Cloud Storage bucket and restart the GKE cluster.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Upload frontend-app.yaml to a Cloud Storage bucket and restart the GKE cluster."
       },
       {
         "letter": "B",
-        "text": "Run gcloud container clusters update --manifest=frontend-app.yaml.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run kubectl apply -f frontend-app.yaml in your configured terminal session."
       },
       {
         "letter": "C",
-        "text": "Run gcloud compute instances create-from-yaml frontend-app.yaml.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run gcloud container clusters update --manifest=frontend-app.yaml."
       },
       {
         "letter": "D",
-        "text": "Run kubectl apply -f frontend-app.yaml in your configured terminal session.",
-        "isTrap": false
+        "text": "Run gcloud compute instances create-from-yaml frontend-app.yaml."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`kubectl apply -f <filename.yaml>` is the authoritative declarative Kubernetes CLI command to create and update Deployments, Services, ConfigMaps, and Ingress resources on a Google Kubernetes Engine cluster.",
     "distractors": {
       "A": "Uploading YAML files to Cloud Storage does not trigger GKE cluster deployment without a CI/CD pipeline or Anthos Config Sync.",
-      "B": "`gcloud container clusters update` modifies cluster infrastructure (node counts, network settings), not container workload manifests.",
-      "C": "`create-from-yaml` is not a valid gcloud compute command for Kubernetes manifests.",
-      "D": "Correct. `kubectl apply -f` submits declarative manifests to the Kubernetes API server."
+      "C": "`gcloud container clusters update` modifies cluster infrastructure (node counts, network settings), not container workload manifests.",
+      "D": "`create-from-yaml` is not a valid gcloud compute command for Kubernetes manifests."
     },
     "gcloudCommand": "kubectl apply -f frontend-app.yaml",
     "architectureComponents": [
@@ -7788,34 +6626,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud artifacts repositories create backend-containers --repository-format=docker --location=us-central1 --description='Docker repository for backend services'",
-        "isTrap": false
+        "text": "gcloud storage buckets create gs://us-docker.pkg.dev/backend-containers"
       },
       {
         "letter": "B",
-        "text": "gcloud container images repositories create backend-containers --region=us-central1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud container images repositories create backend-containers --region=us-central1"
       },
       {
         "letter": "C",
-        "text": "gcloud storage buckets create gs://us-docker.pkg.dev/backend-containers",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud artifacts repositories create backend-containers --repository-format=docker --location=us-central1 --description='Docker repository for backend services'"
       },
       {
         "letter": "D",
-        "text": "gcloud compute repositories create backend-containers --type=DOCKER",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute repositories create backend-containers --type=DOCKER"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "`gcloud artifacts repositories create` is the command to provision new Artifact Registry repositories, requiring `--repository-format=docker` (or npm, maven, python) and `--location=<region>`.",
     "distractors": {
-      "A": "Correct. `artifacts repositories create` with format `docker` and location `us-central1` provisions the Artifact Registry container repo.",
       "B": "`gcloud container images` is the legacy GCR command group and cannot create new Artifact Registry repositories.",
-      "C": "Artifact Registry is a managed OCI registry service, not a plain Cloud Storage bucket URL.",
+      "A": "Artifact Registry is a managed OCI registry service, not a plain Cloud Storage bucket URL.",
       "D": "`gcloud compute repositories` is non-existent CLI syntax."
     },
     "gcloudCommand": "gcloud artifacts repositories create backend-containers --repository-format=docker --location=us-central1 --description='Docker repository for backend services'",
@@ -7849,35 +6679,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute networks update my-vpc --enable-nat",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute firewall-rules create allow-outbound-nat --allow=all --direction=EGRESS"
       },
       {
         "letter": "B",
-        "text": "Create a Cloud Router using gcloud compute routers create nat-router --network=my-vpc --region=us-east1, then create the NAT gateway using gcloud compute routers nats create nat-gw --router=nat-router --region=us-east1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges.",
-        "isTrap": false
+        "text": "gcloud compute networks update my-vpc --enable-nat"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create nat-gateway --image-family=nat --region=us-east1",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances create nat-gateway --image-family=nat --region=us-east1"
       },
       {
         "letter": "D",
-        "text": "gcloud compute firewall-rules create allow-outbound-nat --allow=all --direction=EGRESS",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a Cloud Router using gcloud compute routers create nat-router --network=my-vpc --region=us-east1, then create the NAT gateway using gcloud compute routers nats create nat-gw --router=nat-router --region=us-east1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Cloud NAT operates in conjunction with a Cloud Router in the target region. You first create the Cloud Router (`gcloud compute routers create`), then attach the Cloud NAT service (`gcloud compute routers nats create`) specifying `--auto-allocate-nat-external-ips` and `--nat-all-subnet-ip-ranges`.",
     "distractors": {
-      "A": "`--enable-nat` is not a valid network flag on `gcloud compute networks update`.",
-      "B": "Correct. Creating the Cloud Router followed by `routers nats create` deploys managed Cloud NAT for all subnets in the region.",
+      "B": "`--enable-nat` is not a valid network flag on `gcloud compute networks update`.",
       "C": "Self-managed NAT VM instances introduce single points of failure, scaling bottlenecks, and operational maintenance overhead.",
-      "D": "Firewall rules govern traffic permissions; they do not perform Source Network Address Translation (SNAT)."
+      "A": "Firewall rules govern traffic permissions; they do not perform Source Network Address Translation (SNAT)."
     },
     "gcloudCommand": "gcloud compute routers create nat-router --network=my-vpc --region=us-east1 && gcloud compute routers nats create nat-gw --router=nat-router --region=us-east1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges",
     "architectureComponents": [
@@ -7911,35 +6733,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "cat db-backup.sql.gz | gcloud sql connect prod-mysql-1",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud sql instances restore prod-mysql-1 --source=gs://corp-db-dumps/db-backup.sql.gz"
       },
       {
         "letter": "B",
-        "text": "gcloud sql import sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db",
-        "isTrap": false
+        "text": "gcloud sql import sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db"
       },
       {
         "letter": "C",
-        "text": "bq load --source_format=SQL app_db gs://corp-db-dumps/db-backup.sql.gz",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "cat db-backup.sql.gz | gcloud sql connect prod-mysql-1"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances restore prod-mysql-1 --source=gs://corp-db-dumps/db-backup.sql.gz",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq load --source_format=SQL app_db gs://corp-db-dumps/db-backup.sql.gz"
       }
     ],
     "correct": "B",
     "explanation": "`gcloud sql import sql <INSTANCE_NAME> <GCS_URI> --database=<DB_NAME>` initiates an asynchronous server-side database import from Cloud Storage directly into the Cloud SQL instance engine.",
     "distractors": {
-      "A": "Piping large gzip dumps over `gcloud sql connect` is slow, unmonitored, and prone to client network disconnects.",
-      "B": "Correct. `gcloud sql import sql` is the standard CLI command to load SQL or CSV dumps from Cloud Storage into Cloud SQL.",
-      "C": "`bq load` loads data into BigQuery tables, not Cloud SQL MySQL databases.",
-      "D": "`sql instances restore` is for restoring Cloud SQL automated backups, not importing SQL dump text files from GCS."
+      "C": "Piping large gzip dumps over `gcloud sql connect` is slow, unmonitored, and prone to client network disconnects.",
+      "D": "`bq load` loads data into BigQuery tables, not Cloud SQL MySQL databases.",
+      "A": "`sql instances restore` is for restoring Cloud SQL automated backups, not importing SQL dump text files from GCS."
     },
     "gcloudCommand": "gcloud sql import sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db",
     "architectureComponents": [
@@ -7973,35 +6787,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create-app app.yaml",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create-app app.yaml"
       },
       {
         "letter": "B",
-        "text": "gcloud run deploy retail-app --app-yaml=app.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud run deploy retail-app --app-yaml=app.yaml"
       },
       {
         "letter": "C",
-        "text": "gcloud app deploy app.yaml --project=retail-app-prod --promote",
-        "isTrap": false
+        "text": "gsutil cp app.yaml gs://retail-app-prod-appengine/"
       },
       {
         "letter": "D",
-        "text": "gsutil cp app.yaml gs://retail-app-prod-appengine/",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud app deploy app.yaml --project=retail-app-prod --promote"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "`gcloud app deploy <app.yaml>` deploys the application source code to Google App Engine. Passing `--promote` (which is default true) routes 100% of all incoming application traffic to the newly deployed version immediately.",
     "distractors": {
       "A": "`create-app` is not a valid gcloud compute command.",
       "B": "Cloud Run uses Docker containers and does not parse App Engine `app.yaml` configurations.",
-      "C": "Correct. `gcloud app deploy --promote` deploys App Engine apps and routes 100% traffic to the new version.",
-      "D": "Copying YAML files to Cloud Storage does not deploy App Engine code without Cloud Build / CD pipelines."
+      "C": "Copying YAML files to Cloud Storage does not deploy App Engine code without Cloud Build / CD pipelines."
     },
     "gcloudCommand": "gcloud app deploy app.yaml --project=retail-app-prod --promote",
     "architectureComponents": [
@@ -8034,35 +6840,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl scale deployment batch-pool --replicas=5",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker"
       },
       {
         "letter": "B",
-        "text": "gcloud container clusters update analytics-cluster --add-nodes=5 --spot",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create batch-pool-node-[1-5] --preemptible"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create batch-pool-node-[1-5] --preemptible",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl scale deployment batch-pool --replicas=5"
       },
       {
         "letter": "D",
-        "text": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker",
-        "isTrap": false
+        "text": "gcloud container clusters update analytics-cluster --add-nodes=5 --spot"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "`gcloud container node-pools create <POOL_NAME> --cluster=<CLUSTER>` adds a discrete node pool with specific machine sizing, `--spot` (or `--preemptible`), node count, and Kubernetes node labels.",
     "distractors": {
-      "A": "`kubectl scale deployment` scales Kubernetes Pods, not physical VM worker node infrastructure.",
-      "B": "`clusters update` cannot create new named node pools with custom labels.",
-      "C": "Creating standalone Compute Engine VMs manually does not register them as managed worker nodes in the GKE control plane.",
-      "D": "Correct. `node-pools create` with `--spot` and `--node-labels` is the official command for adding specialized node pools."
+      "C": "`kubectl scale deployment` scales Kubernetes Pods, not physical VM worker node infrastructure.",
+      "D": "`clusters update` cannot create new named node pools with custom labels.",
+      "B": "Creating standalone Compute Engine VMs manually does not register them as managed worker nodes in the GKE control plane."
     },
     "gcloudCommand": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker",
     "architectureComponents": [
@@ -8095,35 +6893,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute health-checks create http web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --global && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --global",
-        "isTrap": false
+        "text": "gcloud compute target-http-proxies create web-backend-svc --health-check=web-health-check"
       },
       {
         "letter": "B",
-        "text": "gcloud compute target-http-proxies create web-backend-svc --health-check=web-health-check",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute forwarding-rules create web-backend-svc --ports=80 --global"
       },
       {
         "letter": "C",
-        "text": "gcloud compute url-maps create web-backend-svc --instance-group=web-mig-us",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute health-checks create http web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --global && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --global"
       },
       {
         "letter": "D",
-        "text": "gcloud compute forwarding-rules create web-backend-svc --ports=80 --global",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute url-maps create web-backend-svc --instance-group=web-mig-us"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Configuring load balancer backends follows a strict dependency order: 1) Create the Health Check (`health-checks create http`), 2) Create the Backend Service with the health check (`backend-services create --global`), 3) Add the instance group backend to the service (`backend-services add-backend --global`).",
     "distractors": {
-      "A": "Correct. Proper sequence: health check creation, global backend service definition, and MIG backend association.",
-      "B": "Target HTTP proxies connect URL maps to forwarding rules and do not attach health checks.",
-      "C": "URL maps route URLs to backend services, not directly to raw instance groups.",
-      "D": "Forwarding rules route incoming traffic to target proxies, not manage backend instance groups directly."
+      "A": "Target HTTP proxies connect URL maps to forwarding rules and do not attach health checks.",
+      "D": "URL maps route URLs to backend services, not directly to raw instance groups.",
+      "B": "Forwarding rules route incoming traffic to target proxies, not manage backend instance groups directly."
     },
     "gcloudCommand": "gcloud compute health-checks create http web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --global && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --global",
     "architectureComponents": [
@@ -8157,35 +6947,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq create table corp_finance.transactions --partition=transaction_time --cluster=merchant_id",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json"
       },
       {
         "letter": "B",
-        "text": "bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json",
-        "isTrap": false
+        "text": "bq create table corp_finance.transactions --partition=transaction_time --cluster=merchant_id"
       },
       {
         "letter": "C",
-        "text": "gcloud bigquery tables create transactions --dataset=corp_finance --schema=./schema.json",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq load --autodetect corp_finance.transactions ./schema.json"
       },
       {
         "letter": "D",
-        "text": "bq load --autodetect corp_finance.transactions ./schema.json",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud bigquery tables create transactions --dataset=corp_finance --schema=./schema.json"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "The `bq mk --table` command creates tables in BigQuery. Adding `--time_partitioning_field=<COLUMN>` defines the time partition column and `--clustering_fields=<COL1,COL2>` configures clustering columns alongside the schema JSON definition.",
     "distractors": {
-      "A": "`bq create table` is invalid syntax; `bq mk` is the table creation command.",
-      "B": "Correct. `bq mk --table` with `--time_partitioning_field` and `--clustering_fields` creates partitioned and clustered tables.",
-      "C": "BigQuery table schema creation is managed via the `bq` CLI tool or API, not `gcloud bigquery tables create`.",
-      "D": "`bq load` ingests data rows into a table from a data file, not creating empty schema definitions."
+      "B": "`bq create table` is invalid syntax; `bq mk` is the table creation command.",
+      "D": "BigQuery table schema creation is managed via the `bq` CLI tool or API, not `gcloud bigquery tables create`.",
+      "C": "`bq load` ingests data rows into a table from a data file, not creating empty schema definitions."
     },
     "gcloudCommand": "bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json",
     "architectureComponents": [
@@ -8217,35 +6999,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure Cloud DNS to inject SSL keys into DNS TXT records.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Deploy an Nginx sidecar container running Certbot in every Pod."
       },
       {
         "letter": "B",
-        "text": "Generate a self-signed certificate and store it in a Kubernetes Secret of type kubernetes.io/tls.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure Cloud DNS to inject SSL keys into DNS TXT records."
       },
       {
         "letter": "C",
-        "text": "Deploy a ManagedCertificate custom resource defining domain 'app.example.com' and annotate the Kubernetes Ingress object with 'networking.gke.io/managed-certificates: my-managed-cert'.",
-        "isTrap": false
+        "text": "Deploy a ManagedCertificate custom resource defining domain 'app.example.com' and annotate the Kubernetes Ingress object with 'networking.gke.io/managed-certificates: my-managed-cert'."
       },
       {
         "letter": "D",
-        "text": "Deploy an Nginx sidecar container running Certbot in every Pod.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Generate a self-signed certificate and store it in a Kubernetes Secret of type kubernetes.io/tls."
       }
     ],
     "correct": "C",
     "explanation": "GKE provides the `ManagedCertificate` custom resource definition (CRD). When an Ingress is annotated with `networking.gke.io/managed-certificates: <CERT_NAME>`, Google Cloud Load Balancing automatically provisions and auto-renews public Google-managed SSL certificates for the specified domains.",
     "distractors": {
-      "A": "Cloud DNS cannot terminate SSL/TLS connections or inject private decryption keys.",
-      "B": "Self-signed certificates trigger browser security warnings and require manual secret rotation.",
-      "C": "Correct. `ManagedCertificate` CRD + Ingress annotation provides fully automated, zero-touch Google-managed SSL/TLS.",
-      "D": "Certbot sidecars introduce high maintenance, lack load balancer edge termination, and add unnecessary complexity."
+      "B": "Cloud DNS cannot terminate SSL/TLS connections or inject private decryption keys.",
+      "D": "Self-signed certificates trigger browser security warnings and require manual secret rotation.",
+      "A": "Certbot sidecars introduce high maintenance, lack load balancer edge termination, and add unnecessary complexity."
     },
     "gcloudCommand": "kubectl apply -f managed-cert.yaml && kubectl apply -f ingress.yaml",
     "architectureComponents": [
@@ -8279,35 +7053,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq mk --dataset telemetry-db && bq mk --table device-readings",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql instances create telemetry-db --database-version=BIGTABLE_1"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances create telemetry-db --storage-type=bigtable",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD --display-name='Telemetry DB' && cbt -instance=telemetry-db createtable device-readings 'families=cf1'"
       },
       {
         "letter": "C",
-        "text": "gcloud sql instances create telemetry-db --database-version=BIGTABLE_1",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "gcloud compute instances create telemetry-db --storage-type=bigtable"
       },
       {
         "letter": "D",
-        "text": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD --display-name='Telemetry DB' && cbt -instance=telemetry-db createtable device-readings 'families=cf1'",
-        "isTrap": false
+        "text": "bq mk --dataset telemetry-db && bq mk --table device-readings"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Provisioning a Cloud Bigtable instance uses `gcloud bigtable instances create` specifying cluster zone, node count, and storage type (SSD/HDD). Table and column family provisioning is performed using the `cbt` CLI (`cbt createtable <table_name> 'families=<family_name>'`).",
     "distractors": {
-      "A": "`bq mk` creates BigQuery tables, which are analytical data warehouses, not sub-millisecond Bigtable clusters.",
-      "B": "Compute Engine instances create VMs, not managed Bigtable instances.",
-      "C": "`gcloud sql` is for relational engines (MySQL/Postgres/SQL Server), not Bigtable NoSQL wide-column.",
-      "D": "Correct. `gcloud bigtable instances create` provisions the cluster and `cbt createtable` creates the table and column family."
+      "D": "`bq mk` creates BigQuery tables, which are analytical data warehouses, not sub-millisecond Bigtable clusters.",
+      "C": "Compute Engine instances create VMs, not managed Bigtable instances.",
+      "A": "`gcloud sql` is for relational engines (MySQL/Postgres/SQL Server), not Bigtable NoSQL wide-column."
     },
     "gcloudCommand": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD --display-name='Telemetry DB' && cbt -instance=telemetry-db createtable device-readings 'families=cf1'",
     "architectureComponents": [
@@ -8340,35 +7106,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu --description='Golden hardened Ubuntu base image'",
-        "isTrap": false
+        "text": "gsutil cp /dev/sda1 gs://my-images/golden-ubuntu-v1.img"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances snapshot base-template-vm --image=golden-ubuntu-v1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute disks export base-template-vm --format=qcow2"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks export base-template-vm --format=qcow2",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances snapshot base-template-vm --image=golden-ubuntu-v1"
       },
       {
         "letter": "D",
-        "text": "gsutil cp /dev/sda1 gs://my-images/golden-ubuntu-v1.img",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu --description='Golden hardened Ubuntu base image'"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "`gcloud compute images create <IMAGE_NAME> --source-disk=<DISK> --source-disk-zone=<ZONE> --family=<FAMILY>` creates an immutable custom image from a stopped VM's persistent disk and adds it to an image family for automated instance template rollouts.",
     "distractors": {
-      "A": "Correct. `gcloud compute images create` creates an image from a source disk and organizes it into an image family.",
-      "B": "`instances snapshot` is invalid syntax; snapshots are created via `gcloud compute disks snapshot`.",
-      "C": "Exporting raw qcow2 disks adds unnecessary data transfer and conversion overhead compared to native image creation.",
-      "D": "Copying raw block devices directly via gsutil produces corrupt image states."
+      "C": "`instances snapshot` is invalid syntax; snapshots are created via `gcloud compute disks snapshot`.",
+      "B": "Exporting raw qcow2 disks adds unnecessary data transfer and conversion overhead compared to native image creation.",
+      "A": "Copying raw block devices directly via gsutil produces corrupt image states."
     },
     "gcloudCommand": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu --description='Golden hardened Ubuntu base image'",
     "architectureComponents": [
@@ -8400,35 +7158,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud storage objects create gs://corp-customer-receipts --location=nam4",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access"
       },
       {
         "letter": "B",
-        "text": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access",
-        "isTrap": false
+        "text": "gcloud compute buckets create gs://corp-customer-receipts --dual-region=us-central1,us-east1"
       },
       {
         "letter": "C",
-        "text": "gsutil mb -c STANDARD -l GLOBAL gs://corp-customer-receipts",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud storage objects create gs://corp-customer-receipts --location=nam4"
       },
       {
         "letter": "D",
-        "text": "gcloud compute buckets create gs://corp-customer-receipts --dual-region=us-central1,us-east1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil mb -c STANDARD -l GLOBAL gs://corp-customer-receipts"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "The `gcloud storage buckets create` command supports specifying custom dual-region pairs (`--location=us-central1,us-east1`), `--default-storage-class=STANDARD`, and `--uniform-bucket-level-access` in a single declarative command.",
     "distractors": {
-      "A": "`gcloud storage objects create` uploads files, not creates buckets.",
-      "B": "Correct. Standard syntax for provisioning dual-region buckets with uniform IAM access control.",
-      "C": "`GLOBAL` is not a valid location for Cloud Storage buckets.",
-      "D": "`gcloud compute buckets` is invalid syntax; storage is managed under `gcloud storage`."
+      "C": "`gcloud storage objects create` uploads files, not creates buckets.",
+      "D": "`GLOBAL` is not a valid location for Cloud Storage buckets.",
+      "B": "`gcloud compute buckets` is invalid syntax; storage is managed under `gcloud storage`."
     },
     "gcloudCommand": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access",
     "architectureComponents": [
@@ -8461,34 +7211,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud container clusters update --enable-git-sync=corp-app",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil notification create -t build-topic -e OBJECT_FINALIZE gs://my-repo"
       },
       {
         "letter": "B",
-        "text": "gsutil notification create -t build-topic -e OBJECT_FINALIZE gs://my-repo",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud container clusters update --enable-git-sync=corp-app"
       },
       {
         "letter": "C",
-        "text": "gcloud builds triggers create github --repo-name=corp-app --repo-owner=my-org --branch-pattern='^main$' --build-config=cloudbuild.yaml",
-        "isTrap": false
+        "text": "gcloud builds triggers create github --repo-name=corp-app --repo-owner=my-org --branch-pattern='^main$' --build-config=cloudbuild.yaml"
       },
       {
         "letter": "D",
-        "text": "gcloud compute triggers create github --repo=corp-app",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute triggers create github --repo=corp-app"
       }
     ],
     "correct": "C",
     "explanation": "`gcloud builds triggers create github` creates an automated CI trigger that listens to Git webhook events from a connected GitHub repository and initiates a build based on branch patterns and `cloudbuild.yaml`.",
     "distractors": {
-      "A": "`--enable-git-sync` is not a valid GKE cluster update flag.",
-      "B": "`gsutil notification` configures Cloud Storage object notifications, not Git repository build triggers.",
-      "C": "Correct. `gcloud builds triggers create github` links GitHub branch events to Cloud Build pipeline execution.",
+      "B": "`--enable-git-sync` is not a valid GKE cluster update flag.",
+      "A": "`gsutil notification` configures Cloud Storage object notifications, not Git repository build triggers.",
       "D": "`gcloud compute triggers` is non-existent CLI syntax."
     },
     "gcloudCommand": "gcloud builds triggers create github --repo-name=corp-app --repo-owner=my-org --branch-pattern='^main$' --build-config=cloudbuild.yaml",
@@ -8522,35 +7264,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instance-groups managed set-autoscaling worker-mig --target-cpu-utilization=0.8",
-        "isTrap": true,
-        "trapType": "premature_optimization"
+        "text": "gcloud compute instance-groups managed set-autoscaling worker-mig --target-cpu-utilization=0.8"
       },
       {
         "letter": "B",
-        "text": "kubectl autoscale deployment worker-mig --min=2 --max=50",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud monitoring alert-policies create --scale-mig=worker-mig"
       },
       {
         "letter": "C",
-        "text": "gcloud monitoring alert-policies create --scale-mig=worker-mig",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instance-groups managed set-autoscaling worker-mig --region=us-central1 --min-num-replicas=2 --max-num-replicas=50 --custom-metric-metric='pubsub.googleapis.com/subscription/num_undelivered_messages' --custom-metric-target=100 --custom-metric-type=GAUGE --custom-metric-utilization-target-type=PER_INSTANCE"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instance-groups managed set-autoscaling worker-mig --region=us-central1 --min-num-replicas=2 --max-num-replicas=50 --custom-metric-metric='pubsub.googleapis.com/subscription/num_undelivered_messages' --custom-metric-target=100 --custom-metric-type=GAUGE --custom-metric-utilization-target-type=PER_INSTANCE",
-        "isTrap": false
+        "text": "kubectl autoscale deployment worker-mig --min=2 --max=50"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Managed Instance Groups support autoscaling based on Cloud Monitoring custom metrics. Specifying `--custom-metric-metric`, `--custom-metric-target=100`, and `--custom-metric-utilization-target-type=PER_INSTANCE` dynamically calculates the required number of VM replicas based on real queue depth.",
     "distractors": {
       "A": "CPU utilization does not accurately reflect Pub/Sub message backlog depth for I/O bound worker processes.",
-      "B": "`kubectl autoscale` is for Kubernetes Pods, not Compute Engine Managed Instance Groups.",
-      "C": "Monitoring alerting policies trigger notifications (email, pager), not native MIG autoscaler controller loops.",
-      "D": "Correct. `set-autoscaling` with custom metric parameters configures dynamic queue-based VM auto-scaling."
+      "D": "`kubectl autoscale` is for Kubernetes Pods, not Compute Engine Managed Instance Groups.",
+      "B": "Monitoring alerting policies trigger notifications (email, pager), not native MIG autoscaler controller loops."
     },
     "gcloudCommand": "gcloud compute instance-groups managed set-autoscaling worker-mig --region=us-central1 --min-num-replicas=2 --max-num-replicas=50 --custom-metric-metric='pubsub.googleapis.com/subscription/num_undelivered_messages' --custom-metric-target=100 --custom-metric-type=GAUGE --custom-metric-utilization-target-type=PER_INSTANCE",
     "architectureComponents": [
@@ -8585,35 +7319,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-secrets=DATABASE_PASSWORD=db-password:latest",
-        "isTrap": false
+        "text": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-secrets=DATABASE_PASSWORD=db-password:latest"
       },
       {
         "letter": "B",
-        "text": "gsutil cp gs://my-secrets/db-pass.txt /etc/secret",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-env-vars=DATABASE_PASSWORD='plainTextPassword123'"
       },
       {
         "letter": "C",
-        "text": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-env-vars=DATABASE_PASSWORD='plainTextPassword123'",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "gcloud compute instances create api-service --secret=db-password"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create api-service --secret=db-password",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil cp gs://my-secrets/db-pass.txt /etc/secret"
       }
     ],
     "correct": "A",
     "explanation": "Cloud Run natively integrates with Secret Manager via `--set-secrets=<ENV_VAR>=<SECRET_NAME>:<VERSION>`. Cloud Run fetches the secret dynamically at runtime and injects it as an environment variable (or volume mount) into the container without exposing plaintext passwords in build files.",
     "distractors": {
-      "A": "Correct. `--set-secrets=DATABASE_PASSWORD=db-password:latest` injects Secret Manager secrets securely into the container runtime.",
-      "B": "Plain text files in Cloud Storage lack automated secret versioning, encryption in memory, and IAM secret governance.",
-      "C": "Hardcoding plaintext credentials into `--set-env-vars` exposes database passwords in console logs and revision metadata.",
-      "D": "`gcloud compute instances create` is for VMs, not Cloud Run serverless services."
+      "D": "Plain text files in Cloud Storage lack automated secret versioning, encryption in memory, and IAM secret governance.",
+      "B": "Hardcoding plaintext credentials into `--set-env-vars` exposes database passwords in console logs and revision metadata.",
+      "C": "`gcloud compute instances create` is for VMs, not Cloud Run serverless services."
     },
     "gcloudCommand": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-secrets=DATABASE_PASSWORD=db-password:latest",
     "architectureComponents": [
@@ -8648,33 +7374,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an egress firewall rule allowing port 80 to 8.8.8.8.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create an ingress firewall rule allowing TCP traffic on your application port from source IP ranges 35.191.0.0/16 and 130.211.0.0/22 targeting your backend network tags."
       },
       {
         "letter": "B",
-        "text": "Create an ingress firewall rule allowing TCP traffic on your application port from source IP ranges 35.191.0.0/16 and 130.211.0.0/22 targeting your backend network tags.",
-        "isTrap": false
+        "text": "Create an egress firewall rule allowing port 80 to 8.8.8.8."
       },
       {
         "letter": "C",
-        "text": "Assign public IP addresses to all backend Compute Engine instances.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Assign public IP addresses to all backend Compute Engine instances."
       },
       {
         "letter": "D",
-        "text": "Create an ingress firewall rule allowing all traffic from 0.0.0.0/0.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an ingress firewall rule allowing all traffic from 0.0.0.0/0."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Google Cloud Load Balancer health checking systems probe instances from well-known IP ranges: `35.191.0.0/16` and `130.211.0.0/22` (and `209.85.152.0/22`, `209.85.204.0/22` for legacy LBs). An ingress firewall rule must explicitly allow these CIDR blocks to reach the backend VM instances.",
     "distractors": {
-      "A": "Egress rules to Google Public DNS (8.8.8.8) do not allow inbound health check probes into backend ports.",
-      "B": "Correct. `35.191.0.0/16` and `130.211.0.0/22` are the official Google Cloud Load Balancer health checker probe IP ranges.",
+      "B": "Egress rules to Google Public DNS (8.8.8.8) do not allow inbound health check probes into backend ports.",
       "C": "Assigning public IPs does not bypass firewall rules and introduces public internet vulnerabilities.",
       "D": "Allowing 0.0.0.0/0 opens the backend VMs to the entire public internet, violating security isolation."
     },
@@ -8711,35 +7429,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl apply -f clouddeploy.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl apply -f clouddeploy.yaml"
       },
       {
         "letter": "B",
-        "text": "gcloud container clusters apply --pipeline=clouddeploy.yaml",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud builds submit --config=clouddeploy.yaml"
       },
       {
         "letter": "C",
-        "text": "gcloud deploy apply --file=clouddeploy.yaml --region=us-central1",
-        "isTrap": false
+        "text": "gcloud deploy apply --file=clouddeploy.yaml --region=us-central1"
       },
       {
         "letter": "D",
-        "text": "gcloud builds submit --config=clouddeploy.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud container clusters apply --pipeline=clouddeploy.yaml"
       }
     ],
     "correct": "C",
     "explanation": "Google Cloud Deploy delivery pipelines and target definitions are applied to the Cloud Deploy service using `gcloud deploy apply --file=<PIPELINE_FILE> --region=<REGION>`.",
     "distractors": {
       "A": "`kubectl apply` applies manifests to an in-cluster Kubernetes API server, not the managed Google Cloud Deploy service.",
-      "B": "`container clusters apply` is non-existent CLI syntax.",
-      "C": "Correct. `gcloud deploy apply` registers the Cloud Deploy delivery pipeline configuration across target environments.",
-      "D": "`gcloud builds submit` invokes Cloud Build steps, not Cloud Deploy multi-target delivery pipelines."
+      "D": "`container clusters apply` is non-existent CLI syntax.",
+      "B": "`gcloud builds submit` invokes Cloud Build steps, not Cloud Deploy multi-target delivery pipelines."
     },
     "gcloudCommand": "gcloud deploy apply --file=clouddeploy.yaml --region=us-central1",
     "architectureComponents": [
@@ -8772,35 +7482,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq update --lifecycle=lifecycle-30d.json corp-archive-vault",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage objects update gs://corp-archive-vault/* --lifecycle=lifecycle-30d.json"
       },
       {
         "letter": "B",
-        "text": "gsutil lifecycle delete gs://corp-archive-vault",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq update --lifecycle=lifecycle-30d.json corp-archive-vault"
       },
       {
         "letter": "C",
-        "text": "gcloud storage objects update gs://corp-archive-vault/* --lifecycle=lifecycle-30d.json",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud storage buckets update gs://corp-archive-vault --lifecycle-file=lifecycle-30d.json"
       },
       {
         "letter": "D",
-        "text": "gcloud storage buckets update gs://corp-archive-vault --lifecycle-file=lifecycle-30d.json",
-        "isTrap": false
+        "text": "gsutil lifecycle delete gs://corp-archive-vault"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "The `gcloud storage buckets update <BUCKET> --lifecycle-file=<FILE>` command applies an Object Lifecycle Management JSON configuration to a Cloud Storage bucket, enabling automated storage class transitions and object purges.",
     "distractors": {
-      "A": "`bq update` is for BigQuery dataset and table metadata updates.",
-      "B": "`gsutil lifecycle delete` removes existing lifecycle rules rather than applying new JSON configurations.",
-      "C": "Lifecycle rules are configured at the bucket level, not on individual object paths.",
-      "D": "Correct. `gcloud storage buckets update --lifecycle-file` is the modern CLI command to configure bucket lifecycle rules."
+      "B": "`bq update` is for BigQuery dataset and table metadata updates.",
+      "D": "`gsutil lifecycle delete` removes existing lifecycle rules rather than applying new JSON configurations.",
+      "A": "Lifecycle rules are configured at the bucket level, not on individual object paths."
     },
     "gcloudCommand": "gcloud storage buckets update gs://corp-archive-vault --lifecycle-file=lifecycle-30d.json",
     "architectureComponents": [
@@ -8833,35 +7535,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Define volumes in the Pod spec referencing the configMap and secret names, and add volumeMounts in the container spec mapping those volumes to the target mountPaths.",
-        "isTrap": false
+        "text": "Hardcode the configuration and passwords into the Dockerfile image layers."
       },
       {
         "letter": "B",
-        "text": "Download the secrets from Cloud Storage in the container ENTRYPOINT script via public URLs.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Define volumes in the Pod spec referencing the configMap and secret names, and add volumeMounts in the container spec mapping those volumes to the target mountPaths."
       },
       {
         "letter": "C",
-        "text": "Pass the secret data as URL query parameters in the Kubernetes Ingress host.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Pass the secret data as URL query parameters in the Kubernetes Ingress host."
       },
       {
         "letter": "D",
-        "text": "Hardcode the configuration and passwords into the Dockerfile image layers.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Download the secrets from Cloud Storage in the container ENTRYPOINT script via public URLs."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "In Kubernetes, ConfigMaps and Secrets are decoupled from container images by mounting them as volumes. Specifying `volumes.configMap` and `volumes.secret` with matching `volumeMounts` in the container spec safely exposes configurations as file paths inside the container filesystem.",
     "distractors": {
-      "A": "Correct. Standard declarative Kubernetes pattern for injecting ConfigMaps and Secrets via volume mounts.",
-      "B": "Public storage URLs expose credentials to unauthorized external access.",
+      "D": "Public storage URLs expose credentials to unauthorized external access.",
       "C": "URL query parameters expose secrets in browser histories, web server logs, and HTTP proxies.",
-      "D": "Hardcoding credentials into container images exposes sensitive passwords in image registries."
+      "A": "Hardcoding credentials into container images exposes sensitive passwords in image registries."
     },
     "gcloudCommand": "kubectl apply -f pod-config-volumes.yaml",
     "architectureComponents": [
@@ -8894,33 +7588,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute users create app_user --instance=app-db",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql users create app_user --instance=app-db --password='SuperSecurePassword987!'"
       },
       {
         "letter": "B",
-        "text": "gcloud sql users create app_user --instance=app-db --password='SuperSecurePassword987!'",
-        "isTrap": false
+        "text": "gcloud compute users create app_user --instance=app-db"
       },
       {
         "letter": "C",
-        "text": "gcloud iam service-accounts create app_user --cloud-sql-user",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud iam service-accounts create app_user --cloud-sql-user"
       },
       {
         "letter": "D",
-        "text": "gcloud sql databases create app_user --instance=app-db",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql databases create app_user --instance=app-db"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "`gcloud sql users create <USERNAME> --instance=<INSTANCE> --password=<PASSWORD>` creates database user accounts in Cloud SQL instances, allowing applications to authenticate over Private IP connections.",
     "distractors": {
-      "A": "`gcloud compute users create` is for OS Login POSIX user accounts, not database users.",
-      "B": "Correct. `gcloud sql users create` creates database-native authentication credentials on the Cloud SQL instance.",
+      "B": "`gcloud compute users create` is for OS Login POSIX user accounts, not database users.",
       "C": "IAM service accounts are GCP identities, which require Cloud SQL IAM database authentication setup, not standard native SQL passwords.",
       "D": "`gcloud sql databases create` provisions empty logical database schemas, not user credentials."
     },
@@ -8956,35 +7642,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create spanner-orders --spanner-units=300",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create spanner-orders --spanner-units=300"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances create spanner-orders --type=SPANNER --ddl='CREATE TABLE Orders...'",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances create spanner-orders --type=SPANNER --ddl='CREATE TABLE Orders...'"
       },
       {
         "letter": "C",
-        "text": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 --description='Orders Spanner' && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'",
-        "isTrap": false
+        "text": "bq mk --dataset spanner_orders && bq query 'CREATE TABLE Orders...'"
       },
       {
         "letter": "D",
-        "text": "bq mk --dataset spanner_orders && bq query 'CREATE TABLE Orders...'",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 --description='Orders Spanner' && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Provisioning Cloud Spanner requires creating the instance (`gcloud spanner instances create --processing-units=300`), then creating the database with initial DDL schema definitions (`gcloud spanner databases create --ddl='...'`).",
     "distractors": {
       "A": "Compute Engine instance creation is for VMs, not managed Spanner instances.",
       "B": "`gcloud sql` does not support Cloud Spanner instances.",
-      "C": "Correct. `spanner instances create` followed by `spanner databases create --ddl` provisions the instance, database, and tables.",
-      "D": "BigQuery (`bq`) creates analytical datasets, not transactional Cloud Spanner relational tables."
+      "C": "BigQuery (`bq`) creates analytical datasets, not transactional Cloud Spanner relational tables."
     },
     "gcloudCommand": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 --description='Orders Spanner' && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'",
     "architectureComponents": [
@@ -9016,35 +7694,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud dns records create sftp-gateway --ip-type=static",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute addresses create sftp-static-ip --region=us-east1 && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=$(gcloud compute addresses describe sftp-static-ip --region=us-east1 --format='value(address)')"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances restart sftp-gateway --make-ip-static",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud dns records create sftp-gateway --ip-type=static"
       },
       {
         "letter": "C",
-        "text": "gcloud compute networks update sftp-gateway --static-ip=true",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances restart sftp-gateway --make-ip-static"
       },
       {
         "letter": "D",
-        "text": "gcloud compute addresses create sftp-static-ip --region=us-east1 && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=$(gcloud compute addresses describe sftp-static-ip --region=us-east1 --format='value(address)')",
-        "isTrap": false
+        "text": "gcloud compute networks update sftp-gateway --static-ip=true"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Reserving a static regional IP address uses `gcloud compute addresses create <NAME> --region=<REGION>`. To attach this reserved static IP to an existing VM's network interface, use `gcloud compute instances add-access-config` (or update the existing access config).",
     "distractors": {
-      "A": "Cloud DNS maps hostnames to IP addresses, but does not allocate static external GCP IP addresses.",
-      "B": "`--make-ip-static` is not a valid flag on `gcloud compute instances restart`.",
-      "C": "`compute networks update` updates network mode/MTU, not individual VM interface IP assignments.",
-      "D": "Correct. Reserving the IP via `compute addresses create` and binding it with `add-access-config` assigns the static external IP."
+      "B": "Cloud DNS maps hostnames to IP addresses, but does not allocate static external GCP IP addresses.",
+      "C": "`--make-ip-static` is not a valid flag on `gcloud compute instances restart`.",
+      "D": "`compute networks update` updates network mode/MTU, not individual VM interface IP assignments."
     },
     "gcloudCommand": "gcloud compute addresses create sftp-static-ip --region=us-east1 && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=34.140.10.20",
     "architectureComponents": [
@@ -9078,35 +7748,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A Kubernetes StatefulSet paired with a Headless Service and volumeClaimTemplates.",
-        "isTrap": false
+        "text": "A Kubernetes Deployment with 3 replicas and a single shared ReadWriteMany PersistentVolume."
       },
       {
         "letter": "B",
-        "text": "A Kubernetes Deployment with 3 replicas and a single shared ReadWriteMany PersistentVolume.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A Kubernetes Job with a restartPolicy of Always."
       },
       {
         "letter": "C",
-        "text": "A Kubernetes DaemonSet with hostPath volumes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A Kubernetes StatefulSet paired with a Headless Service and volumeClaimTemplates."
       },
       {
         "letter": "D",
-        "text": "A Kubernetes Job with a restartPolicy of Always.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A Kubernetes DaemonSet with hostPath volumes."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Kubernetes StatefulSets provide stable, ordered network identifiers (`pod-0`, `pod-1`) and dedicated persistent storage via `volumeClaimTemplates`. When pods restart or migrate to other nodes, the storage volume automatically reattaches to the exact same pod ordinal identity.",
     "distractors": {
-      "A": "Correct. StatefulSets provide stable network identities and dedicated per-replica PersistentVolumeClaims for stateful databases.",
-      "B": "Standard Deployments treat Pods as fungible/stateless with random hash names and cannot guarantee stable volume-to-pod identity bindings.",
-      "C": "DaemonSets run one Pod per node and `hostPath` volumes tie data to physical worker nodes without cloud disk detachment/reattachment.",
-      "D": "Kubernetes Jobs are for run-to-completion batch tasks, not persistent 24/7 databases."
+      "A": "Standard Deployments treat Pods as fungible/stateless with random hash names and cannot guarantee stable volume-to-pod identity bindings.",
+      "D": "DaemonSets run one Pod per node and `hostPath` volumes tie data to physical worker nodes without cloud disk detachment/reattachment.",
+      "B": "Kubernetes Jobs are for run-to-completion batch tasks, not persistent 24/7 databases."
     },
     "gcloudCommand": "kubectl apply -f cassandra-statefulset.yaml",
     "architectureComponents": [
@@ -9138,35 +7800,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute disks attach data-index-disk --instance=data-processor-vm",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create data-processor-vm --add-disk=data-index-disk"
       },
       {
         "letter": "B",
-        "text": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a",
-        "isTrap": false
+        "text": "gcloud storage objects create gs://data-index-disk --size=200GB"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create data-processor-vm --add-disk=data-index-disk",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute disks attach data-index-disk --instance=data-processor-vm"
       },
       {
         "letter": "D",
-        "text": "gcloud storage objects create gs://data-index-disk --size=200GB",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Creating and attaching extra block storage involves: 1) `gcloud compute disks create <DISK_NAME> --size=<SIZE> --type=<TYPE> --zone=<ZONE>`, and 2) `gcloud compute instances attach-disk <VM_NAME> --disk=<DISK_NAME> --zone=<ZONE>`.",
     "distractors": {
-      "A": "`gcloud compute disks attach` is invalid syntax; the command is `gcloud compute instances attach-disk`.",
-      "B": "Correct. Standard two-step workflow to provision persistent disks and attach them to running Compute Engine VMs.",
-      "C": "`instances create` fails because the VM already exists.",
-      "D": "Cloud Storage objects are not block-level persistent disks for VM filesystems."
+      "C": "`gcloud compute disks attach` is invalid syntax; the command is `gcloud compute instances attach-disk`.",
+      "A": "`instances create` fails because the VM already exists.",
+      "B": "Cloud Storage objects are not block-level persistent disks for VM filesystems."
     },
     "gcloudCommand": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a",
     "architectureComponents": [
@@ -9198,35 +7852,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances reset prod-master-db-primary",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances failover prod-master-db"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances delete prod-master-db",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances reset prod-master-db-primary"
       },
       {
         "letter": "C",
-        "text": "gcloud sql instances failover prod-master-db",
-        "isTrap": false
+        "text": "gcloud sql instances restart prod-master-db --force-failover"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances restart prod-master-db --force-failover",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances delete prod-master-db"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "`gcloud sql instances failover <INSTANCE_NAME>` explicitly triggers an intentional failover on a Regional High Availability Cloud SQL instance, promoting the standby replica to the primary master for DR validation.",
     "distractors": {
-      "A": "Cloud SQL underlying VMs are managed by Google and cannot be addressed directly via `gcloud compute instances reset`.",
-      "B": "Deleting the database destroys production data and takes down the application.",
-      "C": "Correct. `gcloud sql instances failover` is the official CLI command to test regional Cloud SQL automated failover.",
-      "D": "`instances restart` reboots the current master in-place rather than initiating regional standby failover."
+      "B": "Cloud SQL underlying VMs are managed by Google and cannot be addressed directly via `gcloud compute instances reset`.",
+      "D": "Deleting the database destroys production data and takes down the application.",
+      "C": "`instances restart` reboots the current master in-place rather than initiating regional standby failover."
     },
     "gcloudCommand": "gcloud sql instances failover prod-master-db",
     "architectureComponents": [
@@ -9258,35 +7904,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A shell script running gsutil cp -r on an e2-micro VM.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A shell script running gsutil cp -r on an e2-micro VM."
       },
       {
         "letter": "B",
-        "text": "Cloud VPN tunnel connecting to AWS VPC.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "BigQuery Data Transfer Service."
       },
       {
         "letter": "C",
-        "text": "BigQuery Data Transfer Service.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Google Storage Transfer Service (via gcloud transfer jobs create)."
       },
       {
         "letter": "D",
-        "text": "Google Storage Transfer Service (via gcloud transfer jobs create).",
-        "isTrap": false
+        "text": "Cloud VPN tunnel connecting to AWS VPC."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Google Storage Transfer Service is a fully managed, scalable data migration service designed to transfer petabytes of data from Amazon S3, Azure Blob, or HTTP endpoints to Cloud Storage with automated parallelization, retries, and MD5 checksum validation.",
     "distractors": {
       "A": "Running `gsutil cp` on a single VM is slow, unmonitored, bottlenecks on VM network interfaces, and lacks automated fault tolerance.",
-      "B": "Cloud VPN requires managing IPsec infrastructure and is unnecessary for S3-to-GCS cloud-to-cloud migration.",
-      "C": "BigQuery Data Transfer Service is for loading analytical data into BigQuery tables, not transferring unstructured object files between storage buckets.",
-      "D": "Correct. Storage Transfer Service delivers serverless, high-bandwidth data transfers from S3 to GCS with automated checksum integrity."
+      "D": "Cloud VPN requires managing IPsec infrastructure and is unnecessary for S3-to-GCS cloud-to-cloud migration.",
+      "B": "BigQuery Data Transfer Service is for loading analytical data into BigQuery tables, not transferring unstructured object files between storage buckets."
     },
     "gcloudCommand": "gcloud transfer jobs create s3://media-source-bucket/ gs://media-target-bucket/ --name='daily-s3-sync' --schedule-start-date=2026-09-01",
     "architectureComponents": [
@@ -9320,35 +7958,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy the Cloud Run service with Direct VPC Egress configured to subnet backend-sub with --vpc-egress=all-traffic (or private-ranges-only).",
-        "isTrap": false
+        "text": "Deploy the Cloud Run service with Direct VPC Egress configured to subnet backend-sub with --vpc-egress=all-traffic (or private-ranges-only)."
       },
       {
         "letter": "B",
-        "text": "Deploy an unmanaged Squid Proxy VM on a public subnet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Assign a public IP address to the private Cloud SQL instance."
       },
       {
         "letter": "C",
-        "text": "Assign a public IP address to the private Cloud SQL instance.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an open firewall rule on port 0-65535 on 0.0.0.0/0."
       },
       {
         "letter": "D",
-        "text": "Create an open firewall rule on port 0-65535 on 0.0.0.0/0.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Deploy an unmanaged Squid Proxy VM on a public subnet."
       }
     ],
     "correct": "A",
     "explanation": "Cloud Run supports Direct VPC Egress (or Serverless VPC Access connectors), allowing serverless container instances to route outbound traffic directly into a VPC subnet (`--network` and `--subnet`) to securely reach private IP addresses without leaving the Google network.",
     "distractors": {
-      "A": "Correct. Direct VPC Egress routes outbound Cloud Run traffic directly into designated VPC subnets privately.",
-      "B": "Self-managed proxy VMs create latency, maintenance overhead, and single points of failure.",
-      "C": "Public IPs on private databases expose database ports to internet scanning and brute-force attacks.",
-      "D": "Opening firewall rules to 0.0.0.0/0 destroys VPC security isolation."
+      "D": "Self-managed proxy VMs create latency, maintenance overhead, and single points of failure.",
+      "B": "Public IPs on private databases expose database ports to internet scanning and brute-force attacks.",
+      "C": "Opening firewall rules to 0.0.0.0/0 destroys VPC security isolation."
     },
     "gcloudCommand": "gcloud run services update backend-api --region=us-central1 --network=prod-vpc --subnet=backend-sub --vpc-egress=private-ranges-only",
     "architectureComponents": [
@@ -9383,35 +8013,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl scale deployment payment-gateway --replicas=25",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud container clusters update payment-gateway --enable-autoscaling --min-nodes=3 --max-nodes=25"
       },
       {
         "letter": "B",
-        "text": "kubectl autoscale deployment payment-gateway --min=3 --max=25 --cpu-percent=75",
-        "isTrap": false
+        "text": "gcloud compute instance-groups managed set-autoscaling payment-gateway --target-cpu-utilization=0.75"
       },
       {
         "letter": "C",
-        "text": "gcloud container clusters update payment-gateway --enable-autoscaling --min-nodes=3 --max-nodes=25",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl scale deployment payment-gateway --replicas=25"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instance-groups managed set-autoscaling payment-gateway --target-cpu-utilization=0.75",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl autoscale deployment payment-gateway --min=3 --max=25 --cpu-percent=75"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`kubectl autoscale deployment <NAME> --min=<MIN> --max=<MAX> --cpu-percent=<TARGET>` creates a HorizontalPodAutoscaler (HPA) resource that queries the Kubernetes metrics-server and adjusts Pod replica counts dynamically based on workload CPU demand.",
     "distractors": {
-      "A": "`kubectl scale` sets a static replica count and does not dynamically autoscale based on real-time CPU utilization.",
-      "B": "Correct. `kubectl autoscale deployment` configures native Kubernetes Pod HPA autoscaling.",
-      "C": "`clusters update --enable-autoscaling` configures Cluster Autoscaler (scaling worker VM nodes), not Pod-level HPA.",
-      "D": "`gcloud compute instance-groups` scales Compute Engine VM instance groups, not Kubernetes Pods."
+      "C": "`kubectl scale` sets a static replica count and does not dynamically autoscale based on real-time CPU utilization.",
+      "A": "`clusters update --enable-autoscaling` configures Cluster Autoscaler (scaling worker VM nodes), not Pod-level HPA.",
+      "B": "`gcloud compute instance-groups` scales Compute Engine VM instance groups, not Kubernetes Pods."
     },
     "gcloudCommand": "kubectl autoscale deployment payment-gateway --min=3 --max=25 --cpu-percent=75",
     "architectureComponents": [
@@ -9444,35 +8066,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute networks update corp-public-zone --dns-a-record=34.120.50.80",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute networks update corp-public-zone --dns-a-record=34.120.50.80"
       },
       {
         "letter": "B",
-        "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80",
-        "isTrap": false
+        "text": "bq query 'INSERT INTO dns_records VALUES (api.corp.com, 34.120.50.80)'"
       },
       {
         "letter": "C",
-        "text": "gcloud dns managed-zones add-record corp-public-zone --type=A --ip=34.120.50.80",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80"
       },
       {
         "letter": "D",
-        "text": "bq query 'INSERT INTO dns_records VALUES (api.corp.com, 34.120.50.80)'",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud dns managed-zones add-record corp-public-zone --type=A --ip=34.120.50.80"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "`gcloud dns record-sets create <FQDN> --zone=<ZONE_NAME> --type=<TYPE> --ttl=<TTL> --rrdatas=<IP_OR_VALUE>` adds DNS resource records (A, CNAME, TXT, MX) to a Cloud DNS managed zone.",
     "distractors": {
       "A": "`compute networks update` is for VPC network properties, not DNS record registration.",
-      "B": "Correct. `gcloud dns record-sets create` is the official CLI command to provision DNS records.",
-      "C": "`managed-zones add-record` is non-existent syntax.",
-      "D": "BigQuery is an analytical SQL engine, not an authoritative public DNS server."
+      "D": "`managed-zones add-record` is non-existent syntax.",
+      "B": "BigQuery is an analytical SQL engine, not an authoritative public DNS server."
     },
     "gcloudCommand": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80",
     "architectureComponents": [
@@ -9505,34 +8119,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud pubsub topics create iam-events && gcloud pubsub subscriptions create --cron='* * * * *'",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud eventarc triggers create iam-audit-trigger --destination-run-service=audit-logger --destination-run-region=us-central1 --location=us-central1 --event-filters='type=google.cloud.audit.log.v1.written' --event-filters='serviceName=iam.googleapis.com' --event-filters='methodName=SetIamPolicy' --service-account=eventarc-sa@corp.iam.gserviceaccount.com"
       },
       {
         "letter": "B",
-        "text": "gcloud logging sinks create iam-audit-sink cloudrun.googleapis.com/audit-logger",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud pubsub topics create iam-events && gcloud pubsub subscriptions create --cron='* * * * *'"
       },
       {
         "letter": "C",
-        "text": "gcloud eventarc triggers create iam-audit-trigger --destination-run-service=audit-logger --destination-run-region=us-central1 --location=us-central1 --event-filters='type=google.cloud.audit.log.v1.written' --event-filters='serviceName=iam.googleapis.com' --event-filters='methodName=SetIamPolicy' --service-account=eventarc-sa@corp.iam.gserviceaccount.com",
-        "isTrap": false
+        "text": "gcloud logging sinks create iam-audit-sink cloudrun.googleapis.com/audit-logger"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create iam-listener --service=audit-logger",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create iam-listener --service=audit-logger"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Eventarc allows routing Cloud Audit Logs directly to Cloud Run services without custom polling. Specifying `--event-filters='type=google.cloud.audit.log.v1.written'`, `--event-filters='serviceName=iam.googleapis.com'`, and `--event-filters='methodName=SetIamPolicy'` triggers the Cloud Run destination on policy changes.",
     "distractors": {
-      "A": "Pub/Sub subscriptions do not take cron syntax.",
-      "B": "Cloud Logging sinks cannot directly route HTTP push requests to Cloud Run services (they route to Pub/Sub, BigQuery, GCS, or log buckets).",
-      "C": "Correct. `gcloud eventarc triggers create` with audit log filters connects IAM changes directly to Cloud Run.",
+      "B": "Pub/Sub subscriptions do not take cron syntax.",
+      "C": "Cloud Logging sinks cannot directly route HTTP push requests to Cloud Run services (they route to Pub/Sub, BigQuery, GCS, or log buckets).",
       "D": "Compute Engine instance creation does not configure serverless event-driven triggers."
     },
     "gcloudCommand": "gcloud eventarc triggers create iam-audit-trigger --destination-run-service=audit-logger --destination-run-region=us-central1 --location=us-central1 --event-filters='type=google.cloud.audit.log.v1.written' --event-filters='serviceName=iam.googleapis.com' --event-filters='methodName=SetIamPolicy' --service-account=eventarc-sa@corp.iam.gserviceaccount.com",
@@ -9568,35 +8174,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gsutil notification create -f bigquery gs://corp-logs",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil notification create -f bigquery gs://corp-logs"
       },
       {
         "letter": "B",
-        "text": "gcloud compute networks update --export-logs-to-bigquery",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq mk --transfer_config --destination=audit_analytics --source=logs"
       },
       {
         "letter": "C",
-        "text": "bq mk --transfer_config --destination=audit_analytics --source=logs",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute networks update --export-logs-to-bigquery"
       },
       {
         "letter": "D",
-        "text": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'",
-        "isTrap": false
+        "text": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'"
       }
     ],
     "correct": "D",
     "explanation": "`gcloud logging sinks create <SINK_NAME> <DESTINATION_URI> --log-filter=<FILTER>` creates a Cloud Logging Sink that continuously routes matching log entries to BigQuery, Cloud Storage, or Pub/Sub.",
     "distractors": {
       "A": "`gsutil notification` is for Cloud Storage Pub/Sub notifications, not Cloud Logging BigQuery streaming.",
-      "B": "`compute networks update` does not configure IAM audit log sinks.",
-      "C": "BigQuery Data Transfer Service does not stream live Cloud Logging entries.",
-      "D": "Correct. `gcloud logging sinks create` with BigQuery destination URI streams filtered logs to BigQuery."
+      "C": "`compute networks update` does not configure IAM audit log sinks.",
+      "B": "BigQuery Data Transfer Service does not stream live Cloud Logging entries."
     },
     "gcloudCommand": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'",
     "architectureComponents": [
@@ -9630,35 +8228,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud sql instances create db-replica-europewest1 --master-instance-name=db-master-uscentral1 --region=europe-west1",
-        "isTrap": false
+        "text": "gcloud sql instances create db-replica-europewest1 --master-instance-name=db-master-uscentral1 --region=europe-west1"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances clone db-master-uscentral1 db-replica-europewest1 --region=europe-west1",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud spanner instances create db-replica-europewest1 --source=db-master-uscentral1"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create db-replica-europewest1 --replica-of=db-master-uscentral1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances clone db-master-uscentral1 db-replica-europewest1 --region=europe-west1"
       },
       {
         "letter": "D",
-        "text": "gcloud spanner instances create db-replica-europewest1 --source=db-master-uscentral1",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "gcloud compute instances create db-replica-europewest1 --replica-of=db-master-uscentral1"
       }
     ],
     "correct": "A",
     "explanation": "Cloud SQL Read Replicas are created with `gcloud sql instances create <REPLICA_NAME> --master-instance-name=<PRIMARY_NAME> --region=<TARGET_REGION>`. When the target region differs from the master, Cloud SQL provisions a Cross-Region Read Replica.",
     "distractors": {
-      "A": "Correct. `gcloud sql instances create --master-instance-name` in a different region deploys a cross-region replica.",
-      "B": "`instances clone` creates a static point-in-time clone in the same region, not an actively replicating live replica.",
-      "C": "`compute instances create` provisions Compute Engine VMs, not managed Cloud SQL database replicas.",
-      "D": "Cloud Spanner cannot act as a direct read replica for Cloud SQL PostgreSQL."
+      "C": "`instances clone` creates a static point-in-time clone in the same region, not an actively replicating live replica.",
+      "D": "`compute instances create` provisions Compute Engine VMs, not managed Cloud SQL database replicas.",
+      "B": "Cloud Spanner cannot act as a direct read replica for Cloud SQL PostgreSQL."
     },
     "gcloudCommand": "gcloud sql instances create db-replica-europewest1 --master-instance-name=db-master-uscentral1 --region=europe-west1",
     "architectureComponents": [
@@ -9691,35 +8281,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Set the instance template to use Spot VMs.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set the instance template to use Spot VMs."
       },
       {
         "letter": "B",
-        "text": "Configure the Managed Instance Group with a Stateful Policy preserving the data disk device name (e.g. --stateful-disk) and network interfaces.",
-        "isTrap": false
+        "text": "Use Local SSDs with cron snapshot scripts."
       },
       {
         "letter": "C",
-        "text": "Deploy an Unmanaged Instance Group and disable autoscaling.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure the Managed Instance Group with a Stateful Policy preserving the data disk device name (e.g. --stateful-disk) and network interfaces."
       },
       {
         "letter": "D",
-        "text": "Use Local SSDs with cron snapshot scripts.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an Unmanaged Instance Group and disable autoscaling."
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Stateful MIGs allow defining a Stateful Policy on persistent disks (`--stateful-disk`) and IP addresses. During auto-healing or rolling updates, Compute Engine preserves and reattaches the exact individual data disk to the recreated instance.",
     "distractors": {
       "A": "Spot VMs are frequently preempted and do not provide stateful disk preservation guarantees.",
-      "B": "Correct. Stateful MIGs preserve unique per-instance persistent disks and IP addresses across VM recreation.",
-      "C": "Unmanaged Instance Groups lack automated autohealing and managed rolling updates.",
-      "D": "Local SSDs lose all data upon VM stop/recreation and cannot be preserved in stateful policies."
+      "D": "Unmanaged Instance Groups lack automated autohealing and managed rolling updates.",
+      "B": "Local SSDs lose all data upon VM stop/recreation and cannot be preserved in stateful policies."
     },
     "gcloudCommand": "gcloud compute instance-groups managed update web-mig --stateful-disk=device-name=data-disk,auto-delete=never",
     "architectureComponents": [
@@ -9752,35 +8334,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a Cloud Scheduler job that sends an HTTP ping every 5 minutes.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud run services update payment-api --region=us-central1 --max-instances=2"
       },
       {
         "letter": "B",
-        "text": "Deploy an e2-micro VM running a loop curl command.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an e2-micro VM running a loop curl command."
       },
       {
         "letter": "C",
-        "text": "gcloud run services update payment-api --region=us-central1 --min-instances=2",
-        "isTrap": false
+        "text": "gcloud run services update payment-api --region=us-central1 --min-instances=2"
       },
       {
         "letter": "D",
-        "text": "gcloud run services update payment-api --region=us-central1 --max-instances=2",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a Cloud Scheduler job that sends an HTTP ping every 5 minutes."
       }
     ],
     "correct": "C",
     "explanation": "Cloud Run supports `--min-instances=<COUNT>`. Setting minimum instances keeps the specified number of container instances initialized and warm in memory, eliminating cold starts for subsequent incoming requests.",
     "distractors": {
-      "A": "Periodic HTTP pings only keep 1 instance warm intermittently and fail under concurrent traffic bursts.",
+      "D": "Periodic HTTP pings only keep 1 instance warm intermittently and fail under concurrent traffic bursts.",
       "B": "Custom ping loops on VMs add infrastructure maintenance and are an unnecessary anti-pattern.",
-      "C": "Correct. `--min-instances=2` keeps two container instances permanently warm to avoid cold start latency.",
-      "D": "`--max-instances=2` limits maximum scale-out capacity, but allows instances to scale down to 0 when idle."
+      "A": "`--max-instances=2` limits maximum scale-out capacity, but allows instances to scale down to 0 when idle."
     },
     "gcloudCommand": "gcloud run services update payment-api --region=us-central1 --min-instances=2",
     "architectureComponents": [
@@ -9813,35 +8387,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Set the node pool autoscaling min-nodes to 3.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a PodDisruptionBudget (PDB) resource with minAvailable: 3 matching the web deployment pod selector."
       },
       {
         "letter": "B",
-        "text": "Create an IAM Deny policy preventing node pool upgrades.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Set the node pool autoscaling min-nodes to 3."
       },
       {
         "letter": "C",
-        "text": "Disable the GKE node auto-upgrade feature permanently.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Disable the GKE node auto-upgrade feature permanently."
       },
       {
         "letter": "D",
-        "text": "Deploy a PodDisruptionBudget (PDB) resource with minAvailable: 3 matching the web deployment pod selector.",
-        "isTrap": false
+        "text": "Create an IAM Deny policy preventing node pool upgrades."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "A Kubernetes `PodDisruptionBudget` (PDB) specifies the minimum number (`minAvailable`) or maximum number (`maxUnavailable`) of Pod replicas that must be running simultaneously during voluntary disruptions (such as node drain, cluster upgrades, or autoscaler downscaling).",
     "distractors": {
-      "A": "Node pool min-nodes controls VM worker count, but does not prevent multiple pods on the same node from being drained simultaneously.",
-      "B": "IAM Deny policies block administrative actions, not Kubernetes scheduler eviction logic.",
-      "C": "Disabling auto-upgrades leaves worker nodes unpatched and vulnerable to security CVEs.",
-      "D": "Correct. A `PodDisruptionBudget` with `minAvailable: 3` prevents the Kubernetes control plane from evicting too many pods concurrently."
+      "B": "Node pool min-nodes controls VM worker count, but does not prevent multiple pods on the same node from being drained simultaneously.",
+      "D": "IAM Deny policies block administrative actions, not Kubernetes scheduler eviction logic.",
+      "C": "Disabling auto-upgrades leaves worker nodes unpatched and vulnerable to security CVEs."
     },
     "gcloudCommand": "kubectl apply -f web-pdb.yaml",
     "architectureComponents": [
@@ -9874,35 +8440,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud storage rsync /var/www/assets/ gs://corp-product-assets/ --recursive",
-        "isTrap": false
+        "text": "gcloud storage cp /var/www/assets/* gs://corp-product-assets/ --overwrite"
       },
       {
         "letter": "B",
-        "text": "gcloud compute scp /var/www/assets/ gs://corp-product-assets/",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq load --source_format=CSV gs://corp-product-assets/ /var/www/assets/"
       },
       {
         "letter": "C",
-        "text": "gcloud storage cp /var/www/assets/* gs://corp-product-assets/ --overwrite",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute scp /var/www/assets/ gs://corp-product-assets/"
       },
       {
         "letter": "D",
-        "text": "bq load --source_format=CSV gs://corp-product-assets/ /var/www/assets/",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage rsync /var/www/assets/ gs://corp-product-assets/ --recursive"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "`gcloud storage rsync` (or `gsutil rsync`) compares source and destination checksums/timestamps and synchronizes only newly added or modified files, minimizing bandwidth consumption and transfer time.",
     "distractors": {
-      "A": "Correct. `gcloud storage rsync --recursive` incrementally synchronizes only changed/new files efficiently.",
-      "B": "`gcloud compute scp` transfers files between Compute Engine VMs, not to Cloud Storage bucket endpoints.",
-      "C": "`storage cp` blindly copies all files, re-uploading unchanged objects and wasting network bandwidth.",
-      "D": "`bq load` loads tabular data into BigQuery tables, not unstructured files into Cloud Storage."
+      "C": "`gcloud compute scp` transfers files between Compute Engine VMs, not to Cloud Storage bucket endpoints.",
+      "A": "`storage cp` blindly copies all files, re-uploading unchanged objects and wasting network bandwidth.",
+      "B": "`bq load` loads tabular data into BigQuery tables, not unstructured files into Cloud Storage."
     },
     "gcloudCommand": "gcloud storage rsync /var/www/assets/ gs://corp-product-assets/ --recursive",
     "architectureComponents": [
@@ -9935,35 +8493,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute firewall-rules create log-all --network=prod-vpc --action=LOG",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances update-all --enable-packet-capture"
       },
       {
         "letter": "B",
-        "text": "gcloud compute networks subnets update db-subnet --region=us-central1 --enable-flow-logs --logging-sample-rate=1.0 --logging-metadata=include-all",
-        "isTrap": false
+        "text": "gcloud logging sinks create db-flow-sink vpc.googleapis.com/db-subnet"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances update-all --enable-packet-capture",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute networks subnets update db-subnet --region=us-central1 --enable-flow-logs --logging-sample-rate=1.0 --logging-metadata=include-all"
       },
       {
         "letter": "D",
-        "text": "gcloud logging sinks create db-flow-sink vpc.googleapis.com/db-subnet",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute firewall-rules create log-all --network=prod-vpc --action=LOG"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "VPC Flow Logs are enabled on subnets via `gcloud compute networks subnets update <SUBNET> --enable-flow-logs`. Specifying `--logging-sample-rate=1.0` and `--logging-metadata=include-all` captures 100% of network flow 5-tuples and rich VM metadata into Cloud Logging.",
     "distractors": {
-      "A": "Firewall rule logging only records packets evaluated by that specific firewall rule, not all subnet internal traffic.",
-      "B": "Correct. `subnets update --enable-flow-logs` configures native VPC network traffic capture.",
-      "C": "`update-all --enable-packet-capture` is non-existent syntax.",
-      "D": "Cloud Logging sinks route already-generated log entries; they do not activate subnet packet telemetry at the hypervisor layer."
+      "D": "Firewall rule logging only records packets evaluated by that specific firewall rule, not all subnet internal traffic.",
+      "A": "`update-all --enable-packet-capture` is non-existent syntax.",
+      "B": "Cloud Logging sinks route already-generated log entries; they do not activate subnet packet telemetry at the hypervisor layer."
     },
     "gcloudCommand": "gcloud compute networks subnets update db-subnet --region=us-central1 --enable-flow-logs --logging-sample-rate=1.0 --logging-metadata=include-all",
     "architectureComponents": [
@@ -9997,35 +8547,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a VPC firewall rule targeting network tag 'app-database'.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set the database Service type to NodePort."
       },
       {
         "letter": "B",
-        "text": "Deploy a Cloud Armor policy targeting port 5432.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a Kubernetes NetworkPolicy with podSelector matching 'app: database' and an ingress rule allowing port 5432 from podSelector 'app: backend-api'."
       },
       {
         "letter": "C",
-        "text": "Deploy a Kubernetes NetworkPolicy with podSelector matching 'app: database' and an ingress rule allowing port 5432 from podSelector 'app: backend-api'.",
-        "isTrap": false
+        "text": "Create a VPC firewall rule targeting network tag 'app-database'."
       },
       {
         "letter": "D",
-        "text": "Set the database Service type to NodePort.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Deploy a Cloud Armor policy targeting port 5432."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Kubernetes NetworkPolicies enforce Pod-to-Pod L3/L4 network segmentation inside a cluster. Specifying `spec.podSelector: {matchLabels: {app: database}}` and `ingress.from.podSelector: {matchLabels: {app: backend-api}}` ensures only authorized backend pods can communicate with the database.",
     "distractors": {
-      "A": "VPC firewall rules apply to VM node instances, not individual Pods sharing the same node IP/overlay.",
-      "B": "Cloud Armor protects HTTP/HTTPS external load balancers, not internal Kubernetes Pod-to-Pod traffic.",
-      "C": "Correct. Kubernetes NetworkPolicy declaratively isolates Pod-level microservice communication.",
-      "D": "`NodePort` opens a port on all worker nodes, increasing attack surface rather than restricting access."
+      "C": "VPC firewall rules apply to VM node instances, not individual Pods sharing the same node IP/overlay.",
+      "D": "Cloud Armor protects HTTP/HTTPS external load balancers, not internal Kubernetes Pod-to-Pod traffic.",
+      "A": "`NodePort` opens a port on all worker nodes, increasing attack surface rather than restricting access."
     },
     "gcloudCommand": "kubectl apply -f db-network-policy.yaml",
     "architectureComponents": [
@@ -10057,35 +8599,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud logging sinks create webhook-sink --rate=10",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud logging sinks create webhook-sink --rate=10"
       },
       {
         "letter": "B",
-        "text": "gcloud pubsub topics create merchant-webhook-topic --max-rate=10",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud tasks queues create merchant-webhook-queue --location=us-central1 --max-dispatches-per-second=10 --max-concurrent-dispatches=5"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create webhook-proxy --rate-limit=10",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud pubsub topics create merchant-webhook-topic --max-rate=10"
       },
       {
         "letter": "D",
-        "text": "gcloud tasks queues create merchant-webhook-queue --location=us-central1 --max-dispatches-per-second=10 --max-concurrent-dispatches=5",
-        "isTrap": false
+        "text": "gcloud compute instances create webhook-proxy --rate-limit=10"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Google Cloud Tasks provides managed task execution with granular rate limiting and backoff controls. Using `gcloud tasks queues create` with `--max-dispatches-per-second=10` strictly throttles outbound execution rates to protect downstream third-party systems.",
     "distractors": {
       "A": "Cloud Logging sinks route log records, not execute rate-limited HTTP webhook calls.",
-      "B": "Cloud Pub/Sub is an event streaming platform and does not support per-second dispatch rate throttling.",
-      "C": "Compute Engine instance creation does not provide managed task queuing or automated token-bucket rate limits.",
-      "D": "Correct. `gcloud tasks queues create` with `--max-dispatches-per-second=10` enforces precise outbound rate limiting."
+      "C": "Cloud Pub/Sub is an event streaming platform and does not support per-second dispatch rate throttling.",
+      "D": "Compute Engine instance creation does not provide managed task queuing or automated token-bucket rate limits."
     },
     "gcloudCommand": "gcloud tasks queues create merchant-webhook-queue --location=us-central1 --max-dispatches-per-second=10 --max-concurrent-dispatches=5",
     "architectureComponents": [
@@ -10118,35 +8652,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gsutil defacl set public-read gs://static-web-assets-pub",
-        "isTrap": false
+        "text": "gcloud iam service-accounts create allUsers --role=roles/viewer"
       },
       {
         "letter": "B",
-        "text": "gcloud iam service-accounts create allUsers --role=roles/viewer",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "gcloud compute networks update static-web-assets-pub --make-public"
       },
       {
         "letter": "C",
-        "text": "bq mk --dataset_acl=public-read static-web-assets-pub",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil defacl set public-read gs://static-web-assets-pub"
       },
       {
         "letter": "D",
-        "text": "gcloud compute networks update static-web-assets-pub --make-public",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq mk --dataset_acl=public-read static-web-assets-pub"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "On buckets using fine-grained access control, `gsutil defacl set public-read <BUCKET_URI>` configures the default object Access Control List (ACL) so that every newly uploaded object is automatically granted public read access (`allUsers:READER`).",
     "distractors": {
-      "A": "Correct. `gsutil defacl set public-read` applies default public-read ACL inheritance to future uploaded objects.",
-      "B": "`allUsers` is a special IAM identifier, not a service account you create manually.",
-      "C": "`bq mk` is for BigQuery datasets, not Cloud Storage buckets.",
-      "D": "`compute networks update` manages VPC networks, not Cloud Storage buckets."
+      "A": "`allUsers` is a special IAM identifier, not a service account you create manually.",
+      "D": "`bq mk` is for BigQuery datasets, not Cloud Storage buckets.",
+      "B": "`compute networks update` manages VPC networks, not Cloud Storage buckets."
     },
     "gcloudCommand": "gsutil defacl set public-read gs://static-web-assets-pub",
     "architectureComponents": [
@@ -10179,35 +8705,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=BASIC",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql instances create session-cache-ha --database-version=REDIS_7"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances create session-cache-ha --database-version=REDIS_7",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=STANDARD --redis-version=redis_7_0 --zone=us-east1-b --alternative-zone=us-east1-c"
       },
       {
         "letter": "C",
-        "text": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=STANDARD --redis-version=redis_7_0 --zone=us-east1-b --alternative-zone=us-east1-c",
-        "isTrap": false
+        "text": "gcloud compute instances create session-cache-ha --redis=true"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create session-cache-ha --redis=true",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=BASIC"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Deploying a High Availability Redis instance in Cloud Memorystore requires specifying `--tier=STANDARD` (which includes cross-zone replication and automated failover) along with primary `--zone` and `--alternative-zone`.",
     "distractors": {
-      "A": "`BASIC` tier is standalone single-node with no cross-zone replica and no HA failover SLA.",
-      "B": "Cloud SQL manages relational SQL engines (MySQL/PostgreSQL/SQL Server), not Redis.",
-      "C": "Correct. `gcloud redis instances create --tier=STANDARD` provisions an HA Redis cluster with automated cross-zone failover.",
-      "D": "Compute Engine instance creation creates unmanaged VMs, not managed Memorystore Redis instances."
+      "D": "`BASIC` tier is standalone single-node with no cross-zone replica and no HA failover SLA.",
+      "A": "Cloud SQL manages relational SQL engines (MySQL/PostgreSQL/SQL Server), not Redis.",
+      "C": "Compute Engine instance creation creates unmanaged VMs, not managed Memorystore Redis instances."
     },
     "gcloudCommand": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=STANDARD --redis-version=redis_7_0 --zone=us-east1-b --alternative-zone=us-east1-c",
     "architectureComponents": [
@@ -10240,35 +8758,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure Cloud Monitoring alerts to kill the node.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set resources.requests with cpu: '500m', memory: '1Gi' and resources.limits with cpu: '2', memory: '4Gi' in the container spec."
       },
       {
         "letter": "B",
-        "text": "Set node pool machine type to custom-2-4096.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create an HPA policy with min-cpu=500m."
       },
       {
         "letter": "C",
-        "text": "Create an HPA policy with min-cpu=500m.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Configure Cloud Monitoring alerts to kill the node."
       },
       {
         "letter": "D",
-        "text": "Set resources.requests with cpu: '500m', memory: '1Gi' and resources.limits with cpu: '2', memory: '4Gi' in the container spec.",
-        "isTrap": false
+        "text": "Set node pool machine type to custom-2-4096."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "In Kubernetes manifests, `resources.requests` defines the minimum compute capacity reserved by the scheduler for the Pod, while `resources.limits` enforces hard caps on CPU throttling and memory OOM termination.",
     "distractors": {
-      "A": "Killing entire nodes causes catastrophic collateral impact on all co-located pods.",
-      "B": "Setting node machine type sizes the whole VM worker, not individual container pod constraints.",
-      "C": "HPA scales replica counts based on target metrics, but does not configure per-pod resource request/limit boundaries.",
-      "D": "Correct. Defining `requests` and `limits` in the container spec guarantees reserved capacity and enforces resource boundaries."
+      "C": "Killing entire nodes causes catastrophic collateral impact on all co-located pods.",
+      "D": "Setting node machine type sizes the whole VM worker, not individual container pod constraints.",
+      "B": "HPA scales replica counts based on target metrics, but does not configure per-pod resource request/limit boundaries."
     },
     "gcloudCommand": "kubectl apply -f pod-resources.yaml",
     "architectureComponents": [
@@ -10300,35 +8810,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud storage buckets update gs://user-avatars-vault --cors-file=cors-policy.json",
-        "isTrap": false
+        "text": "gcloud compute firewall-rules create allow-cors --allow=tcp:443"
       },
       {
         "letter": "B",
-        "text": "gsutil defacl set public-read gs://user-avatars-vault",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "gcloud storage buckets update gs://user-avatars-vault --cors-file=cors-policy.json"
       },
       {
         "letter": "C",
-        "text": "bq update --cors=cors-policy.json user-avatars-vault",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil defacl set public-read gs://user-avatars-vault"
       },
       {
         "letter": "D",
-        "text": "gcloud compute firewall-rules create allow-cors --allow=tcp:443",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --cors=cors-policy.json user-avatars-vault"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Browser cross-origin AJAX/fetch uploads to Cloud Storage require a CORS configuration on the target bucket. `gcloud storage buckets update <BUCKET> --cors-file=<JSON_FILE>` sets allowed origins (e.g. `https://app.example.com`), HTTP methods (PUT, GET), and headers.",
     "distractors": {
-      "A": "Correct. `--cors-file` attaches the JSON CORS policy to the Cloud Storage bucket to authorize browser cross-origin requests.",
-      "B": "Default ACLs change object permissions, but do not satisfy browser CORS pre-flight OPTIONS checks.",
-      "C": "`bq update` manages BigQuery tables, not Cloud Storage buckets.",
-      "D": "VPC firewall rules govern network packets, not browser HTTP CORS response headers."
+      "C": "Default ACLs change object permissions, but do not satisfy browser CORS pre-flight OPTIONS checks.",
+      "D": "`bq update` manages BigQuery tables, not Cloud Storage buckets.",
+      "A": "VPC firewall rules govern network packets, not browser HTTP CORS response headers."
     },
     "gcloudCommand": "gcloud storage buckets update gs://user-avatars-vault --cors-file=cors-policy.json",
     "architectureComponents": [
@@ -10360,35 +8862,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud bigtable instances create cluster-europe-west1 --replicate-from=cluster-us-central1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud bigtable instances create cluster-europe-west1 --replicate-from=cluster-us-central1"
       },
       {
         "letter": "B",
-        "text": "gcloud bigtable clusters create cluster-europe-west1 --instance=ad-bidding-engine --zone=europe-west1-b --num-nodes=4 --storage-type=SSD",
-        "isTrap": false
+        "text": "gcloud compute instances create cluster-europe-west1 --bigtable-cluster=true"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create cluster-europe-west1 --bigtable-cluster=true",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "cbt replicate-cluster cluster-europe-west1"
       },
       {
         "letter": "D",
-        "text": "cbt replicate-cluster cluster-europe-west1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud bigtable clusters create cluster-europe-west1 --instance=ad-bidding-engine --zone=europe-west1-b --num-nodes=4 --storage-type=SSD"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Cloud Bigtable supports adding clusters dynamically to an existing instance using `gcloud bigtable clusters create <CLUSTER_ID> --instance=<INSTANCE_ID> --zone=<ZONE> --num-nodes=<NODES> --storage-type=<SSD/HDD>`. Google Bigtable automatically establishes bidirectional asynchronous data replication.",
     "distractors": {
       "A": "`instances create` creates an entirely new isolated instance rather than attaching a cluster to the existing instance.",
-      "B": "Correct. `gcloud bigtable clusters create` adds a secondary cluster to an existing instance and activates automated multi-cluster replication.",
-      "C": "`compute instances create` is for Compute Engine VMs.",
-      "D": "`cbt replicate-cluster` is not a valid cbt CLI command."
+      "B": "`compute instances create` is for Compute Engine VMs.",
+      "C": "`cbt replicate-cluster` is not a valid cbt CLI command."
     },
     "gcloudCommand": "gcloud bigtable clusters create cluster-europe-west1 --instance=ad-bidding-engine --zone=europe-west1-b --num-nodes=4 --storage-type=SSD",
     "architectureComponents": [
@@ -10420,35 +8914,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create invoice-watcher --bucket=incoming-invoices-vault",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud storage notification-configurations create --topic=projects/corp-finance/topics/invoice-events --event-types=OBJECT_FINALIZE gs://incoming-invoices-vault"
       },
       {
         "letter": "B",
-        "text": "gcloud pubsub subscriptions create invoice-sub --bucket=incoming-invoices-vault",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud logging sinks create invoice-sink pubsub.googleapis.com/projects/corp-finance/topics/invoice-events"
       },
       {
         "letter": "C",
-        "text": "gcloud storage notification-configurations create --topic=projects/corp-finance/topics/invoice-events --event-types=OBJECT_FINALIZE gs://incoming-invoices-vault",
-        "isTrap": false
+        "text": "gcloud compute instances create invoice-watcher --bucket=incoming-invoices-vault"
       },
       {
         "letter": "D",
-        "text": "gcloud logging sinks create invoice-sink pubsub.googleapis.com/projects/corp-finance/topics/invoice-events",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud pubsub subscriptions create invoice-sub --bucket=incoming-invoices-vault"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "`gcloud storage notification-configurations create` (or `gsutil notification create`) configures native Cloud Storage Pub/Sub notifications, sending structured JSON notification messages to the designated topic whenever an object event (e.g. `OBJECT_FINALIZE`) occurs.",
     "distractors": {
-      "A": "Compute Engine watcher VMs require continuous polling scripts and introduce single points of failure.",
-      "B": "Pub/Sub subscriptions attach to Pub/Sub topics, not directly to Cloud Storage buckets.",
-      "C": "Correct. `notification-configurations create` establishes native bucket-to-Pub/Sub event notification.",
-      "D": "Cloud Logging sinks export log records, not structured object metadata payloads for event-driven pipelines."
+      "C": "Compute Engine watcher VMs require continuous polling scripts and introduce single points of failure.",
+      "D": "Pub/Sub subscriptions attach to Pub/Sub topics, not directly to Cloud Storage buckets.",
+      "B": "Cloud Logging sinks export log records, not structured object metadata payloads for event-driven pipelines."
     },
     "gcloudCommand": "gcloud storage notification-configurations create --topic=projects/corp-finance/topics/invoice-events --event-types=OBJECT_FINALIZE gs://incoming-invoices-vault",
     "architectureComponents": [
@@ -10481,35 +8967,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an Nginx sidecar container in every Pod.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Manually edit the GCP Load Balancer in the Cloud Console after every deployment."
       },
       {
         "letter": "B",
-        "text": "Create a VPC firewall rule with a 60-second timeout.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a VPC firewall rule with a 60-second timeout."
       },
       {
         "letter": "C",
-        "text": "Manually edit the GCP Load Balancer in the Cloud Console after every deployment.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an Nginx sidecar container in every Pod."
       },
       {
         "letter": "D",
-        "text": "Deploy a BackendConfig custom resource defining the health check, timeoutSec, and securityPolicy, and annotate the Kubernetes Service with 'cloud.google.com/backend-config: {\"default\": \"my-backend-config\"}'.",
-        "isTrap": false
+        "text": "Deploy a BackendConfig custom resource defining the health check, timeoutSec, and securityPolicy, and annotate the Kubernetes Service with 'cloud.google.com/backend-config: {\"default\": \"my-backend-config\"}'."
       }
     ],
     "correct": "D",
     "explanation": "GKE Ingress controller uses the `BackendConfig` CRD to configure Google Cloud Load Balancer Backend Service features (Cloud Armor, custom health checks, timeouts, CDN, IAP). Annotating the Kubernetes Service with `cloud.google.com/backend-config` links the Kubernetes Service to the GCP Backend Service parameters.",
     "distractors": {
-      "A": "Sidecar proxies cannot configure GCP edge Cloud Armor policies or Cloud Load Balancer backend service timeouts.",
+      "C": "Sidecar proxies cannot configure GCP edge Cloud Armor policies or Cloud Load Balancer backend service timeouts.",
       "B": "Firewall rules inspect L3/L4 packets and do not configure HTTP backend service connection timeouts or WAF policies.",
-      "C": "Manual console edits are overwritten or drift during Kubernetes Ingress reconciliations.",
-      "D": "Correct. `BackendConfig` CRD + Service annotation declaratively configures Cloud Load Balancing parameters in GKE."
+      "A": "Manual console edits are overwritten or drift during Kubernetes Ingress reconciliations."
     },
     "gcloudCommand": "kubectl apply -f backend-config.yaml && kubectl apply -f service.yaml",
     "architectureComponents": [
@@ -10544,34 +9022,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Enable Node Auto-Provisioning (NAP) on the cluster using gcloud container clusters update --enable-autoprovisioning.",
-        "isTrap": false
+        "text": "Create an unmanaged Compute Engine instance group with 100 n2-standard-4 instances."
       },
       {
         "letter": "B",
-        "text": "Deploy a Horizontal Pod Autoscaler for each namespace.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enable Node Auto-Provisioning (NAP) on the cluster using gcloud container clusters update --enable-autoprovisioning."
       },
       {
         "letter": "C",
-        "text": "Create an unmanaged Compute Engine instance group with 100 n2-standard-4 instances.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy a Horizontal Pod Autoscaler for each namespace."
       },
       {
         "letter": "D",
-        "text": "Write a bash cron script that polls kubectl get pods and runs gcloud compute instances create.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Write a bash cron script that polls kubectl get pods and runs gcloud compute instances create."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Node Auto-Provisioning (NAP) extends the GKE Cluster Autoscaler by automatically creating, configuring, and deleting new node pools with the exact machine types, CPU/memory specifications, accelerators, and taint/toleration requirements needed by unscheduled Pods.",
     "distractors": {
-      "A": "Correct. Node Auto-Provisioning (`--enable-autoprovisioning`) automatically creates and sizes dynamic node pools to match Pod requirements.",
-      "B": "Horizontal Pod Autoscaler scales Pod replica counts, but cannot provision new physical VM node pools or hardware machine types.",
-      "C": "Static unmanaged instance groups waste massive compute budget on unallocated VM capacity.",
+      "C": "Horizontal Pod Autoscaler scales Pod replica counts, but cannot provision new physical VM node pools or hardware machine types.",
+      "A": "Static unmanaged instance groups waste massive compute budget on unallocated VM capacity.",
       "D": "Custom polling scripts are fragile, unstandardized, and lack atomic cluster scheduling integration."
     },
     "gcloudCommand": "gcloud container clusters update my-cluster --region=us-central1 --enable-autoprovisioning --max-cpu=1000 --max-memory=4000",
@@ -10605,35 +9075,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gsutil cp gs://backups/db.sql | gcloud sql connect customer-db",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:30:00.000Z"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:30:00.000Z",
-        "isTrap": false
+        "text": "gcloud compute instances restore customer-db --time=14:30:00"
       },
       {
         "letter": "C",
-        "text": "gcloud sql instances restore-backup customer-db --backup-time=14:30",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances restore-backup customer-db --backup-time=14:30"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances restore customer-db --time=14:30:00",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil cp gs://backups/db.sql | gcloud sql connect customer-db"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Point-in-Time Recovery in Cloud SQL is performed via `gcloud sql instances clone <SOURCE_INSTANCE> <TARGET_INSTANCE> --point-in-time=<ISO_TIMESTAMP>`. This creates a new fully functional instance containing database state exactly as of that specified millisecond without modifying or overwriting the original instance.",
     "distractors": {
-      "A": "Manual SQL streaming is slow, requires manual file extraction, and does not leverage managed WAL log replay.",
-      "B": "Correct. `gcloud sql instances clone --point-in-time` creates a new instance restored to the exact target timestamp.",
+      "D": "Manual SQL streaming is slow, requires manual file extraction, and does not leverage managed WAL log replay.",
       "C": "`restore-backup` restores to a daily snapshot point, losing transaction granularity between snapshots.",
-      "D": "Compute Engine instance restore does not manage relational database write-ahead log replay."
+      "B": "Compute Engine instance restore does not manage relational database write-ahead log replay."
     },
     "gcloudCommand": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:30:00.000Z",
     "architectureComponents": [
@@ -10665,35 +9127,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl apply -f cron.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil cp cron.yaml gs://appengine-cron/"
       },
       {
         "letter": "B",
-        "text": "gsutil cp cron.yaml gs://appengine-cron/",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances add-cron cron.yaml"
       },
       {
         "letter": "C",
-        "text": "gcloud app deploy cron.yaml",
-        "isTrap": false
+        "text": "gcloud app deploy cron.yaml"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances add-cron cron.yaml",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl apply -f cron.yaml"
       }
     ],
     "correct": "C",
     "explanation": "`gcloud app deploy cron.yaml` deploys the scheduled task definitions to Google App Engine Cron Service, which automatically triggers the specified application endpoints on schedule without requiring external cron daemons.",
     "distractors": {
-      "A": "Kubernetes manifests use `CronJob` kinds, not App Engine proprietary `cron.yaml` syntax.",
-      "B": "Copying to Cloud Storage does not register scheduled execution jobs with App Engine.",
-      "C": "Correct. `gcloud app deploy cron.yaml` is the standard command to register scheduled cron tasks in App Engine.",
-      "D": "`compute instances add-cron` is non-existent syntax."
+      "D": "Kubernetes manifests use `CronJob` kinds, not App Engine proprietary `cron.yaml` syntax.",
+      "A": "Copying to Cloud Storage does not register scheduled execution jobs with App Engine.",
+      "B": "`compute instances add-cron` is non-existent syntax."
     },
     "gcloudCommand": "gcloud app deploy cron.yaml",
     "architectureComponents": [
@@ -10726,35 +9180,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant primitive roles/viewer to the Cloud Build service account.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Download the project owner's JSON key and embed it into the Git repository."
       },
       {
         "letter": "B",
-        "text": "Download the project owner's JSON key and embed it into the Git repository.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Grant primitive roles/viewer to the Cloud Build service account."
       },
       {
         "letter": "C",
-        "text": "Disable IAM role checks in Cloud Build settings.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Disable IAM role checks in Cloud Build settings."
       },
       {
         "letter": "D",
-        "text": "Grant roles/compute.admin and roles/storage.admin to the Cloud Build service account in the prod-core project.",
-        "isTrap": false
+        "text": "Grant roles/compute.admin and roles/storage.admin to the Cloud Build service account in the prod-core project."
       }
     ],
     "correct": "D",
     "explanation": "When using Cloud Build for Terraform infrastructure automation, the Cloud Build default service account (`<PROJECT_NUMBER>@cloudbuild.gserviceaccount.com`) must be granted the specific administrative predefined roles (`roles/compute.admin`, `roles/storage.admin`, etc.) corresponding to the cloud resources being provisioned.",
     "distractors": {
-      "A": "`roles/viewer` is read-only and will cause Terraform provisioning commands (`create`, `update`, `delete`) to fail with 403 Forbidden.",
-      "B": "Committing static JSON keys into Git repositories violates security policies and creates critical leak vulnerabilities.",
-      "C": "IAM authorization is an immutable platform security requirement and cannot be 'disabled' in Cloud Build.",
-      "D": "Correct. Granting specific resource admin roles to the Cloud Build service account authorizes Terraform execution."
+      "B": "`roles/viewer` is read-only and will cause Terraform provisioning commands (`create`, `update`, `delete`) to fail with 403 Forbidden.",
+      "A": "Committing static JSON keys into Git repositories violates security policies and creates critical leak vulnerabilities.",
+      "C": "IAM authorization is an immutable platform security requirement and cannot be 'disabled' in Cloud Build."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding prod-core --member='serviceAccount:123456789012@cloudbuild.gserviceaccount.com' --role='roles/compute.admin'",
     "architectureComponents": [
@@ -10788,33 +9234,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl create secret generic api-tokens --namespace=prod --from-literal=api-key='SecretTokenXYZ123' --from-literal=jwt-secret='SuperSecretSigningKey987'",
-        "isTrap": false
+        "text": "gsutil cp api-tokens.txt gs://k8s-secrets-prod/"
       },
       {
         "letter": "B",
-        "text": "gsutil cp api-tokens.txt gs://k8s-secrets-prod/",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl create secret generic api-tokens --namespace=prod --from-literal=api-key='SecretTokenXYZ123' --from-literal=jwt-secret='SuperSecretSigningKey987'"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create api-tokens --secret-values='api-key=XYZ'",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create api-tokens --secret-values='api-key=XYZ'"
       },
       {
         "letter": "D",
-        "text": "kubectl apply secret api-tokens --key=SecretTokenXYZ123",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl apply secret api-tokens --key=SecretTokenXYZ123"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "`kubectl create secret generic <NAME> --from-literal=<KEY>=<VALUE>` creates a Kubernetes Secret object directly from CLI arguments, base64-encoding the values into the Kubernetes etcd cluster store.",
     "distractors": {
-      "A": "Correct. `kubectl create secret generic --from-literal` is the standard command to deploy Kubernetes secrets.",
-      "B": "Copying to Cloud Storage does not create Kubernetes Secret objects in the GKE cluster.",
+      "A": "Copying to Cloud Storage does not create Kubernetes Secret objects in the GKE cluster.",
       "C": "Compute Engine instances create VMs, not Kubernetes Secrets.",
       "D": "`kubectl apply secret` without a manifest file or standard creation syntax is invalid."
     },
@@ -10848,34 +9286,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Export Google Ads data to Google Drive and use BigQuery external tables.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Configure BigQuery Data Transfer Service (via bq mk --transfer_config or Cloud Console) with the Google Ads transfer plugin."
       },
       {
         "letter": "B",
-        "text": "Configure BigQuery Data Transfer Service (via bq mk --transfer_config or Cloud Console) with the Google Ads transfer plugin.",
-        "isTrap": false
+        "text": "Deploy a Cloud Storage Transfer job from Ads URLs."
       },
       {
         "letter": "C",
-        "text": "Deploy a Cloud Storage Transfer job from Ads URLs.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Export Google Ads data to Google Drive and use BigQuery external tables."
       },
       {
         "letter": "D",
-        "text": "Write a Python cron script on Compute Engine that calls Google Ads API and runs bq load.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Write a Python cron script on Compute Engine that calls Google Ads API and runs bq load."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "BigQuery Data Transfer Service (DTS) is a fully managed service that automates scheduled data transfers from SaaS applications (Google Ads, Campaign Manager, Google Analytics 4, YouTube) and cloud storage providers directly into BigQuery tables with zero custom code.",
     "distractors": {
-      "A": "Google Drive external tables have strict query rate limits and poor analytical performance.",
-      "B": "Correct. BigQuery Data Transfer Service provides zero-code, fully managed scheduled ingestion from Google marketing platforms.",
-      "C": "Cloud Storage Transfer Service transfers object files to GCS buckets, not tabular schemas into BigQuery.",
+      "C": "Google Drive external tables have strict query rate limits and poor analytical performance.",
+      "B": "Cloud Storage Transfer Service transfers object files to GCS buckets, not tabular schemas into BigQuery.",
       "D": "Custom Python scripts require ongoing maintenance, credential refresh management, and VM compute costs."
     },
     "gcloudCommand": "bq mk --transfer_config --data_source=google_ads --target_dataset=marketing_dw --display_name='Daily Ads Sync' --params='{\"customer_id\":\"123-456-7890\"}'",
@@ -10909,35 +9339,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute firewall-rules create block-malicious --action=DENY --source-ranges=198.51.100.0/24",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq query 'DELETE FROM traffic WHERE ip LIKE \"198.51.100.%\"'"
       },
       {
         "letter": "B",
-        "text": "gcloud compute security-policies rules create 1000 --security-policy=block-malicious-traffic --src-ip-ranges=198.51.100.0/24 --action=deny-403 --description='Block known malicious subnet'",
-        "isTrap": false
+        "text": "gcloud compute firewall-rules create block-malicious --action=DENY --source-ranges=198.51.100.0/24"
       },
       {
         "letter": "C",
-        "text": "gcloud compute networks subnets update --block-ip=198.51.100.0/24",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute security-policies rules create 1000 --security-policy=block-malicious-traffic --src-ip-ranges=198.51.100.0/24 --action=deny-403 --description='Block known malicious subnet'"
       },
       {
         "letter": "D",
-        "text": "bq query 'DELETE FROM traffic WHERE ip LIKE \"198.51.100.%\"'",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute networks subnets update --block-ip=198.51.100.0/24"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "`gcloud compute security-policies rules create <PRIORITY> --security-policy=<POLICY> --src-ip-ranges=<CIDR> --action=deny-403` adds an IP blocking rule to a Cloud Armor policy to filter requests at Google's global edge before reaching backend servers.",
     "distractors": {
-      "A": "VPC firewall rules drop network packets at the hypervisor layer, but do not return an application-level HTTP 403 response.",
-      "B": "Correct. `security-policies rules create` with `--action=deny-403` drops matching client requests at the edge.",
-      "C": "`networks subnets update` does not support IP blocking flags.",
-      "D": "BigQuery queries operate on stored tables, not real-time network traffic filtering."
+      "B": "VPC firewall rules drop network packets at the hypervisor layer, but do not return an application-level HTTP 403 response.",
+      "D": "`networks subnets update` does not support IP blocking flags.",
+      "A": "BigQuery queries operate on stored tables, not real-time network traffic filtering."
     },
     "gcloudCommand": "gcloud compute security-policies rules create 1000 --security-policy=block-malicious-traffic --src-ip-ranges=198.51.100.0/24 --action=deny-403 --description='Block known malicious subnet'",
     "architectureComponents": [
@@ -10970,35 +9392,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq update --retention=31536000 compliance-vault-2026",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute disks snapshot create gs://compliance-vault-2026 --retention=1y"
       },
       {
         "letter": "B",
-        "text": "gsutil versioning set on gs://compliance-vault-2026",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil versioning set on gs://compliance-vault-2026"
       },
       {
         "letter": "C",
-        "text": "gcloud storage buckets update gs://compliance-vault-2026 --retention-period=31536000s",
-        "isTrap": false
+        "text": "gcloud storage buckets update gs://compliance-vault-2026 --retention-period=31536000s"
       },
       {
         "letter": "D",
-        "text": "gcloud compute disks snapshot create gs://compliance-vault-2026 --retention=1y",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --retention=31536000 compliance-vault-2026"
       }
     ],
     "correct": "C",
     "explanation": "`gcloud storage buckets update <BUCKET> --retention-period=<DURATION>` configures a Bucket Retention Policy, preventing any object inside the bucket from being deleted or overwritten until its individual retention period has elapsed.",
     "distractors": {
-      "A": "`bq update` is for BigQuery dataset configurations.",
+      "D": "`bq update` is for BigQuery dataset configurations.",
       "B": "Versioning keeps historical versions but does not enforce minimum retention time or block deletion.",
-      "C": "Correct. `gcloud storage buckets update --retention-period` sets the retention policy duration.",
-      "D": "`disks snapshot create` is for Compute Engine persistent disks, not Cloud Storage buckets."
+      "A": "`disks snapshot create` is for Compute Engine persistent disks, not Cloud Storage buckets."
     },
     "gcloudCommand": "gcloud storage buckets update gs://compliance-vault-2026 --retention-period=31536000s",
     "architectureComponents": [
@@ -11030,35 +9444,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud app deploy backup-cron.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq mk --snapshot_schedule daily-backup-schedule"
       },
       {
         "letter": "B",
-        "text": "bq mk --snapshot_schedule daily-backup-schedule",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud app deploy backup-cron.yaml"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks snapshot-schedule create daily-backup-schedule --time=02:00",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute resource-policies create snapshot-schedule daily-backup-schedule --region=us-central1 --daily-schedule --start-time=02:00 --max-retention-days=14 --on-source-disk-delete=keep-auto-snapshots"
       },
       {
         "letter": "D",
-        "text": "gcloud compute resource-policies create snapshot-schedule daily-backup-schedule --region=us-central1 --daily-schedule --start-time=02:00 --max-retention-days=14 --on-source-disk-delete=keep-auto-snapshots",
-        "isTrap": false
+        "text": "gcloud compute disks snapshot-schedule create daily-backup-schedule --time=02:00"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Automated persistent disk backups in Compute Engine are configured via Resource Policies using `gcloud compute resource-policies create snapshot-schedule <NAME> --region=<REGION> --daily-schedule --start-time=<UTC_TIME> --max-retention-days=<DAYS>`.",
     "distractors": {
-      "A": "App Engine cron does not manage native Compute Engine block storage hypervisor snapshots.",
-      "B": "`bq mk` is for BigQuery dataset tables, not Compute Engine persistent disks.",
-      "C": "`compute disks snapshot-schedule` is invalid CLI syntax.",
-      "D": "Correct. `resource-policies create snapshot-schedule` creates managed automated persistent disk backup schedules."
+      "B": "App Engine cron does not manage native Compute Engine block storage hypervisor snapshots.",
+      "A": "`bq mk` is for BigQuery dataset tables, not Compute Engine persistent disks.",
+      "D": "`compute disks snapshot-schedule` is invalid CLI syntax."
     },
     "gcloudCommand": "gcloud compute resource-policies create snapshot-schedule daily-backup-schedule --region=us-central1 --daily-schedule --start-time=02:00 --max-retention-days=14 --on-source-disk-delete=keep-auto-snapshots",
     "architectureComponents": [
@@ -11090,35 +9496,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A Kubernetes DaemonSet.",
-        "isTrap": false
+        "text": "A Kubernetes StatefulSet with 1 replica."
       },
       {
         "letter": "B",
-        "text": "A Kubernetes Deployment with replicas: 100.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A Kubernetes CronJob running every minute."
       },
       {
         "letter": "C",
-        "text": "A Kubernetes StatefulSet with 1 replica.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A Kubernetes DaemonSet."
       },
       {
         "letter": "D",
-        "text": "A Kubernetes CronJob running every minute.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A Kubernetes Deployment with replicas: 100."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "A Kubernetes `DaemonSet` ensures that all (or some matching) nodes run a copy of a Pod. As new worker nodes are added to the cluster by the Cluster Autoscaler, DaemonSet pods are automatically scheduled onto them, making DaemonSets the standard mechanism for cluster-wide logging and security agents.",
     "distractors": {
-      "A": "Correct. DaemonSets automatically place exactly one agent pod on every node in the cluster.",
-      "B": "Deployments distribute replicas across available nodes based on scheduling algorithms, potentially leaving some nodes without log collectors.",
-      "C": "StatefulSets are for ordered stateful clustered databases, not universal per-node monitoring agents.",
-      "D": "CronJobs launch transient pods at time intervals rather than maintaining persistent per-node daemon processes."
+      "D": "Deployments distribute replicas across available nodes based on scheduling algorithms, potentially leaving some nodes without log collectors.",
+      "A": "StatefulSets are for ordered stateful clustered databases, not universal per-node monitoring agents.",
+      "B": "CronJobs launch transient pods at time intervals rather than maintaining persistent per-node daemon processes."
     },
     "gcloudCommand": "kubectl apply -f logging-daemonset.yaml",
     "architectureComponents": [
@@ -11151,35 +9549,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gsutil notification create -e PUSH https://orders-api-xyz.a.run.app",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances create order-pusher --topic=order-events"
       },
       {
         "letter": "B",
-        "text": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --push-auth-service-account=pubsub-invoker@corp.iam.gserviceaccount.com --push-auth-token-audience=https://orders-api-xyz.a.run.app",
-        "isTrap": false
+        "text": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --unauthenticated"
       },
       {
         "letter": "C",
-        "text": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --unauthenticated",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --push-auth-service-account=pubsub-invoker@corp.iam.gserviceaccount.com --push-auth-token-audience=https://orders-api-xyz.a.run.app"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create order-pusher --topic=order-events",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil notification create -e PUSH https://orders-api-xyz.a.run.app"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Cloud Pub/Sub Push Subscriptions support authenticated HTTP endpoints. Using `--push-auth-service-account` and `--push-auth-token-audience` causes Google Pub/Sub to sign a short-lived OpenID Connect (OIDC) JWT token and include it in the `Authorization: Bearer <TOKEN>` header of every push request.",
     "distractors": {
-      "A": "`gsutil notification` is for Cloud Storage object changes, not Cloud Pub/Sub push subscription definitions.",
-      "B": "Correct. `gcloud pubsub subscriptions create` with `--push-auth-service-account` and audience securely authenticates push deliveries.",
-      "C": "Unauthenticated push requests are rejected with HTTP 401 Unauthorized by secured Cloud Run services.",
-      "D": "Compute Engine instance creation does not configure serverless Pub/Sub push pipelines."
+      "D": "`gsutil notification` is for Cloud Storage object changes, not Cloud Pub/Sub push subscription definitions.",
+      "B": "Unauthenticated push requests are rejected with HTTP 401 Unauthorized by secured Cloud Run services.",
+      "A": "Compute Engine instance creation does not configure serverless Pub/Sub push pipelines."
     },
     "gcloudCommand": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --push-auth-service-account=pubsub-invoker@corp.iam.gserviceaccount.com --push-auth-token-audience=https://orders-api-xyz.a.run.app",
     "architectureComponents": [
@@ -11213,35 +9603,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl apply -f high-cpu-alert.json",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq mk --alert_policy=high-cpu-alert.json"
       },
       {
         "letter": "B",
-        "text": "bq mk --alert_policy=high-cpu-alert.json",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances create-alert high-cpu-alert.json"
       },
       {
         "letter": "C",
-        "text": "gcloud alpha monitoring policies create --policy-from-file=high-cpu-alert.json",
-        "isTrap": false
+        "text": "gcloud alpha monitoring policies create --policy-from-file=high-cpu-alert.json"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create-alert high-cpu-alert.json",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl apply -f high-cpu-alert.json"
       }
     ],
     "correct": "C",
     "explanation": "`gcloud alpha monitoring policies create --policy-from-file=<FILE>` is the Google Cloud CLI command to deploy declarative JSON/YAML alerting policy configurations to Google Cloud Monitoring.",
     "distractors": {
-      "A": "`kubectl apply` applies Kubernetes manifests, not Google Cloud Monitoring alerting policy JSON definitions.",
-      "B": "`bq mk` is for BigQuery database objects, not Cloud Monitoring alert policies.",
-      "C": "Correct. `monitoring policies create --policy-from-file` registers declarative alerting policies in Cloud Monitoring.",
-      "D": "`compute instances create-alert` is non-existent syntax."
+      "D": "`kubectl apply` applies Kubernetes manifests, not Google Cloud Monitoring alerting policy JSON definitions.",
+      "A": "`bq mk` is for BigQuery database objects, not Cloud Monitoring alert policies.",
+      "B": "`compute instances create-alert` is non-existent syntax."
     },
     "gcloudCommand": "gcloud alpha monitoring policies create --policy-from-file=high-cpu-alert.json",
     "architectureComponents": [
@@ -11274,35 +9656,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy with the --cpu-throttling flag (CPU allocated only during requests).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set memory limits to 32 GiB."
       },
       {
         "letter": "B",
-        "text": "Set memory limits to 32 GiB.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy with the --no-cpu-throttling flag (CPU always allocated)."
       },
       {
         "letter": "C",
-        "text": "Set min-instances to 0.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set min-instances to 0."
       },
       {
         "letter": "D",
-        "text": "Deploy with the --no-cpu-throttling flag (CPU always allocated).",
-        "isTrap": false
+        "text": "Deploy with the --cpu-throttling flag (CPU allocated only during requests)."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "By default, Cloud Run throttles CPU to 0 outside of active HTTP request processing. To support WebSockets, streaming connections, and background thread execution, you must deploy with `--no-cpu-throttling` (CPU is always allocated throughout the instance lifecycle).",
     "distractors": {
-      "A": "`--cpu-throttling` shuts off CPU between requests, freezing background tasks and dropping WebSocket connections.",
-      "B": "Increasing memory does not prevent CPU throttling between requests.",
-      "C": "Setting `min-instances=0` allows instances to scale to zero, terminating persistent background tasks.",
-      "D": "Correct. `--no-cpu-throttling` keeps CPU active outside of HTTP request lifecycles for WebSockets and background tasks."
+      "D": "`--cpu-throttling` shuts off CPU between requests, freezing background tasks and dropping WebSocket connections.",
+      "A": "Increasing memory does not prevent CPU throttling between requests.",
+      "C": "Setting `min-instances=0` allows instances to scale to zero, terminating persistent background tasks."
     },
     "gcloudCommand": "gcloud run deploy chat-service --image=gcr.io/my-proj/chat:v1 --region=us-central1 --no-cpu-throttling",
     "architectureComponents": [
@@ -11335,34 +9709,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a PriorityClass resource with a high integer value (e.g. 1000000) and set priorityClassName in the payment deployment Pod template.",
-        "isTrap": false
+        "text": "Set node pool autoscaling max-nodes to 1000."
       },
       {
         "letter": "B",
-        "text": "Deploy an unmanaged Compute Engine instance group.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an unmanaged Compute Engine instance group."
       },
       {
         "letter": "C",
-        "text": "Set node pool autoscaling max-nodes to 1000.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a PriorityClass resource with a high integer value (e.g. 1000000) and set priorityClassName in the payment deployment Pod template."
       },
       {
         "letter": "D",
-        "text": "Create an IAM Deny policy on batch developers.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create an IAM Deny policy on batch developers."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Kubernetes `PriorityClass` defines the scheduling priority of Pods. When high-priority Pods cannot be scheduled due to resource starvation, the Kubernetes scheduler preempts (evicts) lower-priority Pods to guarantee compute resources for critical workloads.",
     "distractors": {
-      "A": "Correct. `PriorityClass` + `priorityClassName` guarantees critical pods are prioritized and can preempt non-critical batch pods.",
       "B": "Unmanaged instance groups lack native Kubernetes pod scheduling integration.",
-      "C": "Increasing max-nodes provisions new VMs over time, but does not solve immediate in-cluster pod scheduling contention during bursts.",
+      "A": "Increasing max-nodes provisions new VMs over time, but does not solve immediate in-cluster pod scheduling contention during bursts.",
       "D": "IAM policies manage GCP control plane permissions, not Kubernetes in-cluster pod scheduling priorities."
     },
     "gcloudCommand": "kubectl apply -f priority-class.yaml && kubectl apply -f payment-deployment.yaml",
@@ -11396,35 +9762,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "SSH into the Cloud SQL instance and edit postgresql.conf directly.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances update prod-pg-1 --pg-flags='max_connections=500'"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances patch prod-pg-1 --database-flags=max_connections=500,shared_buffers=1048576",
-        "isTrap": false
+        "text": "SSH into the Cloud SQL instance and edit postgresql.conf directly."
       },
       {
         "letter": "C",
-        "text": "bq update --flags='max_connections=500' prod-pg-1",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --flags='max_connections=500' prod-pg-1"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances update prod-pg-1 --pg-flags='max_connections=500'",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances patch prod-pg-1 --database-flags=max_connections=500,shared_buffers=1048576"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --database-flags=<FLAG1=VAL1,FLAG2=VAL2>` applies database engine configuration parameters (such as `max_connections`, `log_output`, `autovacuum`) directly to Cloud SQL managed instances.",
     "distractors": {
-      "A": "Cloud SQL is a fully managed service; direct SSH access to the underlying database host OS is not permitted.",
-      "B": "Correct. `gcloud sql instances patch --database-flags` is the official command to configure database engine parameters.",
+      "B": "Cloud SQL is a fully managed service; direct SSH access to the underlying database host OS is not permitted.",
       "C": "`bq update` is for BigQuery dataset and table metadata.",
-      "D": "`gcloud compute instances update` manages Compute Engine VMs, not Cloud SQL database engine flags."
+      "A": "`gcloud compute instances update` manages Compute Engine VMs, not Cloud SQL database engine flags."
     },
     "gcloudCommand": "gcloud sql instances patch prod-pg-1 --database-flags=max_connections=500,shared_buffers=1048576",
     "architectureComponents": [
@@ -11457,34 +9815,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "type: LoadBalancer with an external IP on every microservice.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "type: ClusterIP (using Network Endpoint Groups / NEG annotation for direct container-native routing)."
       },
       {
         "letter": "B",
-        "text": "type: ExternalName with a public DNS host.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "type: ExternalName with a public DNS host."
       },
       {
         "letter": "C",
-        "text": "type: ClusterIP (using Network Endpoint Groups / NEG annotation for direct container-native routing).",
-        "isTrap": false
+        "text": "type: LoadBalancer with an external IP on every microservice."
       },
       {
         "letter": "D",
-        "text": "type: hostPort.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "type: hostPort."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "In GKE, the standard best practice when using GKE Ingress is `type: ClusterIP` paired with Network Endpoint Groups (`cloud.google.com/neg: '{\"ingress\": true}'`). The Google Cloud Load Balancer routes traffic directly to individual Pod IPs (container-native routing), bypassing intermediate node kube-proxy hops.",
     "distractors": {
-      "A": "Deploying `type: LoadBalancer` on every microservice creates separate L4 Network Load Balancers with separate public IPs and high cost.",
+      "C": "Deploying `type: LoadBalancer` on every microservice creates separate L4 Network Load Balancers with separate public IPs and high cost.",
       "B": "`ExternalName` maps a Service to an external DNS CNAME, not internal Pod selector backends.",
-      "C": "Correct. `ClusterIP` + NEGs provides direct container-native load balancing from Google Cloud Load Balancers to Pods.",
       "D": "`hostPort` binds ports directly to worker node host network namespaces, creating port conflict scheduling limitations."
     },
     "gcloudCommand": "kubectl apply -f clusterip-neg-service.yaml",
@@ -11518,35 +9868,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Write a bash script running in cron to redirect traffic.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a VPC route in Cloud Router for /api/*."
       },
       {
         "letter": "B",
-        "text": "Create a VPC route in Cloud Router for /api/*.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Configure Cloud DNS with a path-based CNAME record."
       },
       {
         "letter": "C",
-        "text": "Configure Cloud DNS with a path-based CNAME record.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Write a bash script running in cron to redirect traffic."
       },
       {
         "letter": "D",
-        "text": "Create a dispatch.yaml file mapping '*/api/*' to service 'mobile-api', and deploy it using gcloud app deploy dispatch.yaml.",
-        "isTrap": false
+        "text": "Create a dispatch.yaml file mapping '*/api/*' to service 'mobile-api', and deploy it using gcloud app deploy dispatch.yaml."
       }
     ],
     "correct": "D",
     "explanation": "App Engine uses `dispatch.yaml` to configure path and domain routing across multiple microservices. Running `gcloud app deploy dispatch.yaml` registers the URL routing rules at the App Engine routing layer.",
     "distractors": {
-      "A": "Cron scripts cannot intercept real-time HTTP client requests.",
-      "B": "Cloud Router operates at Layer 3/IP routing and does not evaluate HTTP URL paths.",
-      "C": "Cloud DNS maps domain names to IP addresses; DNS does not support HTTP URL path-based routing.",
-      "D": "Correct. `dispatch.yaml` deployed via `gcloud app deploy dispatch.yaml` routes specific URL path prefixes to designated App Engine services."
+      "C": "Cron scripts cannot intercept real-time HTTP client requests.",
+      "A": "Cloud Router operates at Layer 3/IP routing and does not evaluate HTTP URL paths.",
+      "B": "Cloud DNS maps domain names to IP addresses; DNS does not support HTTP URL path-based routing."
     },
     "gcloudCommand": "gcloud app deploy dispatch.yaml",
     "architectureComponents": [
@@ -11578,35 +9920,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute networks vpc-access connectors create serverless-conn --region=us-central1 --network=corp-vpc --range=10.8.0.0/28 --min-instances=2 --max-instances=10",
-        "isTrap": false
+        "text": "gcloud compute networks vpc-access connectors create serverless-conn --region=us-central1 --network=corp-vpc --range=10.8.0.0/28 --min-instances=2 --max-instances=10"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances create serverless-conn --image-family=serverless-vpc",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute routers create serverless-conn --network=corp-vpc"
       },
       {
         "letter": "C",
-        "text": "gsutil notification create -f vpc gs://serverless-conn",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create serverless-conn --image-family=serverless-vpc"
       },
       {
         "letter": "D",
-        "text": "gcloud compute routers create serverless-conn --network=corp-vpc",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil notification create -f vpc gs://serverless-conn"
       }
     ],
     "correct": "A",
     "explanation": "`gcloud compute networks vpc-access connectors create <NAME> --region=<REGION> --network=<NETWORK> --range=<CIDR>` creates a Serverless VPC Access connector, allowing serverless runtimes (Cloud Functions, Cloud Run, App Engine) to route private traffic into a VPC network.",
     "distractors": {
-      "A": "Correct. `vpc-access connectors create` provisions managed VPC connectors for serverless private communication.",
-      "B": "`compute instances create` does not create managed Serverless VPC Access connectors.",
-      "C": "`gsutil notification` is for Cloud Storage object notifications.",
-      "D": "Cloud Router provides dynamic BGP routing for VPN/Interconnect, not serverless container VPC ingress."
+      "C": "`compute instances create` does not create managed Serverless VPC Access connectors.",
+      "D": "`gsutil notification` is for Cloud Storage object notifications.",
+      "B": "Cloud Router provides dynamic BGP routing for VPN/Interconnect, not serverless container VPC ingress."
     },
     "gcloudCommand": "gcloud compute networks vpc-access connectors create serverless-conn --region=us-central1 --network=corp-vpc --range=10.8.0.0/28 --min-instances=2 --max-instances=10",
     "architectureComponents": [
@@ -11641,35 +9975,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Write a bash script that scales the deployment via kubectl scale in a continuous while loop.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set the node pool autoscaler target CPU to 50%."
       },
       {
         "letter": "B",
-        "text": "Deploy the Custom Metrics Stackdriver Adapter (or Prometheus Adapter) in the cluster, and create an HPA manifest using apiVersion: autoscaling/v2 specifying metric type 'Pods' or 'External' with target value 50.",
-        "isTrap": false
+        "text": "Write a bash script that scales the deployment via kubectl scale in a continuous while loop."
       },
       {
         "letter": "C",
-        "text": "Configure a Cloud Storage bucket lifecycle policy.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Configure a Cloud Storage bucket lifecycle policy."
       },
       {
         "letter": "D",
-        "text": "Set the node pool autoscaler target CPU to 50%.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy the Custom Metrics Stackdriver Adapter (or Prometheus Adapter) in the cluster, and create an HPA manifest using apiVersion: autoscaling/v2 specifying metric type 'Pods' or 'External' with target value 50."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Kubernetes HPA (`autoscaling/v2`) supports custom and external metrics. Deploying the Custom Metrics Adapter allows HPA to query Prometheus or Cloud Monitoring metrics and calculate required replica counts dynamically based on custom application queues.",
     "distractors": {
-      "A": "Continuous shell loops on developer workstations are fragile, unmonitored, and lack atomic cluster reconciliation.",
-      "B": "Correct. Custom Metrics Adapter + `autoscaling/v2` HPA manifest allows autoscaling on arbitrary custom application metrics.",
+      "B": "Continuous shell loops on developer workstations are fragile, unmonitored, and lack atomic cluster reconciliation.",
       "C": "Cloud Storage lifecycle policies manage object retention, not Kubernetes Pod autoscaling.",
-      "D": "Target CPU on node pools scales VM node count based on CPU, not Pod replica count based on custom message queue depth."
+      "A": "Target CPU on node pools scales VM node count based on CPU, not Pod replica count based on custom message queue depth."
     },
     "gcloudCommand": "kubectl apply -f custom-metric-hpa.yaml",
     "architectureComponents": [
@@ -11703,35 +10029,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Mount the VM boot disk to your local workstation using Cloud Storage FUSE.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Connect using standard telnet over port 23."
       },
       {
         "letter": "B",
-        "text": "Assign an ephemeral public IP address to the instance and connect directly over the public internet.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Mount the VM boot disk to your local workstation using Cloud Storage FUSE."
       },
       {
         "letter": "C",
-        "text": "Connect using gcloud compute ssh backend-worker-1 --zone=us-central1-a --tunnel-through-iap, ensuring you have roles/iap.tunnelResourceAccessor and an ingress firewall rule allows port 22 from 35.235.240.0/20.",
-        "isTrap": false
+        "text": "Connect using gcloud compute ssh backend-worker-1 --zone=us-central1-a --tunnel-through-iap, ensuring you have roles/iap.tunnelResourceAccessor and an ingress firewall rule allows port 22 from 35.235.240.0/20."
       },
       {
         "letter": "D",
-        "text": "Connect using standard telnet over port 23.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Assign an ephemeral public IP address to the instance and connect directly over the public internet."
       }
     ],
     "correct": "C",
     "explanation": "Identity-Aware Proxy (IAP) TCP forwarding allows authorized users to establish encrypted SSH connections to private instances with no public IPs over Google Cloud's edge infrastructure. Traffic originates from `35.235.240.0/20` and requires `roles/iap.tunnelResourceAccessor`.",
     "distractors": {
-      "A": "Cloud Storage FUSE does not mount active Compute Engine VM root boot disks.",
-      "B": "Assigning public IPs violates security compliance policies and increases attack surface.",
-      "C": "Correct. `gcloud compute ssh --tunnel-through-iap` provides secure keyless bastion-free access to private VMs.",
-      "D": "Telnet is unencrypted plaintext and transmits passwords in the clear."
+      "B": "Cloud Storage FUSE does not mount active Compute Engine VM root boot disks.",
+      "D": "Assigning public IPs violates security compliance policies and increases attack surface.",
+      "A": "Telnet is unencrypted plaintext and transmits passwords in the clear."
     },
     "gcloudCommand": "gcloud compute ssh backend-worker-1 --zone=us-central1-a --tunnel-through-iap",
     "architectureComponents": [
@@ -11766,35 +10084,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances delete $(kubectl get nodes -o name)",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud container clusters upgrade my-cluster --node-pool=app-pool --cluster-version=1.28 --region=us-central1"
       },
       {
         "letter": "B",
-        "text": "gcloud container clusters update my-cluster --disable-addons=HttpLoadBalancing",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud container clusters update my-cluster --disable-addons=HttpLoadBalancing"
       },
       {
         "letter": "C",
-        "text": "kubectl delete nodes --all && kubectl create nodes --version=1.28",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl delete nodes --all && kubectl create nodes --version=1.28"
       },
       {
         "letter": "D",
-        "text": "gcloud container clusters upgrade my-cluster --node-pool=app-pool --cluster-version=1.28 --region=us-central1",
-        "isTrap": false
+        "text": "gcloud compute instances delete $(kubectl get nodes -o name)"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "GKE node pool upgrades are initiated with `gcloud container clusters upgrade <CLUSTER> --node-pool=<POOL> --cluster-version=<VERSION>`. GKE uses configured surge upgrade parameters (`max-surge` and `max-unavailable`) to gracefully cordon, drain, and replace worker nodes sequentially.",
     "distractors": {
-      "A": "Deleting raw Compute Engine VM nodes abruptly disrupts Kubernetes state and causes ungraceful pod termination.",
+      "D": "Deleting raw Compute Engine VM nodes abruptly disrupts Kubernetes state and causes ungraceful pod termination.",
       "B": "Disabling load balancing addons disrupts external traffic ingress without performing node upgrades.",
-      "C": "Deleting all nodes simultaneously causes catastrophic application downtime.",
-      "D": "Correct. `clusters upgrade --node-pool` triggers managed rolling node pool upgrades with graceful pod eviction."
+      "C": "Deleting all nodes simultaneously causes catastrophic application downtime."
     },
     "gcloudCommand": "gcloud container clusters upgrade my-cluster --node-pool=app-pool --cluster-version=1.28.7-gke.1026000 --region=us-central1",
     "architectureComponents": [
@@ -11826,35 +10136,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Stop the instance using gcloud compute instances stop, change the machine type using gcloud compute instances set-machine-type batch-worker-1 --zone=us-central1-a --machine-type=e2-standard-8, and restart the instance with gcloud compute instances start.",
-        "isTrap": false
+        "text": "Stop the instance using gcloud compute instances stop, change the machine type using gcloud compute instances set-machine-type batch-worker-1 --zone=us-central1-a --machine-type=e2-standard-8, and restart the instance with gcloud compute instances start."
       },
       {
         "letter": "B",
-        "text": "Run gcloud compute instances set-machine-type on the live running instance without stopping it.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Attach 6 additional persistent disks to increase CPU capacity."
       },
       {
         "letter": "C",
-        "text": "Delete the VM and recreate it from a fresh OS image.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud compute instances set-machine-type on the live running instance without stopping it."
       },
       {
         "letter": "D",
-        "text": "Attach 6 additional persistent disks to increase CPU capacity.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Delete the VM and recreate it from a fresh OS image."
       }
     ],
     "correct": "A",
     "explanation": "To change the machine type of a standalone Compute Engine instance, the instance must first be in the `TERMINATED` (stopped) state. You stop the VM, execute `gcloud compute instances set-machine-type`, and start the VM.",
     "distractors": {
-      "A": "Correct. Proper sequence: Stop instance -> `set-machine-type` -> Start instance.",
-      "B": "Compute Engine does not support dynamic live-resizing of machine types while a VM is active/running.",
-      "C": "Deleting the VM destroys installed software, local state, and assigned internal IP configurations.",
-      "D": "Attaching persistent disks adds storage capacity, not vCPU compute cores."
+      "C": "Compute Engine does not support dynamic live-resizing of machine types while a VM is active/running.",
+      "D": "Deleting the VM destroys installed software, local state, and assigned internal IP configurations.",
+      "B": "Attaching persistent disks adds storage capacity, not vCPU compute cores."
     },
     "gcloudCommand": "gcloud compute instances stop batch-worker-1 --zone=us-central1-a && gcloud compute instances set-machine-type batch-worker-1 --zone=us-central1-a --machine-type=e2-standard-8 && gcloud compute instances start batch-worker-1 --zone=us-central1-a",
     "architectureComponents": [
@@ -11887,35 +10189,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Run the query on a Cloud SQL database instead.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Run the query with LIMIT 10 appended."
       },
       {
         "letter": "B",
-        "text": "Execute the query using the bq CLI with the --dry_run flag (e.g. bq query --dry_run --use_legacy_sql=false 'SELECT ...').",
-        "isTrap": false
+        "text": "Run the query on a Cloud SQL database instead."
       },
       {
         "letter": "C",
-        "text": "Export the data to Cloud Storage and check the file size in the console.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Export the data to Cloud Storage and check the file size in the console."
       },
       {
         "letter": "D",
-        "text": "Run the query with LIMIT 10 appended.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Execute the query using the bq CLI with the --dry_run flag (e.g. bq query --dry_run --use_legacy_sql=false 'SELECT ...')."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "BigQuery dry-run queries validate SQL query syntax and calculate the exact number of bytes scanned without executing the query, creating jobs, or consuming on-demand query quota/budget.",
     "distractors": {
-      "A": "Cloud SQL is a relational database and cannot execute BigQuery petabyte-scale analytics.",
-      "B": "Correct. `bq query --dry_run` validates SQL syntax and returns estimated bytes processed for $0 cost.",
+      "B": "Cloud SQL is a relational database and cannot execute BigQuery petabyte-scale analytics.",
       "C": "Exporting data runs an extraction job and does not estimate the column-pruned scan size of an arbitrary SQL query.",
-      "D": "In columnar storage databases like BigQuery, `LIMIT 10` does NOT reduce scanned bytes for full table scans."
+      "A": "In columnar storage databases like BigQuery, `LIMIT 10` does NOT reduce scanned bytes for full table scans."
     },
     "gcloudCommand": "bq query --dry_run --use_legacy_sql=false 'SELECT customer_id, SUM(amount) FROM `corp_data.orders` WHERE order_date >= \"2026-01-01\" GROUP BY customer_id'",
     "architectureComponents": [
@@ -11948,35 +10242,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "SELECT * FROM logs WHERE type='vm' AND status=500",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "logName=\"all\" AND error=true"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances list --filter='errors'",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "SELECT * FROM logs WHERE type='vm' AND status=500"
       },
       {
         "letter": "C",
-        "text": "resource.type=\"gce_instance\" AND severity>=(ERROR) AND timestamp >= \"2026-08-20T20:00:00Z\"",
-        "isTrap": false
+        "text": "resource.type=\"gce_instance\" AND severity>=(ERROR) AND timestamp >= \"2026-08-20T20:00:00Z\""
       },
       {
         "letter": "D",
-        "text": "logName=\"all\" AND error=true",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances list --filter='errors'"
       }
     ],
     "correct": "C",
     "explanation": "Cloud Logging Query Language uses structured key-value expressions. Filtering by `resource.type=\"gce_instance\"` and `severity>=(ERROR)` queries all error and emergency severity logs generated by Compute Engine VM guest agents and platform services.",
     "distractors": {
-      "A": "Cloud Logging Explorer uses logging filter expressions, not raw SQL SELECT statements (unless using BigQuery Log Analytics).",
-      "B": "`compute instances list` displays instance metadata, not application stderr log streams.",
-      "C": "Correct. Cloud Logging query language syntax filtering on resource type, severity comparison, and timestamp.",
-      "D": "`logName=\"all\"` is invalid filter syntax."
+      "B": "Cloud Logging Explorer uses logging filter expressions, not raw SQL SELECT statements (unless using BigQuery Log Analytics).",
+      "D": "`compute instances list` displays instance metadata, not application stderr log streams.",
+      "A": "`logName=\"all\"` is invalid filter syntax."
     },
     "gcloudCommand": "gcloud logging read 'resource.type=\"gce_instance\" AND severity>=ERROR' --limit=50 --format=json",
     "architectureComponents": [
@@ -12009,26 +10295,19 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl describe node $(kubectl get pod checkout-service-78df9b-abcde -o jsonpath='{.spec.nodeName}')",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl describe node $(kubectl get pod checkout-service-78df9b-abcde -o jsonpath='{.spec.nodeName}')"
       },
       {
         "letter": "B",
-        "text": "kubectl delete pod checkout-service-78df9b-abcde --force",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl delete pod checkout-service-78df9b-abcde --force"
       },
       {
         "letter": "C",
-        "text": "gcloud container clusters restart prod-cluster",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud container clusters restart prod-cluster"
       },
       {
         "letter": "D",
-        "text": "kubectl logs checkout-service-78df9b-abcde --namespace=prod --previous",
-        "isTrap": false
+        "text": "kubectl logs checkout-service-78df9b-abcde --namespace=prod --previous"
       }
     ],
     "correct": "D",
@@ -12036,8 +10315,7 @@ window.GCP_ACE_QUESTIONS = [
     "distractors": {
       "A": "`describe node` displays VM worker node conditions, not container application stdout/stderr logs.",
       "B": "Force-deleting the pod deletes active pod metadata and restarts the crash loop without diagnosing the root cause.",
-      "C": "Restarting the entire GKE cluster causes cluster-wide downtime and does not fix container application bugs.",
-      "D": "Correct. `kubectl logs --previous` outputs the crash logs from the terminated container instance."
+      "C": "Restarting the entire GKE cluster causes cluster-wide downtime and does not fix container application bugs."
     },
     "gcloudCommand": "kubectl logs checkout-service-78df9b-abcde --namespace=prod --previous",
     "architectureComponents": [
@@ -12069,35 +10347,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud sql backups restore 1692540000000 --restore-instance=prod-db",
-        "isTrap": false
+        "text": "gcloud sql instances restore prod-db --backup-id=1692540000000"
       },
       {
         "letter": "B",
-        "text": "bq restore prod-db:1692540000000",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute disks restore prod-db --snapshot=1692540000000"
       },
       {
         "letter": "C",
-        "text": "gcloud sql instances restore prod-db --backup-id=1692540000000",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql backups restore 1692540000000 --restore-instance=prod-db"
       },
       {
         "letter": "D",
-        "text": "gcloud compute disks restore prod-db --snapshot=1692540000000",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq restore prod-db:1692540000000"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Restoring a specific Cloud SQL backup to an instance uses `gcloud sql backups restore <BACKUP_ID> --restore-instance=<TARGET_INSTANCE>`.",
     "distractors": {
-      "A": "Correct. `gcloud sql backups restore <ID> --restore-instance=<NAME>` is the official CLI command.",
-      "B": "`bq restore` is for BigQuery historical table snapshots, not Cloud SQL instances.",
-      "C": "`sql instances restore` is invalid syntax; backups are restored via `sql backups restore`.",
-      "D": "Compute Engine disk restore does not manage relational database state and transaction logs."
+      "D": "`bq restore` is for BigQuery historical table snapshots, not Cloud SQL instances.",
+      "A": "`sql instances restore` is invalid syntax; backups are restored via `sql backups restore`.",
+      "B": "Compute Engine disk restore does not manage relational database state and transaction logs."
     },
     "gcloudCommand": "gcloud sql backups restore 1692540000000 --restore-instance=prod-db",
     "architectureComponents": [
@@ -12130,35 +10400,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Disable the Load Balancer health checks.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Delete the _Default log sink completely."
       },
       {
         "letter": "B",
-        "text": "Create an Exclusion Filter on the _Default log sink with filter expression: resource.type=\"http_load_balancer\" AND httpRequest.status=200 AND httpRequest.userAgent=\"GoogleHC/1.0\".",
-        "isTrap": false
+        "text": "Create an Exclusion Filter on the _Default log sink with filter expression: resource.type=\"http_load_balancer\" AND httpRequest.status=200 AND httpRequest.userAgent=\"GoogleHC/1.0\"."
       },
       {
         "letter": "C",
-        "text": "Turn off VPC logging globally across all subnets.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Turn off VPC logging globally across all subnets."
       },
       {
         "letter": "D",
-        "text": "Delete the _Default log sink completely.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Disable the Load Balancer health checks."
       }
     ],
     "correct": "B",
     "explanation": "Cloud Logging sinks (like `_Default`) allow creating Exclusion Filters (`--exclusion`). Excluded logs are discarded before ingestion and storage, incurring zero ingestion charges while allowing non-excluded logs to be retained.",
     "distractors": {
-      "A": "Disabling health checks prevents the load balancer from detecting instance failures, causing severe customer outages.",
-      "B": "Correct. Exclusion filters on the `_Default` sink drop matching noisy log entries, immediately lowering monthly logging bills.",
+      "D": "Disabling health checks prevents the load balancer from detecting instance failures, causing severe customer outages.",
       "C": "Disabling VPC logging globally destroys network visibility and fails security audits.",
-      "D": "Deleting the `_Default` sink stops all standard logs from being ingested, blinding operations teams."
+      "A": "Deleting the `_Default` sink stops all standard logs from being ingested, blinding operations teams."
     },
     "gcloudCommand": "gcloud logging sinks update _Default --add-exclusion='name=exclude-health-checks,filter=\"resource.type=http_load_balancer AND httpRequest.userAgent=GoogleHC/1.0\"'",
     "architectureComponents": [
@@ -12191,35 +10453,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud app versions delete v2 --force",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud app deploy v1/app.yaml --no-promote"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances restart --service=appengine",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances restart --service=appengine"
       },
       {
         "letter": "C",
-        "text": "gcloud app services set-traffic default --splits=v1=1 --migrate",
-        "isTrap": false
+        "text": "gcloud app services set-traffic default --splits=v1=1 --migrate"
       },
       {
         "letter": "D",
-        "text": "gcloud app deploy v1/app.yaml --no-promote",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud app versions delete v2 --force"
       }
     ],
     "correct": "C",
     "explanation": "`gcloud app services set-traffic <SERVICE> --splits=<VERSION>=1 --migrate` instantly routes 100% of incoming requests back to the specified stable version using App Engine traffic migration.",
     "distractors": {
-      "A": "Deleting the actively serving version `v2` while it receives 100% traffic can cause dropped requests before routing adjusts.",
+      "D": "Deleting the actively serving version `v2` while it receives 100% traffic can cause dropped requests before routing adjusts.",
       "B": "`compute instances restart` does not manage App Engine serverless service version traffic routing.",
-      "C": "Correct. `gcloud app services set-traffic` immediately points 100% traffic to version `v1`.",
-      "D": "Re-deploying an old codebase takes several minutes, while `set-traffic` changes routing in milliseconds."
+      "A": "Re-deploying an old codebase takes several minutes, while `set-traffic` changes routing in milliseconds."
     },
     "gcloudCommand": "gcloud app services set-traffic default --splits=v1=1 --migrate",
     "architectureComponents": [
@@ -12252,35 +10506,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "cat /proc/cpuinfo | grep nodes",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl describe cluster --metrics"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances list --show-cpu",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl top nodes"
       },
       {
         "letter": "C",
-        "text": "kubectl describe cluster --metrics",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances list --show-cpu"
       },
       {
         "letter": "D",
-        "text": "kubectl top nodes",
-        "isTrap": false
+        "text": "cat /proc/cpuinfo | grep nodes"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`kubectl top nodes` queries the Kubernetes Metrics Server and displays real-time CPU (cores/millicores) and Memory (bytes/percentage) consumption across all active worker nodes in the cluster.",
     "distractors": {
-      "A": "Running `/proc/cpuinfo` on a local machine shows local laptop processor specs, not remote GKE worker node metrics.",
-      "B": "`--show-cpu` is not a valid flag on `gcloud compute instances list`.",
-      "C": "`describe cluster --metrics` is invalid syntax.",
-      "D": "Correct. `kubectl top nodes` (and `kubectl top pods`) provides immediate real-time node resource consumption data."
+      "D": "Running `/proc/cpuinfo` on a local machine shows local laptop processor specs, not remote GKE worker node metrics.",
+      "C": "`--show-cpu` is not a valid flag on `gcloud compute instances list`.",
+      "A": "`describe cluster --metrics` is invalid syntax."
     },
     "gcloudCommand": "kubectl top nodes && kubectl top pods --all-namespaces --sort-by=cpu",
     "architectureComponents": [
@@ -12312,35 +10558,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud storage objects copy database-boot-disk gs://my-snapshots/",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq mk --snapshot database-boot-disk"
       },
       {
         "letter": "B",
-        "text": "gcloud compute disks snapshot database-boot-disk --zone=us-central1-b --snapshot-names=snapshot-pre-upgrade-db",
-        "isTrap": false
+        "text": "gcloud compute disks snapshot database-boot-disk --zone=us-central1-b --snapshot-names=snapshot-pre-upgrade-db"
       },
       {
         "letter": "C",
-        "text": "bq mk --snapshot database-boot-disk",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances snapshot database-host-1 --name=snapshot-pre-upgrade-db"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances snapshot database-host-1 --name=snapshot-pre-upgrade-db",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud storage objects copy database-boot-disk gs://my-snapshots/"
       }
     ],
     "correct": "B",
     "explanation": "`gcloud compute disks snapshot <DISK_NAME> --zone=<ZONE> --snapshot-names=<SNAPSHOT_NAME>` creates a point-in-time incremental backup snapshot of the specified persistent disk.",
     "distractors": {
-      "A": "Cloud Storage copy cannot read raw active persistent disk block storage devices directly.",
-      "B": "Correct. `gcloud compute disks snapshot` is the standard command to capture persistent disk snapshots.",
-      "C": "`bq mk` manages BigQuery tables, not Compute Engine block persistent disks.",
-      "D": "`compute instances snapshot` is non-existent syntax."
+      "D": "Cloud Storage copy cannot read raw active persistent disk block storage devices directly.",
+      "A": "`bq mk` manages BigQuery tables, not Compute Engine block persistent disks.",
+      "C": "`compute instances snapshot` is non-existent syntax."
     },
     "gcloudCommand": "gcloud compute disks snapshot database-boot-disk --zone=us-central1-b --snapshot-names=snapshot-pre-upgrade-db",
     "architectureComponents": [
@@ -12373,26 +10611,19 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A cron script on an e2-micro VM running curl in a loop.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "A cron script on an e2-micro VM running curl in a loop."
       },
       {
         "letter": "B",
-        "text": "A VPC egress firewall rule blocking non-200 packets.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A VPC egress firewall rule blocking non-200 packets."
       },
       {
         "letter": "C",
-        "text": "Cloud Monitoring Uptime Check configured for HTTPS on hostname store.example.com with path /healthz, check frequency 1 minute, and attached to an Alerting Policy with PagerDuty notification channel.",
-        "isTrap": false
+        "text": "Cloud Monitoring Uptime Check configured for HTTPS on hostname store.example.com with path /healthz, check frequency 1 minute, and attached to an Alerting Policy with PagerDuty notification channel."
       },
       {
         "letter": "D",
-        "text": "Cloud Trace latency sampling.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Trace latency sampling."
       }
     ],
     "correct": "C",
@@ -12400,7 +10631,6 @@ window.GCP_ACE_QUESTIONS = [
     "distractors": {
       "A": "Self-hosted curl loops provide single-point monitoring, lack multi-region geographic probes, and require server maintenance.",
       "B": "Firewall rules inspect IP/port headers, not HTTP application response codes.",
-      "C": "Correct. Cloud Monitoring Uptime Checks provide managed, globally distributed health probing with automated alerting.",
       "D": "Cloud Trace samples distributed request execution traces, but does not provide active periodic synthetic health probing."
     },
     "gcloudCommand": "gcloud alpha monitoring uptime create store-uptime --display-name='Store Uptime' --hostname='store.example.com' --path='/healthz' --check-interval=1m",
@@ -12434,26 +10664,19 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute disks snapshot delete --older-than=90d",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute disks snapshot delete --older-than=90d"
       },
       {
         "letter": "B",
-        "text": "bq query 'DELETE FROM analytics.events WHERE _PARTITIONDATE < DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)' in a cron script",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "bq query 'DELETE FROM analytics.events WHERE _PARTITIONDATE < DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)' in a cron script"
       },
       {
         "letter": "C",
-        "text": "gcloud storage buckets update gs://analytics-events --lifecycle-file=90d.json",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets update gs://analytics-events --lifecycle-file=90d.json"
       },
       {
         "letter": "D",
-        "text": "bq update --time_partitioning_expiration=7776000 analytics.events",
-        "isTrap": false
+        "text": "bq update --time_partitioning_expiration=7776000 analytics.events"
       }
     ],
     "correct": "D",
@@ -12461,8 +10684,7 @@ window.GCP_ACE_QUESTIONS = [
     "distractors": {
       "A": "`compute disks snapshot delete` manages Compute Engine disk backups, not BigQuery table data.",
       "B": "Running recurring SQL DELETE queries incurs ongoing query processing costs and requires maintenance of external cron runners.",
-      "C": "Cloud Storage lifecycle policies apply to Cloud Storage object buckets, not BigQuery internal managed tables.",
-      "D": "Correct. `bq update --time_partitioning_expiration=7776000` enables native automated zero-cost partition purging."
+      "C": "Cloud Storage lifecycle policies apply to Cloud Storage object buckets, not BigQuery internal managed tables."
     },
     "gcloudCommand": "bq update --time_partitioning_expiration=7776000 analytics.events",
     "architectureComponents": [
@@ -12495,35 +10717,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Google Cloud Trace.",
-        "isTrap": false
+        "text": "Compute Engine Serial Port Console."
       },
       {
         "letter": "B",
-        "text": "VPC Flow Logs in Cloud Logging.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Google Cloud Storage Explorer."
       },
       {
         "letter": "C",
-        "text": "Compute Engine Serial Port Console.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "VPC Flow Logs in Cloud Logging."
       },
       {
         "letter": "D",
-        "text": "Google Cloud Storage Explorer.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Google Cloud Trace."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Google Cloud Trace is a distributed tracing system that collects latency data from App Engine, Cloud Run, GKE, and VMs. It renders end-to-end request waterfall diagrams displaying individual span durations, identifying exactly which microservice or database call caused latency.",
     "distractors": {
-      "A": "Correct. Cloud Trace provides distributed request span waterfall visualizations to pinpoint latency bottlenecks.",
-      "B": "VPC Flow Logs record network connection 5-tuples and bytes, not application-level distributed code tracing spans.",
-      "C": "Serial port console displays low-level Linux VM boot logs and hardware kernel messages.",
-      "D": "Cloud Storage Explorer browses object files in buckets."
+      "C": "VPC Flow Logs record network connection 5-tuples and bytes, not application-level distributed code tracing spans.",
+      "A": "Serial port console displays low-level Linux VM boot logs and hardware kernel messages.",
+      "B": "Cloud Storage Explorer browses object files in buckets."
     },
     "gcloudCommand": "gcloud services enable cloudtrace.googleapis.com",
     "architectureComponents": [
@@ -12557,34 +10771,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Run kubectl delete deployment api-deployment && kubectl create deployment api-deployment.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run kubectl rollout history deployment api-deployment followed by kubectl rollout undo deployment api-deployment."
       },
       {
         "letter": "B",
-        "text": "Run kubectl rollout history deployment api-deployment followed by kubectl rollout undo deployment api-deployment.",
-        "isTrap": false
+        "text": "Run gcloud container clusters update --rollback=api-deployment."
       },
       {
         "letter": "C",
-        "text": "Run gcloud container clusters update --rollback=api-deployment.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run kubectl delete deployment api-deployment && kubectl create deployment api-deployment."
       },
       {
         "letter": "D",
-        "text": "Run gcloud compute instances reset-all.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Run gcloud compute instances reset-all."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "`kubectl rollout history deployment <NAME>` displays past deployment revisions, and `kubectl rollout undo deployment <NAME>` rolls back the workload to the previous revision instantly without recreating the deployment object.",
     "distractors": {
-      "A": "Deleting and recreating the deployment causes downtime and destroys deployment revision history.",
-      "B": "Correct. `kubectl rollout history` and `kubectl rollout undo` are the standard declarative Kubernetes commands to manage and reverse rollouts.",
-      "C": "`clusters update --rollback` is non-existent CLI syntax.",
+      "C": "Deleting and recreating the deployment causes downtime and destroys deployment revision history.",
+      "B": "`clusters update --rollback` is non-existent CLI syntax.",
       "D": "Resetting VMs restarts worker node hardware, but does not rollback Kubernetes deployment container images."
     },
     "gcloudCommand": "kubectl rollout history deployment api-deployment && kubectl rollout undo deployment api-deployment",
@@ -12617,35 +10823,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "An App Engine version configuration.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A Compute Engine Machine Image (via gcloud compute machine-images create)."
       },
       {
         "letter": "B",
-        "text": "A standard Zonal Persistent Disk Snapshot of the boot disk only.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A standard Zonal Persistent Disk Snapshot of the boot disk only."
       },
       {
         "letter": "C",
-        "text": "A Compute Engine Machine Image (via gcloud compute machine-images create).",
-        "isTrap": false
+        "text": "A Cloud Storage bucket containing tar.gz archives of /etc."
       },
       {
         "letter": "D",
-        "text": "A Cloud Storage bucket containing tar.gz archives of /etc.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "An App Engine version configuration."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Compute Engine Machine Images capture all configuration, metadata, permissions, and multi-disk persistent storage data of a VM in a single comprehensive resource, making them superior to single-disk snapshots for complete system duplication and backup.",
     "distractors": {
-      "A": "App Engine manages serverless web runtimes, not Compute Engine virtual machine images.",
+      "D": "App Engine manages serverless web runtimes, not Compute Engine virtual machine images.",
       "B": "A single persistent disk snapshot only captures one disk and omits secondary disks, instance metadata, and network tags.",
-      "C": "Correct. Machine Images store all disk data (boot + attached disks) and VM metadata for instant full VM cloning.",
-      "D": "Tar archives of `/etc` do not preserve partition tables, bootloaders, or attached disk storage blocks."
+      "C": "Tar archives of `/etc` do not preserve partition tables, bootloaders, or attached disk storage blocks."
     },
     "gcloudCommand": "gcloud compute machine-images create app-server-golden-image --source-instance=app-server-1 --source-instance-zone=us-central1-a",
     "architectureComponents": [
@@ -12677,35 +10875,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Billing Reports.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud DNS Analytics."
       },
       {
         "letter": "B",
-        "text": "Cloud DNS Analytics.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Google Cloud Bigtable."
       },
       {
         "letter": "C",
-        "text": "Google Cloud Bigtable.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Google Cloud Error Reporting."
       },
       {
         "letter": "D",
-        "text": "Google Cloud Error Reporting.",
-        "isTrap": false
+        "text": "Cloud Billing Reports."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Google Cloud Error Reporting automatically aggregates, counts, and groups unhandled runtime exceptions and stack traces from Cloud Logging (Java, Python, Node.js, Go, PHP, Ruby, .NET) into a centralized dashboard with notification integrations.",
     "distractors": {
-      "A": "Cloud Billing reports monetary infrastructure spend, not application software crash stack traces.",
-      "B": "Cloud DNS manages domain name resolution, not application runtime errors.",
-      "C": "Cloud Bigtable is a NoSQL wide-column database and does not provide exception aggregation dashboards.",
-      "D": "Correct. Cloud Error Reporting groups application crashes and stack traces automatically from log streams."
+      "D": "Cloud Billing reports monetary infrastructure spend, not application software crash stack traces.",
+      "A": "Cloud DNS manages domain name resolution, not application runtime errors.",
+      "B": "Cloud Bigtable is a NoSQL wide-column database and does not provide exception aggregation dashboards."
     },
     "gcloudCommand": "gcloud services enable clouderrorreporting.googleapis.com",
     "architectureComponents": [
@@ -12738,35 +10928,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud sql instances patch prod-mysql-db --storage-size=500GB",
-        "isTrap": false
+        "text": "gcloud sql instances patch prod-mysql-db --storage-size=500GB"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances restart prod-mysql-db --expand-disk=500",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute disks resize prod-mysql-db --size=500GB"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks resize prod-mysql-db --size=500GB",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq update --storage_gb=500 prod-mysql-db"
       },
       {
         "letter": "D",
-        "text": "bq update --storage_gb=500 prod-mysql-db",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql instances restart prod-mysql-db --expand-disk=500"
       }
     ],
     "correct": "A",
     "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --storage-size=<SIZE_IN_GB>` increases the persistent disk capacity of a Cloud SQL instance online without downtime. Note that Cloud SQL storage can only be scaled up, never down.",
     "distractors": {
-      "A": "Correct. `gcloud sql instances patch --storage-size=500GB` expands the database storage online.",
-      "B": "`--expand-disk` is not a valid flag on `gcloud sql instances restart`.",
-      "C": "Underlying Cloud SQL disks are managed by Google and cannot be directly targeted with `gcloud compute disks resize`.",
-      "D": "`bq update` manages BigQuery tables, not Cloud SQL instances."
+      "D": "`--expand-disk` is not a valid flag on `gcloud sql instances restart`.",
+      "B": "Underlying Cloud SQL disks are managed by Google and cannot be directly targeted with `gcloud compute disks resize`.",
+      "C": "`bq update` manages BigQuery tables, not Cloud SQL instances."
     },
     "gcloudCommand": "gcloud sql instances patch prod-mysql-db --storage-size=500GB",
     "architectureComponents": [
@@ -12798,34 +10980,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud container clusters ssh web-app-8594-xyz",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl exec -it web-app-8594-xyz --namespace=staging -- /bin/bash"
       },
       {
         "letter": "B",
-        "text": "kubectl exec -it web-app-8594-xyz --namespace=staging -- /bin/bash",
-        "isTrap": false
+        "text": "gcloud compute ssh web-app-8594-xyz"
       },
       {
         "letter": "C",
-        "text": "gcloud compute ssh web-app-8594-xyz",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud container clusters ssh web-app-8594-xyz"
       },
       {
         "letter": "D",
-        "text": "kubectl attach web-app-8594-xyz --restart",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl attach web-app-8594-xyz --restart"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "`kubectl exec -it <POD_NAME> -- <COMMAND>` opens an interactive TTY terminal session directly inside the running container namespace, allowing developers to execute diagnostic commands in real time.",
     "distractors": {
-      "A": "`gcloud container clusters ssh` is not a valid gcloud command.",
-      "B": "Correct. `kubectl exec -it -- /bin/bash` opens an interactive shell session inside the target container.",
-      "C": "`gcloud compute ssh` connects to the underlying VM host operating system, not the container namespace inside the Pod.",
+      "C": "`gcloud container clusters ssh` is not a valid gcloud command.",
+      "B": "`gcloud compute ssh` connects to the underlying VM host operating system, not the container namespace inside the Pod.",
       "D": "`kubectl attach` connects to the main container stdout stream rather than spawning a new interactive shell process."
     },
     "gcloudCommand": "kubectl exec -it web-app-8594-xyz --namespace=staging -- /bin/bash",
@@ -12859,35 +11033,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an IAM Deny policy on port 22.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Enable OS Login at the project metadata level by setting enable-oslogin=TRUE."
       },
       {
         "letter": "B",
-        "text": "Disable Compute Engine networking.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Add individual developer SSH public keys to the project-wide metadata manually."
       },
       {
         "letter": "C",
-        "text": "Enable OS Login at the project metadata level by setting enable-oslogin=TRUE.",
-        "isTrap": false
+        "text": "Disable Compute Engine networking."
       },
       {
         "letter": "D",
-        "text": "Add individual developer SSH public keys to the project-wide metadata manually.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create an IAM Deny policy on port 22."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Enabling OS Login (`enable-oslogin=TRUE`) links Linux user accounts and SSH keys directly to Google Cloud Identity accounts and IAM roles (e.g. `roles/compute.osAdminLogin`, `roles/compute.osLogin`), enforcing central revocation, 2FA, and eliminating unmanaged static SSH keys.",
     "distractors": {
-      "A": "Denying port 22 completely blocks all SSH management traffic.",
-      "B": "Disabling networking breaks all instance communications and services.",
-      "C": "Correct. `enable-oslogin=TRUE` enforces centralized Cloud Identity POSIX account and 2FA authentication.",
-      "D": "Project-wide metadata SSH keys bypass IAM role governance and lack 2FA enforcement."
+      "D": "Denying port 22 completely blocks all SSH management traffic.",
+      "C": "Disabling networking breaks all instance communications and services.",
+      "B": "Project-wide metadata SSH keys bypass IAM role governance and lack 2FA enforcement."
     },
     "gcloudCommand": "gcloud compute project-info add-metadata --metadata=enable-oslogin=TRUE",
     "architectureComponents": [
@@ -12921,34 +11087,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances delete frontend-mig",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instances delete frontend-mig"
       },
       {
         "letter": "B",
-        "text": "kubectl describe healthchecks",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instance-groups managed list-instances frontend-mig --region=us-central1"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instance-groups managed list-instances frontend-mig --region=us-central1",
-        "isTrap": false
+        "text": "kubectl describe healthchecks"
       },
       {
         "letter": "D",
-        "text": "bq show instance_health",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq show instance_health"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "`gcloud compute instance-groups managed list-instances <MIG_NAME>` lists all member VM instances along with their current instance status (`RUNNING`), current action (`NONE`, `CREATING`, `RECREATING`), and their detailed health state (`HEALTHY`, `UNHEALTHY`, `TIMEOUT`).",
     "distractors": {
       "A": "Deleting the MIG causes total application outage.",
-      "B": "`kubectl describe healthchecks` is invalid syntax for GCE MIGs.",
-      "C": "Correct. `instance-groups managed list-instances` shows member instance health check results and autohealing actions.",
+      "C": "`kubectl describe healthchecks` is invalid syntax for GCE MIGs.",
       "D": "BigQuery does not store real-time Compute Engine MIG instance health state."
     },
     "gcloudCommand": "gcloud compute instance-groups managed list-instances frontend-mig --region=us-central1",
@@ -12983,35 +11141,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Run gcloud container clusters delete prod-cluster.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run kubectl delete pods --all --force."
       },
       {
         "letter": "B",
-        "text": "Run gcloud compute instances delete gke-prod-pool-1-abc1.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run kubectl cordon gke-prod-pool-1-abc1 followed by kubectl drain gke-prod-pool-1-abc1 --ignore-daemonsets --delete-emptydir-data."
       },
       {
         "letter": "C",
-        "text": "Run kubectl delete pods --all --force.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud container clusters delete prod-cluster."
       },
       {
         "letter": "D",
-        "text": "Run kubectl cordon gke-prod-pool-1-abc1 followed by kubectl drain gke-prod-pool-1-abc1 --ignore-daemonsets --delete-emptydir-data.",
-        "isTrap": false
+        "text": "Run gcloud compute instances delete gke-prod-pool-1-abc1."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`kubectl cordon <NODE>` marks the node as unschedulable (preventing new pods), and `kubectl drain <NODE>` gracefully evicts existing workloads following PodDisruptionBudgets, moving them safely to other cluster nodes.",
     "distractors": {
-      "A": "Deleting the cluster destroys the entire production infrastructure.",
-      "B": "Deleting the VM directly terminates workloads abruptly without graceful SIGTERM shutdown or budget validation.",
-      "C": "Deleting all pods across the cluster causes cluster-wide service downtime.",
-      "D": "Correct. `cordon` + `drain` is the standard Kubernetes operational procedure for safe node maintenance."
+      "C": "Deleting the cluster destroys the entire production infrastructure.",
+      "D": "Deleting the VM directly terminates workloads abruptly without graceful SIGTERM shutdown or budget validation.",
+      "A": "Deleting all pods across the cluster causes cluster-wide service downtime."
     },
     "gcloudCommand": "kubectl cordon gke-prod-pool-1-abc1 && kubectl drain gke-prod-pool-1-abc1 --ignore-daemonsets --delete-emptydir-data",
     "architectureComponents": [
@@ -13043,35 +11193,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Run a Network Management Connectivity Test (via gcloud network-management connectivity-tests create) between the source VM IP and destination database IP on port 5432.",
-        "isTrap": false
+        "text": "Deploy an unmanaged traceroute VM in the public subnet."
       },
       {
         "letter": "B",
-        "text": "Delete and recreate both VPC networks.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Disable all firewall rules in both VPCs."
       },
       {
         "letter": "C",
-        "text": "Disable all firewall rules in both VPCs.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Delete and recreate both VPC networks."
       },
       {
         "letter": "D",
-        "text": "Deploy an unmanaged traceroute VM in the public subnet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run a Network Management Connectivity Test (via gcloud network-management connectivity-tests create) between the source VM IP and destination database IP on port 5432."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Network Intelligence Center Connectivity Tests perform static graph analysis of the VPC configuration (routes, firewalls, peerings, Cloud Routers) and dynamic live packet tracing to identify the exact firewall rule or route dropping packets.",
     "distractors": {
-      "A": "Correct. Connectivity Tests provide hop-by-hop analysis of VPC firewall and routing policies to pinpoint reachability failures.",
-      "B": "Recreating networks destroys IP assignments and causes immense downtime.",
-      "C": "Disabling firewall rules creates catastrophic security vulnerabilities.",
-      "D": "Standard traceroute does not analyze internal GCP SDN control plane firewall drop states accurately."
+      "C": "Recreating networks destroys IP assignments and causes immense downtime.",
+      "B": "Disabling firewall rules creates catastrophic security vulnerabilities.",
+      "A": "Standard traceroute does not analyze internal GCP SDN control plane firewall drop states accurately."
     },
     "gcloudCommand": "gcloud network-management connectivity-tests create vpc-a-to-b-test --source-instance=projects/p1/zones/us-central1-a/instances/app-vm --destination-ip=10.20.0.5 --destination-port=5432 --protocol=TCP",
     "architectureComponents": [
@@ -13104,35 +11246,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "compute.googleapis.com/instance/cpu/usage_time",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "storage.googleapis.com/storage/object_count"
       },
       {
         "letter": "B",
-        "text": "cloudsql.googleapis.com/database/cpu/utilization",
-        "isTrap": false
+        "text": "logging.googleapis.com/byte_count"
       },
       {
         "letter": "C",
-        "text": "storage.googleapis.com/storage/object_count",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "cloudsql.googleapis.com/database/cpu/utilization"
       },
       {
         "letter": "D",
-        "text": "logging.googleapis.com/byte_count",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "compute.googleapis.com/instance/cpu/usage_time"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "The official Cloud Monitoring metric for Cloud SQL instance CPU load is `cloudsql.googleapis.com/database/cpu/utilization` (fraction between 0.0 and 1.0).",
     "distractors": {
-      "A": "`compute.googleapis.com/instance/cpu/usage_time` measures raw Compute Engine VMs, not managed Cloud SQL instances.",
-      "B": "Correct. `cloudsql.googleapis.com/database/cpu/utilization` is the native metric measuring Cloud SQL CPU usage percentage.",
-      "C": "`storage/object_count` counts files in Cloud Storage buckets.",
-      "D": "`logging/byte_count` measures log volume ingestion."
+      "D": "`compute.googleapis.com/instance/cpu/usage_time` measures raw Compute Engine VMs, not managed Cloud SQL instances.",
+      "A": "`storage/object_count` counts files in Cloud Storage buckets.",
+      "B": "`logging/byte_count` measures log volume ingestion."
     },
     "gcloudCommand": "gcloud monitoring metrics-scopes list",
     "architectureComponents": [
@@ -13166,35 +11300,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Upload the VM to BigQuery for analysis.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "SSH into the VM over public internet using port 80."
       },
       {
         "letter": "B",
-        "text": "Delete the VM and recreate it from a Debian image.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete the VM and recreate it from a Debian image."
       },
       {
         "letter": "C",
-        "text": "Enable serial port access by setting serial-port-enable=1 in instance metadata, and connect using gcloud compute connect-to-serial-port db-server-1 --zone=us-central1-a --port=1.",
-        "isTrap": false
+        "text": "Enable serial port access by setting serial-port-enable=1 in instance metadata, and connect using gcloud compute connect-to-serial-port db-server-1 --zone=us-central1-a --port=1."
       },
       {
         "letter": "D",
-        "text": "SSH into the VM over public internet using port 80.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Upload the VM to BigQuery for analysis."
       }
     ],
     "correct": "C",
     "explanation": "Interactive serial console access (`serial-port-enable=1`) allows direct terminal access to the VM's serial ports (Ports 1-4) via `gcloud compute connect-to-serial-port`, enabling low-level boot diagnostics, GRUB menu interaction, and recovery of unbootable VMs.",
     "distractors": {
-      "A": "BigQuery is an analytical SQL database and cannot ingest or run virtual machine kernels.",
+      "D": "BigQuery is an analytical SQL database and cannot ingest or run virtual machine kernels.",
       "B": "Deleting the VM destroys stored database data and local configuration.",
-      "C": "Correct. `serial-port-enable=1` + `connect-to-serial-port` provides out-of-band management for unbootable instances.",
-      "D": "SSH cannot connect if the operating system kernel failed to boot."
+      "A": "SSH cannot connect if the operating system kernel failed to boot."
     },
     "gcloudCommand": "gcloud compute instances add-metadata db-server-1 --zone=us-central1-a --metadata=serial-port-enable=1 && gcloud compute connect-to-serial-port db-server-1 --zone=us-central1-a --port=1",
     "architectureComponents": [
@@ -13227,35 +11353,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Export the data to CSV in Cloud Storage before querying.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Add LIMIT 10 to the subquery."
       },
       {
         "letter": "B",
-        "text": "Convert the BigQuery dataset to Cloud Datastore.",
-        "isTrap": true,
-        "trapType": "non_relational_fit"
+        "text": "Export the data to CSV in Cloud Storage before querying."
       },
       {
         "letter": "C",
-        "text": "Add LIMIT 10 to the subquery.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cluster the underlying table by the JOIN and GROUP BY keys to minimize shuffle repartitioning overhead, or rewrite the query to avoid high-cardinality CROSS JOINs."
       },
       {
         "letter": "D",
-        "text": "Cluster the underlying table by the JOIN and GROUP BY keys to minimize shuffle repartitioning overhead, or rewrite the query to avoid high-cardinality CROSS JOINs.",
-        "isTrap": false
+        "text": "Convert the BigQuery dataset to Cloud Datastore."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "High wait and compute times in BigQuery execution stages with repartitioning indicate shuffle bottlenecks and data skew caused by non-clustered join/group-by operations or Cartesian products (CROSS JOIN). Clustering the table on join keys collocates related rows and eliminates data shuffling across slots.",
     "distractors": {
-      "A": "Querying raw CSV files in Cloud Storage has significantly worse performance than native Capacitor columnar storage.",
-      "B": "Cloud Datastore is a transactional NoSQL database that cannot process multi-terabyte analytical joins.",
-      "C": "`LIMIT` inside subqueries is evaluated after full table scans and does not eliminate join skew.",
-      "D": "Correct. Clustering on join/group keys collocates data, reducing expensive shuffle repartitioning across slots."
+      "B": "Querying raw CSV files in Cloud Storage has significantly worse performance than native Capacitor columnar storage.",
+      "D": "Cloud Datastore is a transactional NoSQL database that cannot process multi-terabyte analytical joins.",
+      "A": "`LIMIT` inside subqueries is evaluated after full table scans and does not eliminate join skew."
     },
     "gcloudCommand": "bq query --use_legacy_sql=false --format=prettyjson 'EXPLAIN SELECT * FROM `analytics.orders` o JOIN `analytics.users` u ON o.user_id = u.id'",
     "architectureComponents": [
@@ -13287,35 +11405,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instance-groups managed recreate-instances web-mig --region=us-central1 --instances=web-mig-4x8z",
-        "isTrap": false
+        "text": "gcloud compute instance-groups managed delete web-mig"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances delete web-mig-4x8z",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instance-groups managed recreate-instances web-mig --region=us-central1 --instances=web-mig-4x8z"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instance-groups managed delete web-mig",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl delete pod web-mig-4x8z"
       },
       {
         "letter": "D",
-        "text": "kubectl delete pod web-mig-4x8z",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances delete web-mig-4x8z"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "`gcloud compute instance-groups managed recreate-instances <MIG_NAME> --instances=<INSTANCE_LIST>` instructs the MIG control plane to stop, delete, and recreate the specified member VM instances from the current instance template.",
     "distractors": {
-      "A": "Correct. `recreate-instances` is the official MIG command to replace specific damaged VM members.",
-      "B": "Deleting the instance manually with `instances delete` causes the MIG to report an instance error before recreating.",
-      "C": "Deleting the entire MIG destroys all other healthy instances and causes total application outage.",
-      "D": "`kubectl delete pod` is for Kubernetes pods, not Compute Engine virtual machine instances."
+      "D": "Deleting the instance manually with `instances delete` causes the MIG to report an instance error before recreating.",
+      "A": "Deleting the entire MIG destroys all other healthy instances and causes total application outage.",
+      "C": "`kubectl delete pod` is for Kubernetes pods, not Compute Engine virtual machine instances."
     },
     "gcloudCommand": "gcloud compute instance-groups managed recreate-instances web-mig --region=us-central1 --instances=web-mig-4x8z",
     "architectureComponents": [
@@ -13348,35 +11458,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a Compute Engine instance group to crawl the buckets.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gsutil ls -lR gs://bucket/** in a daily bash script."
       },
       {
         "letter": "B",
-        "text": "Configure Cloud Storage Insights inventory reports to automatically generate daily object metadata CSV/Parquet files in a target analysis bucket.",
-        "isTrap": false
+        "text": "SSH into each storage bucket and run ls -la."
       },
       {
         "letter": "C",
-        "text": "Run gsutil ls -lR gs://bucket/** in a daily bash script.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy a Compute Engine instance group to crawl the buckets."
       },
       {
         "letter": "D",
-        "text": "SSH into each storage bucket and run ls -la.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Configure Cloud Storage Insights inventory reports to automatically generate daily object metadata CSV/Parquet files in a target analysis bucket."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Cloud Storage Insights provides managed inventory reports that deliver daily or weekly CSV or Parquet files containing comprehensive object metadata (storage class, size, timestamps, CRC32c) directly into a destination bucket for fast BigQuery analysis without incurring millions of List API charges.",
     "distractors": {
-      "A": "Custom VM crawlers add compute cost and operational maintenance compared to native Storage Insights.",
-      "B": "Correct. Storage Insights inventory reports automate massive-scale metadata exports without custom scripting or List API rate limits.",
-      "C": "Running `gsutil ls -lR` over 50 million objects takes hours, incurs massive List API costs, and fails on network timeouts.",
-      "D": "Cloud Storage buckets are object endpoints and do not support SSH shell connections."
+      "C": "Custom VM crawlers add compute cost and operational maintenance compared to native Storage Insights.",
+      "A": "Running `gsutil ls -lR` over 50 million objects takes hours, incurs massive List API costs, and fails on network timeouts.",
+      "B": "Cloud Storage buckets are object endpoints and do not support SSH shell connections."
     },
     "gcloudCommand": "gcloud storage insights inventory-reports create --source-bucket=corp-media-vault --destination-bucket=corp-storage-analytics --schedule-frequency=daily --format=CSV",
     "architectureComponents": [
@@ -13410,35 +11512,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "VPC Flow Logs.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud DNS Analytics."
       },
       {
         "letter": "B",
-        "text": "Cloud DNS Analytics.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Google Cloud Armor."
       },
       {
         "letter": "C",
-        "text": "Google Cloud Profiler.",
-        "isTrap": false
+        "text": "Google Cloud Profiler."
       },
       {
         "letter": "D",
-        "text": "Google Cloud Armor.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "VPC Flow Logs."
       }
     ],
     "correct": "C",
     "explanation": "Google Cloud Profiler is a continuous statistical code profiling tool that captures CPU and heap memory allocations across production services, rendering interactive Flame Graphs that highlight exact code functions consuming resources.",
     "distractors": {
-      "A": "VPC Flow Logs inspect network IP packet headers, not application code memory allocations.",
-      "B": "Cloud DNS manages domain name lookups.",
-      "C": "Correct. Cloud Profiler generates interactive Flame Graphs showing CPU/memory usage per function in production.",
-      "D": "Cloud Armor is an HTTP WAF security service for load balancers."
+      "D": "VPC Flow Logs inspect network IP packet headers, not application code memory allocations.",
+      "A": "Cloud DNS manages domain name lookups.",
+      "B": "Cloud Armor is an HTTP WAF security service for load balancers."
     },
     "gcloudCommand": "gcloud services enable cloudprofiler.googleapis.com",
     "architectureComponents": [
@@ -13471,35 +11565,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud sql instances patch iot-telemetry --num-nodes=12",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances create bigtable-node-[5-12]"
       },
       {
         "letter": "B",
-        "text": "cbt updatecluster cluster-us-central1 --nodes=12",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud bigtable clusters update cluster-us-central1 --instance=iot-telemetry --num-nodes=12"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances create bigtable-node-[5-12]",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances patch iot-telemetry --num-nodes=12"
       },
       {
         "letter": "D",
-        "text": "gcloud bigtable clusters update cluster-us-central1 --instance=iot-telemetry --num-nodes=12",
-        "isTrap": false
+        "text": "cbt updatecluster cluster-us-central1 --nodes=12"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`gcloud bigtable clusters update <CLUSTER_ID> --instance=<INSTANCE_ID> --num-nodes=<COUNT>` dynamically scales the Bigtable cluster node count in seconds without restarting the cluster or interrupting streaming writes.",
     "distractors": {
-      "A": "`gcloud sql` manages relational SQL databases, not Bigtable NoSQL wide-column clusters.",
-      "B": "`cbt` CLI is for data and table schema operations, not cluster infrastructure node scaling.",
-      "C": "Compute Engine instance creation does not attach worker nodes to Cloud Bigtable clusters.",
-      "D": "Correct. `gcloud bigtable clusters update --num-nodes=12` immediately scales compute nodes online."
+      "C": "`gcloud sql` manages relational SQL databases, not Bigtable NoSQL wide-column clusters.",
+      "D": "`cbt` CLI is for data and table schema operations, not cluster infrastructure node scaling.",
+      "A": "Compute Engine instance creation does not attach worker nodes to Cloud Bigtable clusters."
     },
     "gcloudCommand": "gcloud bigtable clusters update cluster-us-central1 --instance=iot-telemetry --num-nodes=12",
     "architectureComponents": [
@@ -13531,35 +11617,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances update --count-errors",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances update --count-errors"
       },
       {
         "letter": "B",
-        "text": "gcloud logging metrics create payment_failure_count --description='Count of payment failure errors' --log-filter='textPayload:\"PAYMENT_FAILURE\"'",
-        "isTrap": false
+        "text": "bq mk --metric payment_failure_count"
       },
       {
         "letter": "C",
-        "text": "bq mk --metric payment_failure_count",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl autoscale deployment --metric=payment_failure"
       },
       {
         "letter": "D",
-        "text": "kubectl autoscale deployment --metric=payment_failure",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud logging metrics create payment_failure_count --description='Count of payment failure errors' --log-filter='textPayload:\"PAYMENT_FAILURE\"'"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`gcloud logging metrics create <METRIC_NAME> --log-filter=<FILTER>` creates a Cloud Logging Log-Based Metric, turning matching log lines into numerical metrics that appear in Cloud Monitoring for charting and alerting.",
     "distractors": {
       "A": "`--count-errors` is not a valid Compute Engine flag.",
-      "B": "Correct. `gcloud logging metrics create` creates counter or distribution metrics from log stream patterns.",
-      "C": "`bq mk` is for BigQuery database resources.",
-      "D": "`kubectl autoscale` configures Pod autoscaling, not Cloud Monitoring metric definitions."
+      "B": "`bq mk` is for BigQuery database resources.",
+      "C": "`kubectl autoscale` configures Pod autoscaling, not Cloud Monitoring metric definitions."
     },
     "gcloudCommand": "gcloud logging metrics create payment_failure_count --description='Count of payment failure errors' --log-filter='textPayload:\"PAYMENT_FAILURE\"'",
     "architectureComponents": [
@@ -13592,34 +11670,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Run gsutil mv /dev/sdb server-new:/dev/sdb.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run bq cp data-volume-1 server-new."
       },
       {
         "letter": "B",
-        "text": "Run bq cp data-volume-1 server-new.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Run gsutil mv /dev/sdb server-new:/dev/sdb."
       },
       {
         "letter": "C",
-        "text": "Run gcloud compute instances detach-disk server-old --disk=data-volume-1 --zone=us-central1-a followed by gcloud compute instances attach-disk server-new --disk=data-volume-1 --zone=us-central1-a.",
-        "isTrap": false
+        "text": "Run gcloud compute instances detach-disk server-old --disk=data-volume-1 --zone=us-central1-a followed by gcloud compute instances attach-disk server-new --disk=data-volume-1 --zone=us-central1-a."
       },
       {
         "letter": "D",
-        "text": "Run gcloud compute disks delete data-volume-1 && gcloud compute disks create data-volume-1.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud compute disks delete data-volume-1 && gcloud compute disks create data-volume-1."
       }
     ],
     "correct": "C",
     "explanation": "Moving a Persistent Disk between VMs in the same zone involves detaching it from the source instance (`gcloud compute instances detach-disk`) and attaching it to the target instance (`gcloud compute instances attach-disk`).",
     "distractors": {
-      "A": "gsutil does not copy raw Linux block device nodes over the network.",
-      "B": "`bq cp` copies BigQuery tables, not Compute Engine persistent disks.",
-      "C": "Correct. Detaching from the old instance and attaching to the new instance moves the block storage device without data transfer overhead.",
+      "B": "gsutil does not copy raw Linux block device nodes over the network.",
+      "A": "`bq cp` copies BigQuery tables, not Compute Engine persistent disks.",
       "D": "Deleting the disk destroys all 500 GB of stored report data permanently."
     },
     "gcloudCommand": "gcloud compute instances detach-disk server-old --disk=data-volume-1 --zone=us-central1-a && gcloud compute instances attach-disk server-new --disk=data-volume-1 --zone=us-central1-a",
@@ -13652,35 +11722,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Edit ~/.kube/config manually and paste your Google Cloud password.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Edit ~/.kube/config manually and paste your Google Cloud password."
       },
       {
         "letter": "B",
-        "text": "Run kubectl config set-cluster prod-cluster --server=http://localhost:8080.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "SSH into the GKE master node directly."
       },
       {
         "letter": "C",
-        "text": "SSH into the GKE master node directly.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Run gcloud container clusters get-credentials prod-cluster --region=us-central1."
       },
       {
         "letter": "D",
-        "text": "Run gcloud container clusters get-credentials prod-cluster --region=us-central1.",
-        "isTrap": false
+        "text": "Run kubectl config set-cluster prod-cluster --server=http://localhost:8080."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "`gcloud container clusters get-credentials <CLUSTER_NAME> --region=<REGION>` retrieves cluster control plane endpoint information and generates an authentication token in `~/.kube/config`, configuring `kubectl` to communicate with the GKE cluster.",
     "distractors": {
       "A": "Kubernetes uses OAuth tokens and certs; hardcoding passwords into kubeconfig is invalid and insecure.",
-      "B": "Pointing server to localhost:8080 points to your local machine, where no Kubernetes API server is running.",
-      "C": "GKE master nodes are fully managed by Google and do not permit direct SSH access.",
-      "D": "Correct. `gcloud container clusters get-credentials` configures local kubeconfig contexts automatically."
+      "D": "Pointing server to localhost:8080 points to your local machine, where no Kubernetes API server is running.",
+      "B": "GKE master nodes are fully managed by Google and do not permit direct SSH access."
     },
     "gcloudCommand": "gcloud container clusters get-credentials prod-cluster --region=us-central1",
     "architectureComponents": [
@@ -13713,33 +11775,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instance-groups managed abandon-instances worker-mig --region=us-central1 --instances=worker-mig-7abc",
-        "isTrap": false
+        "text": "kubectl cordon worker-mig-7abc"
       },
       {
         "letter": "B",
-        "text": "kubectl cordon worker-mig-7abc",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instance-groups managed abandon-instances worker-mig --region=us-central1 --instances=worker-mig-7abc"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instance-groups managed delete-instances worker-mig --instances=worker-mig-7abc",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instance-groups managed delete-instances worker-mig --instances=worker-mig-7abc"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances stop worker-mig-7abc",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances stop worker-mig-7abc"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "`gcloud compute instance-groups managed abandon-instances <MIG_NAME> --instances=<INSTANCE>` removes the VM from the Managed Instance Group without deleting the underlying VM. The instance becomes a standalone VM that can be inspected without being terminated or auto-healed by the MIG.",
     "distractors": {
-      "A": "Correct. `abandon-instances` detaches the instance from the MIG while keeping the VM running for forensic debugging.",
-      "B": "`kubectl cordon` is for Kubernetes nodes, not GCE VM instance groups.",
+      "A": "`kubectl cordon` is for Kubernetes nodes, not GCE VM instance groups.",
       "C": "`delete-instances` deletes the VM immediately, destroying the memory state needed for forensics.",
       "D": "Stopping the instance causes the MIG auto-healer to detect an unhealthy VM and immediately recreate/delete it."
     },
@@ -13773,33 +11827,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances update db-replica-uswest1 --role=master",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances promote-replica db-replica-uswest1"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances promote-replica db-replica-uswest1",
-        "isTrap": false
+        "text": "gcloud compute instances update db-replica-uswest1 --role=master"
       },
       {
         "letter": "C",
-        "text": "bq restore db-replica-uswest1",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq restore db-replica-uswest1"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances restart db-replica-uswest1 --master",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances restart db-replica-uswest1 --master"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "`gcloud sql instances promote-replica <REPLICA_NAME>` stops replication from the primary and promotes the read replica into an independent, standalone read-write primary Cloud SQL instance.",
     "distractors": {
-      "A": "`compute instances update` manages Compute Engine VMs, not Cloud SQL database replication topologies.",
-      "B": "Correct. `gcloud sql instances promote-replica` promotes the replica to an independent primary database.",
+      "B": "`compute instances update` manages Compute Engine VMs, not Cloud SQL database replication topologies.",
       "C": "BigQuery (`bq`) does not manage Cloud SQL relational replica promotions.",
       "D": "`--master` is not a valid flag on `instances restart`."
     },
@@ -13834,35 +11880,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl scale node-pool worker-pool --nodes=10",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl scale node-pool worker-pool --nodes=10"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances resize worker-pool --size=10",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq update --nodes=10 worker-pool"
       },
       {
         "letter": "C",
-        "text": "gcloud container clusters resize prod-cluster --node-pool=worker-pool --num-nodes=10 --region=us-central1",
-        "isTrap": false
+        "text": "gcloud compute instances resize worker-pool --size=10"
       },
       {
         "letter": "D",
-        "text": "bq update --nodes=10 worker-pool",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud container clusters resize prod-cluster --node-pool=worker-pool --num-nodes=10 --region=us-central1"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "`gcloud container clusters resize <CLUSTER_NAME> --node-pool=<POOL_NAME> --num-nodes=<COUNT>` manually scales the number of VM worker nodes in the specified GKE node pool.",
     "distractors": {
       "A": "`kubectl scale` scales workload objects (Deployments, StatefulSets), not infrastructure node pools.",
-      "B": "`compute instances resize` is non-existent CLI syntax.",
-      "C": "Correct. `gcloud container clusters resize --node-pool` is the official CLI command to manually adjust node pool sizing.",
-      "D": "BigQuery (`bq`) does not manage Kubernetes cluster infrastructure."
+      "C": "`compute instances resize` is non-existent CLI syntax.",
+      "B": "BigQuery (`bq`) does not manage Kubernetes cluster infrastructure."
     },
     "gcloudCommand": "gcloud container clusters resize prod-cluster --node-pool=worker-pool --num-nodes=10 --region=us-central1",
     "architectureComponents": [
@@ -13895,35 +11933,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq update --legal_hold contract-2026-xyz",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --legal_hold contract-2026-xyz"
       },
       {
         "letter": "B",
-        "text": "gsutil rm -d gs://customer-contracts-vault/contract-2026-xyz.pdf",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud storage objects update gs://customer-contracts-vault/contract-2026-xyz.pdf --temporary-hold"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks snapshot create --hold gs://customer-contracts-vault",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil rm -d gs://customer-contracts-vault/contract-2026-xyz.pdf"
       },
       {
         "letter": "D",
-        "text": "gcloud storage objects update gs://customer-contracts-vault/contract-2026-xyz.pdf --temporary-hold",
-        "isTrap": false
+        "text": "gcloud compute disks snapshot create --hold gs://customer-contracts-vault"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Cloud Storage supports Temporary Holds (`--temporary-hold`) and Event-Based Holds. Placing a temporary hold on an object prevents it from being deleted or overwritten until an administrator explicitly removes the hold.",
     "distractors": {
       "A": "BigQuery does not manage Cloud Storage PDF blob legal holds.",
-      "B": "`gsutil rm` deletes objects, causing catastrophic loss of legal evidence.",
-      "C": "Compute Engine disk snapshots do not place legal holds on Cloud Storage objects.",
-      "D": "Correct. `gcloud storage objects update --temporary-hold` places an immutable legal hold on the specified object."
+      "C": "`gsutil rm` deletes objects, causing catastrophic loss of legal evidence.",
+      "D": "Compute Engine disk snapshots do not place legal holds on Cloud Storage objects."
     },
     "gcloudCommand": "gcloud storage objects update gs://customer-contracts-vault/contract-2026-xyz.pdf --temporary-hold",
     "architectureComponents": [
@@ -13956,32 +11986,24 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud app versions stop v1-beta --service=staging-api",
-        "isTrap": false
+        "text": "gcloud app versions stop v1-beta --service=staging-api"
       },
       {
         "letter": "B",
-        "text": "kubectl delete pod --version=v1-beta",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl delete pod --version=v1-beta"
       },
       {
         "letter": "C",
-        "text": "bq update --stop-service staging-api",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --stop-service staging-api"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances stop appengine-v1-beta",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances stop appengine-v1-beta"
       }
     ],
     "correct": "A",
     "explanation": "`gcloud app versions stop <VERSION> --service=<SERVICE>` stops an App Engine version from serving requests and releases underlying Compute Engine VM instances (for Flexible environment), stopping compute charges while preserving the version configuration.",
     "distractors": {
-      "A": "Correct. `gcloud app versions stop` halts inactive App Engine versions to eliminate unnecessary compute costs.",
       "B": "Kubernetes commands do not manage App Engine serverless service versions.",
       "C": "`bq update` manages BigQuery datasets, not App Engine services.",
       "D": "Underlying App Engine Flexible VMs are managed by the App Engine control plane; manual VM stops will cause App Engine to recreate them."
@@ -14016,35 +12038,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances reset-all --group=worker-mig",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances reset-all --group=worker-mig"
       },
       {
         "letter": "B",
-        "text": "gcloud compute instance-groups managed rolling-action restart worker-mig --region=us-central1 --max-unavailable=1",
-        "isTrap": false
+        "text": "kubectl rollout restart daemonset worker-mig"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instance-groups managed delete worker-mig",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute instance-groups managed delete worker-mig"
       },
       {
         "letter": "D",
-        "text": "kubectl rollout restart daemonset worker-mig",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instance-groups managed rolling-action restart worker-mig --region=us-central1 --max-unavailable=1"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`gcloud compute instance-groups managed rolling-action restart <MIG_NAME> --max-unavailable=<N>` performs a controlled, rolling reboot of all member instances in the MIG, restarting VMs in small batches while maintaining minimum required serving capacity.",
     "distractors": {
       "A": "`instances reset-all` is non-existent CLI syntax.",
-      "B": "Correct. `rolling-action restart` executes graceful, rolling reboots across MIG instances with zero total outage.",
       "C": "Deleting the MIG destroys the group and terminates all processing.",
-      "D": "`kubectl rollout restart` manages Kubernetes workloads, not Compute Engine virtual machine instance groups."
+      "B": "`kubectl rollout restart` manages Kubernetes workloads, not Compute Engine virtual machine instance groups."
     },
     "gcloudCommand": "gcloud compute instance-groups managed rolling-action restart worker-mig --region=us-central1 --max-unavailable=1",
     "architectureComponents": [
@@ -14077,35 +12091,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq show nodes:gke-prod-pool-1-node9",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl delete node gke-prod-pool-1-node9"
       },
       {
         "letter": "B",
-        "text": "gcloud compute disks describe gke-prod-pool-1-node9",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl describe node gke-prod-pool-1-node9"
       },
       {
         "letter": "C",
-        "text": "kubectl describe node gke-prod-pool-1-node9",
-        "isTrap": false
+        "text": "gcloud compute disks describe gke-prod-pool-1-node9"
       },
       {
         "letter": "D",
-        "text": "kubectl delete node gke-prod-pool-1-node9",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "bq show nodes:gke-prod-pool-1-node9"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "`kubectl describe node <NODE_NAME>` outputs complete Kubernetes node metadata, including Node Conditions (`Ready`, `MemoryPressure`, `DiskPressure`, `PIDPressure`), capacity vs allocatable resources, and system event messages (e.g. image garbage collection failures).",
     "distractors": {
-      "A": "BigQuery does not store real-time Kubernetes node conditions.",
-      "B": "`compute disks describe` shows raw GCP persistent disk parameters, but does not show Kubernetes kubelet conditions or pod pressure states.",
-      "C": "Correct. `kubectl describe node` displays all Kubernetes conditions, capacity, taints, and scheduling events.",
-      "D": "Deleting the node abruptly evicts all workloads and does not diagnose why disk pressure occurred."
+      "D": "BigQuery does not store real-time Kubernetes node conditions.",
+      "C": "`compute disks describe` shows raw GCP persistent disk parameters, but does not show Kubernetes kubelet conditions or pod pressure states.",
+      "A": "Deleting the node abruptly evicts all workloads and does not diagnose why disk pressure occurred."
     },
     "gcloudCommand": "kubectl describe node gke-prod-pool-1-node9",
     "architectureComponents": [
@@ -14138,35 +12144,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl apply -f microservices-dashboard.json",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances create-dashboard microservices-dashboard.json"
       },
       {
         "letter": "B",
-        "text": "bq mk --dashboard=microservices-dashboard.json",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud monitoring dashboards create --config-from-file=microservices-dashboard.json"
       },
       {
         "letter": "C",
-        "text": "gcloud monitoring dashboards create --config-from-file=microservices-dashboard.json",
-        "isTrap": false
+        "text": "bq mk --dashboard=microservices-dashboard.json"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances create-dashboard microservices-dashboard.json",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl apply -f microservices-dashboard.json"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "`gcloud monitoring dashboards create --config-from-file=<FILE.json>` imports declarative JSON dashboard templates into Cloud Monitoring, enabling Dashboards-as-Code practices across projects.",
     "distractors": {
-      "A": "`kubectl apply` applies Kubernetes manifests, not Google Cloud Monitoring JSON dashboard definitions.",
-      "B": "BigQuery (`bq`) does not manage Cloud Monitoring dashboards.",
-      "C": "Correct. `gcloud monitoring dashboards create --config-from-file` provisions Cloud Monitoring dashboards programmatically.",
-      "D": "`compute instances create-dashboard` is invalid syntax."
+      "D": "`kubectl apply` applies Kubernetes manifests, not Google Cloud Monitoring JSON dashboard definitions.",
+      "C": "BigQuery (`bq`) does not manage Cloud Monitoring dashboards.",
+      "A": "`compute instances create-dashboard` is invalid syntax."
     },
     "gcloudCommand": "gcloud monitoring dashboards create --config-from-file=microservices-dashboard.json",
     "architectureComponents": [
@@ -14199,35 +12197,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances list --filter='oom'",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "cat /var/log/messages | grep oom"
       },
       {
         "letter": "B",
-        "text": "kubectl get nodes -o yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl get nodes -o yaml"
       },
       {
         "letter": "C",
-        "text": "cat /var/log/messages | grep oom",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl describe pod [POD_NAME] --namespace=prod"
       },
       {
         "letter": "D",
-        "text": "kubectl describe pod [POD_NAME] --namespace=prod",
-        "isTrap": false
+        "text": "gcloud compute instances list --filter='oom'"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "`kubectl describe pod <POD_NAME>` inspects container state details. Under the `Last State: Terminated` section, it explicitly shows `Reason: OOMKilled` and `Exit Code: 137`, indicating that the container exceeded its configured `resources.limits.memory` and was terminated by the Linux cgroup killer.",
     "distractors": {
-      "A": "`instances list --filter='oom'` is invalid; VM instance status does not report container-level cgroup OOM kills.",
+      "D": "`instances list --filter='oom'` is invalid; VM instance status does not report container-level cgroup OOM kills.",
       "B": "`get nodes` shows worker node state, but does not display specific container pod termination reasons.",
-      "C": "Running grep on a local machine does not inspect remote GKE container cgroup logs.",
-      "D": "Correct. `kubectl describe pod` provides container lifecycle states, exit codes (137 = OOM), and termination reasons."
+      "A": "Running grep on a local machine does not inspect remote GKE container cgroup logs."
     },
     "gcloudCommand": "kubectl describe pod image-processor-78dfb --namespace=prod",
     "architectureComponents": [
@@ -14259,35 +12249,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute disks create analytics-data-disk-restored --zone=us-central1-a --source-snapshot=snapshot-analytics-clean --type=pd-ssd",
-        "isTrap": false
+        "text": "gcloud compute disks create analytics-data-disk-restored --zone=us-central1-a --source-snapshot=snapshot-analytics-clean --type=pd-ssd"
       },
       {
         "letter": "B",
-        "text": "bq restore snapshot-analytics-clean analytics-data-disk",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances restore-disk analytics-data-disk --snapshot=snapshot-analytics-clean"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances restore-disk analytics-data-disk --snapshot=snapshot-analytics-clean",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil cp gs://snapshots/snapshot-analytics-clean /dev/sda1"
       },
       {
         "letter": "D",
-        "text": "gsutil cp gs://snapshots/snapshot-analytics-clean /dev/sda1",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "bq restore snapshot-analytics-clean analytics-data-disk"
       }
     ],
     "correct": "A",
     "explanation": "`gcloud compute disks create <NEW_DISK_NAME> --source-snapshot=<SNAPSHOT_NAME> --zone=<ZONE>` restores an incremental snapshot into a brand-new persistent disk volume with identical data state.",
     "distractors": {
-      "A": "Correct. `gcloud compute disks create --source-snapshot` provisions a new disk initialized with snapshot data.",
-      "B": "BigQuery (`bq`) does not manage Compute Engine persistent disk snapshots.",
-      "C": "`instances restore-disk` is not a valid gcloud command.",
-      "D": "Snapshots are stored internally by Compute Engine block storage, not as plain downloadable files in Cloud Storage."
+      "D": "BigQuery (`bq`) does not manage Compute Engine persistent disk snapshots.",
+      "B": "`instances restore-disk` is not a valid gcloud command.",
+      "C": "Snapshots are stored internally by Compute Engine block storage, not as plain downloadable files in Cloud Storage."
     },
     "gcloudCommand": "gcloud compute disks create analytics-data-disk-restored --zone=us-central1-a --source-snapshot=snapshot-analytics-clean --type=pd-ssd",
     "architectureComponents": [
@@ -14320,34 +12302,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute disks update gs://corp-legal-archives --type=ARCHIVE",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq update --storage_class=ARCHIVE corp-legal-archives"
       },
       {
         "letter": "B",
-        "text": "gcloud storage objects update gs://corp-legal-archives/** --storage-class=ARCHIVE",
-        "isTrap": false
+        "text": "gcloud compute disks update gs://corp-legal-archives --type=ARCHIVE"
       },
       {
         "letter": "C",
-        "text": "bq update --storage_class=ARCHIVE corp-legal-archives",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage objects update gs://corp-legal-archives/** --storage-class=ARCHIVE"
       },
       {
         "letter": "D",
-        "text": "gsutil delete-storage-class STANDARD gs://corp-legal-archives/**",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil delete-storage-class STANDARD gs://corp-legal-archives/**"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "`gcloud storage objects update gs://<BUCKET>/** --storage-class=<CLASS>` updates the storage class of existing objects in-place without re-uploading or rewriting data over the network.",
     "distractors": {
-      "A": "`compute disks update` manages Compute Engine block storage disks, not Cloud Storage object buckets.",
-      "B": "Correct. `gcloud storage objects update --storage-class=ARCHIVE` converts object storage classes in-place.",
-      "C": "BigQuery (`bq`) does not manage Cloud Storage bucket object storage classes.",
+      "B": "`compute disks update` manages Compute Engine block storage disks, not Cloud Storage object buckets.",
+      "A": "BigQuery (`bq`) does not manage Cloud Storage bucket object storage classes.",
       "D": "`gsutil delete-storage-class` is non-existent CLI syntax."
     },
     "gcloudCommand": "gcloud storage objects update gs://corp-legal-archives/** --storage-class=ARCHIVE",
@@ -14381,34 +12355,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Billing Dashboard.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Network Intelligence Center: Network Topology."
       },
       {
         "letter": "B",
-        "text": "BigQuery Slot Analyzer.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Billing Dashboard."
       },
       {
         "letter": "C",
-        "text": "Network Intelligence Center: Network Topology.",
-        "isTrap": false
+        "text": "BigQuery Slot Analyzer."
       },
       {
         "letter": "D",
-        "text": "Cloud Storage Transfer Service.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Storage Transfer Service."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Network Topology in Network Intelligence Center provides real-time visualization of your global virtual network infrastructure, overlaying live network performance metrics (traffic volume, latency, packet loss percentage) across regions, zones, VPCs, and hybrid connections.",
     "distractors": {
-      "A": "Cloud Billing reports monetary charges, not live network packet loss or inter-region latency.",
-      "B": "BigQuery Slot Analyzer profiles SQL query compute slot utilization.",
-      "C": "Correct. Network Topology visualizes real-time inter-region throughput, latency, and packet loss metrics across networks.",
+      "B": "Cloud Billing reports monetary charges, not live network packet loss or inter-region latency.",
+      "C": "BigQuery Slot Analyzer profiles SQL query compute slot utilization.",
       "D": "Cloud Storage Transfer Service manages bulk object file transfers between buckets."
     },
     "gcloudCommand": "gcloud services enable networkmanagement.googleapis.com",
@@ -14443,35 +12409,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl autoscale deployment order-service --concurrency=80",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances update order-service --threads=80"
       },
       {
         "letter": "B",
-        "text": "gcloud run services update order-service --region=us-central1 --max-instances=80",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl autoscale deployment order-service --concurrency=80"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances update order-service --threads=80",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud run services update order-service --region=us-central1 --max-instances=80"
       },
       {
         "letter": "D",
-        "text": "gcloud run services update order-service --region=us-central1 --concurrency=80",
-        "isTrap": false
+        "text": "gcloud run services update order-service --region=us-central1 --concurrency=80"
       }
     ],
     "correct": "D",
     "explanation": "`gcloud run services update <SERVICE> --concurrency=<COUNT>` configures container concurrency (number of maximum simultaneous requests routed to a single container instance). Increasing concurrency from 1 to 80 optimizes container utilization, reduces cold starts, and lowers cloud spend.",
     "distractors": {
-      "A": "`kubectl autoscale` does not configure Cloud Run managed serverless services.",
-      "B": "`--max-instances=80` sets the upper limit on container instance scaling, not the concurrent request capacity per instance.",
-      "C": "`compute instances update` manages Compute Engine VMs, not Cloud Run serverless services.",
-      "D": "Correct. `--concurrency=80` instructs Cloud Run to pack up to 80 concurrent HTTP requests into each container instance."
+      "B": "`kubectl autoscale` does not configure Cloud Run managed serverless services.",
+      "C": "`--max-instances=80` sets the upper limit on container instance scaling, not the concurrent request capacity per instance.",
+      "A": "`compute instances update` manages Compute Engine VMs, not Cloud Run serverless services."
     },
     "gcloudCommand": "gcloud run services update order-service --region=us-central1 --concurrency=80",
     "architectureComponents": [
@@ -14503,34 +12461,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud builds log bfa72c3d-1234-5678",
-        "isTrap": false
+        "text": "gcloud builds log bfa72c3d-1234-5678"
       },
       {
         "letter": "B",
-        "text": "kubectl logs bfa72c3d-1234-5678",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil cat gs://cloud-build-logs/bfa72c3d-1234-5678.txt"
       },
       {
         "letter": "C",
-        "text": "gsutil cat gs://cloud-build-logs/bfa72c3d-1234-5678.txt",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "kubectl logs bfa72c3d-1234-5678"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances get-serial-port-output bfa72c3d-1234-5678",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances get-serial-port-output bfa72c3d-1234-5678"
       }
     ],
     "correct": "A",
     "explanation": "`gcloud builds log <BUILD_ID>` streams the complete stdout/stderr logs of all executed build steps directly from Cloud Build, allowing developers to inspect exact compiler errors and failed step commands.",
     "distractors": {
-      "A": "Correct. `gcloud builds log` streams the complete execution log for a specific Cloud Build job.",
-      "B": "`kubectl logs` queries Kubernetes pods, not managed Google Cloud Build execution jobs.",
-      "C": "Locating raw log files manually in GCS requires guessing log bucket naming conventions and paths.",
+      "C": "`kubectl logs` queries Kubernetes pods, not managed Google Cloud Build execution jobs.",
+      "B": "Locating raw log files manually in GCS requires guessing log bucket naming conventions and paths.",
       "D": "`get-serial-port-output` is for Compute Engine VM kernel logs, not serverless Cloud Build pipelines."
     },
     "gcloudCommand": "gcloud builds log bfa72c3d-1234-5678 --stream",
@@ -14564,35 +12514,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances set-maintenance prod-db-1 --day=SUN",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances set-maintenance prod-db-1 --day=SUN"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances patch prod-db-1 --maintenance-window-day=SUN --maintenance-window-hour=2",
-        "isTrap": false
+        "text": "gcloud app deploy maintenance.yaml"
       },
       {
         "letter": "C",
-        "text": "gcloud app deploy maintenance.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --maintenance_schedule=SUN_02 prod-db-1"
       },
       {
         "letter": "D",
-        "text": "bq update --maintenance_schedule=SUN_02 prod-db-1",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql instances patch prod-db-1 --maintenance-window-day=SUN --maintenance-window-hour=2"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --maintenance-window-day=<DAY> --maintenance-window-hour=<UTC_HOUR>` restricts automated platform maintenance and security updates to the specified day and hour window, preventing disruptions during peak business hours.",
     "distractors": {
       "A": "`compute instances set-maintenance` is non-existent CLI syntax.",
-      "B": "Correct. `gcloud sql instances patch --maintenance-window-day=SUN --maintenance-window-hour=2` locks maintenance to Sunday 02:00 UTC.",
-      "C": "App Engine maintenance.yaml is non-existent.",
-      "D": "BigQuery (`bq`) does not manage Cloud SQL instance maintenance schedules."
+      "B": "App Engine maintenance.yaml is non-existent.",
+      "C": "BigQuery (`bq`) does not manage Cloud SQL instance maintenance schedules."
     },
     "gcloudCommand": "gcloud sql instances patch prod-db-1 --maintenance-window-day=SUN --maintenance-window-hour=2",
     "architectureComponents": [
@@ -14625,35 +12567,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq update --lock-dataset sec-archive-vault",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets update gs://sec-archive-vault --lock-retention-policy"
       },
       {
         "letter": "B",
-        "text": "gsutil rm -r gs://sec-archive-vault",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "bq update --lock-dataset sec-archive-vault"
       },
       {
         "letter": "C",
-        "text": "gcloud storage buckets update gs://sec-archive-vault --lock-retention-policy",
-        "isTrap": false
+        "text": "gcloud compute disks snapshot lock gs://sec-archive-vault"
       },
       {
         "letter": "D",
-        "text": "gcloud compute disks snapshot lock gs://sec-archive-vault",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil rm -r gs://sec-archive-vault"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Locking a retention policy (`--lock-retention-policy`) permanently cements the bucket's retention period. Once locked, the policy cannot be deleted, removed, or reduced in duration by any user or IAM role, guaranteeing immutable WORM (Write Once, Read Many) compliance.",
     "distractors": {
-      "A": "BigQuery (`bq`) does not manage Cloud Storage bucket lock policies.",
-      "B": "`gsutil rm` attempts to delete the bucket, which is rejected on locked buckets.",
-      "C": "Correct. `gcloud storage buckets update --lock-retention-policy` permanently locks the retention policy for compliance.",
-      "D": "Compute Engine disk snapshot lock does not manage Cloud Storage WORM compliance buckets."
+      "B": "BigQuery (`bq`) does not manage Cloud Storage bucket lock policies.",
+      "D": "`gsutil rm` attempts to delete the bucket, which is rejected on locked buckets.",
+      "C": "Compute Engine disk snapshot lock does not manage Cloud Storage WORM compliance buckets."
     },
     "gcloudCommand": "gcloud storage buckets update gs://sec-archive-vault --lock-retention-policy",
     "architectureComponents": [
@@ -14686,35 +12620,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "logging.googleapis.com/byte_count.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "logging.googleapis.com/byte_count."
       },
       {
         "letter": "B",
-        "text": "bigquery.googleapis.com/query/scanned_bytes.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "compute.googleapis.com/instance/network/sent_bytes_count (and instance/network/dropped_packets_count)."
       },
       {
         "letter": "C",
-        "text": "storage.googleapis.com/storage/object_count.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "storage.googleapis.com/storage/object_count."
       },
       {
         "letter": "D",
-        "text": "compute.googleapis.com/instance/network/sent_bytes_count (and instance/network/dropped_packets_count).",
-        "isTrap": false
+        "text": "bigquery.googleapis.com/query/scanned_bytes."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Compute Engine network bandwidth is capped per VM based on vCPU count. Monitoring `compute.googleapis.com/instance/network/sent_bytes_count` and `instance/network/dropped_packets_count` identifies egress bandwidth throttling when throughput hits the machine type's network limits.",
     "distractors": {
       "A": "`logging/byte_count` measures log volume ingestion rate.",
-      "B": "`bigquery/query/scanned_bytes` measures data scanned by BigQuery analytical queries.",
-      "C": "`storage/object_count` counts stored files in Cloud Storage.",
-      "D": "Correct. `instance/network/sent_bytes_count` tracks VM network egress rate relative to maximum network bandwidth limits."
+      "D": "`bigquery/query/scanned_bytes` measures data scanned by BigQuery analytical queries.",
+      "C": "`storage/object_count` counts stored files in Cloud Storage."
     },
     "gcloudCommand": "gcloud monitoring metrics-scopes list",
     "architectureComponents": [
@@ -14748,35 +12674,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Set the autoscaling profile to balanced.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set the autoscaling profile to optimize-utilization using gcloud container clusters update my-cluster --autoscaling-profile=optimize-utilization."
       },
       {
         "letter": "B",
-        "text": "Deploy an HPA on the kube-system namespace.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set the autoscaling profile to balanced."
       },
       {
         "letter": "C",
-        "text": "Set the autoscaling profile to optimize-utilization using gcloud container clusters update my-cluster --autoscaling-profile=optimize-utilization.",
-        "isTrap": false
+        "text": "Disable the Cluster Autoscaler."
       },
       {
         "letter": "D",
-        "text": "Disable the Cluster Autoscaler.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy an HPA on the kube-system namespace."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "GKE Cluster Autoscaler supports two profiles: `balanced` (default, balances scale-down speed with avoiding unnecessary evictions) and `optimize-utilization` (aggressively prioritizes bin packing and scale-down speed, evicting pods rapidly to shut down idle nodes and maximize cost savings).",
     "distractors": {
-      "A": "`balanced` is the default conservative profile that delays node removals to prevent pod disruption.",
-      "B": "HPA in `kube-system` does not configure cluster worker node autoscaling profile behaviors.",
-      "C": "Correct. `--autoscaling-profile=optimize-utilization` optimizes for maximum bin-packing and aggressive node scale-down.",
-      "D": "Disabling the autoscaler prevents nodes from scaling down completely, driving up costs."
+      "B": "`balanced` is the default conservative profile that delays node removals to prevent pod disruption.",
+      "D": "HPA in `kube-system` does not configure cluster worker node autoscaling profile behaviors.",
+      "C": "Disabling the autoscaler prevents nodes from scaling down completely, driving up costs."
     },
     "gcloudCommand": "gcloud container clusters update my-cluster --region=us-central1 --autoscaling-profile=optimize-utilization",
     "architectureComponents": [
@@ -14808,35 +12726,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq restore prod-pg-ha",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances delete prod-pg-ha-vm"
       },
       {
         "letter": "B",
-        "text": "gcloud sql instances restart prod-pg-ha",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq restore prod-pg-ha"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances delete prod-pg-ha-vm",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud sql instances restart prod-pg-ha"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances failover prod-pg-ha",
-        "isTrap": false
+        "text": "gcloud sql instances failover prod-pg-ha"
       }
     ],
     "correct": "D",
     "explanation": "`gcloud sql instances failover <INSTANCE_NAME>` initiates an immediate manual failover on a Regional High Availability Cloud SQL instance, switching primary serving duties to the standby replica zone.",
     "distractors": {
-      "A": "BigQuery (`bq`) does not manage Cloud SQL relational database operations.",
-      "B": "`instances restart` restarts the active primary instance without initiating a zone failover.",
-      "C": "Underlying Cloud SQL VMs are managed by Google and cannot be deleted directly via `compute instances delete`.",
-      "D": "Correct. `gcloud sql instances failover` triggers manual HA failover for disaster recovery validation."
+      "B": "BigQuery (`bq`) does not manage Cloud SQL relational database operations.",
+      "C": "`instances restart` restarts the active primary instance without initiating a zone failover.",
+      "A": "Underlying Cloud SQL VMs are managed by Google and cannot be deleted directly via `compute instances delete`."
     },
     "gcloudCommand": "gcloud sql instances failover prod-pg-ha",
     "architectureComponents": [
@@ -14869,33 +12779,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq cp --snapshot warehouse.customer_master warehouse.customer_master_snapshot_20260820",
-        "isTrap": false
+        "text": "gcloud compute disks snapshot warehouse.customer_master"
       },
       {
         "letter": "B",
-        "text": "gcloud compute disks snapshot warehouse.customer_master",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq cp --snapshot warehouse.customer_master warehouse.customer_master_snapshot_20260820"
       },
       {
         "letter": "C",
-        "text": "gsutil cp gs://bq-data/master gs://bq-data/backup",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gsutil cp gs://bq-data/master gs://bq-data/backup"
       },
       {
         "letter": "D",
-        "text": "bq export warehouse.customer_master gs://my-backups/customer.csv",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "bq export warehouse.customer_master gs://my-backups/customer.csv"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "BigQuery table snapshots (`bq cp --snapshot <SOURCE_TABLE> <SNAPSHOT_TABLE>`) create instant, zero-byte incremental snapshots of a table. Storage costs only accrue for data rows that are subsequently modified or deleted in the base table.",
     "distractors": {
-      "A": "Correct. `bq cp --snapshot` creates an instantaneous, cost-effective point-in-time table snapshot.",
-      "B": "`compute disks snapshot` is for Compute Engine persistent disks, not BigQuery tables.",
+      "A": "`compute disks snapshot` is for Compute Engine persistent disks, not BigQuery tables.",
       "C": "`gsutil cp` does not operate on internal BigQuery storage structures.",
       "D": "Exporting full tables to CSV in Cloud Storage takes time, incurs extraction compute, and doubles storage charges."
     },
@@ -14929,35 +12831,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances stop api-gateway-1 && gcloud compute instances set-machine-type api-gateway-1 --metadata=...",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances stop api-gateway-1 && gcloud compute instances set-machine-type api-gateway-1 --metadata=..."
       },
       {
         "letter": "B",
-        "text": "gcloud compute instances add-metadata api-gateway-1 --zone=us-central1-b --metadata=environment=production,release_version=3.2",
-        "isTrap": false
+        "text": "gcloud storage objects update gs://api-gateway-1 --metadata=..."
       },
       {
         "letter": "C",
-        "text": "gcloud storage objects update gs://api-gateway-1 --metadata=...",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl annotate node api-gateway-1 environment=production"
       },
       {
         "letter": "D",
-        "text": "kubectl annotate node api-gateway-1 environment=production",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances add-metadata api-gateway-1 --zone=us-central1-b --metadata=environment=production,release_version=3.2"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "`gcloud compute instances add-metadata <VM_NAME> --metadata=<KEY=VALUE,...>` updates the instance's metadata dictionary online without stopping or rebooting the virtual machine.",
     "distractors": {
       "A": "Stopping the VM is completely unnecessary for metadata updates.",
-      "B": "Correct. `gcloud compute instances add-metadata` applies custom metadata key-value pairs dynamically.",
-      "C": "Cloud Storage objects are not Compute Engine virtual machines.",
-      "D": "`kubectl annotate` is for Kubernetes nodes, not standalone Compute Engine VM metadata."
+      "B": "Cloud Storage objects are not Compute Engine virtual machines.",
+      "C": "`kubectl annotate` is for Kubernetes nodes, not standalone Compute Engine VM metadata."
     },
     "gcloudCommand": "gcloud compute instances add-metadata api-gateway-1 --zone=us-central1-b --metadata=environment=production,release_version=3.2",
     "architectureComponents": [
@@ -14990,35 +12884,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute routers delete nat-router",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "resource.type=\"nat_gateway\" AND jsonPayload.allocation_status=\"DROPPED\""
       },
       {
         "letter": "B",
-        "text": "resource.type=\"gce_instance\" AND severity=DEBUG",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute routers delete nat-router"
       },
       {
         "letter": "C",
-        "text": "resource.type=\"nat_gateway\" AND jsonPayload.allocation_status=\"DROPPED\"",
-        "isTrap": false
+        "text": "SELECT * FROM nat_logs WHERE status='error'"
       },
       {
         "letter": "D",
-        "text": "SELECT * FROM nat_logs WHERE status='error'",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "resource.type=\"gce_instance\" AND severity=DEBUG"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "When Cloud NAT logging is enabled, dropped outbound connections caused by source port exhaustion are logged under `resource.type=\"nat_gateway\"` with `jsonPayload.allocation_status=\"DROPPED\"`.",
     "distractors": {
-      "A": "Deleting the router terminates all outbound internet connectivity for all private VMs.",
-      "B": "`gce_instance` logs with DEBUG severity do not specifically isolate Cloud NAT gateway packet drops.",
-      "C": "Correct. `resource.type=\"nat_gateway\" AND jsonPayload.allocation_status=\"DROPPED\"` explicitly isolates NAT port exhaustion events.",
-      "D": "Cloud Logging filter syntax is not raw SQL (unless using Log Analytics)."
+      "B": "Deleting the router terminates all outbound internet connectivity for all private VMs.",
+      "D": "`gce_instance` logs with DEBUG severity do not specifically isolate Cloud NAT gateway packet drops.",
+      "C": "Cloud Logging filter syntax is not raw SQL (unless using Log Analytics)."
     },
     "gcloudCommand": "gcloud logging read 'resource.type=\"nat_gateway\" AND jsonPayload.allocation_status=\"DROPPED\"' --limit=20",
     "architectureComponents": [
@@ -15053,35 +12939,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute disks update gs://finance-records-vault --kms-key=key-v2",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute disks update gs://finance-records-vault --kms-key=key-v2"
       },
       {
         "letter": "B",
-        "text": "bq update --kms_key=key-v2 finance-records-vault",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets update gs://finance-records-vault --default-encryption-key=projects/my-proj/locations/us-central1/keyRings/vault-ring/cryptoKeys/key-v2"
       },
       {
         "letter": "C",
-        "text": "gsutil set-kms-key gs://finance-records-vault --key=key-v2",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq update --kms_key=key-v2 finance-records-vault"
       },
       {
         "letter": "D",
-        "text": "gcloud storage buckets update gs://finance-records-vault --default-encryption-key=projects/my-proj/locations/us-central1/keyRings/vault-ring/cryptoKeys/key-v2",
-        "isTrap": false
+        "text": "gsutil set-kms-key gs://finance-records-vault --key=key-v2"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`gcloud storage buckets update <BUCKET> --default-encryption-key=<KMS_KEY_RESOURCE_ID>` sets Customer-Managed Encryption Keys (CMEK) as the default encryption mechanism for all future objects uploaded to the bucket.",
     "distractors": {
       "A": "`compute disks update` is for Compute Engine persistent disks, not Cloud Storage buckets.",
-      "B": "`bq update` is for BigQuery datasets and tables.",
-      "C": "`gsutil set-kms-key` is non-existent syntax.",
-      "D": "Correct. `gcloud storage buckets update --default-encryption-key` assigns the CMEK key to the bucket."
+      "C": "`bq update` is for BigQuery datasets and tables.",
+      "D": "`gsutil set-kms-key` is non-existent syntax."
     },
     "gcloudCommand": "gcloud storage buckets update gs://finance-records-vault --default-encryption-key=projects/my-proj/locations/us-central1/keyRings/vault-ring/cryptoKeys/key-v2",
     "architectureComponents": [
@@ -15115,34 +12993,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "kubectl describe pvc db-data-pvc --namespace=prod",
-        "isTrap": false
+        "text": "kubectl describe pvc db-data-pvc --namespace=prod"
       },
       {
         "letter": "B",
-        "text": "gcloud compute disks describe db-data-pvc",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "kubectl delete pvc db-data-pvc --force"
       },
       {
         "letter": "C",
-        "text": "kubectl delete pvc db-data-pvc --force",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute disks describe db-data-pvc"
       },
       {
         "letter": "D",
-        "text": "gcloud container clusters restart prod-cluster",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud container clusters restart prod-cluster"
       }
     ],
     "correct": "A",
     "explanation": "`kubectl describe pvc <PVC_NAME>` reveals the detailed lifecycle status of a PersistentVolumeClaim, including dynamic provisioner error messages (e.g., quota exceeded, unsupported zone, volumeBindingMode: WaitForFirstConsumer).",
     "distractors": {
-      "A": "Correct. `kubectl describe pvc` shows volume provisioning conditions, storage class mapping, and binding events.",
-      "B": "`compute disks describe` fails if the volume provisioner has not yet created the underlying GCP disk.",
-      "C": "Force-deleting the PVC deletes the volume request without identifying why provisioning failed.",
+      "C": "`compute disks describe` fails if the volume provisioner has not yet created the underlying GCP disk.",
+      "B": "Force-deleting the PVC deletes the volume request without identifying why provisioning failed.",
       "D": "Restarting the cluster causes unnecessary downtime and does not resolve storage provisioner issues."
     },
     "gcloudCommand": "kubectl describe pvc db-data-pvc --namespace=prod",
@@ -15175,35 +13045,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq update --defer-maintenance prod-mysql-instance",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql maintenance-events reschedule prod-mysql-instance --reschedule-type=SPECIFIC_TIME --schedule-time=2026-09-01T03:00:00Z"
       },
       {
         "letter": "B",
-        "text": "gcloud sql maintenance-events reschedule prod-mysql-instance --reschedule-type=SPECIFIC_TIME --schedule-time=2026-09-01T03:00:00Z",
-        "isTrap": false
+        "text": "bq update --defer-maintenance prod-mysql-instance"
       },
       {
         "letter": "C",
-        "text": "gcloud sql instances restart prod-mysql-instance --no-maintenance",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances set-maintenance prod-mysql-instance --cancel"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances set-maintenance prod-mysql-instance --cancel",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud sql instances restart prod-mysql-instance --no-maintenance"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "`gcloud sql maintenance-events reschedule <INSTANCE_NAME> --reschedule-type=SPECIFIC_TIME --schedule-time=<TIME>` allows administrators to reschedule or defer upcoming Cloud SQL system maintenance updates to an approved business window.",
     "distractors": {
-      "A": "BigQuery (`bq`) does not manage Cloud SQL relational instances.",
-      "B": "Correct. `gcloud sql maintenance-events reschedule` changes the timing of upcoming scheduled maintenance.",
-      "C": "`--no-maintenance` is not a valid flag on `instances restart`.",
-      "D": "`compute instances set-maintenance` does not manage Cloud SQL database maintenance schedules."
+      "B": "BigQuery (`bq`) does not manage Cloud SQL relational instances.",
+      "D": "`--no-maintenance` is not a valid flag on `instances restart`.",
+      "C": "`compute instances set-maintenance` does not manage Cloud SQL database maintenance schedules."
     },
     "gcloudCommand": "gcloud sql maintenance-events reschedule prod-mysql-instance --reschedule-type=SPECIFIC_TIME --schedule-time=2026-09-01T03:00:00Z",
     "architectureComponents": [
@@ -15236,34 +13098,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud app deploy dev-schedule.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute resource-policies create instance-schedule dev-vm-schedule --region=us-central1 --vm-start-schedule='0 7 * * 1' --vm-stop-schedule='0 19 * * 5' --timezone='UTC'"
       },
       {
         "letter": "B",
-        "text": "kubectl apply -f vm-cronjob.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "kubectl apply -f vm-cronjob.yaml"
       },
       {
         "letter": "C",
-        "text": "gcloud compute resource-policies create instance-schedule dev-vm-schedule --region=us-central1 --vm-start-schedule='0 7 * * 1' --vm-stop-schedule='0 19 * * 5' --timezone='UTC'",
-        "isTrap": false
+        "text": "gcloud app deploy dev-schedule.yaml"
       },
       {
         "letter": "D",
-        "text": "Write a python script on a dedicated VM that runs gcloud compute instances stop in crontab.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Write a python script on a dedicated VM that runs gcloud compute instances stop in crontab."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Compute Engine Instance Schedules (via `gcloud compute resource-policies create instance-schedule`) natively automate the scheduled starting and stopping of virtual machine instances using standard cron expressions with zero custom scripts or running scheduler VMs.",
     "distractors": {
-      "A": "App Engine does not manage native Compute Engine VM power schedules.",
+      "C": "App Engine does not manage native Compute Engine VM power schedules.",
       "B": "Kubernetes CronJobs manage in-cluster pods, not native Compute Engine VM hypervisor power states.",
-      "C": "Correct. `resource-policies create instance-schedule` is the native managed service to automate VM start/stop schedules.",
       "D": "Dedicated VM cron scripts incur compute overhead, require key maintenance, and are prone to single-point-of-failure outages."
     },
     "gcloudCommand": "gcloud compute resource-policies create instance-schedule dev-vm-schedule --region=us-central1 --vm-start-schedule='0 7 * * 1' --vm-stop-schedule='0 19 * * 5' --timezone='UTC'",
@@ -15297,35 +13151,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gsutil retention set 365d gs://logging-default-bucket",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud logging buckets update _Default --location=global --retention-days=365"
       },
       {
         "letter": "B",
-        "text": "gcloud compute networks update --log-retention=365",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq update --retention=365 logging_dataset"
       },
       {
         "letter": "C",
-        "text": "bq update --retention=365 logging_dataset",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gsutil retention set 365d gs://logging-default-bucket"
       },
       {
         "letter": "D",
-        "text": "gcloud logging buckets update _Default --location=global --retention-days=365",
-        "isTrap": false
+        "text": "gcloud compute networks update --log-retention=365"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "`gcloud logging buckets update <BUCKET_ID> --location=<LOCATION> --retention-days=<DAYS>` configures the log retention period of Cloud Logging log buckets (such as `_Default` or `_Required`), extending retention from 30 days up to 3650 days (10 years).",
     "distractors": {
-      "A": "`gsutil retention` is for Cloud Storage buckets, not Cloud Logging managed log buckets.",
-      "B": "`compute networks update` does not manage Cloud Logging log bucket retention policies.",
-      "C": "`bq update` manages BigQuery tables, not Cloud Logging log buckets.",
-      "D": "Correct. `gcloud logging buckets update _Default --retention-days=365` extends log retention to 1 year."
+      "C": "`gsutil retention` is for Cloud Storage buckets, not Cloud Logging managed log buckets.",
+      "D": "`compute networks update` does not manage Cloud Logging log bucket retention policies.",
+      "B": "`bq update` manages BigQuery tables, not Cloud Logging log buckets."
     },
     "gcloudCommand": "gcloud logging buckets update _Default --location=global --retention-days=365",
     "architectureComponents": [
@@ -15358,35 +13204,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/bigquery.dataViewer on dataset sales_dw and roles/bigquery.jobUser at the project level.",
-        "isTrap": false
+        "text": "Grant primitive roles/editor at the project level."
       },
       {
         "letter": "B",
-        "text": "Grant roles/bigquery.dataOwner on the project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/bigquery.admin at the project level."
       },
       {
         "letter": "C",
-        "text": "Grant roles/bigquery.admin at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/bigquery.dataOwner on the project."
       },
       {
         "letter": "D",
-        "text": "Grant primitive roles/editor at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/bigquery.dataViewer on dataset sales_dw and roles/bigquery.jobUser at the project level."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Following the Principle of Least Privilege: `roles/bigquery.jobUser` at the project level allows users to run query jobs and consume project slot quota, while `roles/bigquery.dataViewer` scoped to the dataset grants read-only access to table schemas and rows without granting table deletion or schema modification rights.",
     "distractors": {
-      "A": "Correct. `roles/bigquery.jobUser` (to execute queries) + `roles/bigquery.dataViewer` (to read data) strictly fulfills least privilege.",
-      "B": "`roles/bigquery.dataOwner` grants full control over tables and datasets, including table deletion.",
-      "C": "`roles/bigquery.admin` grants full administrative control including deleting datasets and altering IAM access.",
-      "D": "`roles/editor` grants broad primitive edit permissions across all GCP resources in the project."
+      "C": "`roles/bigquery.dataOwner` grants full control over tables and datasets, including table deletion.",
+      "B": "`roles/bigquery.admin` grants full administrative control including deleting datasets and altering IAM access.",
+      "A": "`roles/editor` grants broad primitive edit permissions across all GCP resources in the project."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding corp-analytics-prod --member='group:analysts@corp.com' --role='roles/bigquery.jobUser'",
     "architectureComponents": [
@@ -15419,35 +13257,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/iam.serviceAccountKeyAdmin to the engineer.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/owner to the engineer on the project."
       },
       {
         "letter": "B",
-        "text": "Grant roles/iam.serviceAccountUser to the engineer on the service account app-runner@corp.iam.gserviceaccount.com.",
-        "isTrap": false
+        "text": "Grant roles/iam.serviceAccountKeyAdmin to the engineer."
       },
       {
         "letter": "C",
-        "text": "Set the Compute Engine default service account to have primitive Editor role.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/iam.serviceAccountUser to the engineer on the service account app-runner@corp.iam.gserviceaccount.com."
       },
       {
         "letter": "D",
-        "text": "Grant roles/owner to the engineer on the project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Set the Compute Engine default service account to have primitive Editor role."
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "To attach a service account to a Compute Engine VM or Cloud Run service, the deploying identity must possess the `roles/iam.serviceAccountUser` role on that specific service account resource (or at project level), preventing unauthorized privilege escalation.",
     "distractors": {
-      "A": "`roles/iam.serviceAccountKeyAdmin` allows creating and downloading static JSON keys, which is unnecessary and creates security risk.",
-      "B": "Correct. `roles/iam.serviceAccountUser` on the target service account authorizes the user to bind the service account to compute instances.",
-      "C": "Granting Editor to the default service account violates least privilege and exposes the entire project.",
-      "D": "Granting `roles/owner` gives excessive project-wide privileges violating security policy."
+      "B": "`roles/iam.serviceAccountKeyAdmin` allows creating and downloading static JSON keys, which is unnecessary and creates security risk.",
+      "D": "Granting Editor to the default service account violates least privilege and exposes the entire project.",
+      "A": "Granting `roles/owner` gives excessive project-wide privileges violating security policy."
     },
     "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding app-runner@corp.iam.gserviceaccount.com --member='user:devops@corp.com' --role='roles/iam.serviceAccountUser'",
     "architectureComponents": [
@@ -15480,35 +13310,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/secretmanager.admin at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant primitive roles/editor at the project level."
       },
       {
         "letter": "B",
-        "text": "Grant roles/secretmanager.viewer on the secret.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Grant roles/secretmanager.secretAccessor to order-sa on the secret prod-db-conn."
       },
       {
         "letter": "C",
-        "text": "Grant roles/secretmanager.secretAccessor to order-sa on the secret prod-db-conn.",
-        "isTrap": false
+        "text": "Grant roles/secretmanager.admin at the project level."
       },
       {
         "letter": "D",
-        "text": "Grant primitive roles/editor at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/secretmanager.viewer on the secret."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "`roles/secretmanager.secretAccessor` grants permission (`secretmanager.versions.access`) to read secret payloads and decrypt secret versions. `roles/secretmanager.viewer` only views secret metadata (names, creation times) without access to the actual secret payload.",
     "distractors": {
-      "A": "`roles/secretmanager.admin` grants permission to delete, modify, and manage secrets across the entire project.",
-      "B": "`roles/secretmanager.viewer` allows viewing secret metadata but explicitly DENIES reading secret payload contents.",
-      "C": "Correct. `roles/secretmanager.secretAccessor` allows reading the decrypted secret payload.",
-      "D": "`roles/editor` grants broad primitive access across all cloud resources in the project."
+      "C": "`roles/secretmanager.admin` grants permission to delete, modify, and manage secrets across the entire project.",
+      "D": "`roles/secretmanager.viewer` allows viewing secret metadata but explicitly DENIES reading secret payload contents.",
+      "A": "`roles/editor` grants broad primitive access across all cloud resources in the project."
     },
     "gcloudCommand": "gcloud secrets add-iam-policy-binding prod-db-conn --member='serviceAccount:order-sa@corp.iam.gserviceaccount.com' --role='roles/secretmanager.secretAccessor'",
     "architectureComponents": [
@@ -15542,35 +13364,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud organizations roles create computeOperator --all-permissions",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "gcloud compute roles create computeOperator --permissions=start,stop,reset"
       },
       {
         "letter": "B",
-        "text": "gcloud iam roles create computeOperator --project=corp-prod --role=roles/compute.instanceAdmin.v1",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "gcloud iam roles create computeOperator --project=corp-prod --title='Compute Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.get,compute.instances.list --stage=GA"
       },
       {
         "letter": "C",
-        "text": "gcloud compute roles create computeOperator --permissions=start,stop,reset",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud iam roles create computeOperator --project=corp-prod --role=roles/compute.instanceAdmin.v1"
       },
       {
         "letter": "D",
-        "text": "gcloud iam roles create computeOperator --project=corp-prod --title='Compute Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.get,compute.instances.list --stage=GA",
-        "isTrap": false
+        "text": "gcloud organizations roles create computeOperator --all-permissions"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`gcloud iam roles create <ROLE_ID> --project=<PROJECT> --permissions=<COMMA_SEPARATED_PERMISSIONS>` creates a custom IAM role containing an exact list of granular GCP API permissions, adhering strictly to least privilege.",
     "distractors": {
-      "A": "`organizations roles create --all-permissions` creates an overprivileged organizational role.",
-      "B": "Passing an existing predefined role name is not valid custom role creation syntax.",
-      "C": "`gcloud compute roles create` is non-existent CLI syntax.",
-      "D": "Correct. `gcloud iam roles create` with explicit `compute.instances.start,stop,reset,get,list` permissions defines the custom role."
+      "D": "`organizations roles create --all-permissions` creates an overprivileged organizational role.",
+      "C": "Passing an existing predefined role name is not valid custom role creation syntax.",
+      "A": "`gcloud compute roles create` is non-existent CLI syntax."
     },
     "gcloudCommand": "gcloud iam roles create computeOperator --project=corp-prod --title='Compute Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.get,compute.instances.list --stage=GA",
     "architectureComponents": [
@@ -15605,35 +13419,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Update the project's IAM Audit Config in Cloud Console or via gcloud to enable DATA_READ and DATA_WRITE log types for storage.googleapis.com.",
-        "isTrap": false
+        "text": "Create a VPC egress firewall rule on port 443 with logging enabled."
       },
       {
         "letter": "B",
-        "text": "Deploy a Cloud Function that polls bucket object metadata every 10 seconds.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant roles/logging.admin to all storage users."
       },
       {
         "letter": "C",
-        "text": "Grant roles/logging.admin to all storage users.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Update the project's IAM Audit Config in Cloud Console or via gcloud to enable DATA_READ and DATA_WRITE log types for storage.googleapis.com."
       },
       {
         "letter": "D",
-        "text": "Create a VPC egress firewall rule on port 443 with logging enabled.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a Cloud Function that polls bucket object metadata every 10 seconds."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Cloud Audit Logs Data Access logs are configured via the project's IAM Audit Config (`auditConfigs`). Enabling `DATA_READ` and `DATA_WRITE` for `storage.googleapis.com` generates audit records for every `objects.get`, `objects.create`, and `objects.delete` API operation.",
     "distractors": {
-      "A": "Correct. Configuring the IAM Audit Policy for `storage.googleapis.com` activates Cloud Audit Data Access logging.",
-      "B": "Polling scripts do not capture who initiated read requests or when objects were downloaded.",
-      "C": "Granting logging admin permissions gives users administrative access to log buckets, but does not enable Data Access log generation.",
-      "D": "VPC firewall rules do not inspect Google Cloud control plane API invocations or generate Cloud Audit Log entries."
+      "D": "Polling scripts do not capture who initiated read requests or when objects were downloaded.",
+      "B": "Granting logging admin permissions gives users administrative access to log buckets, but does not enable Data Access log generation.",
+      "A": "VPC firewall rules do not inspect Google Cloud control plane API invocations or generate Cloud Audit Log entries."
     },
     "gcloudCommand": "gcloud projects get-iam-policy corp-prod --format=json > policy.json && gcloud projects set-iam-policy corp-prod policy.json",
     "architectureComponents": [
@@ -15667,35 +13473,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an egress firewall rule blocking all traffic to 0.0.0.0/0.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create an egress firewall rule blocking all traffic to 0.0.0.0/0."
       },
       {
         "letter": "B",
-        "text": "Create a VPC Service Controls Service Perimeter enclosing project patient-data-prod and protecting the bigquery.googleapis.com and storage.googleapis.com services.",
-        "isTrap": false
+        "text": "Set Cloud Storage bucket permissions to public read-only."
       },
       {
         "letter": "C",
-        "text": "Set Cloud Storage bucket permissions to public read-only.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Deploy an unmanaged proxy VM running iptables in the subnet."
       },
       {
         "letter": "D",
-        "text": "Deploy an unmanaged proxy VM running iptables in the subnet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a VPC Service Controls Service Perimeter enclosing project patient-data-prod and protecting the bigquery.googleapis.com and storage.googleapis.com services."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "VPC Service Controls (VPC SC) establishes security perimeters around Google-managed services (Cloud Storage, BigQuery). It blocks API requests that attempt to move data from inside the perimeter to storage resources outside the perimeter, even if the user has valid IAM permissions.",
     "distractors": {
       "A": "VPC firewall rules apply to VM-to-VM traffic, not Google Cloud API control plane calls (e.g. `gsutil cp` between GCP buckets).",
-      "B": "Correct. VPC Service Controls service perimeters effectively prevent data exfiltration across Google Cloud API boundaries.",
-      "C": "Making buckets public causes catastrophic data leaks violating HIPAA.",
-      "D": "Proxy VMs do not enforce organizational boundaries on managed GCP serverless API endpoints."
+      "B": "Making buckets public causes catastrophic data leaks violating HIPAA.",
+      "C": "Proxy VMs do not enforce organizational boundaries on managed GCP serverless API endpoints."
     },
     "gcloudCommand": "gcloud access-context-manager perimeters create patient_data_perimeter --title='Patient Data Perimeter' --resources=projects/123456789012 --restricted-services=storage.googleapis.com,bigquery.googleapis.com",
     "architectureComponents": [
@@ -15729,35 +13527,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Download the KMS private key and store it in instance metadata.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Grant roles/cloudkms.cryptoKeyEncrypterDecrypter to the Compute Engine Service Agent on the target CryptoKey."
       },
       {
         "letter": "B",
-        "text": "Grant roles/owner to the Compute Engine default service account.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/owner to the Compute Engine default service account."
       },
       {
         "letter": "C",
-        "text": "Grant roles/cloudkms.cryptoKeyEncrypterDecrypter to the Compute Engine Service Agent on the target CryptoKey.",
-        "isTrap": false
+        "text": "Grant roles/cloudkms.admin to the VM instance user."
       },
       {
         "letter": "D",
-        "text": "Grant roles/cloudkms.admin to the VM instance user.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Download the KMS private key and store it in instance metadata."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "To enable Compute Engine to encrypt and decrypt persistent disks using CMEK, Google's Compute Engine Service Agent (`service-[PROJECT_NUM]@compute-system.iam.gserviceaccount.com`) must be granted `roles/cloudkms.cryptoKeyEncrypterDecrypter` on the specific KMS CryptoKey.",
     "distractors": {
-      "A": "Cloud KMS private keys cannot be downloaded; storing keys in metadata violates security compliance.",
+      "D": "Cloud KMS private keys cannot be downloaded; storing keys in metadata violates security compliance.",
       "B": "Granting Owner to the default service account gives excessive project permissions and does not grant KMS key access to the system service agent.",
-      "C": "Correct. Granting `roles/cloudkms.cryptoKeyEncrypterDecrypter` to the Compute Engine service agent authorizes disk encryption.",
-      "D": "KMS admin permissions manage key metadata, not runtime encryption/decryption by the hypervisor."
+      "C": "KMS admin permissions manage key metadata, not runtime encryption/decryption by the hypervisor."
     },
     "gcloudCommand": "gcloud kms keys add-iam-policy-binding disk-key --keyring=finance-ring --location=us-central1 --member='serviceAccount:service-123456789012@compute-system.iam.gserviceaccount.com' --role='roles/cloudkms.cryptoKeyEncrypterDecrypter'",
     "architectureComponents": [
@@ -15791,35 +13581,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an ingress firewall rule in the default VPC network.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy an unmanaged VPN gateway VM on Compute Engine."
       },
       {
         "letter": "B",
-        "text": "Store username and password hashes in Cloud Storage.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an ingress firewall rule in the default VPC network."
       },
       {
         "letter": "C",
-        "text": "Deploy an unmanaged VPN gateway VM on Compute Engine.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Enable Identity-Aware Proxy (IAP) on the App Engine application and bind an Access Context Manager Access Level enforcing corporate IP subnet and device policy conditions."
       },
       {
         "letter": "D",
-        "text": "Enable Identity-Aware Proxy (IAP) on the App Engine application and bind an Access Context Manager Access Level enforcing corporate IP subnet and device policy conditions.",
-        "isTrap": false
+        "text": "Store username and password hashes in Cloud Storage."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Google Identity-Aware Proxy (IAP) integrated with Access Context Manager provides Context-Aware Access (Zero Trust). It evaluates user identity, device security posture (disk encryption, OS version), and network origin IP before granting access to App Engine, Cloud Run, or GKE web applications.",
     "distractors": {
-      "A": "VPC firewall rules do not protect App Engine standard serverless web endpoints.",
-      "B": "Storing passwords in Cloud Storage creates critical data leak risks and lacks Zero Trust integration.",
-      "C": "VPN gateways require network infrastructure management and lack application-level device security verification.",
-      "D": "Correct. IAP + Access Context Manager enforces identity and device context-aware access policies seamlessly."
+      "B": "VPC firewall rules do not protect App Engine standard serverless web endpoints.",
+      "D": "Storing passwords in Cloud Storage creates critical data leak risks and lacks Zero Trust integration.",
+      "A": "VPN gateways require network infrastructure management and lack application-level device security verification."
     },
     "gcloudCommand": "gcloud iap web add-iam-policy-binding --resource-type=app-engine --member='group:employees@corp.com' --role='roles/iap.httpsResourceAccessor'",
     "architectureComponents": [
@@ -15854,35 +13636,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/compute.instanceAdmin.v1 and set a calendar reminder on your phone to delete the role manually.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant roles/compute.instanceAdmin.v1 with an IAM Condition expression: request.time < timestamp(\"2026-08-25T18:00:00Z\")."
       },
       {
         "letter": "B",
-        "text": "Create an unmanaged cron script on an e2-micro VM that deletes the user on August 25.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant roles/compute.instanceAdmin.v1 and set a calendar reminder on your phone to delete the role manually."
       },
       {
         "letter": "C",
-        "text": "Grant primitive roles/editor at the organization level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant primitive roles/editor at the organization level."
       },
       {
         "letter": "D",
-        "text": "Grant roles/compute.instanceAdmin.v1 with an IAM Condition expression: request.time < timestamp(\"2026-08-25T18:00:00Z\").",
-        "isTrap": false
+        "text": "Create an unmanaged cron script on an e2-micro VM that deletes the user on August 25."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud IAM Conditions allow attaching conditional expressions to role bindings. Using `request.time < timestamp(\"2026-08-25T18:00:00Z\")` ensures that the role binding is automatically invalidated by Google IAM the moment the timestamp passes.",
     "distractors": {
-      "A": "Manual reminders rely on human memory and risk forgetting to revoke elevated access.",
-      "B": "Custom cron scripts add failure points, require credential maintenance, and are unnecessary.",
-      "C": "Organizational Editor grants permanent, excessively broad permissions across all projects.",
-      "D": "Correct. Native IAM Conditions with `request.time` enforce automatic time-bound expiration with zero administrative overhead."
+      "B": "Manual reminders rely on human memory and risk forgetting to revoke elevated access.",
+      "D": "Custom cron scripts add failure points, require credential maintenance, and are unnecessary.",
+      "C": "Organizational Editor grants permanent, excessively broad permissions across all projects."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding corp-prod --member='user:contractor@partner.com' --role='roles/compute.instanceAdmin.v1' --condition='expression=request.time < timestamp(\"2026-08-25T18:00:00Z\"),title=ExpiringAccess'",
     "architectureComponents": [
@@ -15915,35 +13689,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure Workload Identity Federation with an OIDC Workload Identity Pool and Provider for GitHub Actions, and grant the GitHub workflow principal permissions to impersonate the deployment service account.",
-        "isTrap": false
+        "text": "Grant roles/owner to github-actions@corp.iam.gserviceaccount.com."
       },
       {
         "letter": "B",
-        "text": "Make the Artifact Registry repository publicly accessible without authentication.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Configure Workload Identity Federation with an OIDC Workload Identity Pool and Provider for GitHub Actions, and grant the GitHub workflow principal permissions to impersonate the deployment service account."
       },
       {
         "letter": "C",
-        "text": "Generate a service account JSON key and store it in GitHub Secrets.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Generate a service account JSON key and store it in GitHub Secrets."
       },
       {
         "letter": "D",
-        "text": "Grant roles/owner to github-actions@corp.iam.gserviceaccount.com.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Make the Artifact Registry repository publicly accessible without authentication."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Workload Identity Federation allows external workloads (GitHub Actions, AWS, Azure, on-premises OIDC/SAML) to exchange external credentials for short-lived Google Cloud access tokens, completely eliminating the risks of downloadable long-lived service account JSON keys.",
     "distractors": {
-      "A": "Correct. Workload Identity Federation provides keyless, secure, short-lived token authentication for GitHub Actions.",
-      "B": "Making repositories public exposes proprietary corporate container images to the world.",
+      "D": "Making repositories public exposes proprietary corporate container images to the world.",
       "C": "Storing long-lived JSON keys in external secret stores violates modern security mandates and risks credential leaks.",
-      "D": "Granting Owner role gives excessive privileges and does not solve key management security."
+      "A": "Granting Owner role gives excessive privileges and does not solve key management security."
     },
     "gcloudCommand": "gcloud iam workload-identity-pools create github-pool --location=global --display-name='GitHub Actions Pool'",
     "architectureComponents": [
@@ -15977,35 +13743,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute networks update sensitive-docs --enable-ubla",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gsutil acl set public-read gs://corp-sensitive-docs"
       },
       {
         "letter": "B",
-        "text": "gcloud storage buckets update gs://corp-sensitive-docs --uniform-bucket-level-access",
-        "isTrap": false
+        "text": "gcloud compute networks update sensitive-docs --enable-ubla"
       },
       {
         "letter": "C",
-        "text": "bq update --uniform_access corp-sensitive-docs",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage buckets update gs://corp-sensitive-docs --uniform-bucket-level-access"
       },
       {
         "letter": "D",
-        "text": "gsutil acl set public-read gs://corp-sensitive-docs",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "bq update --uniform_access corp-sensitive-docs"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Uniform Bucket-Level Access (UBLA) unifies access control exclusively to Google Cloud IAM, disabling individual object ACLs and preventing accidental exposure of individual files through fine-grained ACL leaks.",
     "distractors": {
-      "A": "`compute networks update` manages VPC networks, not Cloud Storage buckets.",
-      "B": "Correct. `gcloud storage buckets update --uniform-bucket-level-access` enforces IAM-only governance on the bucket.",
-      "C": "BigQuery (`bq`) does not manage Cloud Storage bucket ACL settings.",
-      "D": "Setting ACLs to public-read exposes all objects to the entire internet."
+      "B": "`compute networks update` manages VPC networks, not Cloud Storage buckets.",
+      "D": "BigQuery (`bq`) does not manage Cloud Storage bucket ACL settings.",
+      "A": "Setting ACLs to public-read exposes all objects to the entire internet."
     },
     "gcloudCommand": "gcloud storage buckets update gs://corp-sensitive-docs --uniform-bucket-level-access",
     "architectureComponents": [
@@ -16038,35 +13796,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an ingress firewall rule specifying --target-tags=all.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/compute.admin to the backend service account."
       },
       {
         "letter": "B",
-        "text": "Allow all traffic from 0.0.0.0/0 on port 8080 without target filters.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an ingress firewall rule specifying --target-service-accounts=backend-sa@corp.iam.gserviceaccount.com, --allow=tcp:8080, and appropriate source IP ranges."
       },
       {
         "letter": "C",
-        "text": "Create an ingress firewall rule specifying --target-service-accounts=backend-sa@corp.iam.gserviceaccount.com, --allow=tcp:8080, and appropriate source IP ranges.",
-        "isTrap": false
+        "text": "Allow all traffic from 0.0.0.0/0 on port 8080 without target filters."
       },
       {
         "letter": "D",
-        "text": "Grant roles/compute.admin to the backend service account.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create an ingress firewall rule specifying --target-tags=all."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Target Service Accounts in VPC firewall rules bind traffic permissions strictly to the cryptographically verified IAM identity running on the VM instance (`--target-service-accounts`), preventing developers from bypassing firewall rules by arbitrarily modifying network tags.",
     "distractors": {
-      "A": "Network tags can be modified by instance administrators, whereas service accounts provide cryptographically bound identity enforcement.",
-      "B": "Opening port 8080 without target filters allows traffic to every VM in the network.",
-      "C": "Correct. `target-service-accounts` enforces strict, tamper-proof IAM identity-based firewall filtering.",
-      "D": "Granting Compute Admin role modifies control plane permissions, not packet-filtering firewall rules."
+      "D": "Network tags can be modified by instance administrators, whereas service accounts provide cryptographically bound identity enforcement.",
+      "C": "Opening port 8080 without target filters allows traffic to every VM in the network.",
+      "A": "Granting Compute Admin role modifies control plane permissions, not packet-filtering firewall rules."
     },
     "gcloudCommand": "gcloud compute firewall-rules create allow-backend-api --network=prod-vpc --allow=tcp:8080 --source-ranges=10.0.0.0/8 --target-service-accounts=backend-sa@corp.iam.gserviceaccount.com",
     "architectureComponents": [
@@ -16100,35 +13850,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Compute Engine Serial Console.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Cloud DNS forwarding rules."
       },
       {
         "letter": "B",
-        "text": "Cloud Armor security policy.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Armor security policy."
       },
       {
         "letter": "C",
-        "text": "Cloud DNS forwarding rules.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Cloud Sensitive Data Protection (Cloud DLP) inspection and de-identification transform job."
       },
       {
         "letter": "D",
-        "text": "Cloud Sensitive Data Protection (Cloud DLP) inspection and de-identification transform job.",
-        "isTrap": false
+        "text": "Compute Engine Serial Console."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Google Cloud Sensitive Data Protection (Cloud DLP) provides automated discovery, classification, and de-identification (masking, tokenization, hashing, date shifting) of sensitive data (credit cards, SSNs, names) in Cloud Storage, BigQuery, and Datastore.",
     "distractors": {
-      "A": "Serial console provides low-level Linux VM terminal debugging.",
+      "D": "Serial console provides low-level Linux VM terminal debugging.",
       "B": "Cloud Armor is an edge WAF service, not a data payload de-identification engine.",
-      "C": "Cloud DNS resolves domain names to IP addresses.",
-      "D": "Correct. Cloud DLP identifies sensitive infoTypes and applies transformations like character masking and redaction."
+      "A": "Cloud DNS resolves domain names to IP addresses."
     },
     "gcloudCommand": "gcloud dlp jobs create ...",
     "architectureComponents": [
@@ -16162,35 +13904,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a Cloud IAM Deny Policy at the Organization level that denies principals 'allUsers' and 'allAuthenticatedUsers' the permission 'storage.objects.get'.",
-        "isTrap": false
+        "text": "Set up a cron script that scans IAM policies daily."
       },
       {
         "letter": "B",
-        "text": "Revoke Owner roles from all project administrators.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete the default VPC network in all projects."
       },
       {
         "letter": "C",
-        "text": "Set up a cron script that scans IAM policies daily.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy a Cloud IAM Deny Policy at the Organization level that denies principals 'allUsers' and 'allAuthenticatedUsers' the permission 'storage.objects.get'."
       },
       {
         "letter": "D",
-        "text": "Delete the default VPC network in all projects.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Revoke Owner roles from all project administrators."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Cloud IAM Deny Policies take precedence over all IAM allow grants. A Deny Policy applied at the Organization or Folder level denying `allUsers` and `allAuthenticatedUsers` specific permissions (`storage.objects.get`) prevents public access universally, overriding any project-level allow bindings.",
     "distractors": {
-      "A": "Correct. IAM Deny policies provide centralized, non-overridable access blocks that override all allow grants.",
-      "B": "Revoking Owner roles restricts project admins but does not provide declarative policy enforcement.",
-      "C": "Daily scanning scripts detect violations retroactively after data may have already leaked.",
-      "D": "Deleting VPC networks does not prevent public API access to Cloud Storage buckets."
+      "D": "Revoking Owner roles restricts project admins but does not provide declarative policy enforcement.",
+      "A": "Daily scanning scripts detect violations retroactively after data may have already leaked.",
+      "B": "Deleting VPC networks does not prevent public API access to Cloud Storage buckets."
     },
     "gcloudCommand": "gcloud iam deny-policies create no-public-storage --organization=123456789012 --file=deny-policy.json",
     "architectureComponents": [
@@ -16224,34 +13958,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption && set a calendar reminder to click Rotate Key",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud compute disks update --rotate-keys=90d"
       },
       {
         "letter": "B",
-        "text": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption --rotation-period=90d --next-rotation-time=2026-11-20T00:00:00Z",
-        "isTrap": false
+        "text": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption && set a calendar reminder to click Rotate Key"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks update --rotate-keys=90d",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption --rotation-period=90d --next-rotation-time=2026-11-20T00:00:00Z"
       },
       {
         "letter": "D",
-        "text": "bq update --kms_rotation=90d db-key",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --kms_rotation=90d db-key"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "`gcloud kms keys create <KEY_NAME> --rotation-period=<DURATION> --next-rotation-time=<TIMESTAMP>` configures Cloud KMS to automatically generate a new primary key version on schedule, ensuring seamless cryptographic hygiene without breaking decryption of data encrypted with older versions.",
     "distractors": {
-      "A": "Manual rotation reminders are error-prone and violate continuous compliance automation standards.",
-      "B": "Correct. `gcloud kms keys create --rotation-period=90d` enables automated hands-free key rotation.",
-      "C": "`compute disks update --rotate-keys` is non-existent syntax.",
+      "B": "Manual rotation reminders are error-prone and violate continuous compliance automation standards.",
+      "A": "`compute disks update --rotate-keys` is non-existent syntax.",
       "D": "`bq update` manages BigQuery tables, not Cloud KMS key rotation schedules."
     },
     "gcloudCommand": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption --rotation-period=90d --next-rotation-time=2026-11-20T00:00:00Z",
@@ -16285,35 +14011,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Cloud Trace.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "BigQuery Data Transfer Service."
       },
       {
         "letter": "B",
-        "text": "Cloud Billing Reports.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Trace."
       },
       {
         "letter": "C",
-        "text": "Security Command Center (SCC).",
-        "isTrap": false
+        "text": "Cloud Billing Reports."
       },
       {
         "letter": "D",
-        "text": "BigQuery Data Transfer Service.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Security Command Center (SCC)."
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Google Cloud Security Command Center (SCC) is the centralized vulnerability and threat management platform for Google Cloud. It continuously monitors cloud asset inventory, surfaces security findings (Security Health Analytics, Event Threat Detection), and evaluates compliance posture.",
     "distractors": {
-      "A": "Cloud Trace monitors application request latency.",
-      "B": "Cloud Billing reports monetary charges and costs.",
-      "C": "Correct. Security Command Center is the centralized security, vulnerability, and compliance management platform.",
-      "D": "BigQuery Data Transfer Service ingests data into BigQuery tables."
+      "B": "Cloud Trace monitors application request latency.",
+      "C": "Cloud Billing reports monetary charges and costs.",
+      "A": "BigQuery Data Transfer Service ingests data into BigQuery tables."
     },
     "gcloudCommand": "gcloud scc findings list 123456789012 --filter='state=\"ACTIVE\"'",
     "architectureComponents": [
@@ -16346,35 +14064,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an unmanaged Nginx VM to terminate SSL.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create an SSL policy using gcloud compute ssl-policies create pci-ssl-policy --min-tls-version=1.2 --profile=RESTRICTED, and attach it to the Target HTTPS Proxy using gcloud compute target-https-proxies update my-proxy --ssl-policy=pci-ssl-policy."
       },
       {
         "letter": "B",
-        "text": "Set Cloud Storage bucket permissions to private.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a VPC firewall rule blocking port 80."
       },
       {
         "letter": "C",
-        "text": "Create a VPC firewall rule blocking port 80.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set Cloud Storage bucket permissions to private."
       },
       {
         "letter": "D",
-        "text": "Create an SSL policy using gcloud compute ssl-policies create pci-ssl-policy --min-tls-version=1.2 --profile=RESTRICTED, and attach it to the Target HTTPS Proxy using gcloud compute target-https-proxies update my-proxy --ssl-policy=pci-ssl-policy.",
-        "isTrap": false
+        "text": "Deploy an unmanaged Nginx VM to terminate SSL."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "`gcloud compute ssl-policies create <NAME> --min-tls-version=1.2 --profile=RESTRICTED` defines modern TLS cipher standards, which are then attached to Target HTTPS Proxies (`gcloud compute target-https-proxies update --ssl-policy=<NAME>`) to enforce TLS 1.2+ at Google's global load balancing edge.",
     "distractors": {
-      "A": "Self-managed Nginx VMs lose global multi-region edge anycast termination benefits and add maintenance overhead.",
-      "B": "Bucket permissions govern storage objects, not load balancer HTTPS termination protocols.",
-      "C": "Firewall rules block TCP ports, but cannot enforce TLS handshake version requirements.",
-      "D": "Correct. `ssl-policies create` + `target-https-proxies update --ssl-policy` enforces minimum TLS versions on Cloud Load Balancers."
+      "D": "Self-managed Nginx VMs lose global multi-region edge anycast termination benefits and add maintenance overhead.",
+      "C": "Bucket permissions govern storage objects, not load balancer HTTPS termination protocols.",
+      "B": "Firewall rules block TCP ports, but cannot enforce TLS handshake version requirements."
     },
     "gcloudCommand": "gcloud compute ssl-policies create pci-ssl-policy --min-tls-version=1.2 --profile=RESTRICTED && gcloud compute target-https-proxies update my-proxy --ssl-policy=pci-ssl-policy",
     "architectureComponents": [
@@ -16407,35 +14117,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/iam.serviceAccountTokenCreator to developer@corp.com on the service account deployer@corp.iam.gserviceaccount.com.",
-        "isTrap": false
+        "text": "Grant roles/iam.serviceAccountKeyAdmin to the developer."
       },
       {
         "letter": "B",
-        "text": "Grant roles/owner to developer@corp.com at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/iam.serviceAccountTokenCreator to developer@corp.com on the service account deployer@corp.iam.gserviceaccount.com."
       },
       {
         "letter": "C",
-        "text": "Create and download a service account JSON key file.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Grant roles/owner to developer@corp.com at the project level."
       },
       {
         "letter": "D",
-        "text": "Grant roles/iam.serviceAccountKeyAdmin to the developer.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Create and download a service account JSON key file."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Granting `roles/iam.serviceAccountTokenCreator` on a specific service account allows a user to generate short-lived OAuth access tokens and OIDC ID tokens to impersonate that service account (e.g. via `gcloud --impersonate-service-account`), eliminating the need for downloadable JSON keys.",
     "distractors": {
-      "A": "Correct. `roles/iam.serviceAccountTokenCreator` enables secure token-based service account impersonation.",
-      "B": "Granting project Owner provides excessive permissions and does not follow the impersonation security pattern.",
-      "C": "Creating JSON keys introduces key leak and credential theft risks.",
-      "D": "`roles/iam.serviceAccountKeyAdmin` creates and deletes keys, but is not needed for keyless impersonation."
+      "C": "Granting project Owner provides excessive permissions and does not follow the impersonation security pattern.",
+      "D": "Creating JSON keys introduces key leak and credential theft risks.",
+      "A": "`roles/iam.serviceAccountKeyAdmin` creates and deletes keys, but is not needed for keyless impersonation."
     },
     "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding deployer@corp.iam.gserviceaccount.com --member='user:developer@corp.com' --role='roles/iam.serviceAccountTokenCreator'",
     "architectureComponents": [
@@ -16468,35 +14170,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Compute Engine Serial Console and OS Login.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Compute Engine Serial Console and OS Login."
       },
       {
         "letter": "B",
-        "text": "Google Cloud Access Approval (for manual approval gates) and Access Transparency (for immutable access logs of Google personnel actions).",
-        "isTrap": false
+        "text": "Cloud DNS and Cloud NAT."
       },
       {
         "letter": "C",
-        "text": "VPC Flow Logs and Cloud Armor.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "VPC Flow Logs and Cloud Armor."
       },
       {
         "letter": "D",
-        "text": "Cloud DNS and Cloud NAT.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Google Cloud Access Approval (for manual approval gates) and Access Transparency (for immutable access logs of Google personnel actions)."
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Access Transparency provides near real-time audit logs whenever Google administrators access customer data during support tickets. Access Approval extends this by requiring explicit customer approval before Google support engineers can access data.",
     "distractors": {
       "A": "Serial Console and OS Login govern customer user logins, not Google support staff access governance.",
-      "B": "Correct. Access Approval provides explicit authorization controls and Access Transparency provides audit logs for Google personnel actions.",
       "C": "VPC Flow Logs capture network traffic, not Google internal administrative support actions.",
-      "D": "Cloud DNS and Cloud NAT are networking services."
+      "B": "Cloud DNS and Cloud NAT are networking services."
     },
     "gcloudCommand": "gcloud services enable accessapproval.googleapis.com",
     "architectureComponents": [
@@ -16531,35 +14225,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Stream the video binary data through an e2-micro VM in a custom Flask app.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Generate a Cloud Storage Signed URL with a 15-minute expiration using a service account with Storage Object Viewer permissions."
       },
       {
         "letter": "B",
-        "text": "Grant roles/storage.objectViewer to allUsers in IAM.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Make the Cloud Storage bucket public."
       },
       {
         "letter": "C",
-        "text": "Generate a Cloud Storage Signed URL with a 15-minute expiration using a service account with Storage Object Viewer permissions.",
-        "isTrap": false
+        "text": "Grant roles/storage.objectViewer to allUsers in IAM."
       },
       {
         "letter": "D",
-        "text": "Make the Cloud Storage bucket public.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Stream the video binary data through an e2-micro VM in a custom Flask app."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Cloud Storage Signed URLs provide cryptographic delegation of read/write access for a limited time window (e.g. 15 minutes). The client can fetch the object directly from Cloud Storage without routing heavy media streaming bandwidth through backend application servers.",
     "distractors": {
-      "A": "Proxying high-bandwidth video streams through application servers bottlenecks CPU and network bandwidth.",
-      "B": "Granting objectViewer to allUsers makes all files publicly readable.",
-      "C": "Correct. Signed URLs grant temporary, time-bound, direct read access to private objects securely.",
-      "D": "Making the bucket public allows anyone on the internet to download copyrighted video files for free."
+      "D": "Proxying high-bandwidth video streams through application servers bottlenecks CPU and network bandwidth.",
+      "C": "Granting objectViewer to allUsers makes all files publicly readable.",
+      "B": "Making the bucket public allows anyone on the internet to download copyrighted video files for free."
     },
     "gcloudCommand": "gcloud storage sign-url gs://premium-course-videos/lesson-1.mp4 --duration=15m --private-key-file=sa-key.json",
     "architectureComponents": [
@@ -16593,35 +14279,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an ingress firewall rule specifying --source-ranges=0.0.0.0/0 and --allow=tcp:3306.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an egress firewall rule on db-tier to allow port 3306."
       },
       {
         "letter": "B",
-        "text": "Create an egress firewall rule on db-tier to allow port 3306.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create an ingress firewall rule specifying --target-tags=db-tier, --source-tags=app-tier, and --allow=tcp:3306."
       },
       {
         "letter": "C",
-        "text": "Assign public IP addresses to all database instances.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an ingress firewall rule specifying --source-ranges=0.0.0.0/0 and --allow=tcp:3306."
       },
       {
         "letter": "D",
-        "text": "Create an ingress firewall rule specifying --target-tags=db-tier, --source-tags=app-tier, and --allow=tcp:3306.",
-        "isTrap": false
+        "text": "Assign public IP addresses to all database instances."
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Using `--target-tags=db-tier` with `--source-tags=app-tier` enforces strict L3/L4 microsegmentation, ensuring that only VMs tagged with `app-tier` can establish TCP connections on port 3306 to database instances.",
     "distractors": {
-      "A": "Allowing 0.0.0.0/0 exposes the database port to the entire internet.",
-      "B": "Egress rules control outbound traffic leaving the VM, not inbound connection requests from the app tier.",
-      "C": "Public IPs on database VMs expose databases to internet port scanners.",
-      "D": "Correct. Target tag `db-tier` + source tag `app-tier` restricts MySQL traffic strictly to application layer VMs."
+      "C": "Allowing 0.0.0.0/0 exposes the database port to the entire internet.",
+      "A": "Egress rules control outbound traffic leaving the VM, not inbound connection requests from the app tier.",
+      "D": "Public IPs on database VMs expose databases to internet port scanners."
     },
     "gcloudCommand": "gcloud compute firewall-rules create allow-app-to-db --network=prod-vpc --allow=tcp:3306 --source-tags=app-tier --target-tags=db-tier",
     "architectureComponents": [
@@ -16655,35 +14333,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute security-policies rules create 100 --security-policy=api-protection --rate-limit-threshold-count=100 --rate-limit-threshold-interval-sec=60 --conform-action=allow --exceed-action=deny-429 --enforce-on-key=IP --match-expr=\"request.path.startsWith('/api/login')\"",
-        "isTrap": false
+        "text": "bq update --rate_limit=100 api_table"
       },
       {
         "letter": "B",
-        "text": "bq update --rate_limit=100 api_table",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute security-policies rules create 100 --security-policy=api-protection --rate-limit-threshold-count=100 --rate-limit-threshold-interval-sec=60 --conform-action=allow --exceed-action=deny-429 --enforce-on-key=IP --match-expr=\"request.path.startsWith('/api/login')\""
       },
       {
         "letter": "C",
-        "text": "gcloud compute firewall-rules create limit-api --allow=tcp:443 --rate-limit=100",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud logging sinks create rate-limit-sink cloudarmor.googleapis.com/api"
       },
       {
         "letter": "D",
-        "text": "gcloud logging sinks create rate-limit-sink cloudarmor.googleapis.com/api",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute firewall-rules create limit-api --allow=tcp:443 --rate-limit=100"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Cloud Armor Rate Limiting rules (`--rate-limit-threshold-count`, `--rate-limit-threshold-interval-sec`, `--exceed-action=deny-429`, `--enforce-on-key=IP`) enforce rate caps per client IP or session key at Google's global edge, dropping volumetric L7 flood attacks before they reach backend instances.",
     "distractors": {
-      "A": "Correct. `gcloud compute security-policies rules create` with rate-limit parameters configures edge throttling.",
-      "B": "BigQuery (`bq`) manages analytical tables, not edge HTTP web traffic rate limiting.",
-      "C": "VPC firewall rules do not support HTTP request path matching or application-level rate limiting.",
-      "D": "Cloud Logging sinks route log records, not throttle live HTTP client traffic."
+      "A": "BigQuery (`bq`) manages analytical tables, not edge HTTP web traffic rate limiting.",
+      "D": "VPC firewall rules do not support HTTP request path matching or application-level rate limiting.",
+      "C": "Cloud Logging sinks route log records, not throttle live HTTP client traffic."
     },
     "gcloudCommand": "gcloud compute security-policies rules create 100 --security-policy=api-protection --rate-limit-threshold-count=100 --rate-limit-threshold-interval-sec=60 --conform-action=allow --exceed-action=deny-429 --enforce-on-key=IP --match-expr=\"request.path.startsWith('/api/login')\"",
     "architectureComponents": [
@@ -16716,35 +14386,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create an open firewall rule on port 5432 to 0.0.0.0/0.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Enable the cloudsql.iam_authentication=on database flag on the instance, and add an IAM database user for app-sa@corp.iam.gserviceaccount.com in Cloud SQL with type CLOUD_IAM_SERVICE_ACCOUNT."
       },
       {
         "letter": "B",
-        "text": "Enable the cloudsql.iam_authentication=on database flag on the instance, and add an IAM database user for app-sa@corp.iam.gserviceaccount.com in Cloud SQL with type CLOUD_IAM_SERVICE_ACCOUNT.",
-        "isTrap": false
+        "text": "Create an open firewall rule on port 5432 to 0.0.0.0/0."
       },
       {
         "letter": "C",
-        "text": "Store database passwords in a public Cloud Storage bucket.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Hardcode the PostgreSQL postgres master password into the Cloud Run Dockerfile."
       },
       {
         "letter": "D",
-        "text": "Hardcode the PostgreSQL postgres master password into the Cloud Run Dockerfile.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Store database passwords in a public Cloud Storage bucket."
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Cloud SQL IAM database authentication (`cloudsql.iam_authentication=on`) enables applications to authenticate to PostgreSQL/MySQL using short-lived OAuth 2.0 access tokens generated by Google IAM service accounts, completely eliminating static database passwords.",
     "distractors": {
-      "A": "Opening firewall rules to 0.0.0.0/0 creates severe network vulnerabilities and does not solve authentication.",
-      "B": "Correct. Enabling `cloudsql.iam_authentication` + provisioning a `CLOUD_IAM_SERVICE_ACCOUNT` user enables keyless IAM logins.",
-      "C": "Storing passwords in public buckets exposes credentials to the world.",
-      "D": "Hardcoding credentials into Dockerfiles leaks passwords in container images."
+      "B": "Opening firewall rules to 0.0.0.0/0 creates severe network vulnerabilities and does not solve authentication.",
+      "D": "Storing passwords in public buckets exposes credentials to the world.",
+      "C": "Hardcoding credentials into Dockerfiles leaks passwords in container images."
     },
     "gcloudCommand": "gcloud sql instances patch prod-pg-instance --database-flags=cloudsql.iam_authentication=on && gcloud sql users create app-sa@corp.iam.gserviceaccount.com --instance=prod-pg-instance --type=CLOUD_IAM_SERVICE_ACCOUNT",
     "architectureComponents": [
@@ -16779,34 +14441,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/container.admin at the GCP project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant the developer roles/container.viewer at the GCP project level (to authenticate), and create a Kubernetes Role and RoleBinding in namespace development granting read access to pods and deployments."
       },
       {
         "letter": "B",
-        "text": "Grant primitive roles/editor on the project.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant primitive roles/editor on the project."
       },
       {
         "letter": "C",
-        "text": "Grant the developer roles/container.viewer at the GCP project level (to authenticate), and create a Kubernetes Role and RoleBinding in namespace development granting read access to pods and deployments.",
-        "isTrap": false
+        "text": "Grant roles/container.admin at the GCP project level."
       },
       {
         "letter": "D",
-        "text": "Deploy an unmanaged Kubernetes cluster on Compute Engine.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an unmanaged Kubernetes cluster on Compute Engine."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Google Cloud IAM grants cluster-level access (`roles/container.viewer` allows listing clusters and obtaining kubeconfig credentials). Granular namespace-level permissions (e.g. read pods only in `development`) are governed inside the cluster via native Kubernetes RBAC `Role` and `RoleBinding` objects.",
     "distractors": {
-      "A": "`roles/container.admin` grants full administrative control across all namespaces in all clusters.",
+      "C": "`roles/container.admin` grants full administrative control across all namespaces in all clusters.",
       "B": "`roles/editor` grants broad primitive edit permissions across the entire GCP project.",
-      "C": "Correct. IAM `roles/container.viewer` (cluster authentication) + in-cluster Kubernetes `RoleBinding` (namespace authorization) enforces least privilege.",
       "D": "Unmanaged clusters increase operational overhead without solving RBAC authorization requirements."
     },
     "gcloudCommand": "kubectl apply -f dev-rolebinding.yaml --namespace=development",
@@ -16841,35 +14495,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Public bucket access with client SSL encryption.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Google default encryption at rest."
       },
       {
         "letter": "B",
-        "text": "Google default encryption at rest.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud KMS Customer-Managed Encryption Keys (CMEK)."
       },
       {
         "letter": "C",
-        "text": "Cloud KMS Customer-Managed Encryption Keys (CMEK).",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Public bucket access with client SSL encryption."
       },
       {
         "letter": "D",
-        "text": "Customer-Supplied Encryption Keys (CSEK), providing the base64-encoded AES-256 key in the encryption_key configuration header of each API/CLI request.",
-        "isTrap": false
+        "text": "Customer-Supplied Encryption Keys (CSEK), providing the base64-encoded AES-256 key in the encryption_key configuration header of each API/CLI request."
       }
     ],
     "correct": "D",
     "explanation": "Customer-Supplied Encryption Keys (CSEK) require the client to supply raw 256-bit AES encryption keys in HTTP request headers. Google Cloud uses the key in memory to encrypt/decrypt the object and immediately purges the key from memory without persisting it.",
     "distractors": {
-      "A": "Client SSL encrypts in transit but leaves stored at-rest objects unprotected from public download.",
-      "B": "Google default encryption uses Google-managed keys stored in Google KMS.",
-      "C": "Cloud KMS CMEK stores and manages the encryption keys inside Google Cloud KMS.",
-      "D": "Correct. CSEK requires supplying the raw AES-256 key with every request, and Google never stores the key."
+      "C": "Client SSL encrypts in transit but leaves stored at-rest objects unprotected from public download.",
+      "A": "Google default encryption uses Google-managed keys stored in Google KMS.",
+      "B": "Cloud KMS CMEK stores and manages the encryption keys inside Google Cloud KMS."
     },
     "gcloudCommand": "gsutil -o 'GSUtil:encryption_key=Base64KeyString==' cp secure-file.dat gs://defense-vault/",
     "architectureComponents": [
@@ -16903,35 +14549,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Share a single service account JSON key among all developers.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Write a nightly cron script that deletes and recreates all IAM policies."
       },
       {
         "letter": "B",
-        "text": "Write a nightly cron script that deletes and recreates all IAM policies.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Grant primitive roles/editor directly to individual developer personal Gmail accounts."
       },
       {
         "letter": "C",
-        "text": "Grant primitive roles/editor directly to individual developer personal Gmail accounts.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Share a single service account JSON key among all developers."
       },
       {
         "letter": "D",
-        "text": "Assign IAM roles exclusively to Google Groups in Google Workspace/Cloud Identity, and manage individual permissions by adding or removing users from the corresponding groups.",
-        "isTrap": false
+        "text": "Assign IAM roles exclusively to Google Groups in Google Workspace/Cloud Identity, and manage individual permissions by adding or removing users from the corresponding groups."
       }
     ],
     "correct": "D",
     "explanation": "Google Cloud IAM best practice mandates binding IAM roles to Google Groups (e.g. `developers@corp.com`, `data-analysts@corp.com`) rather than individual user accounts. Membership in groups is managed via Cloud Identity/Workspace, allowing instant access revocation upon employee offboarding.",
     "distractors": {
-      "A": "Sharing service account keys destroys individual accountability and creates massive credential compromise risks.",
-      "B": "Recreating IAM policies daily causes intermittent authorization drops and severe outage risks.",
-      "C": "Binding roles to individual personal Gmail accounts violates enterprise identity governance and creates dangling permissions.",
-      "D": "Correct. Managing IAM through Google Groups provides centralized, scalable, audit-compliant access governance."
+      "C": "Sharing service account keys destroys individual accountability and creates massive credential compromise risks.",
+      "A": "Recreating IAM policies daily causes intermittent authorization drops and severe outage risks.",
+      "B": "Binding roles to individual personal Gmail accounts violates enterprise identity governance and creates dangling permissions."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding corp-prod --member='group:developers@corp.com' --role='roles/viewer'",
     "architectureComponents": [
@@ -16965,34 +14603,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Configure Cloud Armor rules using preconfigured WAF expressions: evaluatePreconfiguredExpr('sqli-v33-stable') and evaluatePreconfiguredExpr('xss-v33-stable') with action deny-403.",
-        "isTrap": false
+        "text": "Deploy an unmanaged Snort IDS VM on Compute Engine."
       },
       {
         "letter": "B",
-        "text": "Create a VPC firewall rule blocking port 80 and 443.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Configure Cloud Armor rules using preconfigured WAF expressions: evaluatePreconfiguredExpr('sqli-v33-stable') and evaluatePreconfiguredExpr('xss-v33-stable') with action deny-403."
       },
       {
         "letter": "C",
-        "text": "Deploy an unmanaged Snort IDS VM on Compute Engine.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create a VPC firewall rule blocking port 80 and 443."
       },
       {
         "letter": "D",
-        "text": "Set Cloud Storage bucket permissions to private.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Set Cloud Storage bucket permissions to private."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Cloud Armor provides preconfigured WAF rules based on ModSecurity Core Rule Set (CRS 3.3). Using `evaluatePreconfiguredExpr('sqli-v33-stable')` and `evaluatePreconfiguredExpr('xss-v33-stable')` automatically inspects HTTP payloads for SQL injection and cross-site scripting attack vectors at Google's global edge.",
     "distractors": {
-      "A": "Correct. Preconfigured WAF expressions provide turnkey edge mitigation against SQLi, XSS, and L7 attacks.",
-      "B": "Blocking ports 80 and 443 shuts down all legitimate web traffic.",
-      "C": "Self-managed IDS VMs introduce scaling bottlenecks and require ongoing signature rule maintenance.",
+      "C": "Blocking ports 80 and 443 shuts down all legitimate web traffic.",
+      "A": "Self-managed IDS VMs introduce scaling bottlenecks and require ongoing signature rule maintenance.",
       "D": "Bucket permissions govern storage objects, not HTTP application layer attacks."
     },
     "gcloudCommand": "gcloud compute security-policies rules create 1000 --security-policy=waf-policy --expression=\"evaluatePreconfiguredExpr('sqli-v33-stable')\" --action=deny-403",
@@ -17027,35 +14657,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "bq mk --kms_key customer-data-key",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud storage keys create customer-data-key --keyring=app-keyring"
       },
       {
         "letter": "B",
-        "text": "gcloud kms keyrings create app-keyring --location=us-east1 && gcloud kms keys create customer-data-key --keyring=app-keyring --location=us-east1 --purpose=encryption",
-        "isTrap": false
+        "text": "gcloud compute keys create customer-data-key --region=us-east1"
       },
       {
         "letter": "C",
-        "text": "gcloud compute keys create customer-data-key --region=us-east1",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud kms keyrings create app-keyring --location=us-east1 && gcloud kms keys create customer-data-key --keyring=app-keyring --location=us-east1 --purpose=encryption"
       },
       {
         "letter": "D",
-        "text": "gcloud storage keys create customer-data-key --keyring=app-keyring",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "bq mk --kms_key customer-data-key"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "In Cloud KMS, keys belong to Key Rings. You create the Key Ring first (`gcloud kms keyrings create <NAME> --location=<LOC>`), then create the CryptoKey inside that Key Ring (`gcloud kms keys create <NAME> --keyring=<RING> --location=<LOC> --purpose=encryption`).",
     "distractors": {
-      "A": "BigQuery does not create raw KMS cryptographic key resources.",
-      "B": "Correct. `gcloud kms keyrings create` followed by `gcloud kms keys create` establishes the KMS hierarchy.",
-      "C": "`gcloud compute keys` is non-existent CLI syntax.",
-      "D": "`gcloud storage keys` is non-existent CLI syntax."
+      "D": "BigQuery does not create raw KMS cryptographic key resources.",
+      "B": "`gcloud compute keys` is non-existent CLI syntax.",
+      "A": "`gcloud storage keys` is non-existent CLI syntax."
     },
     "gcloudCommand": "gcloud kms keyrings create app-keyring --location=us-east1 && gcloud kms keys create customer-data-key --keyring=app-keyring --location=us-east1 --purpose=encryption",
     "architectureComponents": [
@@ -17087,34 +14709,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Delete all VPC networks in the project.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Remove the roles/editor role from the default service account, enforce the Organization Policy 'iam.automaticIamGrantsForDefaultServiceAccounts' (Disable Default Role Grants), and create dedicated custom service accounts with least-privilege roles for all VMs."
       },
       {
         "letter": "B",
-        "text": "Store the service account private key in a public Git repository.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Store the service account private key in a public Git repository."
       },
       {
         "letter": "C",
-        "text": "Remove the roles/editor role from the default service account, enforce the Organization Policy 'iam.automaticIamGrantsForDefaultServiceAccounts' (Disable Default Role Grants), and create dedicated custom service accounts with least-privilege roles for all VMs.",
-        "isTrap": false
+        "text": "Delete all VPC networks in the project."
       },
       {
         "letter": "D",
-        "text": "Grant roles/owner to the default service account.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/owner to the default service account."
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Google's enterprise security blueprint strongly recommends disabling automatic Editor grants on default service accounts (`iam.automaticIamGrantsForDefaultServiceAccounts` Org Policy), stripping existing Editor roles, and attaching custom dedicated service accounts with fine-grained least privilege roles to VMs.",
     "distractors": {
-      "A": "Deleting VPC networks breaks network connectivity without addressing IAM privilege risks.",
+      "C": "Deleting VPC networks breaks network connectivity without addressing IAM privilege risks.",
       "B": "Committing private keys to Git creates severe security compromise vulnerabilities.",
-      "C": "Correct. Revoking Editor and deploying dedicated least-privilege service accounts eliminates critical lateral movement attack surfaces.",
       "D": "Granting Owner increases the risk of complete project compromise if any VM is exploited."
     },
     "gcloudCommand": "gcloud projects remove-iam-policy-binding corp-prod --member='serviceAccount:123456789012-compute@developer.gserviceaccount.com' --role='roles/editor'",
@@ -17150,35 +14764,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Assign public IPv4 addresses to all VMs and open firewall port 443.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Deploy an unmanaged Squid proxy VM with an external IP."
       },
       {
         "letter": "B",
-        "text": "Deploy an unmanaged Squid proxy VM with an external IP.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Assign public IPv4 addresses to all VMs and open firewall port 443."
       },
       {
         "letter": "C",
-        "text": "Cloud DNS public forwarding.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud DNS public forwarding."
       },
       {
         "letter": "D",
-        "text": "Private Service Connect (PSC) endpoints (via forwarding rules with target-google-apis-bundle or service attachments).",
-        "isTrap": false
+        "text": "Private Service Connect (PSC) endpoints (via forwarding rules with target-google-apis-bundle or service attachments)."
       }
     ],
     "correct": "D",
     "explanation": "Private Service Connect (PSC) allows private consumption of Google APIs and producer services using private internal IP addresses within your VPC, avoiding internet routing, complex VPC peering CIDR overlaps, and external IP vulnerabilities.",
     "distractors": {
-      "A": "Public IPs violate enterprise isolation policies and expose VMs to public internet scans.",
-      "B": "Proxy VMs introduce latency, management overhead, and single points of failure.",
-      "C": "Cloud DNS public forwarding resolves public IPs rather than routing traffic over private SDN endpoints.",
-      "D": "Correct. Private Service Connect connects private VMs directly to Google APIs and managed services over private internal IPs."
+      "B": "Public IPs violate enterprise isolation policies and expose VMs to public internet scans.",
+      "A": "Proxy VMs introduce latency, management overhead, and single points of failure.",
+      "C": "Cloud DNS public forwarding resolves public IPs rather than routing traffic over private SDN endpoints."
     },
     "gcloudCommand": "gcloud compute forwarding-rules create psc-google-apis --global --network=prod-vpc --address=10.0.0.100 --target-google-apis-bundle=all-apis",
     "architectureComponents": [
@@ -17211,33 +14817,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud secrets versions destroy 1 --secret=db-password",
-        "isTrap": false
+        "text": "bq query 'DELETE FROM secrets WHERE version=1'"
       },
       {
         "letter": "B",
-        "text": "bq query 'DELETE FROM secrets WHERE version=1'",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud secrets versions destroy 1 --secret=db-password"
       },
       {
         "letter": "C",
-        "text": "gcloud secrets delete db-password --force",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "gcloud secrets delete db-password --force"
       },
       {
         "letter": "D",
-        "text": "gcloud compute instances delete db-password",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud compute instances delete db-password"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "`gcloud secrets versions destroy <VERSION_NUMBER> --secret=<SECRET_NAME>` permanently destroys the cryptographic payload of that specific secret version, making it irrecoverable while keeping other versions (and the secret metadata) active.",
     "distractors": {
-      "A": "Correct. `gcloud secrets versions destroy` securely purges compromised secret versions.",
-      "B": "BigQuery does not manage Secret Manager secret stores.",
+      "A": "BigQuery does not manage Secret Manager secret stores.",
       "C": "Deleting the entire secret deletes version 2 as well, causing immediate application database connection outages.",
       "D": "`compute instances delete` manages Compute Engine VMs, not Secret Manager secrets."
     },
@@ -17271,35 +14869,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "At the Folder level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "At the Project level for corp-storage-prod."
       },
       {
         "letter": "B",
-        "text": "At the Cloud Storage Bucket resource level on gs://contractor-workspace.",
-        "isTrap": false
+        "text": "At the Organization level."
       },
       {
         "letter": "C",
-        "text": "At the Organization level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "At the Cloud Storage Bucket resource level on gs://contractor-workspace."
       },
       {
         "letter": "D",
-        "text": "At the Project level for corp-storage-prod.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "At the Folder level."
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Google Cloud IAM policies inherit downwards: Org -> Folder -> Project -> Resource. Binding IAM roles at the specific Resource level (the individual bucket `gs://contractor-workspace`) grants permissions exclusively to that single resource without granting access to other buckets in the project.",
     "distractors": {
-      "A": "Folder-level bindings inherit to all projects inside the folder.",
-      "B": "Correct. Resource-level IAM binding restricts permissions strictly to that target bucket.",
-      "C": "Organization-level bindings grant permissions across all projects in the company.",
-      "D": "Project-level bindings inherit to all 10 buckets in the project, violating least privilege."
+      "D": "Folder-level bindings inherit to all projects inside the folder.",
+      "B": "Organization-level bindings grant permissions across all projects in the company.",
+      "A": "Project-level bindings inherit to all 10 buckets in the project, violating least privilege."
     },
     "gcloudCommand": "gcloud storage buckets add-iam-policy-binding gs://contractor-workspace --member='user:contractor@partner.com' --role='roles/storage.objectAdmin'",
     "architectureComponents": [
@@ -17332,34 +14922,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Delete Perimeter A completely.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Make the BigQuery dataset public to allUsers."
       },
       {
         "letter": "B",
-        "text": "Make the BigQuery dataset public to allUsers.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Configure VPC Service Controls Ingress and Egress rules on Perimeter A defining specific source identity, destination project, and API method permissions."
       },
       {
         "letter": "C",
-        "text": "Configure VPC Service Controls Ingress and Egress rules on Perimeter A defining specific source identity, destination project, and API method permissions.",
-        "isTrap": false
+        "text": "Delete Perimeter A completely."
       },
       {
         "letter": "D",
-        "text": "Deploy an open VPN tunnel between the two projects.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy an open VPN tunnel between the two projects."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "VPC Service Controls supports directional Ingress and Egress rules. Administrators can establish fine-grained, identity-based and method-based exceptions to securely allow data to enter or leave the perimeter without weakening perimeter boundaries.",
     "distractors": {
-      "A": "Deleting the perimeter removes all data exfiltration protections for the entire project.",
-      "B": "Making the dataset public causes critical corporate data leaks.",
-      "C": "Correct. Ingress and Egress rules enable secure, controlled cross-perimeter and cross-org API communications.",
+      "C": "Deleting the perimeter removes all data exfiltration protections for the entire project.",
+      "A": "Making the dataset public causes critical corporate data leaks.",
       "D": "VPN tunnels route IP packets, but do not bypass Google Cloud API VPC Service Controls enforcement."
     },
     "gcloudCommand": "gcloud access-context-manager perimeters update perimeter-a --set-ingress-policies=ingress.yaml",
@@ -17394,35 +14976,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/owner to 203.0.113.0/24 in IAM.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Deploy an unmanaged proxy VM in the subnet."
       },
       {
         "letter": "B",
-        "text": "Create an ingress firewall rule in default VPC allowing 203.0.113.0/24.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create an ingress firewall rule in default VPC allowing 203.0.113.0/24."
       },
       {
         "letter": "C",
-        "text": "Deploy an unmanaged proxy VM in the subnet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Create policy admin-waf, update default rule to deny-403, and add a rule at priority 1000 allowing src-ip-ranges 203.0.113.0/24."
       },
       {
         "letter": "D",
-        "text": "Create policy admin-waf, update default rule to deny-403, and add a rule at priority 1000 allowing src-ip-ranges 203.0.113.0/24.",
-        "isTrap": false
+        "text": "Grant roles/owner to 203.0.113.0/24 in IAM."
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Creating a Cloud Armor IP Whitelist policy involves creating the policy (`gcloud compute security-policies create`), modifying the default rule (priority 2147483647) to `deny-403`, and adding a higher-priority rule (priority 1000) allowing source IP range `203.0.113.0/24` with action `allow`.",
     "distractors": {
-      "A": "IP addresses cannot be granted IAM roles; IAM roles are granted to user identities and service accounts.",
+      "D": "IP addresses cannot be granted IAM roles; IAM roles are granted to user identities and service accounts.",
       "B": "VPC firewall rules apply to backend VMs, but do not block traffic at Google's global edge load balancer or return HTTP 403.",
-      "C": "Proxy VMs add infrastructure maintenance and lack edge DDoS protection.",
-      "D": "Correct. Proper Cloud Armor IP whitelisting structure: default deny-403 + priority allow rule for authorized CIDRs."
+      "A": "Proxy VMs add infrastructure maintenance and lack edge DDoS protection."
     },
     "gcloudCommand": "gcloud compute security-policies create admin-waf && gcloud compute security-policies rules update 2147483647 --security-policy=admin-waf --action=deny-403 && gcloud compute security-policies rules create 1000 --security-policy=admin-waf --src-ip-ranges=203.0.113.0/24 --action=allow",
     "architectureComponents": [
@@ -17456,35 +15030,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "logName=\"projects/corp-prod/logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName=\"SetIamPolicy\"",
-        "isTrap": false
+        "text": "gcloud compute instances list --filter='iam'"
       },
       {
         "letter": "B",
-        "text": "SELECT * FROM iam_table WHERE action='modify'",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "SELECT * FROM iam_table WHERE action='modify'"
       },
       {
         "letter": "C",
-        "text": "gcloud compute instances list --filter='iam'",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "resource.type=\"gce_instance\" AND severity=DEBUG"
       },
       {
         "letter": "D",
-        "text": "resource.type=\"gce_instance\" AND severity=DEBUG",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "logName=\"projects/corp-prod/logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName=\"SetIamPolicy\""
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Administrative IAM policy changes are recorded in the Admin Activity audit log (`cloudaudit.googleapis.com/activity`) with `protoPayload.methodName=\"SetIamPolicy\"` (or `google.iam.admin.v1.CreateRole`). This records the caller identity, timestamp, and the exact delta between policy versions.",
     "distractors": {
-      "A": "Correct. `logName=.../cloudaudit.googleapis.com%2Factivity AND protoPayload.methodName=\"SetIamPolicy\"` isolates IAM modifications.",
       "B": "Logging filter expressions are not raw SQL SELECT statements (unless using Log Analytics).",
-      "C": "`compute instances list` displays VM metadata, not administrative IAM audit trail history.",
-      "D": "`gce_instance` logs with DEBUG severity do not record project-level IAM API changes."
+      "A": "`compute instances list` displays VM metadata, not administrative IAM audit trail history.",
+      "C": "`gce_instance` logs with DEBUG severity do not record project-level IAM API changes."
     },
     "gcloudCommand": "gcloud logging read 'logName=\"projects/corp-prod/logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName=\"SetIamPolicy\"' --limit=10 --format=json",
     "architectureComponents": [
@@ -17518,34 +15084,26 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud kms keys delete customer-key --force",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud kms keys delete customer-key --force"
       },
       {
         "letter": "B",
-        "text": "gcloud kms keys versions destroy 3 --key=customer-key --keyring=app-ring --location=us-central1",
-        "isTrap": false
+        "text": "gcloud compute disks delete customer-key"
       },
       {
         "letter": "C",
-        "text": "gcloud compute disks delete customer-key",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud kms keys versions destroy 3 --key=customer-key --keyring=app-ring --location=us-central1"
       },
       {
         "letter": "D",
-        "text": "bq update --delete_kms customer-key",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "bq update --delete_kms customer-key"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "`gcloud kms keys versions destroy <VERSION> --key=<KEY> --keyring=<RING> --location=<LOC>` transitions the key version into the `DESTROY_SCHEDULED` state with a 24-hour recovery window before the cryptographic key material is irreversibly destroyed.",
     "distractors": {
       "A": "Cloud KMS does not permit instant hard deletion of key resources; keys must undergo scheduled destruction.",
-      "B": "Correct. `gcloud kms keys versions destroy` schedules the key version for destruction.",
-      "C": "`compute disks delete` manages persistent disks, not Cloud KMS keys.",
+      "B": "`compute disks delete` manages persistent disks, not Cloud KMS keys.",
       "D": "BigQuery does not manage KMS key lifecycles."
     },
     "gcloudCommand": "gcloud kms keys versions destroy 3 --key=customer-key --keyring=app-ring --location=us-central1",
@@ -17578,35 +15136,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy a Cloud Function that checks IAM every hour.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete all default VPC networks."
       },
       {
         "letter": "B",
-        "text": "Create an ingress firewall rule blocking all foreign IPs.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy a Cloud Function that checks IAM every hour."
       },
       {
         "letter": "C",
-        "text": "Enforce the Organization Policy constraint 'iam.allowedPolicyMemberDomains' specifying the Directory Customer ID for corp.example.com.",
-        "isTrap": false
+        "text": "Create an ingress firewall rule blocking all foreign IPs."
       },
       {
         "letter": "D",
-        "text": "Delete all default VPC networks.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Enforce the Organization Policy constraint 'iam.allowedPolicyMemberDomains' specifying the Directory Customer ID for corp.example.com."
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "The `iam.allowedPolicyMemberDomains` Organization Policy constraint (Domain Restricted Sharing) restricts IAM policy bindings exclusively to accounts within approved Google Workspace / Cloud Identity customer domains, preventing accidental or malicious addition of external personal Gmail accounts.",
     "distractors": {
-      "A": "Cloud Functions provide delayed detective scanning rather than real-time preventative control plane enforcement.",
-      "B": "VPC firewall rules govern network packets, not Cloud IAM identity email validation.",
-      "C": "Correct. `iam.allowedPolicyMemberDomains` enforces organization-wide domain restricted sharing at the control plane.",
-      "D": "Deleting VPC networks does not prevent IAM role assignments to external users."
+      "B": "Cloud Functions provide delayed detective scanning rather than real-time preventative control plane enforcement.",
+      "C": "VPC firewall rules govern network packets, not Cloud IAM identity email validation.",
+      "A": "Deleting VPC networks does not prevent IAM role assignments to external users."
     },
     "gcloudCommand": "gcloud resource-manager org-policies set-policy policy.json --organization=123456789012",
     "architectureComponents": [
@@ -17641,35 +15191,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud app deploy ssl.yaml",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute firewall-rules create allow-ssl --allow=tcp:3306"
       },
       {
         "letter": "B",
-        "text": "bq update --ssl=true corp-db-prod",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud sql instances patch corp-db-prod --ssl-mode=ENCRYPTED_ONLY"
       },
       {
         "letter": "C",
-        "text": "gcloud compute firewall-rules create allow-ssl --allow=tcp:3306",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud app deploy ssl.yaml"
       },
       {
         "letter": "D",
-        "text": "gcloud sql instances patch corp-db-prod --ssl-mode=ENCRYPTED_ONLY",
-        "isTrap": false
+        "text": "bq update --ssl=true corp-db-prod"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --ssl-mode=ENCRYPTED_ONLY` (or `TRUSTED_CLIENT_CERTIFICATES`) enforces that all incoming client TCP connections must establish an SSL/TLS handshake, rejecting unencrypted plaintext SQL queries.",
     "distractors": {
-      "A": "App Engine `ssl.yaml` is non-existent.",
-      "B": "BigQuery (`bq`) does not manage Cloud SQL instance SSL parameters.",
-      "C": "VPC firewall rules allow TCP traffic but do not enforce SSL/TLS encryption handshakes at the database protocol layer.",
-      "D": "Correct. `gcloud sql instances patch --ssl-mode=ENCRYPTED_ONLY` rejects unencrypted connections."
+      "C": "App Engine `ssl.yaml` is non-existent.",
+      "D": "BigQuery (`bq`) does not manage Cloud SQL instance SSL parameters.",
+      "A": "VPC firewall rules allow TCP traffic but do not enforce SSL/TLS encryption handshakes at the database protocol layer."
     },
     "gcloudCommand": "gcloud sql instances patch corp-db-prod --ssl-mode=ENCRYPTED_ONLY",
     "architectureComponents": [
@@ -17702,35 +15244,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/cloudbuild.builds.editor at the project level.",
-        "isTrap": false
+        "text": "Grant primitive roles/editor at the project level."
       },
       {
         "letter": "B",
-        "text": "Grant roles/cloudbuild.builds.viewer at the project level.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Grant roles/owner at the project level."
       },
       {
         "letter": "C",
-        "text": "Grant roles/owner at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/cloudbuild.builds.editor at the project level."
       },
       {
         "letter": "D",
-        "text": "Grant primitive roles/editor at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/cloudbuild.builds.viewer at the project level."
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "`roles/cloudbuild.builds.editor` provides permissions to create, edit, and run Cloud Build triggers and build executions (`cloudbuild.builds.create`, `cloudbuild.builds.get`, `cloudbuild.triggers.create`), without granting broad administrative access across the project.",
     "distractors": {
-      "A": "Correct. `roles/cloudbuild.builds.editor` grants necessary trigger and build execution permissions.",
-      "B": "`roles/cloudbuild.builds.viewer` is read-only and prevents creating triggers or executing builds.",
-      "C": "Granting Owner gives excessive administrative privileges across the entire project.",
-      "D": "`roles/editor` grants broad access to all GCP resources in the project, violating least privilege."
+      "D": "`roles/cloudbuild.builds.viewer` is read-only and prevents creating triggers or executing builds.",
+      "B": "Granting Owner gives excessive administrative privileges across the entire project.",
+      "A": "`roles/editor` grants broad access to all GCP resources in the project, violating least privilege."
     },
     "gcloudCommand": "gcloud projects add-iam-policy-binding ci-cd-prod --member='user:developer@corp.com' --role='roles/cloudbuild.builds.editor'",
     "architectureComponents": [
@@ -17763,35 +15297,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "gcloud compute instances create payment-api-key --replicate=auto",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "gcloud storage buckets create gs://payment-api-key --replication=global"
       },
       {
         "letter": "B",
-        "text": "gcloud secrets create payment-api-key --replication-policy=automatic",
-        "isTrap": false
+        "text": "gcloud secrets create payment-api-key --replication-policy=automatic"
       },
       {
         "letter": "C",
-        "text": "gcloud secrets create payment-api-key --replication-policy=user-managed --locations=us-central1",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud secrets create payment-api-key --replication-policy=user-managed --locations=us-central1"
       },
       {
         "letter": "D",
-        "text": "gcloud storage buckets create gs://payment-api-key --replication=global",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "gcloud compute instances create payment-api-key --replicate=auto"
       }
     ],
     "correct": "B",
     "explanation": "Secret Manager supports `--replication-policy=automatic`, which automatically replicates secret payloads across multiple Google-managed geographical regions for resilience and high availability with zero manual location management.",
     "distractors": {
-      "A": "Compute Engine instance creation provisions VMs, not Secret Manager secrets.",
-      "B": "Correct. `--replication-policy=automatic` provides managed multi-region secret replication.",
+      "D": "Compute Engine instance creation provisions VMs, not Secret Manager secrets.",
       "C": "`user-managed` with a single region restricts the secret to that single zone/region, failing multi-region redundancy requirements.",
-      "D": "Cloud Storage buckets are object stores, not Secret Manager secret objects."
+      "A": "Cloud Storage buckets are object stores, not Secret Manager secret objects."
     },
     "gcloudCommand": "gcloud secrets create payment-api-key --replication-policy=automatic",
     "architectureComponents": [
@@ -17823,35 +15349,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "BigQuery Data Profiler.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Compute Engine Serial Console."
       },
       {
         "letter": "B",
-        "text": "Compute Engine Serial Console.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Google Cloud Policy Troubleshooter (in Cloud Console or via gcloud policy-troubleshoot)."
       },
       {
         "letter": "C",
-        "text": "Google Cloud Policy Troubleshooter (in Cloud Console or via gcloud policy-troubleshoot).",
-        "isTrap": false
+        "text": "VPC Flow Logs in Cloud Logging."
       },
       {
         "letter": "D",
-        "text": "VPC Flow Logs in Cloud Logging.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "BigQuery Data Profiler."
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Policy Troubleshooter analyzes IAM policies across the Organization, Folder, Project, and Resource hierarchy, evaluating allow bindings, conditional policies, and IAM Deny policies to explain why a user was granted or denied a specific permission.",
     "distractors": {
-      "A": "BigQuery Data Profiler analyzes dataset statistical distributions.",
-      "B": "Serial Console is for Linux VM kernel diagnostics.",
-      "C": "Correct. Policy Troubleshooter pinpoints the exact IAM policy hierarchy binding granting or denying permissions.",
-      "D": "VPC Flow Logs capture network IP packet flows, not IAM permission evaluation graphs."
+      "D": "BigQuery Data Profiler analyzes dataset statistical distributions.",
+      "A": "Serial Console is for Linux VM kernel diagnostics.",
+      "C": "VPC Flow Logs capture network IP packet flows, not IAM permission evaluation graphs."
     },
     "gcloudCommand": "gcloud policy-troubleshoot iam //storage.googleapis.com/projects/_/buckets/finance-vault --principal-email=developer@corp.com --permission=storage.objects.delete",
     "architectureComponents": [
@@ -17885,35 +15403,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "A VPC firewall rule blocking port 80.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Cloud Armor Bot Management with reCAPTCHA Enterprise assessment token validation in security policy rules."
       },
       {
         "letter": "B",
-        "text": "Cloud DNS TXT records.",
-        "isTrap": true,
-        "trapType": "legacy_service"
+        "text": "Cloud DNS TXT records."
       },
       {
         "letter": "C",
-        "text": "Compute Engine instance groups with Spot VMs.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "A VPC firewall rule blocking port 80."
       },
       {
         "letter": "D",
-        "text": "Cloud Armor Bot Management with reCAPTCHA Enterprise assessment token validation in security policy rules.",
-        "isTrap": false
+        "text": "Compute Engine instance groups with Spot VMs."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud Armor Bot Management integrates with reCAPTCHA Enterprise. Security policy rules evaluate `token.recaptcha_session.score` at Google's global edge and apply actions (allow, redirect, challenge, deny-403) to block automated fraud.",
     "distractors": {
-      "A": "Firewall rules block all TCP traffic, terminating legitimate customer access.",
+      "C": "Firewall rules block all TCP traffic, terminating legitimate customer access.",
       "B": "DNS TXT records hold domain verification strings, not edge bot mitigation logic.",
-      "C": "Spot VMs are ephemeral compute instances and have no bot detection capabilities.",
-      "D": "Correct. Cloud Armor Bot Management + reCAPTCHA Enterprise provides automated risk scoring and edge bot mitigation."
+      "D": "Spot VMs are ephemeral compute instances and have no bot detection capabilities."
     },
     "gcloudCommand": "gcloud compute security-policies rules create 1000 --security-policy=login-waf --expression=\"token.recaptcha_session.score < 0.3\" --action=deny-403",
     "architectureComponents": [
@@ -17946,35 +15456,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/artifactregistry.writer on the Artifact Registry repository (or at project level).",
-        "isTrap": false
+        "text": "Grant roles/owner at the project level."
       },
       {
         "letter": "B",
-        "text": "Grant roles/owner at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/artifactregistry.writer on the Artifact Registry repository (or at project level)."
       },
       {
         "letter": "C",
-        "text": "Grant roles/artifactregistry.reader at the project level.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Grant roles/artifactregistry.admin at the project level."
       },
       {
         "letter": "D",
-        "text": "Grant roles/artifactregistry.admin at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/artifactregistry.reader at the project level."
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "`roles/artifactregistry.writer` grants permissions to read and write (push and pull) artifacts and container images (`artifactregistry.repositories.uploadArtifacts`, `artifactregistry.repositories.downloadArtifacts`), without granting repository deletion or IAM administration rights.",
     "distractors": {
-      "A": "Correct. `roles/artifactregistry.writer` strictly fulfills push/pull requirements under least privilege.",
-      "B": "Project Owner grants full unrestricted control over all GCP resources.",
-      "C": "`roles/artifactregistry.reader` is read-only (pull only) and fails image push operations with 403 Forbidden.",
-      "D": "`roles/artifactregistry.admin` allows deleting repositories and modifying IAM access control policies."
+      "A": "Project Owner grants full unrestricted control over all GCP resources.",
+      "D": "`roles/artifactregistry.reader` is read-only (pull only) and fails image push operations with 403 Forbidden.",
+      "C": "`roles/artifactregistry.admin` allows deleting repositories and modifying IAM access control policies."
     },
     "gcloudCommand": "gcloud artifacts repositories add-iam-policy-binding apps --location=us --member='serviceAccount:build-bot@corp.iam.gserviceaccount.com' --role='roles/artifactregistry.writer'",
     "architectureComponents": [
@@ -18008,33 +15510,25 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an unmanaged Squid Proxy VM on a public subnet.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Deploy an unmanaged Squid Proxy VM on a public subnet."
       },
       {
         "letter": "B",
-        "text": "Enable Private Google Access on the subnet using gcloud compute networks subnets update private-sub --region=us-central1 --enable-private-ip-google-access.",
-        "isTrap": false
+        "text": "Enable Private Google Access on the subnet using gcloud compute networks subnets update private-sub --region=us-central1 --enable-private-ip-google-access."
       },
       {
         "letter": "C",
-        "text": "Create an ingress firewall rule allowing port 80 to 0.0.0.0/0.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Create an ingress firewall rule allowing port 80 to 0.0.0.0/0."
       },
       {
         "letter": "D",
-        "text": "Assign public IP addresses to all VM instances.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Assign public IP addresses to all VM instances."
       }
     ],
     "correct": "B",
     "explanation": "Enabling Private Google Access (`--enable-private-ip-google-access`) on a VPC subnet allows VM instances with only internal private IP addresses to reach the public IP endpoints of Google APIs and services (Cloud Storage, BigQuery, Pub/Sub) directly over Google's internal private fiber backbone.",
     "distractors": {
       "A": "Proxy VMs add latency, cost, and maintenance overhead compared to native Private Google Access.",
-      "B": "Correct. `subnets update --enable-private-ip-google-access` allows private VMs to communicate with Google APIs.",
       "C": "Firewall rules do not route private VM packets to Google public VIPs without Private Google Access enabled.",
       "D": "Assigning public IPs violates isolation policies and exposes private VMs to internet inbound attacks."
     },
@@ -18070,35 +15564,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Create a VPC firewall rule blocking US IP addresses.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a VPC firewall rule blocking US IP addresses."
       },
       {
         "letter": "B",
-        "text": "Delete all subnets in US regions manually.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Revoke Owner roles from all project administrators."
       },
       {
         "letter": "C",
-        "text": "Enforce the Organization Policy constraint 'gcp.resourceLocations' with allowedValues set to 'in:europe-locations'.",
-        "isTrap": false
+        "text": "Enforce the Organization Policy constraint 'gcp.resourceLocations' with allowedValues set to 'in:europe-locations'."
       },
       {
         "letter": "D",
-        "text": "Revoke Owner roles from all project administrators.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete all subnets in US regions manually."
       }
     ],
     "correct": "C",
     "explanation": "The `gcp.resourceLocations` Organization Policy constraint restricts the physical geographic locations where resource creation (Compute Engine, GCS, Cloud SQL, BigQuery) is permitted, preventing resource provisioning outside allowed regions (e.g. `in:europe-locations`).",
     "distractors": {
       "A": "Firewall rules control packet transmission, not resource deployment region validation in the GCP control plane.",
-      "B": "Deleting subnets does not prevent developers from creating multi-region US buckets or global resources.",
-      "C": "Correct. `gcp.resourceLocations` enforces data residency and geographical resource creation boundaries across the organization.",
-      "D": "Revoking Owner roles does not establish declarative data residency guardrails for authorized admins."
+      "D": "Deleting subnets does not prevent developers from creating multi-region US buckets or global resources.",
+      "B": "Revoking Owner roles does not establish declarative data residency guardrails for authorized admins."
     },
     "gcloudCommand": "gcloud resource-manager org-policies set-policy policy.json --organization=123456789012",
     "architectureComponents": [
@@ -18131,35 +15617,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Make the secret public for 4 hours.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Email the secret plaintext in an encrypted email."
       },
       {
         "letter": "B",
-        "text": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.admin'",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.secretAccessor' --condition='expression=request.time < timestamp(\"2026-08-20T23:00:00Z\"),title=ExpiringSecretAccess'"
       },
       {
         "letter": "C",
-        "text": "Email the secret plaintext in an encrypted email.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Make the secret public for 4 hours."
       },
       {
         "letter": "D",
-        "text": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.secretAccessor' --condition='expression=request.time < timestamp(\"2026-08-20T23:00:00Z\"),title=ExpiringSecretAccess'",
-        "isTrap": false
+        "text": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.admin'"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Binding `roles/secretmanager.secretAccessor` with an IAM Condition (`request.time < timestamp(...)`) grants time-limited read access that automatically expires and invalidates at the exact specified cutoff time.",
     "distractors": {
-      "A": "Making secrets public exposes payment credentials to the world.",
-      "B": "Secret Admin role gives excessive permissions to modify and delete the secret and lacks automatic expiration.",
-      "C": "Transmitting secrets via email violates security standards and creates persistent plaintext records.",
-      "D": "Correct. `gcloud secrets add-iam-policy-binding` with condition expression enforces time-bound secret access."
+      "C": "Making secrets public exposes payment credentials to the world.",
+      "D": "Secret Admin role gives excessive permissions to modify and delete the secret and lacks automatic expiration.",
+      "A": "Transmitting secrets via email violates security standards and creates persistent plaintext records."
     },
     "gcloudCommand": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.secretAccessor' --condition='expression=request.time < timestamp(\"2026-08-20T23:00:00Z\"),title=ExpiringSecretAccess'",
     "architectureComponents": [
@@ -18193,35 +15671,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/cloudfunctions.invoker (and roles/run.invoker for Gen 2) on the Cloud Function resource.",
-        "isTrap": false
+        "text": "Grant roles/cloudfunctions.admin at the project level."
       },
       {
         "letter": "B",
-        "text": "Grant roles/owner at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/owner at the project level."
       },
       {
         "letter": "C",
-        "text": "Deploy the function with --allow-unauthenticated.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Deploy the function with --allow-unauthenticated."
       },
       {
         "letter": "D",
-        "text": "Grant roles/cloudfunctions.admin at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/cloudfunctions.invoker (and roles/run.invoker for Gen 2) on the Cloud Function resource."
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Invoking secured Cloud Functions requires `roles/cloudfunctions.invoker` (and `roles/run.invoker` on the underlying Cloud Run service for 2nd gen functions). The calling service account presents a signed Google OIDC ID token to authenticate and invoke the function.",
     "distractors": {
-      "A": "Correct. `roles/cloudfunctions.invoker` / `roles/run.invoker` grants permission to invoke authenticated functions.",
       "B": "Project Owner grants full control over all project resources.",
       "C": "`--allow-unauthenticated` exposes the function to the public internet without authentication.",
-      "D": "`roles/cloudfunctions.admin` allows deleting, updating, and deploying function code, violating least privilege."
+      "A": "`roles/cloudfunctions.admin` allows deleting, updating, and deploying function code, violating least privilege."
     },
     "gcloudCommand": "gcloud functions add-iam-policy-binding process-order --region=us-central1 --member='serviceAccount:order-client-sa@corp.iam.gserviceaccount.com' --role='roles/cloudfunctions.invoker'",
     "architectureComponents": [
@@ -18256,35 +15726,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Deploy an unmanaged Snort VM in the VPC.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Set Cloud Storage bucket retention to 10 years."
       },
       {
         "letter": "B",
-        "text": "Enable Cloud Armor Adaptive Protection on the security policy using gcloud compute security-policies update my-policy --enable-layer7-ddos-defense.",
-        "isTrap": false
+        "text": "Enable Cloud Armor Adaptive Protection on the security policy using gcloud compute security-policies update my-policy --enable-layer7-ddos-defense."
       },
       {
         "letter": "C",
-        "text": "Create a VPC firewall rule blocking port 80.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create a VPC firewall rule blocking port 80."
       },
       {
         "letter": "D",
-        "text": "Set Cloud Storage bucket retention to 10 years.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Deploy an unmanaged Snort VM in the VPC."
       }
     ],
     "correct": "B",
     "explanation": "Cloud Armor Adaptive Protection leverages machine learning models to detect Layer 7 application DDoS attacks, identify the specific attack signature, and automatically generate recommended mitigation rules with one-click deployment.",
     "distractors": {
-      "A": "Self-managed Snort VMs lack Google edge scale, machine learning baseline analytics, and DDoS mitigation capacity.",
-      "B": "Correct. `gcloud compute security-policies update --enable-layer7-ddos-defense` enables Cloud Armor Adaptive Protection.",
+      "D": "Self-managed Snort VMs lack Google edge scale, machine learning baseline analytics, and DDoS mitigation capacity.",
       "C": "Blocking port 80 cuts off all customer traffic.",
-      "D": "Cloud Storage retention governs object immutability, not network DDoS defense."
+      "A": "Cloud Storage retention governs object immutability, not network DDoS defense."
     },
     "gcloudCommand": "gcloud compute security-policies update my-policy --enable-layer7-ddos-defense",
     "architectureComponents": [
@@ -18317,35 +15779,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Revoke Owner roles from all developers.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Delete all service accounts across all projects."
       },
       {
         "letter": "B",
-        "text": "Create an ingress firewall rule on port 22.",
-        "isTrap": true,
-        "trapType": "wrong_storage_class_penalty"
+        "text": "Create an ingress firewall rule on port 22."
       },
       {
         "letter": "C",
-        "text": "Enforce the Organization Policy constraint 'iam.disableServiceAccountKeyCreation' at the Organization or Folder level.",
-        "isTrap": false
+        "text": "Enforce the Organization Policy constraint 'iam.disableServiceAccountKeyCreation' at the Organization or Folder level."
       },
       {
         "letter": "D",
-        "text": "Delete all service accounts across all projects.",
-        "isTrap": true,
-        "trapType": "manual_scripting_overhead"
+        "text": "Revoke Owner roles from all developers."
       }
     ],
     "correct": "C",
     "explanation": "The `iam.disableServiceAccountKeyCreation` Organization Policy constraint blocks calls to `CreateServiceAccountKey`, preventing the generation and download of static private key JSON files while allowing keyless Workload Identity Federation and OAuth token impersonation.",
     "distractors": {
-      "A": "Revoking Owner roles does not prevent other IAM admins from generating keys unless governed by Org Policy.",
+      "D": "Revoking Owner roles does not prevent other IAM admins from generating keys unless governed by Org Policy.",
       "B": "Firewall rules control network packets, not IAM control plane API operations.",
-      "C": "Correct. `iam.disableServiceAccountKeyCreation` prevents creating static service account JSON keys organization-wide.",
-      "D": "Deleting all service accounts breaks active application workloads."
+      "A": "Deleting all service accounts breaks active application workloads."
     },
     "gcloudCommand": "gcloud resource-manager org-policies enable-enforce iam.disableServiceAccountKeyCreation --organization=123456789012",
     "architectureComponents": [
@@ -18379,35 +15833,27 @@ window.GCP_ACE_QUESTIONS = [
     "options": [
       {
         "letter": "A",
-        "text": "Grant roles/owner to Key Administrators at the project level.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Grant roles/cloudkms.admin to Key Administrators (grants management without encrypter/decrypter rights), and grant roles/cloudkms.cryptoKeyEncrypterDecrypter to Application Service Accounts (grants data crypto operations without management rights)."
       },
       {
         "letter": "B",
-        "text": "Store the KMS private key in a shared Cloud Storage bucket.",
-        "isTrap": true,
-        "trapType": "public_ip_security_risk"
+        "text": "Grant primitive roles/editor to both Key Administrators and Application Service Accounts."
       },
       {
         "letter": "C",
-        "text": "Grant primitive roles/editor to both Key Administrators and Application Service Accounts.",
-        "isTrap": true,
-        "trapType": "primitive_iam_overprivileged"
+        "text": "Store the KMS private key in a shared Cloud Storage bucket."
       },
       {
         "letter": "D",
-        "text": "Grant roles/cloudkms.admin to Key Administrators (grants management without encrypter/decrypter rights), and grant roles/cloudkms.cryptoKeyEncrypterDecrypter to Application Service Accounts (grants data crypto operations without management rights).",
-        "isTrap": false
+        "text": "Grant roles/owner to Key Administrators at the project level."
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Cloud KMS strictly enforces Separation of Duties by segregating administrative permissions (`roles/cloudkms.admin` manages key rings, rotation schedules, and IAM policies but CANNOT encrypt/decrypt) from cryptographic data plane permissions (`roles/cloudkms.cryptoKeyEncrypterDecrypter` encrypts and decrypts payloads but CANNOT alter key configurations).",
     "distractors": {
-      "A": "Project Owner grants unrestricted control over everything in the project.",
-      "B": "Cloud KMS symmetric keys cannot be exported or stored as files in Cloud Storage.",
-      "C": "Primitive Editor grants both management and crypto permissions to everyone, violating separation of duties.",
-      "D": "Correct. `roles/cloudkms.admin` for administrators + `roles/cloudkms.cryptoKeyEncrypterDecrypter` for workloads enforces classic cryptographic separation of duties."
+      "D": "Project Owner grants unrestricted control over everything in the project.",
+      "C": "Cloud KMS symmetric keys cannot be exported or stored as files in Cloud Storage.",
+      "B": "Primitive Editor grants both management and crypto permissions to everyone, violating separation of duties."
     },
     "gcloudCommand": "gcloud kms keyrings add-iam-policy-binding app-keyring --location=us-central1 --member='group:key-admins@corp.com' --role='roles/cloudkms.admin'",
     "architectureComponents": [
@@ -18418,10 +15864,10 @@ window.GCP_ACE_QUESTIONS = [
   }
 ];
 
-if (typeof window !== 'undefined') {
-  window.GCP_QUESTIONS_ACE = window.GCP_ACE_QUESTIONS;
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = window.GCP_ACE_QUESTIONS;
-}
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = GCP_ACE_QUESTIONS;
+  }
+  if (typeof global !== 'undefined') {
+    global.GCP_ACE_QUESTIONS = GCP_ACE_QUESTIONS;
+  }
+})(typeof window !== 'undefined' ? window : global);
