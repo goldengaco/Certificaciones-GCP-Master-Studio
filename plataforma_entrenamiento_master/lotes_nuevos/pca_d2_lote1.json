@@ -1,0 +1,1505 @@
+[
+  {
+    "id": "PCA-D2-001",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.2",
+    "subsectionName": "Configuring individual storage systems",
+    "subtopic": "Infrastructure as Code: Terraform State & Locking",
+    "conceptos": [
+      "terraform",
+      "cloud storage",
+      "state locking",
+      "object versioning"
+    ],
+    "title": "Terraform Remote State Backend for a 40-Engineer Platform Team",
+    "scenario": "A retail platform has 40 engineers running Terraform from Cloud Build pipelines against 60 Google Cloud projects. Twice last quarter two pipelines applied at the same time and corrupted the state file, costing 6 hours of manual reconciliation. The auditors now require that any prior state generation from the last 30 days can be restored, that concurrent applies are serialized automatically, and that the team adds no servers to operate. Which backend configuration meets these requirements?",
+    "keywords": [
+      "Terraform",
+      "gcs backend",
+      "state locking",
+      "object versioning"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Commit terraform.tfstate to the module repository after each apply and rely on branch protection with required reviews to keep two pipelines from writing the state concurrently."
+      },
+      {
+        "letter": "B",
+        "text": "Configure the pg backend against a Cloud SQL for PostgreSQL instance, using row locks for concurrency and automated backups with a 30-day retention window for state recovery."
+      },
+      {
+        "letter": "C",
+        "text": "Mount a Filestore Basic HDD share on the Cloud Build private pool workers, store the state file there, and use POSIX file permissions plus advisory locks to serialize the applies."
+      },
+      {
+        "letter": "D",
+        "text": "Configure the gcs backend against a Cloud Storage bucket with object versioning enabled, which takes a lock object for the duration of an apply and keeps prior state generations."
+      }
+    ],
+    "correct": "D",
+    "explanation": "The Terraform gcs backend stores state in a Cloud Storage bucket and implements state locking natively by creating a lock object for the duration of write operations, so a second concurrent apply fails fast instead of corrupting state. Enabling object versioning on the bucket keeps every prior generation of the state object, which satisfies the 30-day restore requirement, and Cloud Storage is fully managed so no servers are added.",
+    "distractors": {
+      "A": "Git gives history but no runtime mutual exclusion: two pipelines can check out the same commit and apply simultaneously, and branch protection only gates merges, not the apply step.",
+      "B": "The pg backend does provide locking, but it forces the team to run and patch a Cloud SQL instance purely for state, which contradicts the requirement to add no servers to operate.",
+      "C": "Filestore Basic is a single-zone appliance with no object versioning, so a 30-day point-in-time restore of the state would require a separate backup process, and it adds infrastructure to run."
+    },
+    "officialDocUrl": "https://cloud.google.com/docs/terraform/resource-management/store-state",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-002",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "GitOps & Config Controller",
+    "conceptos": [
+      "config controller",
+      "config connector",
+      "config sync",
+      "gitops"
+    ],
+    "title": "Continuous Drift Reconciliation of Google Cloud Resources with Config Controller",
+    "scenario": "A bank manages 180 Google Cloud projects and has been hit twice by engineers changing firewall rules and IAM bindings directly in the console. Compliance now demands that any drift from the declared configuration be detected and reverted within 15 minutes, that the desired state live in Git as the single source of truth, and that the automation authenticate without exported service account keys. The platform team of four cannot operate a Kubernetes control plane. Which approach should you adopt?",
+    "keywords": [
+      "Config Controller",
+      "Config Sync",
+      "Config Connector",
+      "drift"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Provision a Config Controller instance and point Config Sync at the Git repository, letting Config Connector reconcile the Google Cloud resources on a continuous loop using Workload Identity."
+      },
+      {
+        "letter": "B",
+        "text": "Run terraform plan and terraform apply from a Cloud Build trigger scheduled every 15 minutes with Cloud Scheduler, so drift is detected on each run and reverted by the subsequent apply step."
+      },
+      {
+        "letter": "C",
+        "text": "Install Config Connector and Config Sync yourself on a regional GKE Standard cluster and grant the operator service account the roles it needs through a downloaded key mounted as a Secret."
+      },
+      {
+        "letter": "D",
+        "text": "Export the desired resources as Deployment Manager templates in Git and re-run the deployment update from a Cloud Scheduler job, letting the service reconcile whatever changed since the last run."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Config Controller is a Google-managed instance that bundles Config Sync, Config Connector and Policy Controller. Config Sync polls the Git repository continuously and Config Connector actively reconciles live Google Cloud resources back to the declared state, so console edits are reverted without a scheduled pipeline. It uses Workload Identity rather than exported keys, and Google manages the underlying control plane.",
+    "distractors": {
+      "B": "A scheduled Terraform apply reconciles only when the job runs and Terraform is not a continuous controller, so drift persists for up to the full interval and nothing reverts changes made mid-window.",
+      "C": "This delivers the same reconciliation loop but puts the GKE Standard cluster upgrades and node pools on a four-person team, and the downloaded key violates the no-exported-keys requirement.",
+      "D": "Deployment Manager is deprecated for new work, has no continuous reconciliation loop, and covers far fewer resource types than Config Connector, so most drift would go uncorrected."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/enterprise/config-controller/docs/overview",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-003",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Shared VPC Host & Service Project Delegation",
+    "conceptos": [
+      "shared vpc",
+      "iam",
+      "compute.networkUser",
+      "hostServiceAgentUser",
+      "gke"
+    ],
+    "title": "Least-Privilege Subnet Delegation for a GKE Service Project on Shared VPC",
+    "scenario": "A media company runs a Shared VPC host project with two subnets: web-subnet (10.1.0.0/20) and analytics-subnet (10.2.0.0/20). The analytics team owns one service project and must create GKE clusters in analytics-subnet only. Security requires least privilege, so the team must not be able to place any resource in web-subnet and must not be able to modify routes or firewall rules. The first cluster creation failed with a permission error on the host project. Which two grants satisfy both requirements? (Choose 2.)",
+    "keywords": [
+      "Shared VPC",
+      "networkUser",
+      "hostServiceAgentUser",
+      "GKE"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Grant roles/compute.networkUser on the whole host project to the analytics developers and their service accounts, and block cross-subnet traffic with VPC firewall rules on the web tier."
+      },
+      {
+        "letter": "B",
+        "text": "Grant roles/compute.networkUser on the analytics-subnet resource itself to the analytics developers and their service accounts, leaving web-subnet without any binding for that team."
+      },
+      {
+        "letter": "C",
+        "text": "Grant roles/compute.networkAdmin on the host project to the analytics developers so they can create the clusters, and record in the design document that web-subnet is off limits."
+      },
+      {
+        "letter": "D",
+        "text": "Give the analytics project a standalone VPC with the 10.2.0.0/20 range and attach it to the host network with VPC Network Peering, exporting only the routes the network team approves."
+      },
+      {
+        "letter": "E",
+        "text": "Grant roles/container.hostServiceAgentUser on the host project to the GKE service agent of the analytics project, plus roles/compute.networkUser on analytics-subnet for that same agent."
+      }
+    ],
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "Shared VPC supports binding roles/compute.networkUser at the individual subnet level, which lets principals attach resources to that subnet and nothing else, satisfying least privilege. GKE additionally requires the service project's Kubernetes Engine Service Agent to hold roles/container.hostServiceAgentUser on the host project so it can manage firewall rules and instance groups for the cluster; missing this grant is the usual cause of the permission error at cluster creation.",
+    "distractors": {
+      "A": "A project-level networkUser binding covers every subnet, so the team could still place instances in web-subnet; firewall rules filter packets but do not prevent resource placement.",
+      "C": "networkAdmin lets the team edit routes and firewall rules across the whole host network, which is far beyond least privilege, and a written note is not an enforceable control.",
+      "D": "A separate peered VPC breaks the Shared VPC model the company already runs, duplicates the 10.2.0.0/20 range management, and peering routes are non-transitive toward other spokes."
+    },
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/shared-vpc",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 150,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-004",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "VPC Network Peering & Non-Transitive Routing",
+    "conceptos": [
+      "vpc network peering",
+      "transitive routing",
+      "custom routes"
+    ],
+    "title": "Restoring Spoke-to-Spoke Reachability Around VPC Peering Non-Transitivity",
+    "scenario": "An insurer runs a hub VPC peered with two spoke VPCs: spoke-a hosts an application tier and spoke-b hosts a Cloud SQL replica set. Each spoke reaches the hub, but instances in spoke-a cannot reach 10.20.0.0/16 in spoke-b. The nightly replication moves 8 TB in a 6-hour window, so the design must add no extra forwarding hop and no per-gigabyte processing charge, and the security team forbids public IP addresses on any of these instances. What should you do?",
+    "keywords": [
+      "VPC Peering",
+      "non-transitive",
+      "spoke-to-spoke"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Enable export-custom-routes and import-custom-routes on both existing peerings so the hub re-advertises the subnet ranges it learned from spoke-b toward spoke-a and back again."
+      },
+      {
+        "letter": "B",
+        "text": "Create a direct VPC Network Peering between spoke-a and spoke-b, since peering is non-transitive and only a peering between the two networks installs each other's subnet routes."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy a router appliance instance group in the hub VPC and add static routes in both spokes whose next hop is the internal load balancer fronting those forwarding instances."
+      },
+      {
+        "letter": "D",
+        "text": "Add static routes in spoke-a for 10.20.0.0/16 with the hub peering connection as the next hop, and the mirrored route in spoke-b, so traffic is forwarded through the hub network."
+      }
+    ],
+    "correct": "B",
+    "explanation": "VPC Network Peering is not transitive: a network only learns the subnet routes of networks it is directly peered with, never the routes of its peer's peers. Creating a peering directly between spoke-a and spoke-b installs the subnet routes in both directions, keeps the traffic on Google's backbone with no additional hop, and incurs no per-gigabyte processing charge, which matters for an 8 TB nightly window.",
+    "distractors": {
+      "A": "Custom route export only propagates static and dynamic routes, never subnet routes, and it still does not make peering transitive, so spoke-a would keep failing to reach 10.20.0.0/16.",
+      "C": "A router appliance does restore transitivity, but it inserts a forwarding hop whose throughput is bounded by the VM network cap and adds instance and load balancer cost to every replicated gigabyte.",
+      "D": "A peering connection cannot be used as the next hop of a static route in Google Cloud, so these routes cannot be created and the design fails at configuration time."
+    },
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/vpc-peering",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-005",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Private Service Connect (PSC) Endpoints",
+    "conceptos": [
+      "private service connect",
+      "service attachment",
+      "overlapping ip",
+      "internal load balancer"
+    ],
+    "title": "Private Connectivity to a SaaS Producer with Overlapping RFC 1918 Ranges",
+    "scenario": "A logistics company must consume a partner SaaS API privately. Both the consumer VPC and the producer VPC use 10.10.0.0/16, and neither side will renumber 900 existing instances. Traffic must stay off the public internet, the consumer must not gain routes into the producer network, and the p99 added latency budget for the extra hop is 5 ms. You are designing the connection with the SaaS provider's architect. Which two elements make up the correct design? (Choose 2.)",
+    "keywords": [
+      "Private Service Connect",
+      "service attachment",
+      "overlapping ranges"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Establish VPC Network Peering between the consumer and producer networks and use custom route advertisements so that only the single API subnet of the producer is exported to the consumer."
+      },
+      {
+        "letter": "B",
+        "text": "In the consumer VPC, create a Private Service Connect endpoint with a forwarding rule that takes an internal address from a consumer subnet and targets the producer's service attachment."
+      },
+      {
+        "letter": "C",
+        "text": "Build an HA VPN tunnel pair between both networks and place a NAT gateway instance on each side to translate the overlapping 10.10.0.0/16 ranges before the packets cross the tunnel."
+      },
+      {
+        "letter": "D",
+        "text": "Publish the API on a global external Application Load Balancer with a Google-managed certificate and restrict the consumer's egress addresses with a Cloud Armor allowlist policy."
+      },
+      {
+        "letter": "E",
+        "text": "In the producer VPC, expose the API behind an internal load balancer and publish it as a Private Service Connect service attachment that explicitly accepts the consumer project."
+      }
+    ],
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "Private Service Connect decouples the two address spaces: the producer publishes a service attachment in front of an internal load balancer, and the consumer creates an endpoint whose forwarding rule uses an IP address from its own subnet. No routes are exchanged between the networks, so identical 10.10.0.0/16 ranges on both sides are irrelevant, traffic stays on Google's private network, and NAT is handled transparently by the service.",
+    "distractors": {
+      "A": "VPC Network Peering is rejected outright when the two networks have overlapping subnet ranges, and even a filtered advertisement would still install producer routes in the consumer network.",
+      "C": "A VPN plus NAT instances can work around overlapping ranges, but it adds a self-managed forwarding hop that exceeds the 5 ms budget under load and leaves two NAT gateways to operate.",
+      "D": "An external Application Load Balancer puts the API on the public internet, which the requirement forbids, and a Cloud Armor allowlist is an authorization filter, not private connectivity."
+    },
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/private-service-connect",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 150,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-006",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Cloud NAT & Endpoint-Independent Mapping",
+    "conceptos": [
+      "cloud nat",
+      "dynamic port allocation",
+      "port exhaustion",
+      "nat ip"
+    ],
+    "title": "Eliminating Cloud NAT Port Exhaustion for a Bursty Crawler Fleet",
+    "scenario": "A price-comparison service runs 300 Compute Engine instances without external addresses behind a single Cloud NAT gateway. Each crawler opens up to 900 concurrent connections during a 20-minute burst every hour, while staying near 30 connections the rest of the time. Logs show dropped_sent_packets rising during the burst. The team wants the ceiling raised only while the burst lasts, without reserving addresses that sit idle for the other 40 minutes. What should you configure?",
+    "keywords": [
+      "Cloud NAT",
+      "dynamic port allocation",
+      "minPorts",
+      "maxPorts"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Assign an ephemeral external IP address to each of the 300 crawler instances so that every VM owns the full 64K port range of its own address and no shared translation layer remains."
+      },
+      {
+        "letter": "B",
+        "text": "Raise the static minimum ports per VM to 1024 on the gateway and reserve the extra NAT IP addresses needed to cover 300 instances at that fixed allocation around the clock."
+      },
+      {
+        "letter": "C",
+        "text": "Enable dynamic port allocation on the gateway with a minimum of 64 and a maximum of 1024 ports per VM, so allocation grows during the burst and shrinks when the crawlers go idle."
+      },
+      {
+        "letter": "D",
+        "text": "Turn off endpoint-independent mapping on the gateway so that each destination tuple reuses the same source port, and shorten the TCP established idle timeout to 60 seconds."
+      }
+    ],
+    "correct": "C",
+    "explanation": "Dynamic port allocation lets Cloud NAT start each VM at the minimum port count and double the allocation up to the configured maximum only while the VM needs it, releasing ports when connection counts fall. That matches a 20-minute hourly burst without permanently reserving the NAT addresses that a large static minPorts value would require for all 300 instances.",
+    "distractors": {
+      "A": "Public addresses on 300 crawlers expose them directly, consume the regional external IP quota, and contradict the design decision to keep the fleet private behind a managed gateway.",
+      "B": "A static minimum of 1024 ports does stop the drops, but it reserves 307,200 ports permanently and forces extra NAT addresses to stay allocated during the 40 idle minutes of every hour.",
+      "D": "Endpoint-independent mapping affects how ports are shared across destinations, not the total ports a VM may hold, so the per-VM ceiling that causes the drops during the burst is unchanged."
+    },
+    "officialDocUrl": "https://cloud.google.com/nat/docs/ports-and-addresses",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-007",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "Regional Managed Instance Groups & Autohealing",
+    "conceptos": [
+      "managed instance group",
+      "autohealing",
+      "health check",
+      "initial delay"
+    ],
+    "title": "Tuning Regional MIG Autohealing for a Slow-Warming Application",
+    "scenario": "A ticketing service runs a regional managed instance group of 24 instances across three zones. Each instance takes about 240 seconds to load a 12 GB in-memory catalog before it can serve requests, and the process can deadlock hours later while the port stays open. Since enabling autohealing the group has been recreating healthy instances during boot, and deadlocked instances are never replaced. The team needs both problems fixed without changing the load balancer configuration. What should you do?",
+    "keywords": [
+      "regional MIG",
+      "autohealing",
+      "initialDelaySec",
+      "health check"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Point the autohealing policy at an application health check on the /healthz path that fails when the catalog deadlocks, and set the initial delay of the policy to 300 seconds."
+      },
+      {
+        "letter": "B",
+        "text": "Reuse the load balancer's TCP port 8080 health check in the autohealing policy and set the group's initial delay to 300 seconds so booting instances are no longer recreated."
+      },
+      {
+        "letter": "C",
+        "text": "Remove the autohealing health check from the group and rely instead on the load balancer health check to stop sending traffic to any instance whose catalog has deadlocked."
+      },
+      {
+        "letter": "D",
+        "text": "Keep the current autohealing health check and raise its check interval to 300 seconds with a threshold of 3, so an instance is only replaced after roughly 15 minutes of failures."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Autohealing should use an application-level health check that exercises the code path that can deadlock; a TCP check on an open port cannot detect it. The initial delay tells the managed instance group how long to wait after an instance boots before applying the health check, so a 300-second delay covers the 240-second warm-up and stops the group from recreating instances that are still loading the catalog.",
+    "distractors": {
+      "B": "A TCP check only confirms the port accepts connections, so the deadlocked instances stay in the group forever; the delay fixes the boot problem but leaves the second failure undetected.",
+      "C": "Removing traffic is not the same as replacing capacity: the deadlocked instances remain running and the group never regains the 24 serving instances it was sized for.",
+      "D": "Stretching the interval and threshold delays every replacement, so a genuine failure takes 15 minutes to heal, and the check itself still runs while the catalog is loading."
+    },
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-008",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "Stateful Managed Instance Groups",
+    "conceptos": [
+      "stateful mig",
+      "per-instance configuration",
+      "persistent disk",
+      "static internal ip"
+    ],
+    "title": "Preserving Disks and Internal Addresses Across Rolling Updates",
+    "scenario": "A broker runs six Compute Engine instances, each holding a 4 TB persistent disk with a local index and a static internal IP address that a third-party licence server pins by address. The team wants rolling image updates and automatic replacement of failed instances, but a rebuilt instance must come back with the same disk contents and the same address, and rebuilding the index from scratch takes 9 hours, which exceeds the 2-hour RTO. What should you provision?",
+    "keywords": [
+      "stateful MIG",
+      "per-instance config",
+      "preservedState",
+      "static IP"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create an unmanaged instance group holding the six existing instances, so their disks and internal addresses are never touched, and update the image on each instance one at a time."
+      },
+      {
+        "letter": "B",
+        "text": "Create a regional managed instance group and attach a regional persistent disk to each instance, adding a startup script that looks up and re-attaches the correct disk after a rebuild."
+      },
+      {
+        "letter": "C",
+        "text": "Create a managed instance group with a daily snapshot schedule on the six disks, restoring the latest snapshot into a new disk whenever an instance has to be recreated by the group."
+      },
+      {
+        "letter": "D",
+        "text": "Create a stateful managed instance group with a per-instance configuration that declares the data disk and the internal address as preserved state for each of the six named instances."
+      }
+    ],
+    "correct": "D",
+    "explanation": "Stateful managed instance groups keep per-instance configurations that mark specific disks and internal IP addresses as preserved state. When the group recreates or updates an instance, it reattaches the same persistent disk and reassigns the same internal address, so the 4 TB index survives and the licence server keeps seeing the pinned address, while rolling updates and autohealing still work.",
+    "distractors": {
+      "A": "An unmanaged instance group has no rolling update mechanism and no autohealing, so failed instances are never replaced automatically and every image update becomes a manual operation.",
+      "B": "Regional persistent disks add cross-zone durability but a stateless group still creates fresh instances with new addresses, and disk re-attachment logic in boot scripts is exactly what stateful configs replace.",
+      "C": "A daily snapshot restores an index that can be up to 24 hours stale and the restore of a 4 TB disk plus catch-up indexing does not fit inside the 2-hour recovery objective."
+    },
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/stateful-migs",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D2-009",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "GKE Autopilot vs Standard Cluster Provisioning",
+    "conceptos": [
+      "gke autopilot",
+      "gke standard",
+      "node pool",
+      "pod resource requests"
+    ],
+    "title": "Choosing a GKE Mode of Operation for a Small Platform Team",
+    "scenario": "A SaaS startup with three platform engineers runs 40 stateless HTTP services on Compute Engine and wants to move to GKE. Utilisation reports show nodes sitting at 22 percent average CPU because the team over-provisions to absorb spikes. Finance wants to pay for requested pod resources rather than idle node capacity, and the engineers must not size, upgrade or repair node pools. No workload needs privileged DaemonSets, custom kernel modules or GPUs. Which cluster configuration should you recommend?",
+    "keywords": [
+      "GKE Autopilot",
+      "node pools",
+      "pod requests",
+      "operational overhead"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Provision a regional GKE Standard cluster with node auto-provisioning and cluster autoscaling enabled, plus a maintenance window so that node upgrades happen outside business hours."
+      },
+      {
+        "letter": "B",
+        "text": "Provision a regional GKE Autopilot cluster, where Google manages the nodes end to end and billing follows the CPU, memory and storage that the scheduled pods actually request."
+      },
+      {
+        "letter": "C",
+        "text": "Provision a zonal GKE Standard cluster with a single autoscaling node pool of E2 machines and enable both node auto-upgrade and node auto-repair on that pool to reduce toil."
+      },
+      {
+        "letter": "D",
+        "text": "Provision a regional GKE Standard cluster with Spot node pools and a vertical pod autoscaler, so the discount on preemptible capacity offsets the CPU that the nodes leave unused."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Autopilot removes node management entirely: Google provisions, scales, upgrades and repairs the nodes, and the cluster bills for the CPU, memory and ephemeral storage requested by running pods rather than for provisioned node capacity. With no privileged DaemonSets, kernel modules or GPUs in scope, none of Autopilot's workload restrictions apply, so it fits a three-person team optimising for both toil and idle capacity.",
+    "distractors": {
+      "A": "Node auto-provisioning still leaves the team owning node pool shapes, surge settings and upgrade fallout, and billing remains per provisioned node, so the 22 percent idle capacity is still paid for.",
+      "C": "A zonal control plane is a single point of failure for 40 services, and a single E2 pool billed per node keeps the same idle-capacity problem that finance asked you to remove.",
+      "D": "Spot nodes discount the price but do not change the per-node billing model, and reclaims every 24 hours or less add disruption handling work to a team that wanted less operational load."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview",
+    "difficulty": "intermediate",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-010",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "GKE Multi-Cluster Ingress & Gateway API",
+    "conceptos": [
+      "gke gateway api",
+      "multi-cluster gateway",
+      "fleet",
+      "anycast ip"
+    ],
+    "title": "Global Multi-Cluster Traffic Management with the GKE Gateway API",
+    "scenario": "A travel platform serves users from GKE clusters in us-central1, europe-west1 and asia-southeast1. It needs one anycast IP address, automatic failover to the next closest region within 30 seconds when a cluster fails, and header-based routing that sends the 5 percent of requests carrying x-canary to a canary service. Operations must express all of this as Kubernetes resources reviewed in Git, not as manual load balancer edits. What should you deploy?",
+    "keywords": [
+      "multi-cluster Gateway",
+      "GatewayClass",
+      "fleet",
+      "HTTPRoute"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy one regional external Application Load Balancer per region and publish the three addresses in a Cloud DNS geolocation routing policy whose records carry a 30-second time to live."
+      },
+      {
+        "letter": "B",
+        "text": "Deploy a standalone global external Application Load Balancer and register the three clusters as network endpoint groups, editing the URL map by hand whenever a canary rule changes."
+      },
+      {
+        "letter": "C",
+        "text": "Register the three clusters in a fleet and deploy a multi-cluster Gateway from the config cluster, with HTTPRoute resources expressing the canary header match and the backend clusters."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a Kubernetes Ingress object in each of the three clusters and use Traffic Director with sidecar proxies to steer the canary header traffic between the regional cluster backends."
+      }
+    ],
+    "correct": "C",
+    "explanation": "A multi-cluster Gateway is created in a config cluster of a fleet and programs a single global external Application Load Balancer with an anycast address whose backends span every member cluster. Failover between regions is handled by the load balancer's health checks in seconds rather than by DNS caching, and HTTPRoute resources express header matching and weighting declaratively, so the whole configuration lives in Git.",
+    "distractors": {
+      "A": "DNS-based failover is bounded by resolver caching, and many resolvers ignore a 30-second time to live, so a share of users keeps hitting the failed region well beyond the required window.",
+      "B": "This produces the right data plane but the routing rules live in a URL map edited outside Kubernetes, which breaks the requirement that traffic policy be reviewed as Kubernetes manifests.",
+      "D": "Per-cluster Ingress objects each create their own regional address, so there is no single anycast entry point, and Traffic Director steers service mesh traffic rather than internet ingress."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/concepts/gateway-api",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 150,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-011",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "Cloud Spanner Capacity Sizing: Processing Units vs Nodes",
+    "conceptos": [
+      "cloud spanner",
+      "processing units",
+      "compute capacity",
+      "cpu utilization"
+    ],
+    "title": "Sizing a Cloud Spanner Instance Below One Node with Processing Units",
+    "scenario": "A payments startup is moving a 280 GB relational workload to Cloud Spanner. Peak traffic is 450 queries per second and the finance team has capped the database line item at roughly half the price of a one-node regional instance for the next two quarters. Growth is projected at 15 percent per quarter, and the team wants headroom added in small steps rather than by doubling capacity. How should you provision the regional instance?",
+    "keywords": [
+      "Cloud Spanner",
+      "processing units",
+      "compute capacity",
+      "sizing"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Provision the instance with 500 processing units, watch the CPU usage and storage metrics, and add capacity in increments of 100 processing units as the workload grows each quarter."
+      },
+      {
+        "letter": "B",
+        "text": "Provision the instance with one node, which is the smallest unit Cloud Spanner supports for a production database, and accept the cost until the workload grows into the capacity."
+      },
+      {
+        "letter": "C",
+        "text": "Provision the instance with one node and add two read-only replicas in the same region, spreading the 450 queries per second across the replicas to keep the primary below its limits."
+      },
+      {
+        "letter": "D",
+        "text": "Provision a multi-region instance with 1000 processing units and buy a one-year committed use discount, so the committed price brings the monthly line item under the finance cap."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Cloud Spanner expresses compute capacity in processing units; below one node you can allocate capacity in increments of 100 processing units, and 1000 processing units equal one node. A 500-processing-unit instance therefore costs about half a node, comfortably serves a 280 GB database, and can be grown in 100-unit steps as traffic rises, which is exactly the granularity the team asked for.",
+    "distractors": {
+      "B": "One node is the minimum only if you think in nodes; Cloud Spanner bills capacity in processing units below that threshold, so this doubles the cost the finance team explicitly capped.",
+      "C": "Read-only replicas add serving capacity but they are provisioned on top of the primary compute, so the bill grows rather than halves, and this workload is not read-bound at 450 queries per second.",
+      "D": "A multi-region instance is priced well above a single regional node before any discount, and a one-year commitment locks in capacity the startup does not need for a two-quarter horizon."
+    },
+    "officialDocUrl": "https://cloud.google.com/spanner/docs/compute-capacity",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-012",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.2",
+    "subsectionName": "Configuring individual storage systems",
+    "subtopic": "Cloud Bigtable Provisioning: SSD vs HDD & Autoscaling",
+    "conceptos": [
+      "cloud bigtable",
+      "ssd storage",
+      "cluster autoscaling",
+      "cpu target"
+    ],
+    "title": "Storage Media and Autoscaling Choices for a Bigtable Telemetry Cluster",
+    "scenario": "An energy utility ingests 40 TB of meter telemetry into Cloud Bigtable and serves a dashboard whose single-row point reads must stay under 10 ms at p99. Write volume triples between 06:00 and 09:00 and falls back for the rest of the day, so a cluster sized for the peak idles for 21 hours. Storage type cannot be changed after the instance is created. How should you provision the production cluster?",
+    "keywords": [
+      "Bigtable",
+      "SSD",
+      "HDD",
+      "autoscaling",
+      "p99 latency"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create the cluster with HDD storage to cut the cost of 40 TB and compensate for the slower media by provisioning a fixed 12 nodes, which keeps the dashboard reads within budget."
+      },
+      {
+        "letter": "B",
+        "text": "Create the cluster with HDD storage and enable autoscaling between 3 and 12 nodes at a 60 percent CPU target, so the morning write peak adds nodes and the cluster shrinks afterwards."
+      },
+      {
+        "letter": "C",
+        "text": "Create the cluster with SSD storage and enable autoscaling between 3 and 12 nodes at a 60 percent CPU target, so nodes are added for the morning peak and removed for the idle hours."
+      },
+      {
+        "letter": "D",
+        "text": "Create the cluster with SSD storage and a fixed 12 nodes sized for the 06:00 peak, then use a scheduled job to resize the cluster down to 3 nodes once the morning ingestion completes."
+      }
+    ],
+    "correct": "C",
+    "explanation": "HDD-backed Bigtable clusters are optimised for scans and deliver point-read latency an order of magnitude worse than SSD, so a 10 ms p99 on random single-row reads requires SSD, and the media cannot be changed later. Cluster autoscaling adjusts node count against a CPU utilisation target, which absorbs the three-hour write peak and releases the nodes during the 21 idle hours.",
+    "distractors": {
+      "A": "Adding nodes raises throughput but not per-read seek latency on HDD, so p99 point reads stay far above 10 ms, and a fixed 12-node cluster still pays for the 21 idle hours.",
+      "B": "The autoscaling half is right, but HDD storage cannot meet a 10 ms p99 for random point reads and the choice is permanent for the life of the instance.",
+      "D": "SSD is correct, but a scheduled resize reacts to the clock instead of to load, so an unexpected ingestion burst outside the window finds the cluster pinned at three nodes."
+    },
+    "officialDocUrl": "https://cloud.google.com/bigtable/docs/choosing-ssd-hdd",
+    "difficulty": "advanced",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-013",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Cloud Router & BGP Routing Modes",
+    "conceptos": [
+      "cloud router",
+      "dynamic routing mode",
+      "bgp",
+      "cloud interconnect"
+    ],
+    "title": "Advertising Subnets in Four Regions Over a Single Interconnect Attachment",
+    "scenario": "A manufacturer has one Dedicated Interconnect with a VLAN attachment and a Cloud Router in us-central1. The VPC also has subnets in europe-west1, asia-east1 and us-east4. On-premises hosts reach the us-central1 subnet but time out to the other three, and the network team will not buy a second interconnect in this budget year. The 10 Gbps attachment carries only 2 Gbps at peak, so capacity is not the constraint. What should you change?",
+    "keywords": [
+      "Cloud Router",
+      "global dynamic routing",
+      "VLAN attachment",
+      "BGP"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create an additional Cloud Router in each of the three remaining regions and let them advertise their local subnets to the on-premises peer over the existing us-central1 VLAN attachment."
+      },
+      {
+        "letter": "B",
+        "text": "Change the VPC network's dynamic routing mode from regional to global, so the us-central1 Cloud Router advertises every subnet of the network and learns routes on behalf of all regions."
+      },
+      {
+        "letter": "C",
+        "text": "Configure custom route advertisements on the existing Cloud Router listing the three remote subnet ranges, so the on-premises routers receive prefixes for all four regions of the network."
+      },
+      {
+        "letter": "D",
+        "text": "Add static routes in the VPC for the on-premises ranges with the VLAN attachment as next hop, and matching static routes on the peer for the three subnets that currently time out."
+      }
+    ],
+    "correct": "B",
+    "explanation": "With regional dynamic routing, a Cloud Router advertises only the subnets in its own region and applies learned routes only to that region. Switching the network to global dynamic routing makes the us-central1 Cloud Router advertise the subnets of every region and installs the learned on-premises routes network-wide, which restores bidirectional reachability over the single existing attachment.",
+    "distractors": {
+      "A": "A Cloud Router can only advertise over interconnect attachments or tunnels in its own region, so routers in the other three regions have nothing to peer over without new attachments.",
+      "C": "Custom advertisements would push the prefixes outbound, but with regional mode the return path is missing because the router applies learned on-premises routes only within us-central1.",
+      "D": "Static routes toward on-premises do not solve the advertisement problem, still leave the return path unresolved in the other regions, and lose the failover that BGP provides."
+    },
+    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/router/concepts/overview",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-014",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.2",
+    "subsectionName": "Configuring individual storage systems",
+    "subtopic": "Cloud Storage Uniform Bucket-Level Access & Soft Delete",
+    "conceptos": [
+      "uniform bucket-level access",
+      "soft delete",
+      "cloud storage",
+      "iam"
+    ],
+    "title": "Removing Object ACLs While Guaranteeing a 30-Day Undelete Window",
+    "scenario": "An auditor flagged that 120 Cloud Storage buckets still evaluate per-object ACLs, which makes access reviews unreliable because IAM alone does not describe who can read an object. A separate incident deleted 4,000 objects that took 3 days to notice. The company now requires that access be governed exclusively by IAM and that any deleted object be restorable for 30 days, while ordinary lifecycle deletions of expired data must still be possible. What should you configure on the buckets?",
+    "keywords": [
+      "uniform bucket-level access",
+      "soft delete",
+      "retention",
+      "IAM"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Enable object versioning on every bucket and add a lifecycle rule that deletes noncurrent versions after 30 days, then remove the per-object ACL entries from the objects with a batch job."
+      },
+      {
+        "letter": "B",
+        "text": "Apply a bucket lock with a 30-day retention policy on every bucket, which blocks deletion of any object until it is 30 days old, and grant object access only through signed URLs."
+      },
+      {
+        "letter": "C",
+        "text": "Set the organization policy constraint that requires uniform bucket-level access on new buckets, and rely on Cloud Storage keeping deleted objects in the default recovery window."
+      },
+      {
+        "letter": "D",
+        "text": "Enable uniform bucket-level access on each bucket so ACLs stop being evaluated, and set the soft delete retention duration to 30 days so deleted objects can be restored in place."
+      }
+    ],
+    "correct": "D",
+    "explanation": "Uniform bucket-level access disables object ACLs so that IAM is the only mechanism granting access, which is what makes an access review complete. Soft delete is a separate bucket setting whose retention duration can be raised to 30 days: deleted objects remain restorable for that period without blocking legitimate deletions, unlike a retention policy, which would prevent them.",
+    "distractors": {
+      "A": "Versioning restores overwritten and deleted objects, but it does nothing about ACL evaluation, and removing ACL entries object by object leaves the bucket free to accept new ones later.",
+      "B": "A locked retention policy prevents any deletion for 30 days, including the lifecycle expiry the company still needs, and it cannot be shortened or removed once the bucket is locked.",
+      "C": "The organization policy constraint only governs buckets created afterwards, so the 120 existing buckets keep evaluating ACLs, and the default soft delete window is shorter than 30 days."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage/docs/soft-delete",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-015",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.2",
+    "subsectionName": "Configuring individual storage systems",
+    "subtopic": "Filestore Enterprise NFS for GKE ReadWriteMany",
+    "conceptos": [
+      "filestore",
+      "readwritemany",
+      "nfs",
+      "filestore csi driver",
+      "gke"
+    ],
+    "title": "Shared POSIX Storage for GKE Pods Spread Across Three Zones",
+    "scenario": "A rendering pipeline runs 60 pods in a regional GKE cluster spread over three zones in europe-west4. Every pod must mount the same 10 TB asset library read-write with POSIX semantics, including file locking, and the platform contract requires a 99.99 percent availability SLA that survives the loss of one zone. The team wants a managed service and will not run a storage tier on Compute Engine. Which storage option should you provision?",
+    "keywords": [
+      "Filestore",
+      "Enterprise tier",
+      "ReadWriteMany",
+      "CSI driver"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Provision a Filestore Basic HDD instance of 10 TB and mount it in every pod through the Filestore CSI driver, which exposes the share as a ReadWriteMany persistent volume claim."
+      },
+      {
+        "letter": "B",
+        "text": "Provision a 10 TB regional persistent disk and attach it to the node pool, declaring a ReadWriteMany persistent volume so the 60 pods across the three zones share the same file system."
+      },
+      {
+        "letter": "C",
+        "text": "Provision a Filestore Enterprise instance of 10 TB and mount it with the Filestore CSI driver, since that tier replicates across zones in the region and carries a 99.99 percent SLA."
+      },
+      {
+        "letter": "D",
+        "text": "Create a Cloud Storage bucket for the asset library and mount it in every pod with the Cloud Storage FUSE CSI driver, which presents the bucket to the renderers as a shared file system."
+      }
+    ],
+    "correct": "C",
+    "explanation": "Filestore Enterprise is the tier whose instances are replicated across zones within a region and are offered with a 99.99 percent availability SLA, so the loss of a single zone does not take the share down. The managed Filestore CSI driver exposes it as a ReadWriteMany volume with full NFS POSIX semantics, including the file locking the renderers need, and there is no storage tier to operate.",
+    "distractors": {
+      "A": "Filestore Basic instances live in one zone and are covered by a 99.9 percent SLA, so a zonal outage stops all 60 pods and the availability contract is missed.",
+      "B": "A regional persistent disk can be attached read-write to only one instance at a time, so it cannot back a ReadWriteMany claim shared by pods on different nodes and zones.",
+      "D": "Cloud Storage FUSE presents an object store as files but does not implement POSIX file locking or in-place partial writes, which the rendering pipeline depends on."
+    },
+    "officialDocUrl": "https://cloud.google.com/filestore/docs/service-tiers",
+    "difficulty": "advanced",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "PCA-D2-016",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "Google Cloud Batch for HPC & Gene Sequencing",
+    "conceptos": [
+      "cloud batch",
+      "spot vms",
+      "task parallelism",
+      "cloud storage"
+    ],
+    "title": "Running 50,000 Independent Genomic Tasks Inside a Four-Hour Window",
+    "scenario": "A genomics lab must align 50,000 independent sequencing samples every night. Each task is a container that reads roughly 2 GB from Cloud Storage, runs for about 12 minutes on 8 vCPUs and writes results back. The whole run must finish within a 4-hour window, individual task failures may simply be retried, and the lab wants the lowest possible compute cost with no scheduler cluster to maintain. Which provisioning approach fits best?",
+    "keywords": [
+      "Cloud Batch",
+      "Spot VMs",
+      "task retries",
+      "job array"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Submit a Cloud Batch job with 50,000 tasks, Spot provisioning, a retry count per task and a Cloud Storage volume, letting the service create and delete the Compute Engine capacity it needs."
+      },
+      {
+        "letter": "B",
+        "text": "Create a regional managed instance group of Spot instances that pull sample identifiers from a Pub/Sub subscription, autoscaling the group on the number of undelivered messages in the queue."
+      },
+      {
+        "letter": "C",
+        "text": "Build a Dataflow streaming pipeline that reads the sample identifiers from Pub/Sub and runs the aligner inside a DoFn, relying on the runner to autoscale the workers across the window."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a GKE Standard cluster with a Spot node pool and submit the samples as an indexed Kubernetes Job of 50,000 completions, tuning parallelism so the run fits inside the window."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Cloud Batch is the managed batch scheduler for exactly this shape of work: a job describes an array of independent tasks, a provisioning model such as Spot, per-task retry behaviour and the Cloud Storage volumes to mount. It provisions and tears down Compute Engine capacity itself, so the lab gets Spot pricing and automatic retries with no scheduler or cluster to operate.",
+    "distractors": {
+      "B": "A queue-driven instance group works but the lab has to write and own the puller, the acknowledgement and retry logic, and the autoscaling policy that Cloud Batch provides out of the box.",
+      "C": "Dataflow is designed for data-parallel element processing, not for launching a 12-minute container per element, and a streaming pipeline adds a runner the lab must size and pay for.",
+      "D": "An indexed Job on GKE is a reasonable fit technically, but it leaves the lab operating a cluster and node pool upgrades, which the requirement for no scheduler to maintain rules out."
+    },
+    "officialDocUrl": "https://cloud.google.com/batch/docs/get-started",
+    "difficulty": "advanced",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-017",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "Migrate to Virtual Machines (M4VM)",
+    "conceptos": [
+      "migrate to virtual machines",
+      "continuous replication",
+      "test clone",
+      "cutover"
+    ],
+    "title": "Migrating 300 VMware Workloads With a Two-Hour Cutover Window",
+    "scenario": "A retailer must move 300 VMware virtual machines, totalling 90 TB of disk, from a colocation facility to Compute Engine in six waves. Each wave has a 2-hour maintenance window for cutover, the source machines must keep serving users until that window opens, and every wave must be validated in Google Cloud before the window without disturbing production. The 10 Gbps interconnect is already in place. Which migration approach should you use?",
+    "keywords": [
+      "Migrate to Virtual Machines",
+      "replication",
+      "test clone",
+      "cutover"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Snapshot each VMware disk, copy the images to Cloud Storage with Storage Transfer Service, and import them as custom images that boot new Compute Engine instances during the window."
+      },
+      {
+        "letter": "B",
+        "text": "Use Migrate to Virtual Machines to replicate the disks continuously while the machines keep running, validate each wave with test clones, and cut over inside the maintenance window."
+      },
+      {
+        "letter": "C",
+        "text": "Export each virtual machine to an OVA file, upload the files over the interconnect, and use the image import tool to create the equivalent Compute Engine instances one wave at a time."
+      },
+      {
+        "letter": "D",
+        "text": "Use Migrate to Containers to convert the workloads into container images running on GKE, so the cutover is a Kubernetes deployment rollout that fits comfortably inside the window."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Migrate to Virtual Machines replicates source disks to Google Cloud continuously while the source VM keeps running, so only the final delta is applied at cutover, which is what keeps a 90 TB wave inside a 2-hour window. Test clones let each wave be booted and validated in Google Cloud from replicated data without touching the running source or interrupting replication.",
+    "distractors": {
+      "A": "Snapshot-and-copy captures a point in time, so every change made after the copy is lost unless the source is stopped first, which breaks the requirement to keep serving users until cutover.",
+      "C": "An OVA export requires powering the machine down or accepting a stale image, and moving 90 TB of exported files per wave will not fit inside a 2-hour window even at 10 Gbps.",
+      "D": "Migrate to Containers targets stateless applications suitable for containers, so applying it to 300 mixed workloads adds a re-platforming project the 2-hour cutover cannot absorb."
+    },
+    "officialDocUrl": "https://cloud.google.com/migrate/virtual-machines/docs",
+    "difficulty": "advanced",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-018",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.2",
+    "subsectionName": "Configuring individual storage systems",
+    "subtopic": "Storage Transfer Service for Cross-Cloud Sync",
+    "conceptos": [
+      "storage transfer service",
+      "amazon s3",
+      "scheduled transfer",
+      "federated identity"
+    ],
+    "title": "Hourly Incremental Synchronisation from Amazon S3 to Cloud Storage",
+    "scenario": "A media analytics firm keeps 80 TB of clickstream files in an Amazon S3 bucket and needs them in Cloud Storage for BigQuery. After the initial copy, roughly 400 GB of new objects arrive per day and must appear in Cloud Storage within one hour. The security team refuses to store long-lived AWS access keys in Google Cloud, and the data team has no engineers available to build and operate a transfer pipeline. What should you implement?",
+    "keywords": [
+      "Storage Transfer Service",
+      "S3",
+      "incremental",
+      "federated identity"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Order a Transfer Appliance for the initial 80 TB and schedule an hourly Cloud Run job afterwards that lists the S3 bucket and copies whichever objects are newer than the previous run."
+      },
+      {
+        "letter": "B",
+        "text": "Build a Dataflow pipeline that reads the S3 bucket through the Hadoop connector every hour and writes the objects into Cloud Storage, autoscaling workers to keep up with the daily volume."
+      },
+      {
+        "letter": "C",
+        "text": "Create a Storage Transfer Service job with the S3 bucket as source, an hourly schedule and AWS federated identity, letting the service copy only objects that changed since the last run."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy Cloud Composer and schedule a DAG that runs the S3 to Cloud Storage transfer operator every hour, storing the AWS credentials in Secret Manager and rotating them every 30 days."
+      }
+    ],
+    "correct": "C",
+    "explanation": "Storage Transfer Service is the managed, agentless option for Amazon S3 sources. A scheduled job compares source and destination and copies only objects that are new or changed, so the initial 80 TB and the hourly 400 GB deltas use the same job. It supports AWS federated identity so Google Cloud assumes a role instead of storing long-lived access keys, and there is no pipeline to operate.",
+    "distractors": {
+      "A": "A Transfer Appliance is for offline seeding when bandwidth is the constraint, and the hourly job leaves the team owning listing, retry and consistency logic they said they cannot staff.",
+      "B": "Dataflow can move the bytes but it is a pipeline the data team must build, tune and pay workers for, and it has no built-in incremental comparison between the two object stores.",
+      "D": "The operator delegates to the same transfer service, so Composer adds an environment to run and pay for, and storing AWS keys in Secret Manager is exactly what security rejected."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage-transfer/docs/overview",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-019",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Hierarchical Firewall Policies",
+    "conceptos": [
+      "hierarchical firewall policy",
+      "organization node",
+      "goto_next",
+      "firewall rules"
+    ],
+    "title": "Blocking Inbound RDP Across 400 Projects Without Freezing Project Autonomy",
+    "scenario": "A group with 400 projects under 12 folders discovered VMs exposing TCP port 3389 to 0.0.0.0/0. Security wants an organization-wide control that project owners cannot override, applied within 24 hours and without touching each VPC network individually. At the same time, project teams must keep defining their own allow rules for every other protocol, and one payments folder must additionally deny outbound traffic to a list of sanctioned ranges. Which two actions should you take? (Choose 2.)",
+    "keywords": [
+      "hierarchical firewall policy",
+      "goto_next",
+      "organization",
+      "folder"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create a firewall policy at the organization node with a high-priority rule denying ingress on tcp:3389 from 0.0.0.0/0, and associate that policy with the organization resource itself."
+      },
+      {
+        "letter": "B",
+        "text": "Add a low-priority deny rule for tcp:3389 in the VPC firewall of each project network, applying it with a network tag that project owners are asked not to remove from their instances."
+      },
+      {
+        "letter": "C",
+        "text": "Set an organization policy constraint that restricts which protocols a VPC firewall rule may reference, so any attempt to allow tcp:3389 inside a project is rejected at write time."
+      },
+      {
+        "letter": "D",
+        "text": "Publish the RDP service behind Identity-Aware Proxy TCP forwarding and rely on the IAP allowlist to decide which principals may open a session to the instances in the 400 projects."
+      },
+      {
+        "letter": "E",
+        "text": "Add lower-priority goto_next rules in the same policy for the remaining traffic, and attach a separate policy to the payments folder carrying the egress denies for the sanctioned ranges."
+      }
+    ],
+    "correct": [
+      "A",
+      "E"
+    ],
+    "explanation": "Hierarchical firewall policies are attached to the organization or a folder and are evaluated before any VPC firewall rule, so a deny on tcp:3389 at the organization node cannot be overridden inside a project. Using goto_next for the remaining traffic delegates the rest of the decision to lower levels, which preserves project autonomy, and a second policy attached to the payments folder adds the egress denies only where they are required.",
+    "distractors": {
+      "B": "A rule written inside each project's VPC is owned by that project, so an owner can delete it or omit the tag, and rolling it out to 400 networks does not meet the 24-hour deadline.",
+      "C": "No organization policy constraint filters firewall rules by protocol or port, so this control does not exist and the exposed instances would stay reachable on port 3389.",
+      "D": "Identity-Aware Proxy is an excellent way to offer RDP safely, but it is an access product: it does not stop a project owner from also opening tcp:3389 to the internet."
+    },
+    "officialDocUrl": "https://cloud.google.com/firewall/docs/firewall-policies",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 150,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-020",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Network Connectivity Center (NCC)",
+    "conceptos": [
+      "network connectivity center",
+      "hub",
+      "vpc spoke",
+      "hybrid spoke"
+    ],
+    "title": "Replacing a Full Peering Mesh With a Network Connectivity Center Hub",
+    "scenario": "After three acquisitions a company has five VPC networks in three regions plus two on-premises sites connected with HA VPN. A full peering mesh would need ten peerings and still would not carry on-premises routes between VPCs, and the team of five cannot maintain that many relationships. All five networks must exchange routes with each other and with both sites, no VPC uses overlapping ranges, and the design must avoid any self-managed forwarding instance. What should you build?",
+    "keywords": [
+      "Network Connectivity Center",
+      "hub",
+      "VPC spokes",
+      "hybrid spokes"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Build the full mesh of ten VPC Network Peerings between the five networks and enable custom route import and export on every peering so the on-premises prefixes reach all of them."
+      },
+      {
+        "letter": "B",
+        "text": "Designate one network as a transit VPC, peer the other four with it, and run an autoscaled router appliance instance group there so that spoke-to-spoke and hybrid traffic is forwarded."
+      },
+      {
+        "letter": "C",
+        "text": "Build a mesh of HA VPN tunnels between all five networks with Cloud Router BGP sessions, so dynamic routes are re-advertised between the networks and toward the two on-premises sites."
+      },
+      {
+        "letter": "D",
+        "text": "Create a Network Connectivity Center hub, attach the five networks as VPC spokes and the two site connections as hybrid spokes, so every spoke exchanges its routes through the hub."
+      }
+    ],
+    "correct": "D",
+    "explanation": "Network Connectivity Center provides a hub that exchanges routes between spokes. VPC spokes connect the five networks to one another without a peering mesh, and hybrid spokes attach the HA VPN tunnels of the two on-premises sites, so site prefixes reach every VPC and VPC prefixes reach the sites. The data plane is Google-managed, which removes both the mesh and any forwarding appliance.",
+    "distractors": {
+      "A": "Peering is non-transitive, so even with custom route exchange the on-premises prefixes learned by one network are not usable by the others, and ten relationships stay to maintain.",
+      "B": "A router appliance restores transitivity but it is a self-managed forwarding tier whose throughput and availability the five-person team now owns, which the requirements exclude.",
+      "C": "A VPN mesh does carry dynamic routes, but it means twenty tunnels and ten BGP sessions to operate, plus per-tunnel bandwidth limits, for connectivity that stays inside Google's network."
+    },
+    "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/overview",
+    "difficulty": "advanced",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-021",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Cloud DNS Private Zones & DNS Peering",
+    "conceptos": [
+      "cloud dns",
+      "dns peering zone",
+      "forwarding zone",
+      "private zone"
+    ],
+    "title": "Cross-VPC and On-Premises Name Resolution with Cloud DNS Peering",
+    "scenario": "Workloads in vpc-app must resolve two namespaces. The zone corp.internal is a Cloud DNS private zone attached to vpc-core in another project, and the app team has no permission to modify that zone or its bindings. The namespace ds.corp lives on two on-premises DNS servers at 10.5.0.10 and 10.5.0.11, reachable only from vpc-core over the interconnect. Resolution must add no VM to operate and must fail over between the two servers. Which two configurations achieve this? (Choose 2.)",
+    "keywords": [
+      "Cloud DNS",
+      "peering zone",
+      "forwarding zone",
+      "private zone"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Attach the existing corp.internal private zone to vpc-app as an additional authorised network, so queries from the app workloads are answered directly by the same managed zone."
+      },
+      {
+        "letter": "B",
+        "text": "Create a Cloud DNS peering zone for corp.internal in the app project whose visibility is vpc-app and whose target network is vpc-core, so lookups are resolved in the core network."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy two Compute Engine DNS forwarder instances in vpc-app behind an internal load balancer and set them as alternative name servers so they relay both namespaces toward vpc-core."
+      },
+      {
+        "letter": "D",
+        "text": "Create a Cloud DNS public zone for ds.corp holding the same records as on-premises, so the app workloads resolve the namespace without any dependency on the interconnect path."
+      },
+      {
+        "letter": "E",
+        "text": "Create a forwarding zone for ds.corp visible to vpc-core targeting 10.5.0.10 and 10.5.0.11, and a peering zone for ds.corp in vpc-app whose target network is vpc-core."
+      }
+    ],
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "A Cloud DNS peering zone forwards queries for a namespace to another VPC network and resolves them exactly as that network would, which is the only option available when the app team cannot modify the zone in vpc-core. For the on-premises namespace, a forwarding zone in vpc-core sends queries to both listed servers with automatic failover, and a peering zone in vpc-app reaches that forwarding path without any VM.",
+    "distractors": {
+      "A": "Adding an authorised network means editing the corp.internal zone in the other project, and the scenario states the app team holds no permission to change that zone or its bindings.",
+      "C": "Forwarder instances would work but they add VMs the requirement rules out, plus patching, capacity and an internal load balancer, for behaviour Cloud DNS provides natively.",
+      "D": "Publishing internal records in a public zone exposes on-premises host names to the internet and creates a copy that drifts from the authoritative servers on the corporate network."
+    },
+    "officialDocUrl": "https://cloud.google.com/dns/docs/zones/zones-overview",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 150,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-022",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "GPU Accelerator Provisioning & GKE Taints",
+    "conceptos": [
+      "gke gpu node pool",
+      "taints and tolerations",
+      "node selector",
+      "device plugin"
+    ],
+    "title": "Keeping CPU-Only Pods Off an Expensive GPU Node Pool in GKE",
+    "scenario": "A research team adds eight nodes carrying A100 GPUs to a GKE Standard cluster that already runs 200 CPU-only pods. Within a day the scheduler placed 30 of those pods on the GPU nodes, so training jobs queued while the cluster paid for idle accelerators costing several thousand dollars a month. The team needs the GPU nodes reserved exclusively for pods that request GPUs, without editing the 200 existing CPU workloads. What should you do?",
+    "keywords": [
+      "GPU node pool",
+      "taints",
+      "tolerations",
+      "nodeSelector"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Set a ResourceQuota on the namespace limiting how much CPU and memory may be requested overall, so that the CPU-only pods can no longer fit onto the eight accelerator nodes."
+      },
+      {
+        "letter": "B",
+        "text": "Add a node affinity rule to the training job specification preferring nodes labelled with the accelerator type, so the scheduler places those jobs on the GPU pool ahead of other pods."
+      },
+      {
+        "letter": "C",
+        "text": "Create the GPU nodes as their own node pool, which GKE taints automatically for accelerators, and add the matching toleration and a GPU resource request to the training pods only."
+      },
+      {
+        "letter": "D",
+        "text": "Create a PodDisruptionBudget for the training jobs and enable the cluster autoscaler on the GPU pool, so CPU-only pods are evicted from those nodes whenever a training job is queued."
+      }
+    ],
+    "correct": "C",
+    "explanation": "When a GKE node pool is created with attached GPUs, GKE applies the nvidia.com/gpu=present:NoSchedule taint to those nodes, so pods without a matching toleration are never scheduled there. Adding that toleration and a GPU resource request to the training pods lets only those workloads land on the accelerator nodes, and the 200 existing CPU workloads keep working untouched.",
+    "distractors": {
+      "A": "A quota caps aggregate consumption in a namespace but says nothing about which node a pod lands on, so CPU-only pods would still be scheduled onto the accelerator nodes.",
+      "B": "Node affinity attracts the training pods to the GPU nodes but does not repel anything, so CPU-only pods with no affinity remain perfectly schedulable on the same nodes.",
+      "D": "A disruption budget limits voluntary evictions rather than causing them, and the autoscaler will not remove a node that is running pods, so the accelerators stay occupied."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/gpus",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-023",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Internal Application Load Balancer with Cross-Region Backends",
+    "conceptos": [
+      "cross-region internal application load balancer",
+      "failover",
+      "vip",
+      "https"
+    ],
+    "title": "Single Internal VIP With Automatic Regional Failover for Private Clients",
+    "scenario": "An internal claims API runs on managed instance groups in us-east4 and us-central1 and is consumed by 90 back-office applications over private addressing only. The recovery time objective for a regional outage is 60 seconds and the consuming teams will not change the hostname or address they call, so a single internal virtual IP must survive the loss of either region. The service speaks HTTPS and requires path-based routing. What should you deploy?",
+    "keywords": [
+      "cross-region internal ALB",
+      "failover",
+      "internal VIP",
+      "path routing"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy a cross-region internal Application Load Balancer with backend services in both regions, so one internal address fronts the two managed instance groups and fails over on health checks."
+      },
+      {
+        "letter": "B",
+        "text": "Deploy a regional internal Application Load Balancer in each region and publish both addresses in a Cloud DNS private failover routing policy with a 30-second time to live on the published record."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy an internal passthrough Network Load Balancer with global access enabled, adding the managed instance groups of both regions as backends behind a single internal forwarding rule."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a global external Application Load Balancer with both regions as backends and restrict access with a Cloud Armor policy that allows only the corporate address ranges to reach it."
+      }
+    ],
+    "correct": "A",
+    "explanation": "The cross-region internal Application Load Balancer is the internal Layer 7 balancer whose forwarding rule serves one internal address while backend services live in several regions. Health checks shift traffic to the surviving region in seconds without a client-side change, and being a Layer 7 balancer it terminates HTTPS and performs path-based routing, which the API requires.",
+    "distractors": {
+      "B": "A DNS failover policy depends on client and resolver caching, so a 60-second objective is not reliably met, and the hostname would resolve to a different address after failover.",
+      "C": "An internal passthrough Network Load Balancer is a regional Layer 4 service: global access lets clients in other regions reach it, but its backends must stay in one region and it cannot route by path.",
+      "D": "An external balancer places the API on a public address, which the private-only requirement forbids, and a Cloud Armor allowlist does not make the endpoint internal."
+    },
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/l7-internal",
+    "difficulty": "advanced",
+    "bloomsLevel": "evaluate",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "PCA-D2-024",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.1",
+    "subsectionName": "Configuring network topologies",
+    "subtopic": "Altostrat Media: Direct Server Return UDP Ingress",
+    "conceptos": [
+      "external passthrough network load balancer",
+      "direct server return",
+      "udp",
+      "gke"
+    ],
+    "title": "Altostrat Media: Ultra-Low Latency UDP Ingress with Direct Server Return",
+    "scenario": "Altostrat Media runs its first-person shooter fleet on GKE nodes in five regions. Player clients on mobile networks send UDP datagrams at 60 packets per second, and the product requires that added jitter stay under 2 ms. The game servers must see the real player source address for anti-cheat correlation, and return packets must travel from the node straight to the player rather than back through any middle box. Which ingress design meets these constraints?",
+    "keywords": [
+      "External Passthrough Network Load Balancer",
+      "DSR",
+      "UDP",
+      "source IP"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "An internal passthrough Network Load Balancer in front of the game server node pool, which preserves the client source address on the datagrams and lets backends answer without traversing it."
+      },
+      {
+        "letter": "B",
+        "text": "An external passthrough Network Load Balancer whose forwarding rule carries UDP to the backend node interfaces, keeping the client source address and returning packets straight to the player."
+      },
+      {
+        "letter": "C",
+        "text": "A global external Application Load Balancer with HTTP/3 and QUIC enabled on the frontend, terminating the player traffic at the nearest Google edge point of presence and forwarding it on."
+      },
+      {
+        "letter": "D",
+        "text": "An external proxy Network Load Balancer that terminates the player connections at the closest Google edge point of presence and adds a PROXY protocol header carrying the original source address."
+      }
+    ],
+    "correct": "B",
+    "explanation": "External passthrough Network Load Balancers operate at Layer 4 with Maglev and do not proxy: packets arrive at the backend network interface with the client source address intact, and the backend replies directly to the client without the response traversing the load balancer. That direct server return behaviour is what keeps added jitter minimal for a 60-packet-per-second UDP game stream.",
+    "distractors": {
+      "A": "Passthrough behaviour and direct return are right, but an internal forwarding rule uses an RFC 1918 address that players on mobile networks on the public internet cannot reach.",
+      "C": "An Application Load Balancer is an HTTP proxy: it understands HTTP/3 over QUIC rather than raw game datagrams, and every response is proxied back through the frontend.",
+      "D": "The proxy Network Load Balancer supports TCP and SSL only, not UDP, and being a proxy it adds a return hop, which removes the direct server return the jitter budget depends on."
+    },
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/network",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "altostrat_media",
+    "caseStudySection": "Technical Constraints: Game Server Latency and Direct UDP",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "PCA-D2-025",
+    "certId": "pca",
+    "domainId": "PCA-D2",
+    "domainName": "2. Managing and provisioning a solution infrastructure",
+    "sectionId": "PCA-2",
+    "sectionName": "Managing and provisioning a cloud solution infrastructure",
+    "subsectionId": "PCA-2.3",
+    "subsectionName": "Configuring compute systems",
+    "subtopic": "Altostrat Media: Spot VM Graceful Drain Lifecycle",
+    "conceptos": [
+      "spot vms",
+      "graceful node shutdown",
+      "prestop hook",
+      "termination grace period"
+    ],
+    "title": "Altostrat Media: Draining Matches Within the 30-Second Spot Preemption Notice",
+    "scenario": "Altostrat Media runs 70 percent of its game server capacity on GKE Spot node pools to hold infrastructure spend inside the agreed budget. Compute Engine sends a preemption notice 30 seconds before reclaiming a Spot instance. A match must stop accepting new players, persist its score state and move the remaining players to another node within 25 seconds of that notice, and no match may be cut without that drain. What should you implement?",
+    "keywords": [
+      "Spot VMs",
+      "graceful node shutdown",
+      "preStop",
+      "terminationGracePeriodSeconds"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Define a PodDisruptionBudget allowing at most one unavailable game server pod, so the node is not reclaimed until the remaining pods in the match have finished serving their players."
+      },
+      {
+        "letter": "B",
+        "text": "Enable node auto-repair and node auto-upgrade on the Spot pools, so an instance flagged for reclamation is replaced by the group before the preemption notice expires on that node."
+      },
+      {
+        "letter": "C",
+        "text": "Set terminationGracePeriodSeconds to 120 on the game server pods so that the drain routine has time to persist state and hand the remaining players over to another node in the pool."
+      },
+      {
+        "letter": "D",
+        "text": "Rely on GKE graceful node shutdown for Spot nodes and give the game server pods a preStop hook plus a terminationGracePeriodSeconds of 25, so the drain completes inside the notice."
+      }
+    ],
+    "correct": "D",
+    "explanation": "GKE handles the Compute Engine preemption signal on Spot nodes with graceful node shutdown, which sends SIGTERM to pods and honours their grace period within the 30-second window. A preStop hook that stops matchmaking, persists the score state and migrates players, combined with terminationGracePeriodSeconds of 25, fits inside that window so every match drains before the instance is reclaimed.",
+    "distractors": {
+      "A": "A disruption budget governs voluntary evictions only; Compute Engine reclaims a Spot instance regardless of it, so the match is cut without ever running the drain routine.",
+      "B": "Auto-repair and auto-upgrade react to unhealthy or outdated nodes, not to a preemption notice, so they never trigger in this path and no state is persisted before reclamation.",
+      "C": "A 120-second grace period exceeds the 30-second notice, so the kubelet is cut off partway through the drain and the score state of the match is lost anyway."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "altostrat_media",
+    "caseStudySection": "Cost Constraints: Spot VM Lifecycle Management",
+    "blockId": "BLOCK-4"
+  }
+]

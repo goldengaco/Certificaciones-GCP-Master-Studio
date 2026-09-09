@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D4-032",
+  "subtopic": "Compute Engine Disk Detachment & Reattachment",
+  "scenario": "VM instance `server-old` in zone `us-central1-a` is being decommissioned. Its non-boot data disk `data-volume-1` contains 500 GB of reports that must be moved and attached to a new VM `server-new` in the same zone. Which sequence of commands performs this disk migration?",
+  "correct": "C",
+  "clave_len": 196,
+  "explanation": "Moving a Persistent Disk between VMs in the same zone involves detaching it from the source instance (`gcloud compute instances detach-disk`) and attaching it to the target instance (`gcloud compute instances attach-disk`).",
+  "doc": "https://cloud.google.com/compute/docs/disks/detach-reattach-pd",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 35,
+    "text": "Run bq cp data-volume-1 server-new."
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Run gsutil mv /dev/sdb server-new:/dev/sdb."
+   },
+   {
+    "letter": "C",
+    "len": 196,
+    "text": "Run gcloud compute instances detach-disk server-old --disk=data-volume-1 --zone=us-central1-a followed by gcloud compute instances attach-disk server-new --disk=data-volume-1 --zone=us-central1-a."
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Run gcloud compute disks delete data-volume-1 && gcloud compute disks create data-volume-1."
+   }
+  ],
+  "ratio": 3.48
+ },
+ {
+  "id": "ACE-D3-056",
+  "subtopic": "GKE BackendConfig CRD & Load Balancer Settings",
+  "scenario": "You are exposing a GKE microservice through a Google Cloud HTTP(S) Load Balancer via Ingress. You need to configure a custom health check path (`/api/v1/healthz`), a 60-second connection timeout, and attach a Cloud Armor security policy `waf-policy` directly to the GKE backend service. What Kubernetes resource must you deploy and associate with your Service?",
+  "correct": "D",
+  "clave_len": 207,
+  "explanation": "GKE Ingress controller uses the `BackendConfig` CRD to configure Google Cloud Load Balancer Backend Service features (Cloud Armor, custom health checks, timeouts, CDN, IAP). Annotating the Kubernetes Service with `cloud.google.com/backend-config` links the Kubernetes Service to the GCP Backend Service parameters.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#backendconfig_cr",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 80,
+    "text": "Manually edit the GCP Load Balancer in the Cloud Console after every deployment."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Create a VPC firewall rule with a 60-second timeout."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Deploy an Nginx sidecar container in every Pod."
+   },
+   {
+    "letter": "D",
+    "len": 207,
+    "text": "Deploy a BackendConfig custom resource defining the health check, timeoutSec, and securityPolicy, and annotate the Kubernetes Service with 'cloud.google.com/backend-config: {\"default\": \"my-backend-config\"}'."
+   }
+  ],
+  "ratio": 3.47
+ },
+ {
+  "id": "ACE-D5-025",
+  "subtopic": "Cloud Storage Customer-Supplied Encryption Keys (CSEK)",
+  "scenario": "A government defense contractor requires that satellite imagery files stored in Cloud Storage must be encrypted using raw 256-bit AES encryption keys generated and stored on on-premises Hardware Security Modules (HSM). Google Cloud must NEVER store the raw key on disk or retain it after the upload/download request finishes. Which encryption model should you implement?",
+  "correct": "D",
+  "clave_len": 150,
+  "explanation": "Customer-Supplied Encryption Keys (CSEK) require the client to supply raw 256-bit AES encryption keys in HTTP request headers. Google Cloud uses the key in memory to encrypt/decrypt the object and immediately purges the key from memory without persisting it.",
+  "doc": "https://cloud.google.com/storage/docs/encryption/customer-supplied-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "Google default encryption at rest."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Cloud KMS Customer-Managed Encryption Keys (CMEK)."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Public bucket access with client SSL encryption."
+   },
+   {
+    "letter": "D",
+    "len": 150,
+    "text": "Customer-Supplied Encryption Keys (CSEK), providing the base64-encoded AES-256 key in the encryption_key configuration header of each API/CLI request."
+   }
+  ],
+  "ratio": 3.41
+ },
+ {
+  "id": "ACE-D5-046",
+  "subtopic": "Secret Manager Conditional IAM Access",
+  "scenario": "An on-call engineer needs temporary access to read the production payment secret `stripe-prod-api-key` in Secret Manager. Access must be granted immediately, but must automatically expire in 4 hours (`2026-08-20T23:00:00Z`). Which command grants this conditional access?",
+  "correct": "B",
+  "clave_len": 234,
+  "explanation": "Binding `roles/secretmanager.secretAccessor` with an IAM Condition (`request.time < timestamp(...)`) grants time-limited read access that automatically expires and invalidates at the exact specified cutoff time.",
+  "doc": "https://cloud.google.com/secret-manager/docs/access-control#conditions",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Email the secret plaintext in an encrypted email."
+   },
+   {
+    "letter": "B",
+    "len": 234,
+    "text": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.secretAccessor' --condition='expression=request.time < timestamp(\"2026-08-20T23:00:00Z\"),title=ExpiringSecretAccess'"
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Make the secret public for 4 hours."
+   },
+   {
+    "letter": "D",
+    "len": 124,
+    "text": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.admin'"
+   }
+  ],
+  "ratio": 3.38
+ },
+ {
+  "id": "ACE-D5-048",
+  "subtopic": "Cloud Armor Adaptive Protection",
+  "scenario": "Your high-traffic web application encounters frequent, sophisticated Layer 7 DDoS attacks that mimic legitimate user behavior. You need Google Cloud to use machine learning to automatically analyze normal traffic baselines, detect application-layer anomalies, generate custom Cloud Armor mitigation WAF rules, and alert security engineers in real time. Which feature should you enable?",
+  "correct": "B",
+  "clave_len": 147,
+  "explanation": "Cloud Armor Adaptive Protection leverages machine learning models to detect Layer 7 application DDoS attacks, identify the specific attack signature, and automatically generate recommended mitigation rules with one-click deployment.",
+  "doc": "https://cloud.google.com/armor/docs/adaptive-protection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "Set Cloud Storage bucket retention to 10 years."
+   },
+   {
+    "letter": "B",
+    "len": 147,
+    "text": "Enable Cloud Armor Adaptive Protection on the security policy using gcloud compute security-policies update my-policy --enable-layer7-ddos-defense."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "Create a VPC firewall rule blocking port 80."
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Deploy an unmanaged Snort VM in the VPC."
+   }
+  ],
+  "ratio": 3.37
+ },
+ {
+  "id": "ACE-D3-075",
+  "subtopic": "GKE Custom Metric Autoscaling with Prometheus",
+  "scenario": "You have an event-driven queue processing worker deployment in GKE. The deployment must scale out when the custom metric `queue_messages_ready` exposed by a Prometheus endpoint exceeds 50 messages per pod. What architecture should you deploy to allow Kubernetes HPA to autoscale based on this Prometheus metric?",
+  "correct": "D",
+  "clave_len": 211,
+  "explanation": "Kubernetes HPA (`autoscaling/v2`) supports custom and external metrics. Deploying the Custom Metrics Adapter allows HPA to query Prometheus or Cloud Monitoring metrics and calculate required replica counts dynamically based on custom application queues.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "Set the node pool autoscaler target CPU to 50%."
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "Write a bash script that scales the deployment via kubectl scale in a continuous while loop."
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Configure a Cloud Storage bucket lifecycle policy."
+   },
+   {
+    "letter": "D",
+    "len": 211,
+    "text": "Deploy the Custom Metrics Stackdriver Adapter (or Prometheus Adapter) in the cluster, and create an HPA manifest using apiVersion: autoscaling/v2 specifying metric type 'Pods' or 'External' with target value 50."
+   }
+  ],
+  "ratio": 3.35
+ },
+ {
+  "id": "ACE-D4-059",
+  "subtopic": "Compute Engine Resource Policy Instance Schedule",
+  "scenario": "To eliminate compute spend over weekends for 50 non-production development VMs in project `dev-sandbox`, you need to create a resource policy schedule that automatically stops these VMs every Friday at 19:00 UTC and starts them every Monday at 07:00 UTC. Which command creates this instance schedule?",
+  "correct": "A",
+  "clave_len": 175,
+  "explanation": "Compute Engine Instance Schedules (via `gcloud compute resource-policies create instance-schedule`) natively automate the scheduled starting and stopping of virtual machine instances using standard cron expressions with zero custom scripts or running scheduler VMs.",
+  "doc": "https://cloud.google.com/compute/docs/instances/schedule-instance-start-stop",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 175,
+    "text": "gcloud compute resource-policies create instance-schedule dev-vm-schedule --region=us-central1 --vm-start-schedule='0 7 * * 1' --vm-stop-schedule='0 19 * * 5' --timezone='UTC'"
+   },
+   {
+    "letter": "B",
+    "len": 32,
+    "text": "kubectl apply -f vm-cronjob.yaml"
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "gcloud app deploy dev-schedule.yaml"
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Write a python script on a dedicated VM that runs gcloud compute instances stop in crontab."
+   }
+  ],
+  "ratio": 3.32
+ },
+ {
+  "id": "ACE-D5-013",
+  "subtopic": "Cloud DLP Sensitive Data Inspection & Masking",
+  "scenario": "A company ingests customer support tickets containing personally identifiable information (PII) such as credit card numbers (CCN) and Social Security Numbers (SSN). Before loading ticket text into BigQuery for public analysis, the security team must automatically detect, inspect, and mask credit card numbers with `[REDACTED]`. Which Google Cloud service should you deploy?",
+  "correct": "C",
+  "clave_len": 91,
+  "explanation": "Google Cloud Sensitive Data Protection (Cloud DLP) provides automated discovery, classification, and de-identification (masking, tokenization, hashing, date shifting) of sensitive data (credit cards, SSNs, names) in Cloud Storage, BigQuery, and Datastore.",
+  "doc": "https://cloud.google.com/dlp/docs/transforming-sensitive-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 27,
+    "text": "Cloud DNS forwarding rules."
+   },
+   {
+    "letter": "B",
+    "len": 28,
+    "text": "Cloud Armor security policy."
+   },
+   {
+    "letter": "C",
+    "len": 91,
+    "text": "Cloud Sensitive Data Protection (Cloud DLP) inspection and de-identification transform job."
+   },
+   {
+    "letter": "D",
+    "len": 30,
+    "text": "Compute Engine Serial Console."
+   }
+  ],
+  "ratio": 3.21
+ },
+ {
+  "id": "ACE-D4-031",
+  "subtopic": "Cloud Monitoring Log-Based Metrics",
+  "scenario": "Your legacy application running on Compute Engine outputs log lines containing `PAYMENT_FAILURE: error_code=[code]`. You need to create a Cloud Monitoring Counter metric that counts every occurrence of this error string in real time so you can create an alerting policy. Which command creates this log-based metric?",
+  "correct": "D",
+  "clave_len": 144,
+  "explanation": "`gcloud logging metrics create <METRIC_NAME> --log-filter=<FILTER>` creates a Cloud Logging Log-Based Metric, turning matching log lines into numerical metrics that appear in Cloud Monitoring for charting and alerting.",
+  "doc": "https://cloud.google.com/logging/docs/logs-based-metrics/counter-logs-based-metrics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "gcloud compute instances update --count-errors"
+   },
+   {
+    "letter": "B",
+    "len": 36,
+    "text": "bq mk --metric payment_failure_count"
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "kubectl autoscale deployment --metric=payment_failure"
+   },
+   {
+    "letter": "D",
+    "len": 144,
+    "text": "gcloud logging metrics create payment_failure_count --description='Count of payment failure errors' --log-filter='textPayload:\"PAYMENT_FAILURE\"'"
+   }
+  ],
+  "ratio": 3.2
+ },
+ {
+  "id": "ACE-D5-014",
+  "subtopic": "Cloud IAM Deny Policies & Governance",
+  "scenario": "An enterprise Chief Information Security Officer (CISO) requires a permanent, non-overridable security rule at the Organization level that explicitly denies `allUsers` and `allAuthenticatedUsers` from being granted any Cloud Storage permissions (`storage.objects.get`), even if a project administrator attempts to grant it in their project IAM policies. Which feature enforces this restriction?",
+  "correct": "C",
+  "clave_len": 156,
+  "explanation": "Cloud IAM Deny Policies take precedence over all IAM allow grants. A Deny Policy applied at the Organization or Folder level denying `allUsers` and `allAuthenticatedUsers` specific permissions (`storage.objects.get`) prevents public access universally, overriding any project-level allow bindings.",
+  "doc": "https://cloud.google.com/iam/docs/deny-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Set up a cron script that scans IAM policies daily."
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Delete the default VPC network in all projects."
+   },
+   {
+    "letter": "C",
+    "len": 156,
+    "text": "Deploy a Cloud IAM Deny Policy at the Organization level that denies principals 'allUsers' and 'allAuthenticatedUsers' the permission 'storage.objects.get'."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Revoke Owner roles from all project administrators."
+   }
+  ],
+  "ratio": 3.14
+ },
+ {
+  "id": "ACE-D5-041",
+  "subtopic": "Cloud IAM Role Inheritance & Policy Troubleshooter",
+  "scenario": "A developer reports that they cannot delete objects in Cloud Storage bucket `gs://finance-vault`, receiving a 403 Access Denied error. You check the bucket IAM policy and find no role granted to the developer. However, the developer insists their team lead was granted Storage Admin at the Folder level. Which Google Cloud tool allows you to input a user email, resource, and permission to troubleshoot exactly which IAM binding or Deny policy is blocking access?",
+  "correct": "B",
+  "clave_len": 88,
+  "explanation": "Policy Troubleshooter analyzes IAM policies across the Organization, Folder, Project, and Resource hierarchy, evaluating allow bindings, conditional policies, and IAM Deny policies to explain why a user was granted or denied a specific permission.",
+  "doc": "https://cloud.google.com/iam/docs/troubleshooting-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 30,
+    "text": "Compute Engine Serial Console."
+   },
+   {
+    "letter": "B",
+    "len": 88,
+    "text": "Google Cloud Policy Troubleshooter (in Cloud Console or via gcloud policy-troubleshoot)."
+   },
+   {
+    "letter": "C",
+    "len": 31,
+    "text": "VPC Flow Logs in Cloud Logging."
+   },
+   {
+    "letter": "D",
+    "len": 23,
+    "text": "BigQuery Data Profiler."
+   }
+  ],
+  "ratio": 3.14
+ },
+ {
+  "id": "ACE-D5-008",
+  "subtopic": "Identity-Aware Proxy & Context-Aware Access",
+  "scenario": "Your company hosts an internal corporate web portal on App Engine. Corporate security mandates: 1) Employees must authenticate using Google Cloud Identity. 2) Access must ONLY be permitted from company-managed laptops connecting from the corporate office IP range (`198.51.100.0/24`) with disk encryption enabled. Which combination of GCP security services enforces this policy?",
+  "correct": "C",
+  "clave_len": 171,
+  "explanation": "Google Identity-Aware Proxy (IAP) integrated with Access Context Manager provides Context-Aware Access (Zero Trust). It evaluates user identity, device security posture (disk encryption, OS version), and network origin IP before granting access to App Engine, Cloud Run, or GKE web applications.",
+  "doc": "https://cloud.google.com/iap/docs/context-aware-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "Deploy an unmanaged VPN gateway VM on Compute Engine."
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Create an ingress firewall rule in the default VPC network."
+   },
+   {
+    "letter": "C",
+    "len": 171,
+    "text": "Enable Identity-Aware Proxy (IAP) on the App Engine application and bind an Access Context Manager Access Level enforcing corporate IP subnet and device policy conditions."
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Store username and password hashes in Cloud Storage."
+   }
+  ],
+  "ratio": 3.13
+ },
+ {
+  "id": "ACE-D5-028",
+  "subtopic": "Cloud KMS Key Ring Creation & CryptoKey Admin",
+  "scenario": "You are setting up a cryptographic key management hierarchy in region `us-east1`. You need to create a regional Key Ring named `app-keyring` and provision a CryptoKey named `customer-data-key` for symmetric encryption with 256-bit AES. Which sequence of gcloud commands creates the Key Ring and CryptoKey?",
+  "correct": "C",
+  "clave_len": 165,
+  "explanation": "In Cloud KMS, keys belong to Key Rings. You create the Key Ring first (`gcloud kms keyrings create <NAME> --location=<LOC>`), then create the CryptoKey inside that Key Ring (`gcloud kms keys create <NAME> --keyring=<RING> --location=<LOC> --purpose=encryption`).",
+  "doc": "https://cloud.google.com/kms/docs/creating-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "gcloud storage keys create customer-data-key --keyring=app-keyring"
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "gcloud compute keys create customer-data-key --region=us-east1"
+   },
+   {
+    "letter": "C",
+    "len": 165,
+    "text": "gcloud kms keyrings create app-keyring --location=us-east1 && gcloud kms keys create customer-data-key --keyring=app-keyring --location=us-east1 --purpose=encryption"
+   },
+   {
+    "letter": "D",
+    "len": 33,
+    "text": "bq mk --kms_key customer-data-key"
+   }
+  ],
+  "ratio": 3.07
+ },
+ {
+  "id": "ACE-D5-042",
+  "subtopic": "Cloud Armor Bot Management & reCAPTCHA Integration",
+  "scenario": "An automated bot network is executing credential stuffing attacks against your login portal. You need to integrate Google Cloud Armor with reCAPTCHA Enterprise so that incoming requests with reCAPTCHA risk scores below 0.3 (indicating automated bot traffic) are automatically redirected to a CAPTCHA challenge or blocked at the edge. Which service feature enables this?",
+  "correct": "A",
+  "clave_len": 106,
+  "explanation": "Cloud Armor Bot Management integrates with reCAPTCHA Enterprise. Security policy rules evaluate `token.recaptcha_session.score` at Google's global edge and apply actions (allow, redirect, challenge, deny-403) to block automated fraud.",
+  "doc": "https://cloud.google.com/armor/docs/bot-management-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 106,
+    "text": "Cloud Armor Bot Management with reCAPTCHA Enterprise assessment token validation in security policy rules."
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud DNS TXT records."
+   },
+   {
+    "letter": "C",
+    "len": 37,
+    "text": "A VPC firewall rule blocking port 80."
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "Compute Engine instance groups with Spot VMs."
+   }
+  ],
+  "ratio": 3.06
+ },
+ {
+  "id": "ACE-D3-041",
+  "subtopic": "Cloud Logging Sink Deployment",
+  "scenario": "A security policy mandates that all Google Cloud IAM administrative activity logs across project `corp-prod-101` must be streamed in real-time to a BigQuery dataset `audit_analytics` for compliance retention and SIEM queries. Which gcloud command deploys this logging sink?",
+  "correct": "D",
+  "clave_len": 178,
+  "explanation": "`gcloud logging sinks create <SINK_NAME> <DESTINATION_URI> --log-filter=<FILTER>` creates a Cloud Logging Sink that continuously routes matching log entries to BigQuery, Cloud Storage, or Pub/Sub.",
+  "doc": "https://cloud.google.com/logging/docs/export/configure-export-v2",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "gsutil notification create -f bigquery gs://corp-logs"
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "bq mk --transfer_config --destination=audit_analytics --source=logs"
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "gcloud compute networks update --export-logs-to-bigquery"
+   },
+   {
+    "letter": "D",
+    "len": 178,
+    "text": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'"
+   }
+  ],
+  "ratio": 3.03
+ },
+ {
+  "id": "ACE-D3-043",
+  "subtopic": "Compute Engine Stateful MIG Deployment",
+  "scenario": "You are deploying a cluster of 3 Elasticsearch nodes in a Compute Engine Managed Instance Group `es-mig`. Each node must retain its specific data disk and internal IP address across instance restarts, auto-healing events, and rolling software updates. How should you configure the MIG?",
+  "correct": "C",
+  "clave_len": 143,
+  "explanation": "Stateful MIGs allow defining a Stateful Policy on persistent disks (`--stateful-disk`) and IP addresses. During auto-healing or rolling updates, Compute Engine preserves and reattaches the exact individual data disk to the recreated instance.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/configuring-stateful-disks-in-migs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Set the instance template to use Spot VMs."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Use Local SSDs with cron snapshot scripts."
+   },
+   {
+    "letter": "C",
+    "len": 143,
+    "text": "Configure the Managed Instance Group with a Stateful Policy preserving the data disk device name (e.g. --stateful-disk) and network interfaces."
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "Deploy an Unmanaged Instance Group and disable autoscaling."
+   }
+  ],
+  "ratio": 3.0
+ },
+ {
+  "id": "ACE-D5-023",
+  "subtopic": "Cloud SQL IAM Database Authentication",
+  "scenario": "To eliminate static database passwords in source code, an engineering team wants a Cloud Run service running as service account `app-sa@corp.iam.gserviceaccount.com` to authenticate directly to a Cloud SQL PostgreSQL database using its Google Cloud IAM identity. What database flag and user configuration must be enabled?",
+  "correct": "A",
+  "clave_len": 191,
+  "explanation": "Cloud SQL IAM database authentication (`cloudsql.iam_authentication=on`) enables applications to authenticate to PostgreSQL/MySQL using short-lived OAuth 2.0 access tokens generated by Google IAM service accounts, completely eliminating static database passwords.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/authentication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 191,
+    "text": "Enable the cloudsql.iam_authentication=on database flag on the instance, and add an IAM database user for app-sa@corp.iam.gserviceaccount.com in Cloud SQL with type CLOUD_IAM_SERVICE_ACCOUNT."
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "Create an open firewall rule on port 5432 to 0.0.0.0/0."
+   },
+   {
+    "letter": "C",
+    "len": 79,
+    "text": "Hardcode the PostgreSQL postgres master password into the Cloud Run Dockerfile."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Store database passwords in a public Cloud Storage bucket."
+   }
+  ],
+  "ratio": 2.98
+ }
+]

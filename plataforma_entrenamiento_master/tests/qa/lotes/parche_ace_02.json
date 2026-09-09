@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D4-032",
+  "options": {
+   "A": "Run gcloud compute snapshots create vol1-snap --source-disk=data-volume-1 --source-disk-zone=us-central1-a followed by gcloud compute disks create data-volume-1 --source-snapshot=vol1-snap --zone=us-central1-b.",
+   "B": "Run gcloud compute ssh server-old --zone=us-central1-a --command='sudo umount /dev/sdb' followed by gcloud compute scp --recurse server-old:/mnt/reports server-new:/mnt/reports --zone=us-central1-a.",
+   "D": "Run gcloud compute instances attach-disk server-new --disk=data-volume-1 --zone=us-central1-a --mode=ro followed by gcloud compute instances stop server-old --zone=us-central1-a to release it."
+  },
+  "distractors": {
+   "A": "Restores the reports into a brand new disk in us-central1-b. attach-disk only accepts a disk that lives in the same zone as the target VM, so that copy can never be attached to server-new in us-central1-a, and the original disk stays on server-old.",
+   "B": "Copies files over SSH instead of moving the disk resource: 500 GB cross the network and must fit on the boot disk of server-new, while data-volume-1 remains attached to server-old and disappears with it if auto-delete is set on the decommissioned VM.",
+   "D": "attach-disk is rejected while data-volume-1 is still attached to server-old in read-write mode, and stopping the source VM does not release the attachment: only detach-disk (or deleting the instance) frees the disk. Read-only mode would also block writes."
+  }
+ },
+ {
+  "id": "ACE-D3-056",
+  "options": {
+   "A": "Deploy a FrontendConfig custom resource carrying the healthCheck path, timeoutSec and securityPolicy fields, and reference it from the Ingress with the networking.gke.io/v1beta1.FrontendConfig annotation.",
+   "B": "Deploy a GCPBackendPolicy holding the Cloud Armor securityPolicy plus a HealthCheckPolicy with the /api/v1/healthz path, both bound to the Service through the Gateway API targetRef field.",
+   "C": "Annotate the Ingress object with cloud.google.com/backend-config, ingress.kubernetes.io/health-check-path: /api/v1/healthz and cloud.google.com/armor-config: waf-policy so the controller applies all three."
+  },
+  "distractors": {
+   "A": "FrontendConfig configures the load balancer front end only (SSL policy, minimum TLS version, HTTP-to-HTTPS redirect) and attaches to the Ingress; it has no healthCheck, timeoutSec or securityPolicy fields, which belong to BackendConfig on the Service.",
+   "B": "GCPBackendPolicy and HealthCheckPolicy are Gateway API custom resources reconciled only by the GKE Gateway controller. A Service published through an Ingress object is reconciled by the GKE Ingress controller, which never reads them.",
+   "C": "Right resource, wrong anchor point: each Ingress backend maps to one Service, so backend service settings are per-Service and the backend-config annotation must sit on the Service. Annotations the Ingress controller does not know are ignored with no error."
+  }
+ },
+ {
+  "id": "ACE-D5-025",
+  "options": {
+   "A": "Cloud KMS Customer-Managed Encryption Keys with protection level HSM (Cloud HSM, FIPS 140-2 Level 3) set as the bucket default encryption key.",
+   "B": "Cloud KMS Customer-Managed Encryption Keys built by wrapping the on-premises AES-256 material and running gcloud kms keys versions import into the key ring.",
+   "C": "Cloud External Key Manager (Cloud EKM), referencing the key by URI so Cloud KMS delegates every wrap and unwrap call to the on-premises HSM."
+  },
+  "distractors": {
+   "A": "The AES-256 key is generated inside Google's own HSM cluster and persists there as a CryptoKey version that Google manages; the contractor requires material generated on their own HSM and never held by Google.",
+   "B": "Import protects the material in transit, but once imported that key version is stored inside Cloud KMS and reused for every request, which is precisely the persistence the requirement forbids.",
+   "C": "Cloud EKM can only reference keys hosted in a supported EKM partner service reached over the internet or a VPC, not an arbitrary on-premises HSM, and the client never supplies raw AES-256 bytes per request."
+  }
+ },
+ {
+  "id": "ACE-D5-046",
+  "options": {
+   "A": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.viewer' --condition='expression=request.time < timestamp(\"2026-08-20T23:00:00Z\"),title=ExpiringSecretAccess'",
+   "C": "gcloud secrets add-iam-policy-binding stripe-prod-api-key --member='user:oncall@corp.com' --role='roles/secretmanager.secretAccessor' --condition='expression=request.time > timestamp(\"2026-08-20T23:00:00Z\"),title=OnCallShift'",
+   "D": "gcloud projects add-iam-policy-binding corp-prod --member='user:oncall@corp.com' --role='roles/secretmanager.secretAccessor' --condition='expression=request.time < timestamp(\"2026-08-20T23:00:00Z\"),title=ExpiringSecretAccess'"
+  },
+  "distractors": {
+   "A": "The condition expires exactly on time, but roles/secretmanager.viewer only carries metadata permissions (secrets.get, secrets.list, versions.list). Reading the payload needs secretmanager.versions.access, so the engineer still gets 403 on the value.",
+   "C": "The comparison operator is inverted: request.time > timestamp(...) denies the binding for the next four hours and then grants it permanently from 23:00 onwards, the opposite of a window that closes by itself.",
+   "D": "The expiry works, but binding at the project level grants payload access to every secret in the project for those four hours, including database credentials and signing keys, when only stripe-prod-api-key was in scope."
+  }
+ },
+ {
+  "id": "ACE-D5-048",
+  "options": {
+   "A": "Throttle the attackers with gcloud compute security-policies rules create 1000 --security-policy=my-policy --action=rate-based-ban --rate-limit-threshold-count=100.",
+   "C": "Add gcloud compute security-policies rules create 2000 --security-policy=my-policy --expression=\"evaluatePreconfiguredExpr('xss-v33-stable')\" --action=deny-403.",
+   "D": "Deepen inspection with gcloud compute security-policies update my-policy --json-parsing=STANDARD --log-level=VERBOSE so engineers can study the traffic."
+  },
+  "distractors": {
+   "A": "A rate-based ban uses one fixed threshold per source IP; a botnet imitating real users spreads its requests over thousands of addresses and stays under it. Nothing learns a traffic baseline or generates a mitigation rule.",
+   "C": "Preconfigured WAF (ModSecurity CRS) expressions match known injection signatures inside a request. An application-layer flood built from well-formed requests matches none of them, and the signature set is static, not learned.",
+   "D": "Verbose logging and JSON body parsing only enrich what Cloud Armor records per request. No machine learning model runs, no alert is raised and no rule is proposed, so the attack is documented in detail instead of mitigated."
+  }
+ },
+ {
+  "id": "ACE-D3-075",
+  "options": {
+   "A": "Create an autoscaling/v1 HorizontalPodAutoscaler with kubectl autoscale --cpu-percent=50 --min=1 --max=20 and enable the Vertical Pod Autoscaler in Auto mode so worker Pods are resized as the queue grows.",
+   "B": "Enable node pool autoscaling with gcloud container clusters update --enable-autoscaling --min-nodes=1 --max-nodes=10 plus Node Auto-Provisioning, so capacity is added whenever the queue backs up.",
+   "C": "Scrape the endpoint with Google Cloud Managed Service for Prometheus and create an autoscaling/v2 HPA whose metric block is of type Resource, named queue_messages_ready, with target averageValue 50."
+  },
+  "distractors": {
+   "A": "autoscaling/v1 exposes only targetCPUUtilizationPercentage, so queue_messages_ready is never read and a worker blocked on I/O keeps CPU flat while messages pile up. VPA resizes Pod requests instead of adding replicas, and fights an HPA on the same workload.",
+   "B": "The cluster autoscaler reacts to Pods that stay Pending for lack of capacity; it never changes the Deployment replica count. With a fixed number of replicas nothing is ever unschedulable, so no node is added and the Prometheus metric is never consulted.",
+   "C": "A metric block of type Resource is served by metrics-server and only accepts the cpu and memory resources of the Pod, so the HPA reports FailedGetResourceMetric. Prometheus values must be surfaced as type Pods or External by a custom metrics API adapter."
+  }
+ },
+ {
+  "id": "ACE-D4-059",
+  "options": {
+   "B": "gcloud compute resource-policies create instance-schedule dev-vm-schedule --zone=us-central1-a --vm-start-schedule='0 7 * * 1' --vm-stop-schedule='0 19 * * 5'",
+   "C": "gcloud compute resource-policies create snapshot-schedule dev-vm-schedule --region=us-central1 --weekly-schedule=friday --start-time=19:00 --max-retention-days=7",
+   "D": "gcloud scheduler jobs create pubsub stop-dev-vms --schedule='0 19 * * 5' --time-zone=UTC --topic=vm-ops --message-body='stop dev-sandbox' --location=us-central1"
+  },
+  "distractors": {
+   "B": "Resource policies are regional objects: the command takes --region, never --zone, and the policy has to live in the region of the VMs it will be attached to, so the call is rejected before any schedule exists.",
+   "C": "This builds the other kind of resource policy, a snapshot schedule: it takes disk backups every Friday at 19:00 and keeps them a week. The 50 VMs keep running all weekend, so compute spend is unchanged and storage cost grows.",
+   "D": "Cloud Scheduler only publishes a message to the topic at the right minute. Nothing subscribes to it, so a Cloud Function or Cloud Run job that actually calls compute.instances.stop on the 50 VMs still has to be written and authorised."
+  }
+ },
+ {
+  "id": "ACE-D5-013",
+  "options": {
+   "A": "BigQuery column-level access control with a Dataplex policy tag on the ticket text column.",
+   "B": "Cloud Natural Language API entity analysis to strip PII entities out of the ticket text.",
+   "D": "BigQuery dynamic data masking bound to the ticket text column through a masking policy."
+  },
+  "distractors": {
+   "A": "Policy tags expose or hide an entire column per principal. They cannot locate a credit card number inside free-form ticket text, and every analyst allowed to read the column still sees the raw CCN.",
+   "B": "Entity analysis returns annotations such as PERSON or NUMBER, with no credit card or SSN infoType and no checksum validation, and it emits no de-identified copy of the text, so nothing becomes [REDACTED].",
+   "D": "Dynamic masking applies one fixed rule (hash, nullify, default value) to the whole column for a principal group; it cannot find the card number inside the sentence, so the choice is a blank ticket or an unmasked one."
+  }
+ },
+ {
+  "id": "ACE-D4-031",
+  "options": {
+   "A": "gcloud logging sinks create payment-failure-sink pubsub.googleapis.com/projects/prod-101/topics/errors --log-filter='textPayload:\"PAYMENT_FAILURE\"'",
+   "B": "gcloud alpha monitoring policies create --policy-from-file=payment-failure-alert.yaml --notification-channels=ops-oncall-channel",
+   "C": "gcloud logging metrics create payment_failure_count --description='Payment errors' --log-filter='severity>=ERROR AND resource.type=\"gce_instance\"'"
+  },
+  "distractors": {
+   "A": "A sink only copies matching entries to Pub/Sub. It creates no time series, so Cloud Monitoring has nothing to chart and an alerting policy has no metric to condition on; counting would have to happen in a subscriber.",
+   "B": "An alerting policy condition must reference a metric type that already exists. logging.googleapis.com/user/payment_failure_count has not been created yet, so the policy is rejected: the log-based metric is the missing prior step.",
+   "C": "Right command, wrong filter: it counts every ERROR any VM writes, folding in unrelated failures, while the legacy application prints PAYMENT_FAILURE as a plain text line that the agent ingests with DEFAULT severity, so the real events are missed."
+  }
+ },
+ {
+  "id": "ACE-D5-014",
+  "options": {
+   "A": "Create a custom organization-level IAM role that omits storage.objects.get and grant it to every project administrator in place of the predefined Storage roles.",
+   "B": "Attach an IAM Deny Policy denying the principals 'allUsers' and 'allAuthenticatedUsers' the permission 'storage.objects.get' to each project in the organization.",
+   "D": "Enable Security Command Center Security Health Analytics and auto-remediate the PUBLIC_BUCKET_ACL finding with a Cloud Function subscribed to the findings feed."
+  },
+  "distractors": {
+   "A": "A custom role limits what that role conveys, not what an administrator may grant. Anyone still holding resourcemanager.projects.setIamPolicy can bind the predefined roles/storage.objectViewer to allUsers inside their own project.",
+   "B": "Correct mechanism, wrong attachment point: a deny policy covers the resource it is attached to and its descendants, so projects created later are unprotected and a project administrator can detach it from their own project.",
+   "D": "Detection is after the fact. The scanner runs on its own cadence, so the objects are publicly readable between the grant and the remediation, and nothing stops the administrator from adding the binding again straight away."
+  }
+ },
+ {
+  "id": "ACE-D5-041",
+  "options": {
+   "A": "IAM Policy Simulator, replaying past access logs against a proposed policy change.",
+   "C": "Cloud Audit Logs filtered on protoPayload.authorizationInfo.granted=false for the bucket.",
+   "D": "Cloud Asset Inventory, running gcloud asset search-all-iam-policies on the user's email."
+  },
+  "distractors": {
+   "A": "Policy Simulator forecasts what a policy change you supply would alter, comparing access before and after over past requests. It needs a proposed policy as input and says nothing about why a live request is being denied now.",
+   "C": "Data Access audit logs for Cloud Storage are off by default, so the denied call is likely never recorded; even when it is, the entry names the permission that was missing, not which binding, group inheritance or deny policy decided it.",
+   "D": "The search returns bindings whose members literally contain that email, so a grant inherited through a group or from the folder level, exactly what is happening here, is invisible, and deny policies are not evaluated at all."
+  }
+ },
+ {
+  "id": "ACE-D5-008",
+  "options": {
+   "A": "Enable Identity-Aware Proxy (IAP) on the App Engine application and add App Engine firewall rules allowing 198.51.100.0/24 while denying every other source range.",
+   "B": "Put an external Application Load Balancer with a serverless NEG in front of App Engine and attach a Cloud Armor policy matching origin.ip and the corporate user agent header.",
+   "D": "Define an Access Context Manager access level for the corporate range and encrypted devices, then enforce it with a VPC Service Controls perimeter around the project."
+  },
+  "distractors": {
+   "A": "Identity and network origin are covered, but App Engine firewall rules match only the source IP address. No device signal is evaluated, so an employee's personal unencrypted laptop on the office network still passes the check.",
+   "B": "Cloud Armor evaluates network and HTTP attributes only: it has no Cloud Identity session and no device posture signal, and the default appspot.com URL keeps serving the app directly unless ingress controls are added, bypassing the policy.",
+   "D": "The access level is the right building block on the wrong enforcement point: VPC Service Controls gates Google Cloud API calls crossing the perimeter, not end-user HTTPS sessions to the web app. Binding the level to IAP is what applies it."
+  }
+ },
+ {
+  "id": "ACE-D5-028",
+  "options": {
+   "A": "gcloud kms keys create customer-data-key --keyring=app-keyring --location=us-east1 --purpose=encryption && gcloud kms keyrings create app-keyring --location=us-east1",
+   "B": "gcloud kms keyrings create app-keyring --location=global && gcloud kms keys create customer-data-key --keyring=app-keyring --location=global --purpose=encryption",
+   "D": "gcloud kms keyrings create app-keyring --location=us-east1 && gcloud kms keys create customer-data-key --keyring=app-keyring --location=us-east1 --purpose=asymmetric-signing"
+  },
+  "distractors": {
+   "A": "The two commands are right but chained in the wrong order: a CryptoKey can only be created inside an existing key ring, so the first call fails with NOT_FOUND on app-keyring and && never runs the second.",
+   "B": "Location is set at creation and immutable: a key ring in global cannot be moved to us-east1 afterwards, and CMEK on a regional resource requires a key in that same region, so this hierarchy cannot encrypt the data it is meant for.",
+   "D": "asymmetric-signing creates an RSA or EC key pair for signing and verification, which cannot encrypt data. Symmetric AES-256 requires --purpose=encryption, whose default algorithm is google-symmetric-encryption."
+  }
+ },
+ {
+  "id": "ACE-D5-042",
+  "options": {
+   "B": "reCAPTCHA Enterprise score-based site key assessed by the application backend on every login POST.",
+   "C": "A Cloud Armor rate-based ban rule keyed on the source IP address with a deny-429 exceed action.",
+   "D": "Identity-Aware Proxy in front of the portal with Cloud Identity multi-factor authentication enforced."
+  },
+  "distractors": {
+   "B": "The assessment runs after the request has crossed the load balancer and reached the service, so the stuffing traffic still consumes backend capacity and database lookups. Nothing is challenged or dropped at Google's edge.",
+   "C": "A distributed botnet rotates through thousands of source addresses and stays below any per-IP threshold. The rule never reads a reCAPTCHA score and cannot serve a challenge, only a blanket block once a limit is crossed.",
+   "D": "IAP demands that every visitor sign in with a Google identity that has been granted a role on the resource, which is impossible for a public customer login page, and it produces no bot score for the traffic it does let through."
+  }
+ },
+ {
+  "id": "ACE-D3-041",
+  "options": {
+   "A": "gcloud logging sinks create iam-audit-gcs-sink storage.googleapis.com/corp-prod-101-audit-archive --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'",
+   "B": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='logName:\"cloudaudit.googleapis.com%2Fdata_access\"'",
+   "C": "gcloud logging sinks create iam-audit-ps-sink pubsub.googleapis.com/projects/corp-prod-101/topics/iam-audit --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'"
+  },
+  "distractors": {
+   "A": "Cloud Storage is a valid destination, but a bucket sink writes hourly batches of JSON files: entries arrive with up to an hour of delay and the SIEM cannot query them with SQL until someone loads them, so the real-time requirement fails.",
+   "B": "Right destination, wrong log stream: the Data Access log records reads of user data and is disabled by default for most services, while role grants and policy edits land in the Admin Activity log, so the dataset stays empty of IAM changes.",
+   "C": "Pub/Sub does stream the entries in real time, but nothing writes them into audit_analytics: a subscriber such as a Dataflow job must be built, run and paid for, when BigQuery is already a native sink destination."
+  }
+ },
+ {
+  "id": "ACE-D3-043",
+  "options": {
+   "A": "Declare the data disk in the instance template so every instance the group creates gets that same disk specification, and add auto-healing with a health check.",
+   "B": "Create per-instance configs with gcloud compute instance-groups managed instance-configs create es-mig --instance=es-1 --metadata=node-id=es-1 for each node.",
+   "D": "Reserve three static internal IP addresses, reference them in the instance template, and hold the group at a fixed size of 3 with autoscaling switched off."
+  },
+  "distractors": {
+   "A": "One template is shared by every member, so each recreated VM builds a brand-new empty disk from that specification: an auto-healed Elasticsearch node comes back with no shard data and a different internal IP address.",
+   "B": "Per-instance configs are the right mechanism, but preserved metadata only pins configuration values. Without --stateful-disk the data disk is still recreated from the template on every auto-heal, and the internal IP is not preserved either.",
+   "D": "A single template cannot carry three different addresses: an internal IP declared there is claimed by every instance, so the second and third VM fail creation with an address conflict, and nothing preserves the data disks anyway."
+  }
+ },
+ {
+  "id": "ACE-D5-023",
+  "options": {
+   "B": "Grant roles/cloudsql.client and roles/cloudsql.instanceUser to app-sa and run the Cloud SQL Auth Proxy with --auto-iam-authn; no instance flag or database user change is required.",
+   "C": "Store the postgres password in Secret Manager, expose it to Cloud Run with --set-secrets=DB_PASS=db-password:latest, and grant app-sa the roles/secretmanager.secretAccessor role.",
+   "D": "Set the database flag password_encryption=scram-sha-256 and create a native PostgreSQL role named app-sa@corp.iam with CREATE USER and a random password inside the database."
+  },
+  "distractors": {
+   "B": "The proxy does mint the OAuth token, but PostgreSQL refuses the login: the instance only honours IAM tokens once cloudsql.iam_authentication is on, and a matching database user must exist. IAM roles alone create no database role.",
+   "C": "The password leaves the source code but does not disappear: the service still authenticates with a long-lived static credential that has to be rotated by hand, and the session is not tied to the app-sa IAM identity as required.",
+   "D": "A role made with CREATE USER is an ordinary built-in database account that merely shares the name. Without cloudsql.iam_authentication the instance never validates OAuth tokens, and the role still needs the password that had to go."
+  }
+ }
+]

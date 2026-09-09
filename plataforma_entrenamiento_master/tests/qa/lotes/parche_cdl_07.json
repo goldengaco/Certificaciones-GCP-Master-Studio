@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D4-006",
+  "options": {
+   "A": "Crear una Service Account por cada ingeniero, asignarle los 15 roles de IAM y entregarle su clave JSON al empleado que ocupe el puesto, rotando la clave cada vez que alguien cambie de departamento.",
+   "B": "Definir un rol personalizado de IAM que agrupe los 15 permisos y asignarlo individualmente al correo de cada ingeniero en cada uno de los 30 proyectos, repitiendo la asignación en cada alta o cambio.",
+   "D": "Conceder el rol básico de Editor a nivel de organización a los 50 ingenieros para que hereden acceso a los 30 proyectos sin necesidad de gestionar asignaciones de roles proyecto por proyecto."
+  },
+  "distractors": {
+   "A": "Las Service Accounts son identidades de máquina para cargas de trabajo, no para personas: no resuelven la gestión del ciclo de vida del empleado y añaden claves JSON de larga vida que hay que custodiar.",
+   "B": "El rol personalizado resuelve el empaquetado de permisos, pero la asignación sigue siendo usuario por usuario y proyecto por proyecto: el problema que plantea el escenario es la gestión de identidades, no el número de roles.",
+   "D": "Viola el principio de mínimo privilegio: Editor concede muchísimos más permisos que los 15 roles requeridos y no permite revocar el acceso de un ingeniero que cambia de puesto sin tocar la política de la organización."
+  }
+ },
+ {
+  "id": "CDL-D3-069",
+  "options": {
+   "A": "Adjuntar un Persistent Disk en modo lectura-escritura a cada instancia del servicio para que todos los contenedores activos compartan el mismo sistema de archivos de documentos.",
+   "B": "Usar el directorio `/tmp` del contenedor de Cloud Run como almacenamiento compartido, ya que persiste entre revisiones y es visible para todas las instancias que atienden peticiones.",
+   "D": "Configurar un conector de Acceso a VPC sin servidor (Serverless VPC Access), que por sí solo expone los discos de las VMs de la VPC como carpetas locales dentro del contenedor."
+  },
+  "distractors": {
+   "A": "Cloud Run no permite adjuntar discos persistentes de Compute Engine a sus instancias, y un Persistent Disk en lectura-escritura admite un único escritor, por lo que no daría el acceso compartido que pide el escenario.",
+   "B": "El sistema de archivos local de Cloud Run, incluido `/tmp`, reside en memoria RAM y es efímero y propio de cada instancia: se pierde al reciclar el contenedor y no es visible para las demás instancias.",
+   "D": "El conector de VPC sólo aporta alcance de red hacia la VPC: es el requisito previo para llegar a un recurso NFS, pero no es el mecanismo que monta el volumen dentro del contenedor."
+  }
+ },
+ {
+  "id": "CDL-D4-074",
+  "options": {
+   "B": "Presupuestos de Cloud Billing con alertas por umbrales fijos del 50%, 90% y 100%",
+   "C": "Informes de Cloud Billing (Billing Reports) filtrados por proyecto y por SKU",
+   "D": "Exportación diaria de los datos de Cloud Billing a BigQuery con paneles en Looker Studio"
+  },
+  "distractors": {
+   "B": "Los presupuestos disparan la alerta al cruzar un importe fijo previamente definido, no al desviarse del patrón histórico: con un bucle infinito el aviso llega cuando el gasto ya se consumió.",
+   "C": "Los informes de facturación son una vista retrospectiva de consulta manual en la consola: no analizan la tendencia ni emiten ninguna alerta automática al detectar un pico.",
+   "D": "La exportación a BigQuery entrega los datos en bruto para analizarlos, pero no incorpora ningún modelo de detección ni notificación: alguien tendría que mirar el panel para ver el pico."
+  }
+ },
+ {
+  "id": "CDL-D4-024",
+  "options": {
+   "A": "Cada Proyecto de Google Cloud genera automáticamente su propia Cuenta de Facturación al ser creado, de modo que siempre existe una relación estricta de uno a uno entre cada Proyecto y su Cuenta de Facturación.",
+   "B": "Las Cuentas de Facturación se vinculan a las Carpetas (Folders) de la jerarquía de recursos, y todos los Proyectos que cuelgan de una Carpeta heredan automáticamente la Cuenta de Facturación de esa Carpeta.",
+   "D": "Un Proyecto puede estar vinculado simultáneamente a varias Cuentas de Facturación para repartir su gasto entre divisiones, mientras que cada Cuenta de Facturación sólo puede pagar un único Proyecto a la vez."
+  },
+  "distractors": {
+   "A": "La Cuenta de Facturación es un recurso independiente que se crea y se vincula de forma explícita: un Proyecto puede existir sin ella, y la relación real es de una cuenta a muchos proyectos, no uno a uno.",
+   "B": "El vínculo de facturación se establece directamente sobre el Proyecto, no sobre la Carpeta: la jerarquía de recursos propaga políticas de IAM y de organización, pero no propaga la Cuenta de Facturación.",
+   "D": "Invierte la cardinalidad real: un Proyecto sólo admite una Cuenta de Facturación activa en un momento dado, y una Cuenta de Facturación sí puede pagar cientos de Proyectos."
+  }
+ },
+ {
+  "id": "CDL-D2-036",
+  "options": {
+   "A": "Vertex AI Workbench con notebooks gestionados de JupyterLab para entrenar el modelo de abandono en Python sobre los datos leídos de BigQuery",
+   "B": "Looker Studio conectado a BigQuery para construir un panel con la evolución histórica de cancelaciones segmentada por tipo de suscripción",
+   "C": "Dataproc ejecutando un trabajo de clasificación con Spark MLlib sobre los datos de clientes copiados previamente de BigQuery a Cloud Storage"
+  },
+  "distractors": {
+   "A": "Resuelve el problema de predicción, pero exige programar en Python y gestionar el entorno del notebook: el escenario dice expresamente que los analistas sólo dominan SQL.",
+   "B": "Looker Studio es una herramienta de visualización descriptiva: muestra lo que ya ocurrió, pero no entrena ningún modelo que asigne una probabilidad de abandono a cada cliente.",
+   "C": "Obliga a mover los datos fuera del data warehouse y a escribir código Spark, las dos restricciones que el escenario descarta explícitamente."
+  }
+ },
+ {
+  "id": "CDL-D1-019",
+  "options": {
+   "A": "Externalizar por completo la operación de la nueva plataforma de nube a un proveedor gestionado, de modo que los equipos de operaciones internos conserven sin cambios sus tareas actuales sobre el entorno físico heredado.",
+   "B": "Imponer la migración por decreto ejecutivo con una única fecha límite y medir el desempeño de cada equipo por el número de servidores físicos apagados, sin comunicar qué papel tendrán en el modelo operativo futuro.",
+   "C": "Constituir un equipo separado de ingenieros de nube contratados del exterior que opere la nueva plataforma en paralelo, dejando a los equipos tradicionales al cargo del entorno heredado hasta su extinción."
+  },
+  "distractors": {
+   "A": "Evita el conflicto en lugar de gestionarlo: no desarrolla ninguna capacidad interna, mantiene a los equipos en el modelo antiguo y confirma su temor a quedar fuera del futuro de la compañía.",
+   "B": "Un mandato descendente sin comunicación ni plan de desarrollo profesional aumenta la resistencia en vez de reducirla; el indicador elegido premia el apagado de servidores, no la adopción de las nuevas herramientas.",
+   "C": "Crea una organización de dos velocidades: los equipos tradicionales no se re-especializan, se refuerza el silo y la resistencia se consolida en lugar de resolverse mediante capacitación y colaboración."
+  }
+ },
+ {
+  "id": "CDL-D4-071",
+  "options": {
+   "A": "Director de Finanzas: `roles/billing.admin` (Billing Account Administrator); Líderes de proyecto: `roles/billing.viewer` (Billing Account Viewer).",
+   "C": "Director de Finanzas: `roles/billing.user` (Billing Account User); Líderes de proyecto: `roles/billing.projectManager` (Project Billing Manager).",
+   "D": "Director de Finanzas: `roles/billing.costsManager` (Costs Manager); Líderes de proyecto: `roles/billing.user` (Billing Account User)."
+  },
+  "distractors": {
+   "A": "Acierta con el Director de Finanzas, pero `roles/billing.viewer` es de sólo lectura sobre costes y transacciones: no permite vincular proyectos nuevos a la cuenta de facturación, que es justo lo que necesitan los líderes.",
+   "C": "Invierte el alcance: `roles/billing.user` es un rol muy restringido que sólo sirve para vincular proyectos, por lo que el Director de Finanzas no podría gestionar métodos de pago ni presupuestos.",
+   "D": "`roles/billing.costsManager` gestiona presupuestos y vistas de coste, pero no confiere permiso sobre los métodos de pago ni sobre las propiedades de la cuenta que el Director de Finanzas necesita controlar."
+  }
+ },
+ {
+  "id": "CDL-D2-039",
+  "options": {
+   "A": "Cloud Translation API para traducir las descripciones y Cloud Text-to-Speech para procesar las llamadas grabadas del centro de soporte.",
+   "B": "Cloud Natural Language API para traducir las descripciones de producto y Cloud Speech-to-Text para transcribir las llamadas grabadas.",
+   "C": "Cloud Translation API para traducir el catálogo de productos y Dialogflow CX para transcribir a texto las grabaciones del centro de llamadas."
+  },
+  "distractors": {
+   "A": "Text-to-Speech opera en el sentido contrario: convierte texto en audio sintetizado. Para obtener texto a partir de llamadas grabadas hace falta Speech-to-Text.",
+   "B": "Natural Language API analiza entidades, sintaxis y sentimiento de un texto, pero no lo traduce a otro idioma: la traducción a más de 100 idiomas la aporta Cloud Translation API.",
+   "C": "Dialogflow CX construye agentes conversacionales que atienden llamadas en vivo; la transcripción por lotes de grabaciones ya existentes corresponde a Cloud Speech-to-Text."
+  }
+ },
+ {
+  "id": "CDL-D3-051",
+  "options": {
+   "A": "Certificados SSL autoadministrados (self-managed) subidos al balanceador de carga",
+   "B": "Certificate Authority Service (CAS) con una CA privada de la empresa",
+   "C": "Política SSL (SSL Policy) con perfil MODERN y TLS 1.2 como versión mínima"
+  },
+  "distractors": {
+   "A": "El certificado autoadministrado obliga a renovarlo y volver a subirlo manualmente antes de cada vencimiento: es exactamente el proceso humano que les falló en el pasado.",
+   "B": "CAS emite certificados de una autoridad privada que los navegadores públicos no confían, y no aprovisiona ni renueva automáticamente el certificado del balanceador.",
+   "C": "La política SSL fija qué protocolos y cifrados acepta el balanceador; no aprovisiona ni renueva ningún certificado, por lo que la expiración seguiría ocurriendo."
+  }
+ },
+ {
+  "id": "CDL-D2-073",
+  "options": {
+   "A": "El cifrado en reposo debe activarse de forma explícita en cada bucket, conjunto de datos e instancia creando previamente claves gestionadas por el cliente (CMEK) en Cloud KMS antes de escribir dato alguno.",
+   "B": "Sólo Cloud Storage cifra los datos en reposo de forma predeterminada; en BigQuery y en Cloud SQL el cifrado de disco es una función de pago que debe contratarse por separado para cada instancia.",
+   "D": "Los datos se cifran únicamente mientras viajan por la red pública, pero se escriben en texto plano en los discos de Google salvo que se contrate Assured Workloads para el proyecto que los aloja."
+  },
+  "distractors": {
+   "A": "Confunde control de la clave con existencia del cifrado: el cifrado en reposo ya está activo por defecto con claves gestionadas por Google, y CMEK es una opción para que el cliente controle la clave, no un requisito previo.",
+   "B": "El cifrado en reposo predeterminado se aplica por igual a Cloud Storage, BigQuery y Cloud SQL, y no conlleva ningún cargo adicional en ninguno de los tres servicios.",
+   "D": "Invierte la realidad: el cifrado en reposo es la garantía predeterminada, y Assured Workloads aporta controles de cumplimiento y residencia de datos, no la activación del cifrado."
+  }
+ },
+ {
+  "id": "CDL-D1-011",
+  "options": {
+   "A": "Google Cloud ofrece condiciones contractuales de salida sin penalización y descuentos por compromiso, de modo que el cliente puede rescindir el acuerdo comercial en cualquier momento sin coste.",
+   "B": "Google Cloud replica automáticamente todas las cargas de trabajo del cliente en AWS y Azure, de modo que la misma aplicación puede ejecutarse indistintamente en cualquiera de los tres proveedores.",
+   "C": "Google Cloud recomienda desarrollar exclusivamente sobre servicios propietarios como BigQuery y Spanner, y exportar los datos a ficheros CSV el día que se decida cambiar de proveedor de nube."
+  },
+  "distractors": {
+   "A": "Resuelve el bloqueo comercial, pero no el técnico: el CTO teme no poder mover sus cargas de trabajo, y la portabilidad depende de los estándares sobre los que está construida la aplicación, no de la letra del contrato.",
+   "B": "Google Cloud no replica cargas de trabajo en nubes de terceros; la portabilidad se consigue empaquetando la aplicación sobre tecnologías abiertas como Kubernetes, no mediante una copia automática.",
+   "C": "La exportación a CSV cubre la portabilidad de los datos, pero deja atrapada la aplicación: habría que reescribirla al cambiar de plataforma, que es precisamente el bloqueo que preocupa al CTO."
+  }
+ },
+ {
+  "id": "CDL-D1-023",
+  "options": {
+   "A": "Proporciona Looker y BigQuery para elaborar informes semanales de segmentación de clientes que el equipo de marketing revisa y convierte manualmente en campañas de correo electrónico dirigidas a cada grupo.",
+   "B": "Proporciona Google Analytics 4 y Firebase para registrar el comportamiento de navegación y el historial de compras de cada usuario y almacenarlos en un panel de eventos consultable por el equipo de producto.",
+   "D": "Proporciona Cloud CDN y Cloud Load Balancing para acelerar la carga de la tienda y servir el catálogo de productos desde la ubicación más cercana a cada comprador, mejorando la experiencia de navegación."
+  },
+  "distractors": {
+   "A": "Es analítica por lotes con intervención humana: produce segmentos semanales, no la recomendación personalizada en tiempo real para cada usuario ni el soporte conversacional que pide el escenario.",
+   "B": "Captura las señales de comportamiento que alimentarían el sistema, pero no genera ninguna recomendación ni atiende consultas en lenguaje natural: se queda en la instrumentación previa.",
+   "D": "Mejora la latencia y el rendimiento de la tienda, un beneficio real, pero no personaliza nada: sirve el mismo catálogo a todos los usuarios y no aporta capacidades de lenguaje natural."
+  }
+ },
+ {
+  "id": "CDL-D3-053",
+  "options": {
+   "A": "Políticas de red de Kubernetes (NetworkPolicy) en cada espacio de nombres",
+   "C": "Cloud Armor con reglas WAF delante del balanceador externo del clúster",
+   "D": "Cloud Trace y Cloud Monitoring instrumentando cada microservicio con su SDK"
+  },
+  "distractors": {
+   "A": "NetworkPolicy filtra el tráfico por IP y puerto (capas 3 y 4): no cifra con mTLS, no autoriza por identidad de servicio ni genera métricas de latencia entre microservicios.",
+   "C": "Cloud Armor protege el tráfico norte-sur que entra al clúster desde Internet; el requisito es cifrar y autorizar el tráfico este-oeste entre los propios microservicios.",
+   "D": "Aporta observabilidad, pero exige instrumentar el código de cada microservicio (lo que el escenario prohíbe) y no cifra el tráfico ni aplica políticas de autorización."
+  }
+ },
+ {
+  "id": "CDL-D3-055",
+  "options": {
+   "A": "Google Distributed Cloud conectado",
+   "C": "Anthos clusters on VMware (GKE on-prem)",
+   "D": "Assured Workloads para sector público"
+  },
+  "distractors": {
+   "A": "La variante conectada de Google Distributed Cloud sí corre en las instalaciones del cliente, pero requiere conectividad permanente con Google Cloud para su plano de control: no es un entorno air-gapped.",
+   "C": "El clúster se ejecuta en el centro de datos del cliente, pero debe registrarse en una flota y comunicarse con Google Cloud para su gestión, lo que la ley del escenario prohíbe.",
+   "D": "Assured Workloads aporta controles de cumplimiento y residencia sobre regiones de la nube pública de Google: sigue siendo nube pública, no un despliegue local desconectado."
+  }
+ },
+ {
+  "id": "CDL-D4-056",
+  "options": {
+   "B": "Aplicar la restricción `gcp.resourceLocations` en modo de imposición sobre un proyecto de prueba",
+   "C": "Simulador de políticas (Policy Simulator) sobre los permisos de IAM de la organización",
+   "D": "Recomendaciones de Active Assist (Policy Intelligence) sobre roles no utilizados"
+  },
+  "distractors": {
+   "B": "Sigue siendo una imposición real, sólo que en menor alcance: bloquea las operaciones que infrinjan la política y no revela qué recursos de los proyectos de producción la violarían.",
+   "C": "Policy Simulator evalúa el impacto de cambios en las políticas de permisos de IAM, no el de las restricciones de Organization Policy que limitan la ubicación de los recursos.",
+   "D": "Active Assist recomienda retirar permisos y roles infrautilizados; no simula ni registra el efecto de una restricción de ubicación sobre las canalizaciones de despliegue."
+  }
+ },
+ {
+  "id": "CDL-D2-085",
+  "options": {
+   "A": "Vertex AI Feature Store para servir atributos de producto",
+   "C": "Cloud Vision API con detección de etiquetas y logotipos",
+   "D": "Índice de búsqueda de texto completo (SEARCH) de BigQuery"
+  },
+  "distractors": {
+   "A": "Feature Store almacena y sirve características para entrenar y servir modelos; no ejecuta búsquedas de vecino más cercano sobre embeddings del catálogo.",
+   "C": "Vision API etiqueta el contenido de la foto que sube el usuario, pero no recupera de la tienda los muebles visualmente más parecidos a partir de esos vectores.",
+   "D": "La búsqueda de texto completo de BigQuery localiza tokens y palabras exactas: no interpreta conceptos abstractos ni admite una imagen como consulta."
+  }
+ },
+ {
+  "id": "CDL-D3-007",
+  "options": {
+   "A": "GKE Standard con el autoescalador de clústeres activado, de modo que el equipo define los tipos de máquina de cada grupo de nodos y mantiene su sistema operativo",
+   "B": "Cloud Run for Anthos desplegando los microservicios sobre un clúster de GKE Standard que el equipo de operaciones sigue aprovisionando, parcheando y dimensionando",
+   "D": "Compute Engine con un grupo de instancias administrado y Kubernetes instalado con kubeadm por el equipo, apoyado en el autoescalado de las máquinas virtuales"
+  },
+  "distractors": {
+   "A": "El autoescalador automatiza el número de nodos, pero el cliente sigue eligiendo y manteniendo los grupos de nodos y su sistema operativo, y paga por la capacidad del nodo, no por lo que piden los Pods.",
+   "B": "Ofrece una experiencia de despliegue serverless, pero la infraestructura subyacente sigue siendo un clúster GKE Standard que el equipo de operaciones tiene que aprovisionar y actualizar.",
+   "D": "Es el extremo opuesto al requisito: el equipo asume la instalación, el parcheado y el escalado tanto del plano de control como de las VMs que hacen de nodos."
+  }
+ },
+ {
+  "id": "CDL-D1-027",
+  "options": {
+   "A": "Entrenar un modelo propio de extracción de entidades con Vertex AI AutoML, etiquetando antes varios miles de contratos escaneados con un equipo interno de anotadores durante los próximos meses.",
+   "B": "Desplegar un clúster de Dataproc con Tesseract OCR y Apache Tika de código abierto para extraer el texto de los PDFs y programar reglas de expresiones regulares por cada tipo de cláusula contractual.",
+   "C": "Cargar los contratos escaneados en Cloud Storage y consultarlos desde BigQuery como tabla externa para extraer con SQL las entidades y cláusulas de cada uno de los documentos en PDF."
+  },
+  "distractors": {
+   "A": "AutoML evita programar, pero no evita el trabajo: exige un conjunto de entrenamiento etiquetado y ciclos de evaluación, mientras que la API preentrenada ya reconoce contratos sin datos de partida.",
+   "B": "Construye y mantiene internamente una canalización de OCR y reglas que la startup tendría que operar y afinar, justo la carga de ingeniería que el servicio gestionado elimina.",
+   "C": "Una tabla externa de BigQuery lee formatos estructurados como CSV, JSON o Parquet: no aplica OCR ni extrae entidades del contenido de un PDF escaneado."
+  }
+ },
+ {
+  "id": "CDL-D3-087",
+  "options": {
+   "A": "Desplegar la Revisión 2 como un servicio de Cloud Run distinto y repartir el tráfico con Cloud DNS",
+   "C": "Ajustar el escalado automático de Cloud Run fijando un mínimo de instancias por cada revisión",
+   "D": "Publicar la Revisión 2 con `--no-traffic` y una URL de etiqueta para probarla por separado"
+  },
+  "distractors": {
+   "A": "El reparto por DNS es aproximado y no controla el porcentaje real de peticiones: la caché de resolución en clientes y resolutores impide tanto el 10% exacto como el cambio inmediato al 100%.",
+   "C": "El número mínimo de instancias controla la capacidad y el arranque en frío de cada revisión, pero no decide qué proporción de las solicitudes entrantes va a cada una.",
+   "D": "La URL de etiqueta permite probar la revisión sin exponerla, pero no le envía ninguna fracción del tráfico de producción: sólo la alcanza quien conoce esa URL."
+  }
+ },
+ {
+  "id": "CDL-D2-062",
+  "options": {
+   "A": "Cloud Shell Editor con autocompletado de `gcloud`",
+   "B": "Recomendador de Active Assist en la consola",
+   "D": "Vertex AI Model Garden con modelos abiertos"
+  },
+  "distractors": {
+   "A": "Ofrece autocompletado y ayuda de sintaxis del SDK, pero no genera código nuevo, ni consultas SQL, ni diagnostica errores de despliegue con IA generativa.",
+   "B": "Active Assist emite recomendaciones sobre recursos concretos (dimensionamiento, roles, ociosidad); no asiste al desarrollador escribiendo código ni SQL en el IDE.",
+   "D": "Model Garden es el catálogo desde el que se construyen aplicaciones propias con modelos base: no es el asistente ya integrado en la consola y en los IDEs."
+  }
+ },
+ {
+  "id": "CDL-D1-026",
+  "options": {
+   "A": "Concediendo créditos del programa Google for Startups y un nivel gratuito de servicios, de modo que la empresa pueda lanzar sus experimentos sin coste alguno hasta que agote el saldo promocional recibido.",
+   "C": "Permitiendo reservar capacidad mediante Descuentos por Compromiso de Uso a tres años, que abaratan el precio por hora de las máquinas virtuales dedicadas a los experimentos de cada equipo de producto.",
+   "D": "Replicando cada prototipo en varias regiones con balanceo de carga global desde el primer día, de modo que cualquier experimento pueda absorber millones de usuarios en cuanto se publique al mercado."
+  },
+  "distractors": {
+   "A": "Los créditos promocionales son finitos y puntuales: rebajan el coste del primer experimento, pero no crean el modelo económico sostenible de pagar sólo por lo consumido en cada intento posterior.",
+   "C": "Un compromiso de tres años es lo contrario de un experimento barato: se paga la capacidad reservada tanto si la idea funciona como si se descarta a la semana siguiente.",
+   "D": "Sobredimensionar desde el primer día encarece el fracaso en lugar de abaratarlo: responde a cómo escalar un éxito, no a cómo reducir el coste de descartar una hipótesis."
+  }
+ },
+ {
+  "id": "CDL-D1-029",
+  "options": {
+   "A": "Sincronizando una carpeta local en el equipo de cada empleado con Google Drive para escritorio, de modo que cada uno siga editando su propia copia y los cambios se fusionen al reconectarse.",
+   "B": "Ampliando el límite de tamaño de los adjuntos de Gmail y archivando cada versión enviada por correo en una etiqueta compartida del buzón de cada uno de los departamentos implicados.",
+   "D": "Publicando cada documento como PDF de sólo lectura en un sitio de Google Sites para que toda la plantilla consulte siempre la última versión aprobada por la dirección de la empresa."
+  },
+  "distractors": {
+   "A": "Sigue siendo una copia por persona: la edición ocurre en local y la sincronización genera copias en conflicto en lugar de una única fuente de verdad editada a la vez por todos.",
+   "B": "Mantiene intacto el flujo de adjuntos por correo que provoca la divergencia: cada envío crea una versión paralela más, sólo que ahora archivada.",
+   "D": "Distribuye el documento pero elimina la colaboración: nadie puede editar el PDF, así que el trabajo conjunto vuelve a hacerse en copias fuera del sistema."
+  }
+ },
+ {
+  "id": "CDL-D2-015",
+  "options": {
+   "B": "Cloud Data Fusion con conector JDBC",
+   "C": "Datastream para captura de cambios",
+   "D": "Migrate to Virtual Machines (M2VM)"
+  },
+  "distractors": {
+   "B": "Data Fusion construye canalizaciones ETL para analítica: mueve y transforma datos hacia el almacén, pero no replica de forma continua una base de datos operativa a Cloud SQL.",
+   "C": "Datastream replica cambios (CDC) hacia destinos analíticos como BigQuery o Cloud Storage; no crea ni mantiene la instancia de Cloud SQL destino de la migración.",
+   "D": "Migra máquinas virtuales completas: dejaría 50 MySQL autogestionados en Compute Engine, no bases de datos administradas en Cloud SQL, y exige una parada por servidor."
+  }
+ },
+ {
+  "id": "CDL-D4-009",
+  "options": {
+   "A": "Workload Identity de GKE vinculando la cuenta de servicio de Kubernetes",
+   "B": "Claves JSON de Service Account custodiadas y rotadas en Secret Manager",
+   "C": "Identity-Aware Proxy (IAP) delante del endpoint del servidor de la API"
+  },
+  "distractors": {
+   "A": "Workload Identity autentica a los Pods que ya se ejecutan dentro del clúster de GKE; el ejecutor de GitHub Actions está fuera de Google Cloud y no puede usar ese mecanismo.",
+   "B": "Sigue existiendo un fichero de clave JSON de larga vida que hay que custodiar y rotar: es exactamente el artefacto que el equipo de seguridad ha prohibido crear.",
+   "C": "IAP aplica control de acceso contextual a usuarios que acceden a aplicaciones web; no federa identidades de máquina ni emite credenciales temporales para una canalización."
+  }
+ },
+ {
+  "id": "CDL-D3-064",
+  "options": {
+   "B": "Patrón Big Bang (reescritura total en un único corte)",
+   "C": "Patrón Anti-Corruption Layer (capa anticorrupción)",
+   "D": "Patrón Lift-and-Shift (rehost del monolito sin cambios)"
+  },
+  "distractors": {
+   "B": "Es justamente la reescritura total en un solo corte que la empresa ha descartado por su alto riesgo de fracaso.",
+   "C": "La capa anticorrupción traduce entre el modelo heredado y el nuevo: es una táctica de apoyo dentro de la migración, no la estrategia de sustitución progresiva del monolito.",
+   "D": "Rehost traslada el monolito tal cual a la nube: no extrae funcionalidades ni las convierte en microservicios, así que el sistema sigue siendo el mismo monolito."
+  }
+ }
+]

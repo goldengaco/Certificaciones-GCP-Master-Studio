@@ -1,0 +1,522 @@
+[
+ {
+  "id": "PCA-D6-009",
+  "scenario": "In a multi-region Spanner configuration with default leader region us-east4, all read-write transaction coordination is led by Paxos leaders in us-east4. If a catastrophic disaster destroys us-east4, how does Cloud Spanner recover write leadership?",
+  "correct": "D",
+  "clave_len": 268,
+  "densidad_clave": 6,
+  "eco_clave": 4,
+  "explanation": "Under Paxos consensus, if the leader region fails, the remaining quorum members detect missing heartbeats and immediately elect a new leader among healthy read-write replicas, restoring write transactions automatically within seconds.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview#replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 250,
+    "densidad": 2,
+    "eco": 3,
+    "text": "The read-only replicas in the surviving regions are automatically promoted to read-write replicas by the Spanner control plane, which rebuilds a Paxos quorum from their local snapshots and resumes write traffic once replication lag has fully drained."
+   },
+   {
+    "letter": "B",
+    "len": 246,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Write transactions continue to be accepted in the surviving regions but are buffered locally and applied asynchronously once the default leader region us-east4 is restored, so client applications observe no errors while the region is unavailable."
+   },
+   {
+    "letter": "C",
+    "len": 256,
+    "densidad": 1,
+    "eco": 7,
+    "text": "An operator must first move write leadership by updating the instance configuration's default leader region with gcloud spanner instances update, after which the surviving regions elect a leader and read-write transactions resume for the affected database."
+   },
+   {
+    "letter": "D",
+    "len": 268,
+    "densidad": 6,
+    "eco": 4,
+    "text": "Remaining read-write replicas in alternate regions (e.g. us-central1 and us-east1) detect leader heartbeat loss and automatically elect new Paxos leaders among themselves within seconds, restoring full read-write transactional capability with zero data loss (RPO = 0)."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-030",
+  "scenario": "knightmotives_automotive has 100TB of historical vehicle CSV logs stored across 50 legacy on-premises SFTP servers in regional datacenters. knightmotives_automotive wants to migrate all files to Cloud Storage multi-region buckets rapidly, reliably, and with automatic checksum verification and incremental delta syncs. What is the recommended managed service?",
+  "correct": "B",
+  "clave_len": 200,
+  "densidad_clave": 4,
+  "eco_clave": 6,
+  "explanation": "Google Cloud Storage Transfer Service for on-premises data uses lightweight Docker agents to transfer petabytes of data securely over HTTPS, handling bandwidth throttling, incremental syncing, and automatic data integrity verification.",
+  "doc": "https://cloud.google.com/storage-transfer/docs/on-prem-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 208,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Install the gcloud CLI on each of the 50 SFTP servers and schedule a nightly 'gcloud storage rsync -r' from the log directory into the destination bucket, logging the output for the operations team to review."
+   },
+   {
+    "letter": "B",
+    "len": 200,
+    "densidad": 4,
+    "eco": 6,
+    "text": "Use Google Cloud Storage Transfer Service with on-premises Transfer Agents installed in each datacenter, configuring scheduled incremental transfer jobs with end-to-end MD5/CRC32C checksum validation."
+   },
+   {
+    "letter": "C",
+    "len": 211,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Order Transfer Appliances for each regional datacenter, copy the 100TB of CSV logs onto them and ship them to Google for ingestion into the multi-region bucket, repeating the shipment for each incremental delta."
+   },
+   {
+    "letter": "D",
+    "len": 206,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Publish the log files over HTTPS on each server and create a Storage Transfer Service job of type URL list, pointing it at a manifest TSV enumerating the URL, size and MD5 of every file that must be copied."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-047",
+  "scenario": "Doctors and nurses need to access internal web-based clinical charting portals securely from home and mobile clinics. EHR Healthcare wants to eliminate traditional legacy VPN concentrators (which grant broad network access) and replace them with a Zero-Trust identity and context-aware proxy that validates user identity, device health status, and geographic origin before granting access to web apps hosted on private GKE clusters. What solution meets these requirements?",
+  "correct": "D",
+  "clave_len": 275,
+  "densidad_clave": 2,
+  "eco_clave": 8,
+  "explanation": "Identity-Aware Proxy (IAP) establishes a BeyondCorp Zero-Trust perimeter. It intercepts HTTPS requests, authenticates the user via Cloud Identity/Google Workspace with MFA, verifies device context via Access Context Manager, and proxies traffic directly to private GKE backends without exposing VMs to the public internet.",
+  "doc": "https://cloud.google.com/iap/docs/concepts-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 249,
+    "densidad": 2,
+    "eco": 2,
+    "text": "Terminate the remote clinician laptops on an HA VPN gateway into the production VPC and rely on VPC firewall rules plus a per-user IPsec pre-shared key and static route set to limit which internal subnets each clinician's tunnel is allowed to reach."
+   },
+   {
+    "letter": "B",
+    "len": 247,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Expose the charting portals through an External Application Load Balancer protected by Cloud Armor rules that allow only the known clinic IP ranges, and let each application implement its own Google OAuth sign-in flow for the clinician's identity."
+   },
+   {
+    "letter": "C",
+    "len": 244,
+    "densidad": 0,
+    "eco": 1,
+    "text": "Publish the portals only inside the VPC and have clinicians reach them by opening an IAP TCP forwarding tunnel from their laptop to a bastion host with the gcloud CLI, then browsing to the forwarded local port over that tunnel from the browser."
+   },
+   {
+    "letter": "D",
+    "len": 275,
+    "densidad": 2,
+    "eco": 8,
+    "text": "Deploy Google Cloud Identity-Aware Proxy (IAP) with BeyondCorp Enterprise Context-Aware Access policies in front of the internal backend services via an External Application Load Balancer, verifying user identity, MFA, and managed device certificates before proxying traffic."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-029",
+  "scenario": "An enterprise bank runs critical core banking analytics on an IBM z/OS Mainframe. Mainframe Million Instructions Per Second (MIPS) consumption charges for business intelligence queries are costing $5,000,000 annually. The bank wants to offload analytical queries to Google Cloud while keeping the transactional OLTP core on the mainframe. What modernization pipeline achieves this?",
+  "correct": "A",
+  "clave_len": 262,
+  "densidad_clave": 2,
+  "eco_clave": 8,
+  "explanation": "Google Cloud Mainframe Connector and CDC streaming offload expensive batch analytical queries from mainframes into BigQuery. This slashes mainframe MIPS operating expenses by millions while providing faster analytical querying in BigQuery.",
+  "doc": "https://cloud.google.com/solutions/mainframe-data-integration",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 262,
+    "densidad": 2,
+    "eco": 8,
+    "text": "Use Google Cloud Mainframe Connector (or CDC replication via IBM MQ / Datastream) to stream mainframe VSAM/Db2 datasets into BigQuery, redirecting business intelligence and analytical queries to BigQuery to eliminate analytical MIPS consumption on the mainframe."
+   },
+   {
+    "letter": "B",
+    "len": 243,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Run a nightly z/OS batch job that unloads the full Db2 tables and VSAM files to sequential datasets, transfers them by FTP to Cloud Storage, and loads them into BigQuery so the business intelligence dashboards read the previous day's snapshot."
+   },
+   {
+    "letter": "C",
+    "len": 236,
+    "densidad": 1,
+    "eco": 1,
+    "text": "Keep the data on the mainframe and expose it to BigQuery through a federated external connection, so analysts write ordinary BigQuery SQL that is pushed down and executed against Db2 on z/OS at query time without moving a single record."
+   },
+   {
+    "letter": "D",
+    "len": 244,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Replatform the entire core banking system, both the OLTP transactions and the analytics, onto Compute Engine using a COBOL runtime with an emulated CICS transaction layer, and decommission the mainframe once the parallel run has been validated."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-056",
+  "scenario": "HRL hosts races on alternating weekends. During the 2-hour live race window, API traffic spikes from 0 to 500,000 requests/sec for live telemetry, telemetry graphing, and real-time betting odds. During weekdays, traffic drops to near zero. HRL wants a serverless compute backend that scales instantly without cold start latency spikes and incurs zero idle compute costs during off-hours. What architecture meets this need?",
+  "correct": "B",
+  "clave_len": 228,
+  "densidad_clave": 9,
+  "eco_clave": 1,
+  "explanation": "Google Cloud Run provides instant container autoscaling up to thousands of instances within seconds. Configuring min-instances = 0 during weekdays achieves zero idle cost, while setting min-instances dynamically before live events prevents cold starts during sudden viewer surges.",
+  "doc": "https://cloud.google.com/run/docs/about-instance-autoscaling",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 230,
+    "densidad": 0,
+    "eco": 2,
+    "text": "Keep a regional managed instance group of 1,000 Compute Engine instances running continuously behind a Global External Application Load Balancer, sized for the peak so that no scaling event can ever delay a live telemetry request."
+   },
+   {
+    "letter": "B",
+    "len": 228,
+    "densidad": 9,
+    "eco": 1,
+    "text": "Deploy containerized microservices to Google Cloud Run, setting min-instances = 0 for off-race periods (zero cost), and pre-warming min-instances = 500 30 minutes before race start with max-instances = 5000 and concurrency = 80."
+   },
+   {
+    "letter": "C",
+    "len": 215,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Deploy the telemetry and betting odds endpoints as Cloud Functions (1st gen) with concurrency fixed at one request per instance and the maximum instance count raised to 3,000 to absorb the race-day burst of traffic."
+   },
+   {
+    "letter": "D",
+    "len": 219,
+    "densidad": 0,
+    "eco": 1,
+    "text": "Run the microservices on a GKE Autopilot cluster with a Horizontal Pod Autoscaler targeting 70 percent CPU and cluster autoscaling enabled, letting the cluster grow from a minimal baseline when the race traffic arrives."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-006",
+  "scenario": "A fleet of 500 private Compute Engine instances without public IPs runs microservices making thousands of concurrent outbound API calls to external payment gateways. During peak hours, instances experience connection drops and 10-second TCP timeouts. Cloud Monitoring shows Cloud NAT 'dropped_sent_packets_count' spiking due to port exhaustion. How should you fix the Cloud NAT configuration?",
+  "correct": "C",
+  "clave_len": 221,
+  "densidad_clave": 7,
+  "eco_clave": 2,
+  "explanation": "Cloud NAT port exhaustion occurs when VMs exhaust their allocated source ports. Enabling Dynamic Port Allocation allows Cloud NAT to dynamically increase port allocations based on usage, while adding external NAT IPs expands total available translation ports (64,512 ports per IP).",
+  "doc": "https://cloud.google.com/nat/docs/ports-and-addresses#dynamic-port-allocation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 224,
+    "densidad": 0,
+    "eco": 6,
+    "text": "Assign an ephemeral external IP address to each of the 500 instances and remove them from the Cloud NAT gateway, so that every microservice opens its outbound payment gateway connections directly from its own public address."
+   },
+   {
+    "letter": "B",
+    "len": 225,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Keep the two existing NAT IP addresses and raise minPortsPerVm from the default 64 to 4,096 so that each of the 500 instances receives a much larger static block of source ports for its concurrent payment gateway connections."
+   },
+   {
+    "letter": "C",
+    "len": 221,
+    "densidad": 7,
+    "eco": 2,
+    "text": "Configure Cloud NAT to enable Dynamic Port Allocation (with appropriate min_ports_per_vm and max_ports_per_vm), allocate additional static external NAT IP addresses, and configure Endpoint-Independent Mapping if required."
+   },
+   {
+    "letter": "D",
+    "len": 215,
+    "densidad": 0,
+    "eco": 4,
+    "text": "Disable Cloud NAT and route the default path through a single squid forward proxy VM with several external IP addresses attached, reconfiguring each microservice to send its payment gateway calls through that proxy."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-026",
+  "scenario": "Connected vehicles streaming telemetry over cellular frequently drive through tunnels and dead zones where cellular connectivity is lost for up to 30 minutes. Telemetry records must not be lost during outages and must be transmitted in chronological order once connectivity resumes without crashing vehicle memory. How should the vehicle IoT software client be designed?",
+  "correct": "C",
+  "clave_len": 226,
+  "densidad_clave": 6,
+  "eco_clave": 3,
+  "explanation": "Store-and-forward architecture using local persistent storage ensures telemetry records survive network disconnects and power loss. Bounded storage with exponential backoff prevents RAM exhaustion and network storming.",
+  "doc": "https://cloud.google.com/architecture/iot-overview#device-gateway",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 224,
+    "densidad": 3,
+    "eco": 3,
+    "text": "Rely on the Pub/Sub client library's built-in publisher retry settings with a long total timeout, keeping the unacknowledged telemetry in the publisher's in-process outstanding message buffer until the cellular link returns."
+   },
+   {
+    "letter": "B",
+    "len": 222,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Buffer the readings in a bounded in-memory ring buffer sized for two minutes of telemetry and overwrite the oldest records when it fills, publishing whatever the buffer still holds as soon as the cellular modem reattaches."
+   },
+   {
+    "letter": "C",
+    "len": 226,
+    "densidad": 6,
+    "eco": 3,
+    "text": "Implement an embedded store-and-forward queue backed by persistent flash memory (e.g. SQLite/RocksDB) with bounded buffer size, automatically retrying with exponential backoff and publishing in-order to Pub/Sub when connected."
+   },
+   {
+    "letter": "D",
+    "len": 219,
+    "densidad": 2,
+    "eco": 2,
+    "text": "Accumulate every unsent reading in an unbounded in-memory list inside the telemetry process and flush the whole list in a single Pub/Sub publish call when the modem regains signal, ordering entries by capture timestamp."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-020",
+  "scenario": "An enterprise has 20 branch offices connected via IPsec VPNs, 3 corporate datacenters connected via Dedicated Interconnects, and 10 VPC networks across Google Cloud. They want to use Google's global fiber backbone as the centralized wide-area network (WAN) transit mesh to connect branch offices to datacenters and to VPCs with automated BGP dynamic route exchange. What service provides this hub-and-spoke connectivity?",
+  "correct": "A",
+  "clave_len": 213,
+  "densidad_clave": 0,
+  "eco_clave": 9,
+  "explanation": "Network Connectivity Center (NCC) uses a hub-and-spoke model to manage global connectivity. By attaching VPNs, Interconnects, and VPCs as spokes to an NCC Hub, enterprises leverage Google's global backbone for site-to-site and site-to-cloud WAN transit.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 213,
+    "densidad": 0,
+    "eco": 9,
+    "text": "Deploy Google Cloud Network Connectivity Center (NCC), creating a centralized Hub and attaching Cloud Interconnects, Cloud VPN gateways, and VPCs as Spokes for automated transit WAN routing over Google's backbone."
+   },
+   {
+    "letter": "B",
+    "len": 227,
+    "densidad": 0,
+    "eco": 5,
+    "text": "Build a full mesh of HA VPN tunnels between the 20 branch offices, the 3 datacenters and each of the 10 VPC networks, with Cloud Routers exchanging BGP on every tunnel so that every site learns the prefixes of every other site."
+   },
+   {
+    "letter": "C",
+    "len": 216,
+    "densidad": 0,
+    "eco": 5,
+    "text": "Designate one VPC as the hub, peer the other nine VPC networks to it with VPC Network Peering, and attach the Interconnects and Cloud VPN gateways to that hub so all branch and datacenter traffic transits through it."
+   },
+   {
+    "letter": "D",
+    "len": 229,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Deploy a pair of third-party SD-WAN router appliances on Compute Engine instances that terminate the branch VPN tunnels and the datacenter Interconnects, redistributing routes between all 10 VPC networks through their interfaces."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-028",
+  "scenario": "An enterprise retailer processes credit card payments on Google Cloud. PCI-DSS scope reduction mandates that the Cardholder Data Environment (CDE) must be strictly isolated from general corporate workloads, with dedicated IAM administrative boundaries, dedicated Shared VPC subnets, end-to-end TLS 1.3 encryption, and no direct routing between non-CDE and CDE environments. How should you design the resource hierarchy?",
+  "correct": "C",
+  "clave_len": 261,
+  "densidad_clave": 1,
+  "eco_clave": 8,
+  "explanation": "Isolating the Cardholder Data Environment (CDE) into dedicated Folders, Projects, and VPC Service Controls perimeters minimizes the number of systems in PCI scope, reducing audit complexity, compliance costs, and risk of lateral movement.",
+  "doc": "https://cloud.google.com/architecture/pci-dss-compliance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 253,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Keep every workload in the single existing production project but carve the Cardholder Data Environment into its own Shared VPC subnet with dedicated firewall rules and custom IAM roles narrowed by resource-level IAM Conditions on the payment resources."
+   },
+   {
+    "letter": "B",
+    "len": 235,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Create a dedicated 'PCI-CDE' folder holding the isolated production projects and connect it to the corporate VPC with VPC Network Peering, permitting only TLS 1.3 traffic from the corporate application tier into the cardholder subnets."
+   },
+   {
+    "letter": "C",
+    "len": 261,
+    "densidad": 1,
+    "eco": 8,
+    "text": "Create a dedicated 'PCI-CDE' Folder in the Google Cloud resource hierarchy containing isolated production projects, enclosed by a VPC Service Controls perimeter, with dedicated Shared VPC networks and strict IAM separation to drastically reduce PCI audit scope."
+   },
+   {
+    "letter": "D",
+    "len": 232,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Create a dedicated 'PCI-CDE' project inside the existing production folder, enable Assured Workloads on it, and apply organization policy constraints restricting resource locations and mandating CMEK for all cardholder data at rest."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-040",
+  "scenario": "EHR Healthcare partners with academic medical researchers to analyze 10 million electronic medical records for oncology drug discovery. HIPAA Safe Harbor rules require the removal or transformation of all 18 designated PHI identifiers (names, dates, medical record numbers, SSNs, and free-text clinical notes) before data can be exported to researchers. What architecture automates this de-identification pipeline?",
+  "correct": "D",
+  "clave_len": 312,
+  "densidad_clave": 6,
+  "eco_clave": 3,
+  "explanation": "The Cloud Healthcare API includes native de-identification tools that integrate with Cloud DLP. It supports HIPAA Safe Harbor and Expert Determination methods, including cryptographic hashing, date shifting (preserving temporal intervals across visits), and redaction of free-text doctor notes.",
+  "doc": "https://cloud.google.com/healthcare-api/docs/how-tos/fhir-de-identification",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 291,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Export the FHIR store into BigQuery, run a Sensitive Data Protection (Cloud DLP) inspection job with the HIPAA infoTypes, and apply column-level access policy tags so researchers querying the dataset cannot read the 18 identifier columns while the underlying values stay stored in the table."
+   },
+   {
+    "letter": "B",
+    "len": 267,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Run a Dataflow pipeline over the FHIR export applying Cloud DLP deterministic crypto-hash transformations to all 18 identifier fields, including every admission, discharge and treatment date, and write the pseudonymised records into the researchers' BigQuery dataset."
+   },
+   {
+    "letter": "C",
+    "len": 284,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Configure a Cloud Healthcare API FHIR store de-identification configuration that redacts the structured identifier fields and generalizes ages above 89, exporting the result to the research dataset while leaving the clinical narrative notes untouched to preserve their research value."
+   },
+   {
+    "letter": "D",
+    "len": 312,
+    "densidad": 6,
+    "eco": 3,
+    "text": "Execute the Cloud Healthcare API de-identify operation on the FHIR Store, configuring Date Shifting (randomized per-patient shift within +/- 30 days) and Sensitive Data Protection (Cloud DLP) infoType masking on unstructured free-text clinical notes, writing results to a separate de-identified research dataset."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-037",
+  "scenario": "A streaming payment consumer crashes whenever it receives a malformed 'poison pill' JSON message from Pub/Sub. Because the subscriber fails before acknowledging the message, Pub/Sub re-delivers the poison pill endlessly in an infinite loop, blocking all valid subsequent messages in the queue. How should the Pub/Sub subscription be configured?",
+  "correct": "C",
+  "clave_len": 300,
+  "densidad_clave": 6,
+  "eco_clave": 3,
+  "explanation": "Dead-Letter Topics in Cloud Pub/Sub isolate un-processable 'poison pill' messages after a specified number of failed delivery attempts (max_delivery_attempts), preventing subscriber crash loops and allowing queue processing to proceed.",
+  "doc": "https://cloud.google.com/pubsub/docs/dead-letter-topics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 341,
+    "densidad": 2,
+    "eco": 6,
+    "text": "Raise the subscription ack deadline to the 600 second maximum and enable exactly-once delivery, giving the consumer more time to finish processing before Pub/Sub treats the delivery as failed and hands the same message to another subscriber instance for a further attempt, and set the subscription to retain acknowledged messages for replay."
+   },
+   {
+    "letter": "B",
+    "len": 263,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Configure the subscription retry policy with exponential backoff from a 10 second minimum to a 600 second maximum delay, so that redelivery of the failing message is spaced further and further apart and the subscriber has time to restart cleanly between attempts."
+   },
+   {
+    "letter": "C",
+    "len": 300,
+    "densidad": 6,
+    "eco": 3,
+    "text": "Configure a Dead-Letter Topic on the Pub/Sub subscription with max_delivery_attempts = 5 and Retry Policy set to exponential backoff, automatically routing poisoned messages to the dead-letter topic for offline debugging after 5 failed attempts while allowing valid messages to process uninterrupted."
+   },
+   {
+    "letter": "D",
+    "len": 261,
+    "densidad": 2,
+    "eco": 6,
+    "text": "Reduce the subscription message_retention_duration to the ten minute minimum so the malformed message ages out of the backlog on its own, and enable message ordering with an ordering key per payment account so valid messages behind it are delivered in sequence."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-052",
+  "scenario": "HRL's mobile fan app communicates with Cloud Run backend APIs. Attackers frequently decompile the Android/iOS app binary, extract API keys, and use custom automated scripts to spam voting and telemetry endpoints. HRL needs a solution that cryptographically attests that incoming API requests originate from legitimate, untampered mobile app binaries running on genuine mobile hardware (Apple DeviceCheck / Google Play Integrity). What service provides this?",
+  "correct": "D",
+  "clave_len": 221,
+  "densidad_clave": 1,
+  "eco_clave": 8,
+  "explanation": "Firebase App Check protects backend APIs by leveraging hardware-backed platform attestation (Play Integrity on Android, DeviceCheck/App Attest on iOS). It verifies that requests originate from authentic, untampered app instances, rejecting bot traffic and extracted API key abuse.",
+  "doc": "https://firebase.google.com/docs/app-check",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 228,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Issue per-user ID tokens through Firebase Authentication and verify the token signature and audience claim in the Cloud Run backend, rejecting every voting or telemetry request that does not carry a valid signed user credential."
+   },
+   {
+    "letter": "B",
+    "len": 225,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Store the API key in the Android Keystore and iOS Keychain, apply R8/ProGuard obfuscation to the released binary and pin the backend TLS certificate so decompiling the app cannot recover the credential used against Cloud Run."
+   },
+   {
+    "letter": "C",
+    "len": 218,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Attach a Cloud Armor security policy to the load balancer in front of Cloud Run with reCAPTCHA Enterprise bot management and per-IP rate limiting on the voting and telemetry paths, blocking traffic scored as automated."
+   },
+   {
+    "letter": "D",
+    "len": 221,
+    "densidad": 1,
+    "eco": 8,
+    "text": "Enable Firebase App Check with Google Play Integrity (Android) and Apple DeviceCheck / App Attest (iOS) to verify app authenticity, validating App Check tokens on backend Cloud Run services before processing API requests."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-002",
+  "scenario": "Multiple independent development teams publish events to a shared 'enterprise-events' Pub/Sub topic. Downstream analytics pipelines frequently break when a publishing team introduces backward-incompatible JSON schema changes (e.g. renaming fields or changing data types). How should you enforce strict contract schema validation at the Pub/Sub topic level?",
+  "correct": "D",
+  "clave_len": 278,
+  "densidad_clave": 5,
+  "eco_clave": 3,
+  "explanation": "Cloud Pub/Sub Schemas enforce message structure validation at topic ingestion time using Avro or Protobuf definitions. Publishers that send malformed or incompatible messages are rejected synchronously, preventing schema corruption in downstream pipelines.",
+  "doc": "https://cloud.google.com/pubsub/docs/schemas",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 278,
+    "densidad": 2,
+    "eco": 4,
+    "text": "Validate downstream: have the Dataflow pipeline deserialize every message against the expected Avro schema, route the messages that fail deserialization to a dead-letter Pub/Sub topic, and alert the publishing team so they can fix the offending producer before its next release."
+   },
+   {
+    "letter": "B",
+    "len": 257,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Create a BigQuery subscription on the shared topic bound to a table carrying the canonical schema and enable 'use topic schema', so that messages whose fields do not match the table columns are diverted to a dead-letter topic instead of the analytics table."
+   },
+   {
+    "letter": "C",
+    "len": 241,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Publish exclusively through a shared internal client library that validates each event against the registered Avro schema before calling publish, and require every team to pin the released version of that library in their build dependencies."
+   },
+   {
+    "letter": "D",
+    "len": 278,
+    "densidad": 5,
+    "eco": 3,
+    "text": "Create a Cloud Pub/Sub Schema resource (using Apache Avro or Protocol Buffers definition) and attach it to the Pub/Sub topic with schema_settings; Pub/Sub automatically validates message payloads at publish time and rejects non-conforming messages immediately with an API error."
+   }
+  ]
+ }
+]

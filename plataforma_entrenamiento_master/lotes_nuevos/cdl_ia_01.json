@@ -1,0 +1,589 @@
+[
+  {
+    "id": "CDL-IA-001",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "API preentrenada frente a modelo personalizado",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Clasificar fotografías de siniestros sin equipo de ciencia de datos",
+    "scenario": "Una aseguradora quiere clasificar automáticamente fotografías de daños en vehículos para agilizar los peritajes. No tiene científicos de datos en plantilla ni un conjunto de imágenes etiquetado propio, y necesita resultados en semanas. ¿Cuál es el punto de partida más razonable en Google Cloud?",
+    "keywords": [
+      "peritaje de siniestros",
+      "sin equipo propio",
+      "plazo de semanas",
+      "fotografías"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Entrenar desde cero una red neuronal de visión en Vertex AI usando aceleradores dedicados y un equipo de investigación contratado."
+      },
+      {
+        "letter": "B",
+        "text": "Empezar con Cloud Vision API, que reconoce objetos y etiquetas comunes sin que la empresa entrene ni etiquete nada."
+      },
+      {
+        "letter": "C",
+        "text": "Levantar un clúster de Dataproc con Spark y programar el algoritmo de reconocimiento de imágenes internamente."
+      },
+      {
+        "letter": "D",
+        "text": "Construir un modelo de regresión en BigQuery ML sobre los metadatos de las fotografías, sin analizar los píxeles."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Las APIs preentrenadas de Google Cloud, como Cloud Vision API, resuelven tareas comunes de percepción sin datos etiquetados ni experiencia en aprendizaje automático. Son el primer escalón recomendado: si el caso de uso es estándar, evitan por completo el coste de entrenar. Solo cuando la tarea es específica del negocio conviene subir a AutoML o a un modelo personalizado.",
+    "distractors": {
+      "A": "Entrenar desde cero exige datos etiquetados, experiencia en aprendizaje automático y meses de trabajo: es lo contrario de lo que permite el plazo y el equipo disponibles.",
+      "C": "Dataproc sirve para procesamiento distribuido con Spark o Hadoop, no aporta capacidades de visión artificial ya entrenadas y obliga a programar el modelo.",
+      "D": "BigQuery ML trabaja sobre datos tabulares en SQL; los metadatos de un archivo no describen los daños que aparecen en la imagen."
+    },
+    "officialDocUrl": "https://cloud.google.com/vision/docs",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-IA-002",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Elegir entre BigQuery ML, AutoML y entrenamiento personalizado",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "Predecir la baja de clientes con los datos que ya están en el almacén",
+    "scenario": "Un equipo de analistas de negocio domina SQL pero no sabe programar en Python. Toda la información de facturación y uso de los clientes ya vive en BigQuery y quieren predecir qué cuentas van a darse de baja el próximo trimestre. ¿Qué enfoque les permite avanzar sin salir de sus herramientas?",
+    "keywords": [
+      "analistas de negocio",
+      "dominan SQL",
+      "datos ya centralizados",
+      "predicción de bajas"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Exportar las tablas a Cloud Storage y entrenar un modelo personalizado en Vertex AI con contenedores propios en Python."
+      },
+      {
+        "letter": "B",
+        "text": "Usar BigQuery ML para crear y evaluar el modelo con sentencias SQL, sin mover los datos fuera del almacén."
+      },
+      {
+        "letter": "C",
+        "text": "Contratar Cloud Natural Language API para que analice el sentimiento de las facturas y deduzca la intención de baja."
+      },
+      {
+        "letter": "D",
+        "text": "Montar un panel en Looker Studio con filtros manuales y dejar que cada analista estime el riesgo por intuición."
+      }
+    ],
+    "correct": "B",
+    "explanation": "BigQuery ML permite crear, entrenar y evaluar modelos con SQL estándar dentro del propio almacén de datos. Elimina el movimiento de datos y la barrera de programación, por lo que es la vía natural cuando el equipo domina SQL y la información ya está en BigQuery.",
+    "distractors": {
+      "A": "Un modelo personalizado en Vertex AI da el máximo control, pero exige Python y conocimientos de aprendizaje automático que este equipo no tiene.",
+      "C": "Natural Language API analiza texto no estructurado; los datos de facturación y uso son tabulares y no requieren análisis de sentimiento.",
+      "D": "Un panel muestra lo que ya ocurrió, pero no genera una predicción: no hay modelo ni estimación de probabilidad de baja."
+    },
+    "officialDocUrl": "https://cloud.google.com/bigquery/docs/bqml-introduction",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-IA-003",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Calidad de los datos como requisito para la IA",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Un modelo que funciona en pruebas y falla con clientes reales",
+    "scenario": "Un minorista entrena un modelo de recomendación con el histórico de compras de una sola tienda urbana y lo despliega en toda la cadena, incluidas tiendas rurales. Las recomendaciones resultan irrelevantes fuera de la ciudad. ¿Cuál es la causa de fondo desde el punto de vista del negocio?",
+    "keywords": [
+      "histórico de una sola tienda",
+      "despliegue en toda la cadena",
+      "recomendaciones irrelevantes"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Los datos de entrenamiento no representan a toda la población de clientes, así que el modelo aprendió un comportamiento parcial."
+      },
+      {
+        "letter": "B",
+        "text": "El modelo necesita más capacidad de cómputo durante la fase de predicción para poder atender a las tiendas situadas lejos de la región."
+      },
+      {
+        "letter": "C",
+        "text": "Los modelos de recomendación solo funcionan correctamente cuando se ejecutan sobre bases de datos relacionales."
+      },
+      {
+        "letter": "D",
+        "text": "El problema se resuelve aumentando el número de productos del catálogo hasta cubrir todas las categorías posibles."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La calidad de un modelo depende de que sus datos de entrenamiento representen la realidad donde se va a usar. Entrenar con una muestra sesgada produce un modelo que generaliza mal, por bien construido que esté. Es uno de los principios centrales de la IA responsable.",
+    "distractors": {
+      "B": "La potencia de cómputo afecta a la latencia y al coste de la predicción, no a que el modelo haya aprendido patrones que no aplican a otras tiendas.",
+      "C": "Los modelos de recomendación funcionan con datos de muchas formas y orígenes; el tipo de base de datos no determina su acierto.",
+      "D": "Ampliar el catálogo añade opciones, pero el modelo seguiría prefiriendo los patrones de compra de la única tienda con la que aprendió."
+    },
+    "officialDocUrl": "https://cloud.google.com/responsible-ai",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-IA-004",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Anclaje (grounding) de respuestas en datos propios",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "Un asistente que inventa condiciones de garantía",
+    "scenario": "Un fabricante despliega un asistente conversacional basado en un modelo generativo para responder dudas de garantía. El asistente contesta con fluidez, pero a veces describe coberturas que la empresa no ofrece. ¿Qué técnica reduce ese comportamiento?",
+    "keywords": [
+      "asistente conversacional",
+      "responde con fluidez",
+      "coberturas inexistentes",
+      "documentación interna"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Anclar el modelo a los documentos oficiales de garantía de la empresa para que sus respuestas partan de esa fuente verificada."
+      },
+      {
+        "letter": "B",
+        "text": "Aumentar el parámetro de temperatura del modelo para que explore muchas más alternativas antes de redactar cada una de sus respuestas."
+      },
+      {
+        "letter": "C",
+        "text": "Sustituir el modelo generativo por Cloud Translation API y traducir las preguntas al idioma de la documentación."
+      },
+      {
+        "letter": "D",
+        "text": "Ampliar el número de réplicas del punto de conexión para que atienda más consultas simultáneas sin degradarse."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El anclaje conecta el modelo generativo con fuentes de datos propias y verificadas, de modo que sus respuestas se apoyen en documentación real de la empresa en lugar de en lo que el modelo considera probable. Es la defensa habitual contra las respuestas inventadas.",
+    "distractors": {
+      "B": "Subir la temperatura aumenta la variedad y la creatividad de la salida, es decir, agrava exactamente el problema que se quiere corregir.",
+      "C": "Translation API convierte texto entre idiomas; el asistente no falla por el idioma sino porque afirma coberturas que no existen.",
+      "D": "Más réplicas mejoran la capacidad de atención concurrente, pero no cambian el contenido ni la veracidad de las respuestas."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/overview",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-IA-005",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Privacidad de los datos del cliente en servicios de IA",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "El comité legal pregunta por los datos que entran en el modelo",
+    "scenario": "El departamento jurídico de un banco quiere aprobar el uso de IA generativa en Google Cloud, pero teme que las indicaciones y los documentos que envíen los empleados acaben mejorando modelos de terceros. ¿Qué compromiso de Google Cloud responde a esa preocupación?",
+    "keywords": [
+      "departamento jurídico",
+      "indicaciones y documentos",
+      "aprobación de uso",
+      "banca"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Los datos que el cliente envía a los servicios de IA no se usan para entrenar los modelos base de Google sin su permiso."
+      },
+      {
+        "letter": "B",
+        "text": "Los datos enviados se anonimizan y pasan a formar parte del corpus público de entrenamiento de los modelos generales."
+      },
+      {
+        "letter": "C",
+        "text": "Google pasa a conservar la propiedad de todo el contenido generado y también de los documentos que se hayan usado como contexto."
+      },
+      {
+        "letter": "D",
+        "text": "El cliente debe cifrar cada indicación con su propia clave antes de enviarla o el servicio rechazará la petición."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Google Cloud establece que los datos del cliente le pertenecen y que el contenido enviado a sus servicios de IA no se utiliza para entrenar los modelos base sin autorización expresa. Este compromiso contractual es lo que suele desbloquear la aprobación en sectores regulados.",
+    "distractors": {
+      "B": "Es lo contrario del compromiso vigente: el contenido del cliente no pasa a un corpus común de entrenamiento por el hecho de anonimizarse.",
+      "C": "La propiedad de los datos y del contenido generado permanece en el cliente; Google actúa como encargado del tratamiento.",
+      "D": "El cifrado gestionado por el cliente es una opción disponible, no un requisito obligatorio para poder invocar los servicios de IA."
+    },
+    "officialDocUrl": "https://cloud.google.com/terms/service-terms",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-IA-006",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Deriva del modelo y necesidad de MLOps",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 105,
+    "caseStudy": "none",
+    "title": "Un modelo de detección de fraude que empeora con los meses",
+    "scenario": "Un modelo de detección de fraude alcanzó un acierto muy alto al desplegarse hace un año. Sin cambiar su código ni su infraestructura, hoy deja pasar operaciones que antes bloqueaba. ¿Cómo se explica este deterioro?",
+    "keywords": [
+      "desplegado hace un año",
+      "sin cambios de código",
+      "acierto que decae",
+      "operaciones fraudulentas"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "El comportamiento del fraude cambió con el tiempo y los datos reales ya no se parecen a los del entrenamiento original."
+      },
+      {
+        "letter": "B",
+        "text": "Los modelos de aprendizaje automático pierden precisión de forma natural porque sus parámetros almacenados se degradan en el disco."
+      },
+      {
+        "letter": "C",
+        "text": "El punto de conexión agotó su cuota anual de predicciones y comenzó a devolver resultados aproximados por defecto."
+      },
+      {
+        "letter": "D",
+        "text": "La versión del modelo caducó automáticamente al cumplir doce meses y pasó a ejecutarse en un modo reducido."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Es la deriva de datos: la realidad que el modelo intenta describir evoluciona, mientras que lo que aprendió se quedó fijo en el momento del entrenamiento. Por eso un modelo en producción necesita supervisión continua y reentrenamiento periódico, que es la razón de ser de las prácticas de MLOps.",
+    "distractors": {
+      "B": "Los parámetros de un modelo son datos almacenados y no se degradan solos; lo que cambia es el mundo que el modelo intenta predecir.",
+      "C": "Los servicios de predicción aplican cuotas de capacidad, pero no sustituyen silenciosamente los resultados por aproximaciones.",
+      "D": "Un modelo desplegado no caduca por antigüedad ni cambia de modo de ejecución por sí solo al cumplir un plazo."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/docs/model-monitoring/overview",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-IA-007",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Document AI para procesos administrativos",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Miles de facturas en papel escaneadas cada mes",
+    "scenario": "Una empresa de logística recibe cada mes miles de facturas escaneadas con formatos distintos según el proveedor. Hoy un equipo administrativo teclea a mano los campos en el sistema contable. ¿Qué servicio de Google Cloud está pensado para automatizar este flujo?",
+    "keywords": [
+      "captura manual de datos",
+      "proveedores diversos",
+      "volumen mensual",
+      "cuentas por pagar"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Document AI, que extrae campos estructurados de documentos escaneados y los entrega listos para el sistema contable."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Storage con una política de ciclo de vida que traslade los archivos escaneados a una clase de almacenamiento más económica."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Speech-to-Text, que convierte el contenido de los documentos recibidos en texto editable y consultable."
+      },
+      {
+        "letter": "D",
+        "text": "Looker Studio, que permite construir paneles interactivos a partir de los importes que el equipo ya tecleó."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Document AI combina reconocimiento óptico con modelos entrenados para comprender documentos de negocio, de modo que devuelve campos estructurados (proveedor, importe, fecha, líneas) en lugar de texto plano. Es el servicio específico para automatizar la captura documental.",
+    "distractors": {
+      "B": "Cloud Storage guarda los archivos y optimiza su coste, pero no lee su contenido ni extrae los campos de la factura.",
+      "C": "Speech-to-Text transcribe audio a texto; una factura escaneada es una imagen, no una grabación de voz.",
+      "D": "Looker Studio visualiza datos que ya existen; no resuelve el problema de capturarlos desde los documentos."
+    },
+    "officialDocUrl": "https://cloud.google.com/document-ai/docs",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-IA-008",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Aprendizaje supervisado frente a no supervisado",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Descubrir segmentos de clientes que nadie había definido",
+    "scenario": "Un equipo de marketing quiere descubrir agrupaciones naturales de clientes según su comportamiento de compra. No existe una lista previa de segmentos ni ejemplos etiquetados de a qué grupo pertenece cada cliente. ¿Qué tipo de aprendizaje corresponde a este problema?",
+    "keywords": [
+      "agrupaciones naturales",
+      "sin lista previa",
+      "sin ejemplos etiquetados",
+      "comportamiento de compra"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Aprendizaje supervisado, porque el objetivo es predecir una etiqueta ya conocida a partir de un conjunto de ejemplos clasificados."
+      },
+      {
+        "letter": "B",
+        "text": "Aprendizaje no supervisado, porque el modelo busca estructura en los datos sin etiquetas previas que le indiquen el grupo."
+      },
+      {
+        "letter": "C",
+        "text": "Aprendizaje por refuerzo, porque un agente aprende de las recompensas que obtiene al interactuar con su entorno."
+      },
+      {
+        "letter": "D",
+        "text": "Aprendizaje por transferencia, porque se reutiliza un modelo ya entrenado y se adapta con muy pocos datos nuevos."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Cuando no hay etiquetas y se busca que el propio modelo encuentre patrones o agrupaciones en los datos, el problema es de aprendizaje no supervisado. El agrupamiento de clientes es su ejemplo clásico en el mundo del negocio.",
+    "distractors": {
+      "A": "El aprendizaje supervisado necesita ejemplos ya etiquetados con la respuesta correcta, y aquí no existe esa lista de segmentos.",
+      "C": "El aprendizaje por refuerzo se aplica a decisiones secuenciales con recompensas, como la robótica o la gestión de inventario dinámica.",
+      "D": "El aprendizaje por transferencia adapta un modelo previo a una tarea nueva, pero sigue requiriendo etiquetas para esa tarea."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/docs/beginner/beginners-guide",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-IA-009",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Coste de entrenamiento frente a coste de inferencia",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "El director financiero revisa la factura de un proyecto de IA",
+    "scenario": "Un proyecto de IA entrenó su modelo una sola vez hace meses, pero atiende millones de peticiones diarias desde entonces. El director financiero pregunta dónde se concentra realmente el gasto recurrente. ¿Qué respuesta refleja mejor la economía de este escenario?",
+    "keywords": [
+      "entrenamiento único",
+      "millones de peticiones",
+      "gasto recurrente",
+      "revisión financiera"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "En la inferencia, porque el coste se repite con cada predicción y crece de forma proporcional al uso del servicio."
+      },
+      {
+        "letter": "B",
+        "text": "En el entrenamiento, porque su coste vuelve a facturarse de forma íntegra cada mes mientras el modelo siga estando desplegado."
+      },
+      {
+        "letter": "C",
+        "text": "En el almacenamiento del modelo, ya que los artefactos entrenados ocupan la mayor parte de la factura mensual."
+      },
+      {
+        "letter": "D",
+        "text": "En las licencias del algoritmo, que se renuevan cada vez que el modelo atiende una petición de un usuario final."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El entrenamiento es un coste puntual e intenso; la inferencia es un coste continuo que escala con el número de predicciones. En sistemas con mucho tráfico, servir el modelo termina pesando bastante más que haberlo entrenado, y ahí es donde se optimiza.",
+    "distractors": {
+      "B": "El entrenamiento se factura por los recursos consumidos mientras dura, no de forma recurrente por tener el modelo desplegado.",
+      "C": "Los artefactos de un modelo ocupan muy poco frente al cómputo de servirlo millones de veces al día.",
+      "D": "Los servicios gestionados de Google Cloud se facturan por consumo de recursos, no mediante licencias por petición atendida."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/pricing",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-IA-010",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Vertex AI Agent Builder para asistentes empresariales",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Un buscador interno que responda con las políticas de la empresa",
+    "scenario": "Una compañía quiere que sus empleados pregunten en lenguaje natural sobre políticas internas repartidas en cientos de documentos, y reciban una respuesta redactada con la referencia al documento de origen. ¿Qué producto de Google Cloud está diseñado para construir esa experiencia?",
+    "keywords": [
+      "lenguaje natural",
+      "cientos de documentos",
+      "referencia al origen",
+      "empleados"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Vertex AI Agent Builder, que crea asistentes de búsqueda y conversación sobre los documentos propios de la organización."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Composer, que orquesta flujos de trabajo programados mediante grafos de tareas escritos con Apache Airflow."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Bigtable, que ofrece lecturas de latencia muy baja sobre volúmenes enormes de datos accedidos mediante clave de fila."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Data Fusion, que integra y transforma datos entre sistemas mediante una interfaz gráfica sin escribir código."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Vertex AI Agent Builder permite construir buscadores y asistentes conversacionales apoyados en los datos y documentos de la propia empresa, devolviendo respuestas ancladas y con sus citas. Es el camino directo para esta necesidad sin construir la canalización desde cero.",
+    "distractors": {
+      "B": "Cloud Composer programa y encadena tareas de datos; no interpreta preguntas en lenguaje natural ni redacta respuestas.",
+      "C": "Bigtable es una base de datos de altísimo caudal por clave, no un motor de búsqueda semántica sobre documentos.",
+      "D": "Data Fusion mueve y transforma datos entre sistemas, pero no ofrece búsqueda conversacional para los empleados."
+    },
+    "officialDocUrl": "https://cloud.google.com/products/agent-builder",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-IA-011",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Transparencia y documentación de modelos",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Un regulador pide saber cómo decide el modelo",
+    "scenario": "Una entidad financiera usa un modelo para apoyar decisiones de concesión de crédito. El regulador exige poder explicar por qué el sistema recomendó denegar una solicitud concreta. ¿Qué capacidad de Google Cloud responde a esta exigencia?",
+    "keywords": [
+      "concesión de crédito",
+      "exigencia del regulador",
+      "solicitud denegada",
+      "entidad financiera"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Vertex Explainable AI, que atribuye a cada característica de entrada su contribución al resultado que produjo el modelo."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Audit Logs, que deja registrado qué identidad invocó cada servicio de Google Cloud, desde qué origen y en qué momento."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Monitoring, que recoge métricas de latencia y disponibilidad del punto de conexión que sirve el modelo."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Armor, que filtra el tráfico malicioso antes de que alcance la aplicación que consume las predicciones."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La explicabilidad responde a la pregunta de por qué el modelo dio ese resultado, atribuyendo peso a cada variable de entrada. Es distinto de auditar quién llamó al servicio o de vigilar su rendimiento, y es lo que reclaman los reguladores en decisiones que afectan a las personas.",
+    "distractors": {
+      "B": "Los registros de auditoría documentan accesos y llamadas a la API, no el razonamiento interno que llevó a una predicción.",
+      "C": "Cloud Monitoring vigila si el servicio funciona y con qué latencia, pero no justifica el contenido de una decisión concreta.",
+      "D": "Cloud Armor protege la aplicación frente a ataques de red; no tiene relación con explicar una decisión del modelo."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/docs/explainable-ai/overview",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-IA-012",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Valor de negocio de la IA generativa frente a la automatización clásica",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "Cuándo compensa un modelo generativo y cuándo no",
+    "scenario": "Un comité de dirección evalúa dos iniciativas: aplicar un descuento fijo cuando el importe del pedido supera un umbral, y redactar borradores personalizados de respuesta a reclamaciones de clientes. ¿Cuál de las dos justifica un modelo generativo?",
+    "keywords": [
+      "comité de dirección",
+      "descuento por umbral",
+      "borradores de respuesta",
+      "dos iniciativas"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La redacción de borradores, porque produce lenguaje nuevo y adaptado a cada caso en lugar de aplicar una regla fija."
+      },
+      {
+        "letter": "B",
+        "text": "El cálculo del descuento, porque las reglas de negocio con umbrales son el terreno donde más aporta un modelo generativo."
+      },
+      {
+        "letter": "C",
+        "text": "Las dos por igual, ya que cualquier proceso repetitivo de una empresa mejora al sustituirse por un modelo generativo."
+      },
+      {
+        "letter": "D",
+        "text": "Ninguna de las dos, porque los modelos generativos se limitan a tareas de investigación y no a procesos de negocio."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La IA generativa aporta valor donde hay que producir contenido nuevo y contextual: texto, resúmenes, código o imágenes. Una regla determinista con umbrales se resuelve mejor con lógica convencional, que es más barata, exacta y auditable.",
+    "distractors": {
+      "B": "Una condición de umbral es lógica determinista: un modelo generativo la haría más cara, más lenta y menos predecible.",
+      "C": "Aplicar IA generativa a todo proceso repetitivo introduce coste e incertidumbre donde una regla simple ya funcionaba.",
+      "D": "Los modelos generativos están en uso productivo en atención al cliente, marketing y desarrollo de software, no solo en investigación."
+    },
+    "officialDocUrl": "https://cloud.google.com/use-cases/generative-ai",
+    "blockId": "BLOCK-6"
+  }
+]

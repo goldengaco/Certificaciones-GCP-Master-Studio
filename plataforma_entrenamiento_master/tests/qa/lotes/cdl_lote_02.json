@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D4-044",
+  "subtopic": "Titan Security Chip: Raíz de Confianza de Hardware en Servidores de Google",
+  "caseStudy": "none",
+  "scenario": "Google diseña e instala chips de microcontroladores propietarios llamados 'Titan' en las placas base de todos sus servidores y tarjetas de red en sus centros de datos. ¿Cuál es el propósito de seguridad del chip Titan?",
+  "correct": "C",
+  "clave_len": 252,
+  "explanation": "El chip Titan de Google es una raíz de confianza de hardware diseñada a medida que valida la firma criptográfica del firmware de arranque en cada inicio del servidor, garantizando que ninguna máquina ejecute código de bajo nivel comprometido o manipulado físicamente.",
+  "doc": "https://cloud.google.com/blog/products/gcp/titan-in-depth-security-in-plaintext",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "Minar criptomonedas para Google cuando los servidores están inactivos."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Bloquear el acceso a Internet a todos los clientes de Google Cloud."
+   },
+   {
+    "letter": "C",
+    "len": 252,
+    "text": "Establecer una raíz de confianza en hardware (Hardware Root of Trust) que verifica criptográficamente la integridad del firmware y del sistema de arranque del servidor físico, evitando la ejecución de software no autorizado o modificado maliciosamente."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Aumentar el brillo de las luces LED de la sala de servidores."
+   }
+  ],
+  "ratio": 3.82
+ },
+ {
+  "id": "CDL-D3-084",
+  "subtopic": "Cloud Run vs Compute Engine: Decisión de Costos y Mantenimiento",
+  "caseStudy": "none",
+  "scenario": "Una empresa evalúa hospedar una API web en Compute Engine (IaaS) frente a Cloud Run (Serverless). La API recibe tráfico principalmente durante el horario de oficina (8 horas al día) y muy pocas peticiones por la noche y fines de semana. ¿Por qué Cloud Run ofrece una ventaja económica y operativa contundente?",
+  "correct": "D",
+  "clave_len": 246,
+  "explanation": "Cloud Run factura únicamente por los recursos consumidos durante el procesamiento activo de solicitudes HTTP (calculado en milisegundos). Al no tener costos fijos de VMs ociosas y delegar la administración del sistema operativo a Google, optimiza radicalmente el TCO para cargas de tráfico variable.",
+  "doc": "https://cloud.google.com/run",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 95,
+    "text": "Porque Cloud Run regala computadoras físicas para que los ingenieros se las lleven a sus casas."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Porque Compute Engine prohíbe alojar APIs web."
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "No existe ninguna diferencia en facturación ni gestión."
+   },
+   {
+    "letter": "D",
+    "len": 246,
+    "text": "Porque en Cloud Run no se pagan servidores ociosos durante las noches o fines de semana (escala a cero) y Google gestiona automáticamente el aprovisionamiento, parches de seguridad del sistema operativo y autoescalado sin costo de administración."
+   }
+  ],
+  "ratio": 3.77
+ },
+ {
+  "id": "CDL-D3-067",
+  "subtopic": "Accelerator-Optimized VMs: GPUs y TPUs para Inteligencia Artificial y Cómputo Científico",
+  "caseStudy": "none",
+  "scenario": "Un equipo de investigación de inteligencia artificial entrena modelos de lenguaje masivos y visión artificial. Necesitan infraestructura de cómputo especializada con aceleradores de hardware propietarios diseñados específicamente por Google para acelerar el entrenamiento y la inferencia con TensorFlow, PyTorch y JAX. ¿Qué aceleradores específicos de Google Cloud deben seleccionar?",
+  "correct": "C",
+  "clave_len": 104,
+  "explanation": "Las Cloud TPUs (Tensor Processing Units) son circuitos integrados para aplicaciones específicas (ASICs) desarrollados por Google diseñados para acelerar cargas de trabajo de Machine Learning, junto con las VMs optimizadas con aceleradores (A2/A3) que integran GPUs NVIDIA Tensor Core.",
+  "doc": "https://cloud.google.com/tpu/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Discos duros mecánicos de 5400 RPM de 1998"
+   },
+   {
+    "letter": "C",
+    "len": 104,
+    "text": "Cloud TPUs (Tensor Processing Units) y familias de máquinas aceleradas (A2/A3) con GPUs NVIDIA H100/A100"
+   },
+   {
+    "letter": "D",
+    "len": 33,
+    "text": "Compute Engine sin CPU ni memoria"
+   }
+  ],
+  "ratio": 3.71
+ },
+ {
+  "id": "CDL-D3-080",
+  "subtopic": "Migración de Bases de Datos Heterogéneas: Oracle a PostgreSQL",
+  "caseStudy": "none",
+  "scenario": "Una empresa desea liberarse de costosas licencias comerciales migrando su base de datos Oracle a Cloud SQL for PostgreSQL / AlloyDB for PostgreSQL. Requieren convertir automáticamente los esquemas, procedimientos almacenados y replicar los cambios en tiempo real (CDC) durante la transición. ¿Qué solución de Google Cloud lidera esta modernización de bases de datos?",
+  "correct": "C",
+  "clave_len": 147,
+  "explanation": "Database Migration Service (DMS) simplifica las migraciones heterogéneas complejas (como Oracle a PostgreSQL o AlloyDB) guiando la conversión de esquemas, procedimientos y tipos de datos, y manteniendo la replicación continua de datos para minimizar el tiempo de inactividad durante la transición.",
+  "doc": "https://cloud.google.com/database-migration/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "Reescribir manualmente cada consulta SQL en papel bond"
+   },
+   {
+    "letter": "C",
+    "len": 147,
+    "text": "Database Migration Service (DMS) con capacidades integradas de conversión de esquemas basadas en IA para modernizar de Oracle a PostgreSQL/AlloyDB."
+   },
+   {
+    "letter": "D",
+    "len": 56,
+    "text": "Desactivar las bases de datos de la empresa para siempre"
+   }
+  ],
+  "ratio": 3.71
+ },
+ {
+  "id": "CDL-D3-085",
+  "subtopic": "Cloud Run: Integración con Secret Manager para Gestión de Credenciales",
+  "caseStudy": "none",
+  "scenario": "Un microservicio en Cloud Run necesita conectarse a una base de datos utilizando una contraseña confidencial. La política de seguridad prohíbe almacenar contraseñas en texto plano dentro del código fuente, en el Dockerfile o en variables de entorno visibles. ¿Qué servicio administrado debe almacenar la contraseña para ser inyectada de forma segura en el contenedor durante la ejecución?",
+  "correct": "A",
+  "clave_len": 131,
+  "explanation": "Secret Manager es un sistema de almacenamiento seguro, centralizado y versionado para contraseñas, claves de API, certificados y otros datos sensibles en Google Cloud, permitiendo inyectarlos de forma controlada y auditada a Cloud Run mediante permisos de IAM.",
+  "doc": "https://cloud.google.com/secret-manager/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 131,
+    "text": "Secret Manager (integrado nativamente con Cloud Run para inyectar secretos cifrados como variables de entorno o volúmenes montados)"
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Escribir la contraseña en el archivo README.md de GitHub público"
+   },
+   {
+    "letter": "C",
+    "len": 34,
+    "text": "Cloud Storage Nearline sin cifrado"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud DNS"
+   }
+  ],
+  "ratio": 3.67
+ },
+ {
+  "id": "CDL-D2-028",
+  "subtopic": "Looker vs Looker Studio: Plataforma Empresarial vs Visualización Ágil",
+  "caseStudy": "none",
+  "scenario": "El Director de Datos (CDO) busca estandarizar la definición de métricas clave (como 'Margen Bruto' y 'Cliente Activo') para que todos los departamentos utilicen exactamente las mismas fórmulas gobernadas en una capa semántica unificada, a la vez que permite a equipos individuales crear reportes rápidos. ¿Cómo se complementan Looker y Looker Studio?",
+  "correct": "B",
+  "clave_len": 292,
+  "explanation": "Looker es una plataforma de inteligencia de negocios de nivel empresarial con un modelo semántico centralizado (LookML) que asegura que todos en la empresa utilicen definiciones de métricas coherentes y auditadas. Looker Studio (anteriormente Data Studio) permite visualizaciones intuitivas y de rápida creación para reportes y tableros ágiles.",
+  "doc": "https://cloud.google.com/looker",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Looker solo se puede usar para editar archivos de música MP3."
+   },
+   {
+    "letter": "B",
+    "len": 292,
+    "text": "Looker proporciona una plataforma de BI empresarial con una capa de modelado de datos gobernada (LookML) que define una fuente única de verdad para las métricas de negocio, mientras que Looker Studio ofrece una herramienta ágil y gratuita de visualización de datos y tableros de autoservicio."
+   },
+   {
+    "letter": "C",
+    "len": 113,
+    "text": "Looker y Looker Studio son herramientas de hardware que se instalan físicamente en los monitores de los usuarios."
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Looker Studio prohíbe conectarse a bases de datos de Google Cloud."
+   }
+  ],
+  "ratio": 3.65
+ },
+ {
+  "id": "CDL-D3-036",
+  "subtopic": "GKE: Escalado Automático Horizontal de Pods (HPA) y de Clúster (Cluster Autoscaler)",
+  "caseStudy": "none",
+  "scenario": "Un sitio web de comercio electrónico en GKE experimenta un pico repentino de usuarios durante una promoción relámpago. ¿Cómo colaboran el Horizontal Pod Autoscaler (HPA) y el Cluster Autoscaler para manejar esta demanda?",
+  "correct": "C",
+  "clave_len": 270,
+  "explanation": "En GKE, el escalado opera en dos niveles: el HPA ajusta dinámicamente el número de Pods según la carga de trabajo de la aplicación, mientras que el Cluster Autoscaler ajusta automáticamente el número de nodos de cómputo subyacentes cuando hay Pods en estado pendiente por falta de capacidad.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Kubernetes no permite ejecutar más de un Pod a la vez en todo el clúster."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "El Cluster Autoscaler borra la base de datos para liberar espacio en disco."
+   },
+   {
+    "letter": "C",
+    "len": 270,
+    "text": "El HPA incrementa el número de réplicas de Pods de la aplicación basándose en el uso de CPU/memoria; y si los nodos existentes se quedan sin capacidad para alojar los nuevos Pods, el Cluster Autoscaler agrega automáticamente nuevas máquinas virtuales (nodos) al clúster."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "El HPA apaga todas las máquinas virtuales para enfriar el centro de datos."
+   }
+  ],
+  "ratio": 3.65
+ },
+ {
+  "id": "CDL-D3-001",
+  "subtopic": "Modelos de Cómputo: IaaS vs PaaS vs Serverless vs CaaS",
+  "caseStudy": "none",
+  "scenario": "Un equipo de arquitectura de software debe clasificar los siguientes servicios de Google Cloud según su modelo de abstracción de cómputo: (1) Compute Engine, (2) Google Kubernetes Engine (GKE), (3) App Engine Standard, y (4) Cloud Run. ¿Cuál es la clasificación correcta?",
+  "correct": "D",
+  "clave_len": 171,
+  "explanation": "Compute Engine es IaaS (control total de VMs y SO); GKE es CaaS (orquestación empresarial de clústeres Kubernetes); App Engine Standard es PaaS (abstracción del runtime para código web); y Cloud Run es Serverless de contenedores (escalado automático a cero por petición sin administrar clústeres).",
+  "doc": "https://cloud.google.com/learn/choosing-the-right-compute-option",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "(1) PaaS, (2) Serverless, (3) IaaS, (4) CaaS"
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "(1) Serverless, (2) IaaS, (3) CaaS, (4) PaaS"
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "Todos son servicios de hardware físico local en sitio"
+   },
+   {
+    "letter": "D",
+    "len": 171,
+    "text": "(1) IaaS (Infraestructura como Servicio), (2) CaaS (Contenedores como Servicio), (3) PaaS (Plataforma como Servicio), (4) Serverless Containers (Contenedores sin servidor)"
+   }
+  ],
+  "ratio": 3.64
+ },
+ {
+  "id": "CDL-D4-042",
+  "subtopic": "Arquitectura de Defensa en Profundidad (Defense in Depth) en Google Cloud",
+  "caseStudy": "none",
+  "scenario": "Un consultor de seguridad explica el principio de 'Defensa en Profundidad' (Defense in Depth) aplicado en la infraestructura de Google Cloud. ¿Qué significa este enfoque?",
+  "correct": "A",
+  "clave_len": 266,
+  "explanation": "La defensa en profundidad en Google Cloud asegura cada nivel del sistema: seguridad física de centros de datos, chips Titan en servidores propietarios, arranque seguro, cifrado automático en reposo y en tránsito, aislamiento de red, IAM granular y monitoreo continuo de amenazas.",
+  "doc": "https://cloud.google.com/security/overview/whitepaper",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 266,
+    "text": "Implementar múltiples capas independientes y redundantes de controles de seguridad (seguridad física, hardware con chip Titan, cifrado por defecto, aislamiento de red VPC, IAM, WAF y auditoría) para que si una capa falla, las demás continúen protegiendo los activos."
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Confiar exclusivamente en una sola contraseña simple de 4 dígitos para toda la empresa."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Cavar una trinchera física con agua alrededor del centro de datos."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Eliminar todos los controles de software para reducir la complejidad."
+   }
+  ],
+  "ratio": 3.59
+ },
+ {
+  "id": "CDL-D4-032",
+  "subtopic": "Seguridad de la Cadena de Suministro de Software (SLSA Framework)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de software bancario implementa el marco SLSA (Supply-chain Levels for Software Artifacts) promovido por Google para asegurar su cadena de suministro digital desde el código fuente hasta la ejecución en producción. ¿Qué combinación de servicios de Google Cloud habilita esta protección de extremo a extremo?",
+  "correct": "D",
+  "clave_len": 221,
+  "explanation": "El marco SLSA en Google Cloud se implementa integrando Cloud Build para generar código con procedencia verificable, Artifact Registry para auditar y escanear vulnerabilidades en artefactos, y Binary Authorization para bloquear el despliegue de cualquier contenedor que no cuente con las atestaciones requeridas.",
+  "doc": "https://cloud.google.com/software-supply-chain-security/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Descargar imágenes de contenedores anónimas de sitios web no verificados"
+   },
+   {
+    "letter": "B",
+    "len": 80,
+    "text": "Cloud Storage Archive + Copiar archivos ejecutables en memorias USB sin escanear"
+   },
+   {
+    "letter": "C",
+    "len": 33,
+    "text": "Cloud DNS público sin contraseñas"
+   },
+   {
+    "letter": "D",
+    "len": 221,
+    "text": "Cloud Build (compilación hermética y atestaciones de procedencia) + Artifact Registry (escaneo de vulnerabilidades y almacenamiento seguro) + Binary Authorization (imposición de firmas antes del despliegue en producción)."
+   }
+  ],
+  "ratio": 3.58
+ },
+ {
+  "id": "CDL-D3-045",
+  "subtopic": "Resumen de Modernización: De Servidores Tradicionales a Nube Serverless",
+  "caseStudy": "none",
+  "scenario": "El Director de Operaciones (COO) solicita una explicación de cómo evoluciona la carga operativa del equipo de TI al avanzar desde centros de datos locales tradicionales, pasando por IaaS (Compute Engine) y CaaS (GKE), hasta alcanzar Serverless (Cloud Run). ¿Cuál es la conclusión precisa?",
+  "correct": "A",
+  "clave_len": 303,
+  "explanation": "La transición hacia modelos serverless y servicios completamente administrados traslada el trabajo pesado no diferenciado (administración de hardware, sistemas operativos, clústeres y aprovisionamiento de capacidad) a Google Cloud, permitiendo a los ingenieros concentrar su tiempo e innovación en el producto y el negocio.",
+  "doc": "https://cloud.google.com/serverless",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 303,
+    "text": "A mayor nivel de abstracción (avanzando hacia Serverless), Google asume más responsabilidades de gestión de infraestructura (hardware, parches de SO, escalado y alta disponibilidad), permitiendo al equipo de TI enfocarse casi exclusivamente en la lógica de negocio y desarrollo de valor para el cliente."
+   },
+   {
+    "letter": "B",
+    "len": 95,
+    "text": "No existe ninguna diferencia en la administración entre un servidor físico de 1995 y Cloud Run."
+   },
+   {
+    "letter": "C",
+    "len": 86,
+    "text": "Serverless obliga al equipo de TI a fabricar sus propios microchips de silicio a mano."
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "La carga operativa aumenta exponencialmente al usar servicios administrados."
+   }
+  ],
+  "ratio": 3.54
+ },
+ {
+  "id": "CDL-D4-052",
+  "subtopic": "Log Analytics: Consultas SQL sobre Registros en Cloud Logging con BigQuery",
+  "caseStudy": "none",
+  "scenario": "Un equipo de operaciones necesita ejecutar consultas SQL complejas (con funciones de agregación, uniones y filtrado multidimensional) directamente sobre sus registros de auditoría y aplicaciones en Cloud Logging para investigar un incidente de seguridad, sin tener que exportar previamente los datos a un data warehouse externo. ¿Qué capacidad nativa de Cloud Logging deben utilizar?",
+  "correct": "C",
+  "clave_len": 139,
+  "explanation": "Log Analytics integra la potencia del motor de análisis SQL de BigQuery directamente dentro de Cloud Logging, permitiendo a los ingenieros de operaciones y seguridad ejecutar consultas analíticas avanzadas, generar agregaciones y visualizar métricas sobre sus datos de registros en tiempo real.",
+  "doc": "https://cloud.google.com/logging/docs/log-analytics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "Leer manualmente 10 millones de líneas de registros con una lupa"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 139,
+    "text": "Log Analytics (que permite consultar buckets de Cloud Logging utilizando el motor de SQL de BigQuery directamente en la consola de Logging)"
+   },
+   {
+    "letter": "D",
+    "len": 33,
+    "text": "Desactivar la recolección de logs"
+   }
+  ],
+  "ratio": 3.53
+ },
+ {
+  "id": "CDL-D3-079",
+  "subtopic": "Cloud CDN: URLs Firmadas y Purga de Caché Instantánea",
+  "caseStudy": "none",
+  "scenario": "Una plataforma de cursos online de pago distribuye videos a través de Cloud CDN. Necesitan: (1) Asegurarse de que solo los usuarios con suscripción activa puedan ver los videos en caché (sin que usuarios no autorizados compartan enlaces públicos), y (2) Eliminar inmediatamente un video de la caché global si se detecta un error de contenido. ¿Qué funcionalidades de Cloud CDN deben usar?",
+  "correct": "C",
+  "clave_len": 200,
+  "explanation": "Cloud CDN permite proteger contenido multimedia privado mediante Signed URLs / Signed Cookies (que autorizan el acceso por tiempo limitado a usuarios autenticados) y ofrece invalidación de caché (Purge) en segundos para retirar o actualizar contenido en todos los puntos de presencia mundiales.",
+  "doc": "https://cloud.google.com/cdn/docs/using-signed-urls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "Cloud Storage Archive como único reproductor"
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Apagar Cloud CDN para que nadie pueda ver los videos"
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "text": "Signed URLs (URLs firmadas de Cloud CDN) para restringir el acceso temporal a suscriptores válidos y Purga de Caché (Cache Invalidation) para eliminar contenido erróneo de la caché global al instante."
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "Hacer públicos todos los cursos para que cualquiera los vea gratis sin pagar"
+   }
+  ],
+  "ratio": 3.49
+ },
+ {
+  "id": "CDL-D3-090",
+  "subtopic": "Ecosistema Integral de Modernización de Google Cloud",
+  "caseStudy": "none",
+  "scenario": "El Comité de Transformación Digital de una corporación multinacional solicita una evaluación final sobre cómo la suite de modernización de Google Cloud (Compute Engine, GKE, Cloud Run, Global VPC, Cloud Armor, Apigee) habilita la resiliencia y el crecimiento del negocio a largo plazo. ¿Cuál es la conclusión integral?",
+  "correct": "A",
+  "clave_len": 378,
+  "explanation": "El portafolio de modernización de infraestructura y aplicaciones de Google Cloud ofrece una transición fluida desde la infraestructura tradicional hacia arquitecturas nativas de nube, potenciando la resiliencia del negocio, reduciendo el time-to-market y garantizando seguridad de clase mundial a escala global.",
+  "doc": "https://cloud.google.com/solutions/application-modernization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 378,
+    "text": "Google Cloud proporciona una plataforma integral y flexible que permite a las empresas elegir el nivel óptimo de abstracción (desde IaaS con Compute Engine hasta Serverless con Cloud Run), respaldada por una red global privada de fibra óptica, seguridad Zero Trust y gestión híbrida/multinube, acelerando la innovación y garantizando disponibilidad continua a escala planetaria."
+   },
+   {
+    "letter": "B",
+    "len": 122,
+    "text": "La modernización de la nube es solo una moda pasajera que no genera ningún valor tangible frente a los servidores locales."
+   },
+   {
+    "letter": "C",
+    "len": 106,
+    "text": "La infraestructura en la nube elimina la necesidad de contar con desarrolladores o ingenieros de software."
+   },
+   {
+    "letter": "D",
+    "len": 97,
+    "text": "Google Cloud exige que todas las empresas utilicen exclusivamente hojas de cálculo sin excepción."
+   }
+  ],
+  "ratio": 3.49
+ },
+ {
+  "id": "CDL-D3-014",
+  "subtopic": "Beneficios de la Contenedorización (Docker y OCI)",
+  "caseStudy": "none",
+  "scenario": "Los desarrolladores de una compañía se quejan frecuentemente con la frase 'en mi computadora sí funciona, pero en el servidor de pruebas falla' debido a diferencias en versiones de dependencias, variables de entorno y librerías del sistema operativo. ¿Cómo resuelve la contenedorización este problema?",
+  "correct": "A",
+  "clave_len": 250,
+  "explanation": "Los contenedores encapsulan el código de la aplicación y todas sus dependencias en un paquete estándar y portátil. Esto garantiza paridad total entre los entornos de desarrollo local y los entornos de producción en la nube, resolviendo el clásico problema de inconsistencia de configuraciones.",
+  "doc": "https://cloud.google.com/learn/what-are-containers",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 250,
+    "text": "Empaquetando la aplicación junto con todo su código, runtime, librerías del sistema y dependencias en una imagen inmutable de contenedor que se ejecuta de forma idéntica y predecible en cualquier entorno (desarrollo, pruebas o producción en la nube)."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Eliminando todos los entornos de prueba para desplegar a ciegas."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Prohibiendo a los desarrolladores programar nuevas funcionalidades."
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "Regalando la computadora personal del desarrollador al centro de datos de producción."
+   }
+  ],
+  "ratio": 3.47
+ },
+ {
+  "id": "CDL-D3-042",
+  "subtopic": "Niveles de Red de Google Cloud: Premium Tier vs Standard Tier",
+  "caseStudy": "none",
+  "scenario": "Google Cloud ofrece dos niveles de servicio de red (Network Service Tiers) para el tráfico saliente hacia Internet: Premium Tier y Standard Tier. ¿Cuál es la diferencia técnica y de rendimiento fundamental?",
+  "correct": "C",
+  "clave_len": 276,
+  "explanation": "Premium Tier maximiza el rendimiento y la confiabilidad dirigiendo el tráfico a través de la red privada global de Google de baja latencia con enrutamiento de 'patata fría'. Standard Tier optimiza costos encaminando el tráfico a través de redes de tránsito de Internet públicas convencionales ('patata caliente').",
+  "doc": "https://cloud.google.com/network-tiers/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "No existe ninguna diferencia; ambos son nombres decorativos idénticos."
+   },
+   {
+    "letter": "B",
+    "len": 80,
+    "text": "Standard Tier borra el 50% de los paquetes de datos para ahorrar ancho de banda."
+   },
+   {
+    "letter": "C",
+    "len": 276,
+    "text": "Premium Tier transporta el tráfico a través de la red global de fibra privada de alta calidad de Google, ingresando y saliendo en el punto de presencia más cercano al usuario; Standard Tier utiliza la red pública de Internet convencional de otros proveedores a un costo menor."
+   },
+   {
+    "letter": "D",
+    "len": 89,
+    "text": "Premium Tier solo funciona los días festivos; Standard Tier funciona los días laborables."
+   }
+  ],
+  "ratio": 3.46
+ },
+ {
+  "id": "CDL-D4-045",
+  "subtopic": "Resumen de Seguridad y Operaciones: Confianza y Excelencia Operativa",
+  "caseStudy": "none",
+  "scenario": "Un panel de auditores internacionales evalúa la madurez de seguridad y operaciones de una empresa que opera en Google Cloud. ¿Qué combinación de prácticas operativas y de seguridad demuestra la máxima excelencia en la nube?",
+  "correct": "A",
+  "clave_len": 309,
+  "explanation": "La excelencia operativa y de seguridad en Google Cloud integra una sólida gobernanza de identidades (IAM y Zero Trust), guardarraíles de políticas de organización, cifrado integral, monitoreo y observabilidad proactiva con la suite de Cloud Operations y prácticas de Site Reliability Engineering (SRE).",
+  "doc": "https://cloud.google.com/architecture/framework",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 309,
+    "text": "Gobernanza centralizada con jerarquía de recursos y Organization Policies, control de accesos IAM basado en el principio de menor privilegio con grupos y MFA, arquitectura Zero Trust con BeyondCorp, cifrado integral por defecto, observabilidad continua con Cloud Operations y cultura SRE con métricas SLI/SLO."
+   },
+   {
+    "letter": "B",
+    "len": 109,
+    "text": "Asignar contraseñas compartidas simples de 3 caracteres y desactivar todas las alertas de costos y monitoreo."
+   },
+   {
+    "letter": "C",
+    "len": 95,
+    "text": "Dejar que cada empleado use tarjetas de crédito personales sin ninguna supervisión corporativa."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Apagar todas las computadoras de la empresa de forma permanente."
+   }
+  ],
+  "ratio": 3.46
+ },
+ {
+  "id": "CDL-D3-004",
+  "subtopic": "Compute Engine: Spot VMs (Preemptible VMs) para Ahorro en Cargas Tolerantes a Fallos",
+  "caseStudy": "none",
+  "scenario": "Un laboratorio universitario ejecuta simulaciones de genómica y procesamiento de imágenes por lotes que duran varias horas y pueden reiniciarse automáticamente si una máquina falla. El presupuesto es muy limitado. ¿Qué tipo de instancias de Compute Engine ofrecen descuentos de hasta el 60-91% a cambio de permitir que Google las interrumpa si necesita capacidad para otros clientes?",
+  "correct": "C",
+  "clave_len": 150,
+  "explanation": "Las Spot VMs en Compute Engine ofrecen ahorros masivos (del 60% al 91% frente al precio regular) para cargas de trabajo tolerantes a fallos, renderizado, análisis por lotes y pruebas que pueden ser interrumpidas de forma segura cuando Google Cloud requiere esa capacidad para otros servicios.",
+  "doc": "https://cloud.google.com/compute/docs/instances/spot",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Servidores físicos comprados a perpetuidad"
+   },
+   {
+    "letter": "B",
+    "len": 26,
+    "text": "Cloud Spanner Multi-region"
+   },
+   {
+    "letter": "C",
+    "len": 150,
+    "text": "Spot VMs (máquinas virtuales con descuento que aprovechan capacidad de cómputo sobrante y pueden ser interrumpidas con un aviso previo de 30 segundos)"
+   },
+   {
+    "letter": "D",
+    "len": 63,
+    "text": "Instancias dedicadas de alta prioridad con sobreprecio del 500%"
+   }
+  ],
+  "ratio": 3.44
+ },
+ {
+  "id": "CDL-D4-086",
+  "subtopic": "Gobernanza de Proyectos: Creación de Proyectos Aislados por Entorno (Dev, Stage, Prod)",
+  "caseStudy": "none",
+  "scenario": "Una empresa diseña su arquitectura de proyectos en Google Cloud. ¿Por qué la mejor práctica recomendada por Google es separar los entornos de Desarrollo (Dev), Pruebas (Staging) y Producción (Prod) en Proyectos de Google Cloud completamente independientes?",
+  "correct": "C",
+  "clave_len": 266,
+  "explanation": "En Google Cloud, el Proyecto actúa como el límite fundamental de aislamiento de seguridad, administración de IAM, redes, cuotas y auditoría. Separar Dev, Staging y Prod en proyectos distintos garantiza el principio de aislamiento de fallos (blast radius) y control riguroso de accesos.",
+  "doc": "https://cloud.google.com/resource-manager/docs/creating-managing-projects",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 93,
+    "text": "Es una mala práctica; todos los entornos deben mezclarse en un solo proyecto sin contraseñas."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Para obligar a los desarrolladores a pagar una cuota de registro personal."
+   },
+   {
+    "letter": "C",
+    "len": 266,
+    "text": "Porque el Proyecto es el límite principal de aislamiento en Google Cloud para seguridad (políticas de IAM independientes), cuotas de recursos, redes VPC y facturación, evitando que un error o prueba en desarrollo afecte a la disponibilidad o seguridad de producción."
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Porque Google Cloud prohíbe tener más de un archivo por proyecto."
+   }
+  ],
+  "ratio": 3.44
+ },
+ {
+  "id": "CDL-D3-082",
+  "subtopic": "Arquitectura Serverless de Microservicios para Aplicaciones de E-Commerce",
+  "caseStudy": "none",
+  "scenario": "Un minorista en línea diseña su nueva plataforma de comercio electrónico. Requieren: (1) Servicios web de catálogo y pagos en contenedores serverless con escalado automático a cero, (2) Mensajería asíncrona para procesar pedidos, (3) Notificaciones automáticas por correo cuando se crea un pedido, y (4) Base de datos transaccional con alta disponibilidad. ¿Qué combinación de servicios de Google Cloud representa la arquitectura de referencia?",
+  "correct": "B",
+  "clave_len": 202,
+  "explanation": "Esta arquitectura combina el cómputo serverless elástico de Cloud Run, el desacoplamiento asíncrono y tolerante a picos de Pub/Sub, la ejecución ligera basada en eventos de Cloud Functions y la persistencia relacional administrada con alta disponibilidad de Cloud SQL.",
+  "doc": "https://cloud.google.com/architecture/serverless-microservices-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Cloud Storage Archive + Memorias USB + Faxes automáticos"
+   },
+   {
+    "letter": "B",
+    "len": 202,
+    "text": "Cloud Run (microservicios web de catálogo y checkout) + Cloud Pub/Sub (cola de pedidos) + Cloud Functions (envío de notificaciones de correo) + Cloud SQL (base de datos transaccional relacional con HA)."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Compute Engine con Windows XP sin actualizaciones"
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Desactivar el procesamiento de pagos para que los productos sean gratuitos"
+   }
+  ],
+  "ratio": 3.39
+ },
+ {
+  "id": "CDL-D3-086",
+  "subtopic": "GKE Autopilot: Mejores Prácticas de Seguridad Preconfiguradas",
+  "caseStudy": "none",
+  "scenario": "Un equipo de desarrollo adopta GKE Autopilot. El oficial de seguridad se alegra al conocer que este modo aplica automáticamente las recomendaciones de seguridad del estándar CIS Kubernetes Benchmark por defecto. ¿Qué características de seguridad vienen endurecidas en GKE Autopilot?",
+  "correct": "D",
+  "clave_len": 198,
+  "explanation": "GKE Autopilot viene preconfigurado con una postura de seguridad endurecida según las mejores prácticas de Google: gestiona y actualiza los nodos automáticamente, restringe capacidades peligrosas de contenedores (como privilegios root no autorizados) e integra Shielded Nodes y Workload Identity.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-security",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Desactivación de todos los firewalls y contraseñas"
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Prohibición total de desplegar aplicaciones"
+   },
+   {
+    "letter": "C",
+    "len": 82,
+    "text": "Obligación de que todos los Pods se ejecuten como usuario 'root' sin restricciones"
+   },
+   {
+    "letter": "D",
+    "len": 198,
+    "text": "Nodos blindados (Shielded Nodes) activados, parches de seguridad automáticos aplicados por Google, Workload Identity configurado y restricción predeterminada de privilegios elevados de contenedores."
+   }
+  ],
+  "ratio": 3.39
+ },
+ {
+  "id": "CDL-D4-038",
+  "subtopic": "Condiciones de IAM (IAM Conditions): Control de Acceso Basado en Contexto y Tiempo",
+  "caseStudy": "none",
+  "scenario": "Un ingeniero de guardia necesita permisos temporales de administración para solucionar un problema en producción. La política de seguridad exige que los permisos se otorguen únicamente durante su turno (de 08:00 a 16:00 horas) y que solo pueda acceder si su solicitud proviene de una dirección IP corporativa confiable. ¿Qué funcionalidad de IAM permite aplicar estas restricciones?",
+  "correct": "B",
+  "clave_len": 160,
+  "explanation": "IAM Conditions permite definir y aplicar políticas de control de acceso condicionales y temporales basadas en atributos como horarios específicos, fechas de expiración, nombres de recursos o características de la solicitud, reforzando el principio de menor privilegio.",
+  "doc": "https://cloud.google.com/iam/docs/conditions-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "Eliminar el proyecto de producción"
+   },
+   {
+    "letter": "B",
+    "len": 160,
+    "text": "Condiciones de IAM (IAM Conditions), que permiten definir expresiones condicionales basadas en atributos como fecha/hora, recurso de destino y atributos de red."
+   },
+   {
+    "letter": "C",
+    "len": 86,
+    "text": "Otorgarle acceso de Owner permanente para siempre y esperar que no se conecte de noche"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   }
+  ],
+  "ratio": 3.38
+ },
+ {
+  "id": "CDL-D3-050",
+  "subtopic": "Cloud Router y Protocolo BGP para Redes Híbridas Dinámicas",
+  "caseStudy": "none",
+  "scenario": "Una empresa conecta su red local con Google Cloud mediante Cloud VPN y Cloud Interconnect. Desean que las nuevas subredes que se creen en la nube o en el centro de datos local se anuncien y descubran automáticamente sin requerir que los ingenieros de redes actualicen tablas de enrutamiento estáticas manualmente en cada enrutador. ¿Qué servicio y protocolo proporcionan este enrutamiento dinámico?",
+  "correct": "C",
+  "clave_len": 99,
+  "explanation": "Cloud Router es un servicio de red completamente administrado que utiliza el protocolo estándar BGP (Border Gateway Protocol) para intercambiar rutas dinámicas automáticamente entre la red VPC de Google Cloud y los enrutadores locales.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/router",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 16,
+    "text": "Cloud Vision API"
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Configuración manual de rutas estáticas en hojas de papel"
+   },
+   {
+    "letter": "C",
+    "len": 99,
+    "text": "Cloud Router utilizando el protocolo de puerta de enlace fronteriza (BGP - Border Gateway Protocol)"
+   },
+   {
+    "letter": "D",
+    "len": 15,
+    "text": "Cloud Armor WAF"
+   }
+  ],
+  "ratio": 3.38
+ },
+ {
+  "id": "CDL-D4-014",
+  "subtopic": "Security Command Center: Nivel Estándar vs Nivel Premium",
+  "caseStudy": "none",
+  "scenario": "Una empresa evalúa el nivel de Security Command Center a contratar: el nivel Standard ofrece inventario básico de activos y escaneo de vulnerabilidades web; mientras que el nivel Premium agrega detección avanzada de amenazas con IA (Event Threat Detection, Container Threat Detection, Virtual Machine Threat Detection) y reportes automáticos de cumplimiento regulatorio (PCI-DSS, NIST). ¿Cuál es la justificación para adoptar el nivel Premium?",
+  "correct": "B",
+  "clave_len": 240,
+  "explanation": "Security Command Center Premium (y Enterprise) desbloquea motores de detección de amenazas de nivel empresarial impulsados por inteligencia de amenazas de Mandiant y Google (detección de malware en memoria de VMs, ataques a contenedores, anomalías en logs) y cuadros de mando de cumplimiento normativo continuo.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-tiers",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "SCC Standard borra todos los proyectos de la empresa cada fin de semana."
+   },
+   {
+    "letter": "B",
+    "len": 240,
+    "text": "SCC Premium proporciona detección avanzada de amenazas en tiempo real a nivel de eventos de red, contenedores en GKE y memoria de VMs, además de evaluación continua y automatizada de cumplimiento con estándares regulatorios internacionales."
+   },
+   {
+    "letter": "C",
+    "len": 88,
+    "text": "SCC Premium es obligatorio para poder encender una sola máquina virtual en Google Cloud."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "No existe ninguna diferencia técnica entre ambos niveles."
+   }
+  ],
+  "ratio": 3.32
+ },
+ {
+  "id": "CDL-D2-071",
+  "subtopic": "Cloud Bigtable: Diseño de Claves de Fila (Row Keys) para Evitar Puntos Calientes (Hotspotting)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de monitoreo de flotas ingiere datos en Cloud Bigtable. Observan que un solo nodo del clúster está al 100% de CPU mientras los demás nodos están inactivos, debido a que están usando una marca de tiempo secuencial pura (timestamp) como clave de fila principal. ¿Por qué ocurre esto y cómo se resuelve según las mejores prácticas?",
+  "correct": "B",
+  "clave_len": 271,
+  "explanation": "En Cloud Bigtable, las tablas se ordenan lexicográficamente por la clave de fila (Row Key). Usar marcas de tiempo secuenciales puras envía todas las escrituras a una sola partición/nodo (hotspotting). Diseñar claves de fila que comiencen con prefijos distribuidos (como `vehicle_id#timestamp`) distribuye el tráfico equitativamente entre todos los nodos.",
+  "doc": "https://cloud.google.com/bigtable/docs/schema-design",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 81,
+    "text": "Ocurre porque Bigtable no soporta más de una consulta por hora en toda la región."
+   },
+   {
+    "letter": "B",
+    "len": 271,
+    "text": "Ocurre hotspotting porque las claves secuenciales escriben en el mismo rango contiguo de nodos; se resuelve anteponiendo un identificador de alta cardinalidad (como el ID del vehículo) a la clave de fila para distribuir las escrituras uniformemente entre todos los nodos."
+   },
+   {
+    "letter": "C",
+    "len": 78,
+    "text": "Se resuelve duplicando el costo de las licencias de software de base de datos."
+   },
+   {
+    "letter": "D",
+    "len": 86,
+    "text": "Se resuelve apagando todos los nodos del clúster y pasando los datos a hojas de Excel."
+   }
+  ],
+  "ratio": 3.32
+ }
+]

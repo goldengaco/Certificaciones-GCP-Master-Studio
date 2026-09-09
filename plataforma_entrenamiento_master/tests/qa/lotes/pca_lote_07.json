@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D4-008",
+  "subtopic": "SRE: Blameless Post-Mortems & Cultural Best Practices",
+  "caseStudy": "none",
+  "scenario": "A production outage occurred when a senior software engineer mistakenly deployed a configuration file with a syntax error, causing a 45-minute service outage. How should the engineering organization conduct the incident retrospective according to Google SRE best practices?",
+  "correct": "D",
+  "clave_len": 286,
+  "explanation": "Google SRE culture mandates Blameless Post-Mortems. Human errors are symptoms of systemic shortcomings. Effective post-mortems focus on process, tooling, and guardrails (e.g. pre-submit linters, automated canaries) rather than individual blame.",
+  "doc": "https://sre.google/sre-book/postmortem-culture/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "Publicly name and reprimand the engineer in an all-hands meeting."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Delete all incident logs so executive leadership does not find out."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Require all future configuration changes to be signed by 5 vice presidents."
+   },
+   {
+    "letter": "D",
+    "len": 286,
+    "text": "Conduct a Blameless Post-Mortem assuming good intentions, analyzing the systemic weaknesses that allowed human error to reach production (e.g., lack of automated config validation in CI, missing canary stage), and create prioritized, tracked action items to eliminate the systemic flaw."
+   }
+  ],
+  "ratio": 4.14
+ },
+ {
+  "id": "PCA-D4-005",
+  "subtopic": "FinOps: Automated Billing Kill-Switch via Cloud Functions",
+  "caseStudy": "none",
+  "scenario": "An enterprise provides sandbox Google Cloud projects for developer experimentation with a strict $1,000 monthly budget per project. If a project exceeds 100% of its budget, the system must automatically disable billing for that project to prevent further charges, even if it terminates active VMs. How should this automated kill switch be designed?",
+  "correct": "A",
+  "clave_len": 256,
+  "explanation": "Cloud Billing Budgets only send notifications; they do not stop resources automatically. To enforce a hard cap, budget alerts publish to Pub/Sub, triggering a Cloud Function that programmatically unbinds the project's billing account.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/notify#cap_disable_billing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 256,
+    "text": "Configure a Cloud Billing Budget with threshold_percent = 1.0 publishing notifications to a Cloud Pub/Sub topic; trigger a Cloud Function that calls the Google Cloud Billing API to remove the billing account link from the project (billingAccountName = '')."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Cloud Billing Budgets automatically shut down resources by default."
+   },
+   {
+    "letter": "C",
+    "len": 63,
+    "text": "Send a reminder email to the developer at the end of the month."
+   },
+   {
+    "letter": "D",
+    "len": 56,
+    "text": "Manually log into the console once a day to check spend."
+   }
+  ],
+  "ratio": 4.13
+ },
+ {
+  "id": "PCA-D3-042",
+  "subtopic": "Altostrat Media: IAM Role Separation for Game Services",
+  "caseStudy": "altostrat_media",
+  "scenario": "In altostrat's GKE cluster, the 'telemetry-ingestion' pod only needs to publish messages to a Pub/Sub topic, while the 'billing-service' pod only needs read/write access to Cloud Spanner. To prevent a compromised telemetry pod from accessing the billing database, how should you architect IAM service accounts?",
+  "correct": "A",
+  "clave_len": 242,
+  "explanation": "Workload Identity allows individual Kubernetes pods to assume distinct Google Service Accounts with granular least-privilege IAM roles, preventing lateral privilege escalation if a pod is compromised.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 242,
+    "text": "Enable GKE Workload Identity and create dedicated Google Service Accounts: grant roles/pubsub.publisher to 'gsa-telemetry' and bind it to KSA 'telemetry-ksa'; grant roles/spanner.databaseUser to 'gsa-billing' and bind it to KSA 'billing-ksa'."
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Grant Project Owner to all Kubernetes pods."
+   },
+   {
+    "letter": "C",
+    "len": 84,
+    "text": "Attach the default Compute Engine service account with Editor role to all GKE nodes."
+   },
+   {
+    "letter": "D",
+    "len": 50,
+    "text": "Store database passwords in a plaintext ConfigMap."
+   }
+  ],
+  "ratio": 4.1
+ },
+ {
+  "id": "PCA-D2-030",
+  "subtopic": "Altostrat Media: Live Stream API & Transcoder API",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL is setting up the broadcast infrastructure for a live racing season. They must provision 20 live video channels that ingest RTMP feeds from aircraft cameras, transcode streams into 1080p, 720p, and 480p HLS renditions with redundant input endpoints, and output segmented video files to a Cloud Storage origin bucket. What Google Cloud API resources should you provision in Terraform?",
+  "correct": "A",
+  "clave_len": 235,
+  "explanation": "Google Cloud Live Stream API Channels and Inputs provide enterprise live broadcast transcoding. Provisioning redundant RTMP inputs connected to multi-bitrate HLS channel encoders delivers broadcast-grade streaming with automated failover.",
+  "doc": "https://cloud.google.com/livestream/docs/create-channel",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 235,
+    "text": "Provision Google Cloud Live Stream API Input resources (with dual redundant RTMP ingestion URIs) connected to Live Stream Channel resources configured with multi-bitrate Elementary Streams and HLS Manifests outputting to Cloud Storage."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Store raw video files in Cloud SQL BLOB columns."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Use Cloud Memorystore Redis for video encoding."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Provision 20 unmanaged Compute Engine instances running FFmpeg in a bash loop."
+   }
+  ],
+  "ratio": 4.08
+ },
+ {
+  "id": "PCA-D2-033",
+  "subtopic": "Cloud Deploy Target Delivery Pipelines",
+  "caseStudy": "none",
+  "scenario": "An enterprise DevOps team needs a secure, automated continuous delivery pipeline that promotes container releases progressively through three environments: dev -> staging -> production. Production releases require manual approval gates from the security lead and automated metric rollback if error rates spike. Which Google Cloud service natively manages this delivery lifecycle?",
+  "correct": "C",
+  "clave_len": 211,
+  "explanation": "Google Cloud Deploy is a managed continuous delivery service for GKE, Cloud Run, and Anthos. It automates multi-target release progression, integrates built-in approval gates, supports canary rollouts, and provides one-click or automated rollbacks.",
+  "doc": "https://cloud.google.com/deploy/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Execute kubectl apply manually from developer laptops."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Use Cloud Scheduler to reboot clusters every night."
+   },
+   {
+    "letter": "C",
+    "len": 211,
+    "text": "Configure Google Cloud Deploy with a Delivery Pipeline defining dev, staging, and prod targets, enforcing required_approval = true for the prod target, and configuring automated rollbacks and canary progression."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Send container images via email to the IT helpdesk."
+   }
+  ],
+  "ratio": 4.06
+ },
+ {
+  "id": "PCA-D1-063",
+  "subtopic": "Altostrat Media: PTS Video & Telemetry Synchronization",
+  "caseStudy": "altostrat_media",
+  "scenario": "In live aircraft racing, video streams and aircraft sensor telemetry travel over separate physical uplinks. Video frames arrive with an embedded Presentation Time Stamp (PTS) while sensor packets arrive with GPS atomic clock timestamps. When fans switch camera angles, the on-screen telemetry overlay (speedometer, G-meter) must align perfectly with the visual frame within 20 milliseconds. How should you design the synchronization pipeline?",
+  "correct": "C",
+  "clave_len": 290,
+  "explanation": "Apache Beam on Cloud Dataflow enables event-time windowed joins (CoGroupByKey) across distinct streaming sources. Correlating video frame Presentation Time Stamps (PTS) with GPS atomic telemetry within a 20ms window guarantees broadcast-grade frame-accurate synchronization.",
+  "doc": "https://beam.apache.org/documentation/patterns/grouping-data/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 81,
+    "text": "Drop all telemetry timestamps and display whatever reading arrives at the server."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Match timestamps on the mobile phone using a javascript setTimeout() timer."
+   },
+   {
+    "letter": "C",
+    "len": 290,
+    "text": "Ingest video PTS metadata and telemetry streams into Cloud Pub/Sub, execute a Cloud Dataflow pipeline using CoGroupByKey or Side Inputs with a 20ms event-time window to join video frame PTS to GPS telemetry, and write synchronized frame-data packets to Bigtable/Cloud Run WebSocket streams."
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "Save data to BigQuery and execute a SQL JOIN every midnight."
+   }
+  ],
+  "ratio": 4.03
+ },
+ {
+  "id": "PCA-D6-027",
+  "subtopic": "Disaster Recovery: RTO vs RPO Trade-Off Matrix",
+  "caseStudy": "none",
+  "scenario": "An enterprise disaster recovery board is establishing Recovery Time Objective (RTO) and Recovery Point Objective (RPO) targets for corporate applications. Which of the following correctly matches the Google Cloud disaster recovery strategy with its expected RTO and RPO profile?",
+  "correct": "A",
+  "clave_len": 221,
+  "explanation": "In DR architecture: Active-Active (Hot-Hot) delivers sub-second RTO and RPO 0 at highest cost; Warm Standby delivers minutes-to-hours RTO/RPO with scaled-down standby resources; Backup & Restore delivers lowest cost but has hours-to-days RTO and hours RPO.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery-scenarios-for-data#choosing_a_dr_pattern",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 221,
+    "text": "Active-Active (Hot-Hot) Multi-Region: RTO near 0, RPO = 0 (highest cost); Warm Standby: RTO in minutes/hours, RPO in minutes (moderate cost); Cold Standby / Backup & Restore: RTO in hours/days, RPO in hours (lowest cost)."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "RTO and RPO are identical metrics with no difference."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Backup & Restore provides RTO < 1 second and RPO = 0 at zero cost."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Cold Standby has lower RTO than Active-Active."
+   }
+  ],
+  "ratio": 4.02
+ },
+ {
+  "id": "PCA-D2-045",
+  "subtopic": "Cloud Spanner Schema Optimization: Interleaved Tables",
+  "caseStudy": "none",
+  "scenario": "A SaaS multi-tenant application in Cloud Spanner frequently executes queries joining the Tenants table with the Users table and Orders table (e.g. SELECT * FROM Tenants T JOIN Users U ON T.tenant_id = U.tenant_id WHERE T.tenant_id = '123'). To optimize query latency by physically co-locating parent and child table rows on the same split servers, how should you structure the Spanner schema?",
+  "correct": "A",
+  "clave_len": 220,
+  "explanation": "Table interleaving in Cloud Spanner physically co-locates child rows with their parent row in the same split. This eliminates network hops during parent-child JOIN queries and optimizes distributed multi-table transactions.",
+  "doc": "https://cloud.google.com/spanner/docs/schema-and-data-model#creating-interleaved-tables",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 220,
+    "text": "Define Users and Orders as Interleaved Tables under the parent Tenants table (INTERLEAVE IN PARENT Tenants ON DELETE CASCADE), ensuring child rows are stored physically adjacent to parent rows on the same storage splits."
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "Store all data in JSON strings inside a single column."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Denormalize all data into a single 500-column table."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Create independent standalone tables without foreign keys."
+   }
+  ],
+  "ratio": 4.02
+ },
+ {
+  "id": "PCA-D3-052",
+  "subtopic": "Altostrat Media: Mobile App Secret Protection",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL's mobile fan app communicates with Cloud Run backend APIs. Attackers frequently decompile the Android/iOS app binary, extract API keys, and use custom automated scripts to spam voting and telemetry endpoints. HRL needs a solution that cryptographically attests that incoming API requests originate from legitimate, untampered mobile app binaries running on genuine mobile hardware (Apple DeviceCheck / Google Play Integrity). What service provides this?",
+  "correct": "D",
+  "clave_len": 221,
+  "explanation": "Firebase App Check protects backend APIs by leveraging hardware-backed platform attestation (Play Integrity on Android, DeviceCheck/App Attest on iOS). It verifies that requests originate from authentic, untampered app instances, rejecting bot traffic and extracted API key abuse.",
+  "doc": "https://firebase.google.com/docs/app-check",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Obfuscate API keys with base64 encoding inside the mobile app code."
+   },
+   {
+    "letter": "B",
+    "len": 32,
+    "text": "Disable all mobile applications."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Require mobile users to solve 5 CAPTCHAs before every API request."
+   },
+   {
+    "letter": "D",
+    "len": 221,
+    "text": "Enable Firebase App Check with Google Play Integrity (Android) and Apple DeviceCheck / App Attest (iOS) to verify app authenticity, validating App Check tokens on backend Cloud Run services before processing API requests."
+   }
+  ],
+  "ratio": 4.02
+ },
+ {
+  "id": "PCA-D1-072",
+  "subtopic": "Altostrat Media: Dual-Region Ingestion & DR Failover",
+  "caseStudy": "altostrat_media",
+  "scenario": "To protect the live broadcast of the World Championship race against any regional Google Cloud outage, HRL provisions live video ingestion encoders in two separate geographic regions (us-central1 and us-east1). If the primary transcoding pipeline in us-central1 fails during the race, global viewer traffic must fail over automatically to the live backup stream in us-east1 with less than 3 seconds of viewer interruption. What architecture achieves this?",
+  "correct": "A",
+  "clave_len": 314,
+  "explanation": "Active-Active dual-region live video ingestion processes parallel streams in two independent regions. An Anycast Global Load Balancer or Cloud DNS Health-Checked Failover policy automatically redirects video playback clients to the secondary region within seconds upon primary failure.",
+  "doc": "https://cloud.google.com/load-balancing/docs/https/cross-region-example",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 314,
+    "text": "Ingest redundant RTMP feeds simultaneously into Live Stream API pipelines in both us-central1 and us-east1, and use Cloud DNS Health-Checked Failover Routing Policies (or Global External Application Load Balancer Multi-Region Backend Services with health checks) to route viewers dynamically to the healthy region."
+   },
+   {
+    "letter": "B",
+    "len": 100,
+    "text": "Deploy only a single transcoder in us-central1 and manually rebuild in us-east1 if an outage occurs."
+   },
+   {
+    "letter": "C",
+    "len": 82,
+    "text": "Have aircraft pilots land and pause the race until cloud engineers fix the server."
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Broadcast the race using an analog UHF radio antenna."
+   }
+  ],
+  "ratio": 4.01
+ },
+ {
+  "id": "PCA-D3-006",
+  "subtopic": "Privileged Access Manager (PAM)",
+  "caseStudy": "none",
+  "scenario": "Site Reliability Engineers (SREs) normally operate with read-only viewer permissions in production projects. During critical production incidents, on-call SREs require temporary 2-hour elevated Project Editor permissions with automated manager approval, multi-factor re-authentication, and an immutable audit trail. What Google Cloud service delivers Just-In-Time (JIT) access?",
+  "correct": "D",
+  "clave_len": 214,
+  "explanation": "Google Cloud Privileged Access Manager (PAM) provides automated, audited Just-In-Time (JIT) privilege elevation. It eliminates standing privileges, enforces approval workflows, and automatically revokes access when the entitlement duration expires.",
+  "doc": "https://cloud.google.com/iam/docs/pam-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 62,
+    "text": "Have engineers create new Google accounts during every outage."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Grant all SREs permanent Owner permissions in production."
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "Post credentials in a public company wiki."
+   },
+   {
+    "letter": "D",
+    "len": 214,
+    "text": "Configure Google Cloud Privileged Access Manager (PAM) defining an Entitlement for the Project Editor role with max duration of 2 hours, specifying required approvers, justification requirements, and audit logging."
+   }
+  ],
+  "ratio": 3.99
+ },
+ {
+  "id": "PCA-D3-018",
+  "subtopic": "Container Vulnerability Scanning & Artifact Registry",
+  "caseStudy": "none",
+  "scenario": "A security compliance policy requires that every container image pushed to Google Cloud must be automatically scanned for Common Vulnerabilities and Exposures (CVEs) in operating system packages and language runtime dependencies (Java, Python, Go, Node.js). If a Critical CVE is detected, deployment to GKE must be automatically blocked. Which two Google Cloud services integrate to provide this pipeline?",
+  "correct": "A",
+  "clave_len": 162,
+  "explanation": "Container Analysis automatically scans container images pushed to Artifact Registry for OS and language package CVEs. Binary Authorization evaluates these scan results against security policies (e.g. block if CVE CVSS > 8.0) before allowing GKE pod admission.",
+  "doc": "https://cloud.google.com/artifact-registry/docs/analysis",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 162,
+    "text": "Artifact Registry with Container Analysis (automatic vulnerability scanning) integrated with Binary Authorization to enforce vulnerability admission gates on GKE."
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "Cloud Logging and Cloud Monitoring."
+   },
+   {
+    "letter": "C",
+    "len": 33,
+    "text": "Compute Engine and Cloud Storage."
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Manual virus scan software running on a Windows 98 VM."
+   }
+  ],
+  "ratio": 3.98
+ },
+ {
+  "id": "PCA-D4-009",
+  "subtopic": "Observability: OpenTelemetry & Cloud Trace",
+  "caseStudy": "none",
+  "scenario": "An e-commerce order checkout involves 15 microservices running across GKE, Cloud Run, and Cloud Functions. Occasionally, checkout latency spikes from 200ms to 8 seconds, but individual service metrics appear normal. How should you instrument the microservices to pinpoint the exact downstream RPC call and database query causing the latency bottleneck?",
+  "correct": "C",
+  "clave_len": 242,
+  "explanation": "OpenTelemetry instrumentation with W3C Trace Context propagates trace and span IDs across distributed network boundaries. Ingesting traces into Google Cloud Trace generates visual flame graphs identifying the exact bottleneck microservice or query.",
+  "doc": "https://cloud.google.com/trace/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Increase VM CPU to maximum size without investigation."
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Restart all microservices every 10 minutes."
+   },
+   {
+    "letter": "C",
+    "len": 242,
+    "text": "Instrument microservices using OpenTelemetry SDKs with W3C Trace Context propagation (traceparent headers) exporting spans to Google Cloud Trace, allowing engineers to visualize end-to-end distributed flame graphs and identify slow RPC spans."
+   },
+   {
+    "letter": "D",
+    "len": 86,
+    "text": "Add print(time.time()) statements to Python code and inspect console outputs manually."
+   }
+  ],
+  "ratio": 3.97
+ },
+ {
+  "id": "PCA-D4-053",
+  "subtopic": "Altostrat Media: Database Scaling Spanner vs Cloud SQL",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media is retiring its legacy mobile game backend on Cloud SQL for MySQL. In the previous game launch, the Cloud SQL master database suffered severe write lock contention, CPU saturation, and required manual sharding across multiple MySQL instances. To prepare for 50 million global players with zero manual sharding and seamless horizontal write scaling, what database modernization should occur?",
+  "correct": "B",
+  "clave_len": 267,
+  "explanation": "Cloud Spanner combines relational SQL structure and ACID consistency with the horizontal scalability of NoSQL databases. It automatically partitions and balances data across nodes and regions, eliminating manual database sharding toil.",
+  "doc": "https://cloud.google.com/spanner/docs/whitepapers/optimizing-schema-design",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "Upgrade to a larger single Compute Engine VM running Microsoft Access."
+   },
+   {
+    "letter": "B",
+    "len": 267,
+    "text": "Migrate the database to Cloud Spanner, which provides horizontally scalable distributed SQL transactions with automatic table splitting, transparent multi-region replication, and external consistency (TrueTime), eliminating database sharding and maintenance downtime."
+   },
+   {
+    "letter": "C",
+    "len": 78,
+    "text": "Use Cloud SQL and split data across 10,000 independent MySQL servers manually."
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Store player data in flat text files on an FTP server."
+   }
+  ],
+  "ratio": 3.97
+ },
+ {
+  "id": "PCA-D2-014",
+  "subtopic": "Cloud Storage Uniform Bucket-Level Access & Soft Delete",
+  "caseStudy": "none",
+  "scenario": "An enterprise security audit discovered that individual Cloud Storage objects were inadvertently made public through legacy Object ACLs. Additionally, an operator accidentally ran gsutil rm on critical customer data. What two bucket-level security and resilience configurations should you enforce across all corporate storage buckets?",
+  "correct": "C",
+  "clave_len": 235,
+  "explanation": "Uniform Bucket-Level Access (UBLA) disables fine-grained object ACLs, unifying access control under IAM. Cloud Storage Soft Delete protects against accidental or malicious deletions by retaining deleted objects in a soft-deleted state for recovery without restoring from backups.",
+  "doc": "https://cloud.google.com/storage/docs/soft-delete",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Disable IAM and manage all permissions through XML ACL files."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Set bucket permissions to public Read-Write for everyone."
+   },
+   {
+    "letter": "C",
+    "len": 235,
+    "text": "Enable Uniform Bucket-Level Access (UBLA) to disable legacy ACLs and enforce unified IAM policies, and configure Cloud Storage Soft Delete (with a 7 to 90-day retention window) to allow instant recovery of accidentally deleted objects."
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "Delete all storage buckets and store data in VM local disks."
+   }
+  ],
+  "ratio": 3.96
+ },
+ {
+  "id": "PCA-D4-044",
+  "subtopic": "Observability: MQL (Monitoring Query Language) Ratio Metrics",
+  "caseStudy": "none",
+  "scenario": "An SRE needs to create a real-time Cloud Monitoring chart that displays the exact HTTP 5xx error percentage ratio (Total 5xx Responses / Total HTTP Responses * 100) across all backend services in a Managed Instance Group. How should this custom ratio be expressed in Monitoring Query Language (MQL)?",
+  "correct": "C",
+  "clave_len": 219,
+  "explanation": "Monitoring Query Language (MQL) allows powerful mathematical time-series transformations. Using MQL 'ratio' operations on filtered streams calculates exact real-time error percentage ratios for dashboards and alerting.",
+  "doc": "https://cloud.google.com/monitoring/mql/query-ui",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Delete all 5xx responses from the logs so the ratio is 0%."
+   },
+   {
+    "letter": "B",
+    "len": 68,
+    "text": "Calculate the ratio manually using a pocket calculator once an hour."
+   },
+   {
+    "letter": "C",
+    "len": 219,
+    "text": "Write an MQL query using 'fetch' on loadbalancer http/response_count, filtering 5xx responses in one stream and all responses in another stream, joining them with 'ratio', and multiplying by 100 in the MQL query editor."
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Guess the error rate based on intuition."
+   }
+  ],
+  "ratio": 3.96
+ },
+ {
+  "id": "PCA-D1-048",
+  "subtopic": "EHR Healthcare: High-Throughput HL7 Ingestion on GKE",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "During flu and pandemic seasons, hospital admissions generate over 50,000 HL7v2 admission/discharge/transfer (ADT) messages per second. The ingestion backend must buffer sudden surges without dropping a single message, scale horizontally, parse HL7 strings into JSON, and write to the Cloud Healthcare API within a 2-second SLA. What architecture should you deploy?",
+  "correct": "B",
+  "clave_len": 298,
+  "explanation": "Decoupling ingestion using Cloud Pub/Sub as a high-throughput buffer prevents packet loss during spikes. GKE worker pods autoscaled by Pub/Sub backlog metrics (via Custom Metrics Adapter) scale horizontally to process 50,000+ msgs/sec within strict SLAs.",
+  "doc": "https://cloud.google.com/healthcare-api/docs/how-tos/hl7v2",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 89,
+    "text": "Send HL7 messages directly to a single Cloud SQL instance via synchronous INSERT queries."
+   },
+   {
+    "letter": "B",
+    "len": 298,
+    "text": "Ingest HL7v2 messages via an External TCP Network Load Balancer into an Agones/GKE MLLP adapter pool that publishes to Cloud Pub/Sub, with downstream GKE worker pods autoscaled by Horizontal Pod Autoscaler (HPA) using custom Pub/Sub queue depth metrics, parsing and writing to Cloud Healthcare API."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Store incoming messages in local disk text files on an NFS server."
+   },
+   {
+    "letter": "D",
+    "len": 72,
+    "text": "Process HL7 messages sequentially using a single-threaded Python script."
+   }
+  ],
+  "ratio": 3.94
+ },
+ {
+  "id": "PCA-D4-047",
+  "subtopic": "Knightmotives Automotive: Predictive Maintenance SRE & Anomaly Alerting",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive guarantees agricultural equipment uptime during harvesting seasons. An ML model on Vertex AI evaluates real-time tractor sensor telemetry (engine vibration, hydraulic oil pressure, transmission temperature). When the model predicts a catastrophic engine failure probability > 85% within the next 48 hours, what automated workflow should dispatch immediate replacement parts to the nearest dealer?",
+  "correct": "D",
+  "clave_len": 279,
+  "explanation": "Integrating Vertex AI anomaly predictions with Cloud Tasks / Eventarc and Cloud Run automates predictive maintenance workflows, dispatching parts and scheduling technicians before equipment breaks down in the field.",
+  "doc": "https://cloud.google.com/vertex-ai/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 82,
+    "text": "Remotely disable the tractor while the farmer is driving in the middle of harvest."
+   },
+   {
+    "letter": "B",
+    "len": 65,
+    "text": "Wait for the engine to explode in the field before taking action."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Print prediction reports on paper and mail them via standard post."
+   },
+   {
+    "letter": "D",
+    "len": 279,
+    "text": "Vertex AI prediction triggers a Cloud Task / Eventarc event invoking an automated dealer dispatch microservice on Cloud Run, which reserves replacement parts in the local dealer ERP, schedules a mobile technician, and alerts the farmer via the mobile app before the engine fails."
+   }
+  ],
+  "ratio": 3.93
+ },
+ {
+  "id": "PCA-D4-001",
+  "subtopic": "Cloud Build Private Pools for VPC-SC & Internal Artifacts",
+  "caseStudy": "none",
+  "scenario": "An enterprise CI/CD pipeline builds proprietary container images. The build process must access internal GitLab repositories and private Nexus artifact registries located in a private Shared VPC subnet with no internet access. Furthermore, the build runners must comply with a VPC Service Controls perimeter. How should you configure Cloud Build?",
+  "correct": "A",
+  "clave_len": 234,
+  "explanation": "Cloud Build Private Worker Pools run on dedicated, isolated worker nodes peered directly into the customer VPC via Service Networking. This enables access to private internal repositories (GitLab, Nexus) and full compatibility with VPC Service Controls.",
+  "doc": "https://cloud.google.com/build/docs/private-pools/private-pools-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 234,
+    "text": "Create a Cloud Build Private Worker Pool with Service Networking peering to the customer Shared VPC, allowing build workers to access private internal IP endpoints directly without public IPs while running inside the VPC-SC perimeter."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Run builds manually on developer workstations."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Expose internal Git and Nexus servers to the public internet."
+   },
+   {
+    "letter": "D",
+    "len": 72,
+    "text": "Use Cloud Build default public worker pools with public IP whitelisting."
+   }
+  ],
+  "ratio": 3.92
+ },
+ {
+  "id": "PCA-D5-003",
+  "subtopic": "Pub/Sub: Direct BigQuery & Cloud Storage Subscriptions",
+  "caseStudy": "none",
+  "scenario": "An enterprise streams 100,000 IoT sensor messages per second to a Pub/Sub topic and needs to write them directly into a BigQuery table with minimal latency. Deploying and managing a Cloud Dataflow or Cloud Run pipeline just to write Pub/Sub messages into BigQuery adds unnecessary compute costs and operational overhead. What Pub/Sub subscription type solves this?",
+  "correct": "C",
+  "clave_len": 233,
+  "explanation": "Pub/Sub BigQuery Subscriptions stream messages directly from Pub/Sub into BigQuery tables with zero intermediate compute infrastructure (no Dataflow or Cloud Run needed), dramatically simplifying architecture and lowering costs.",
+  "doc": "https://cloud.google.com/pubsub/docs/bigquery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Use Cloud SQL for MySQL as a temporary buffer."
+   },
+   {
+    "letter": "B",
+    "len": 71,
+    "text": "Save messages to text files on a local laptop and run bq load manually."
+   },
+   {
+    "letter": "C",
+    "len": 233,
+    "text": "Create a Cloud Pub/Sub BigQuery Subscription (bigquery_config), allowing Pub/Sub to write messages directly into the destination BigQuery table serverlessly without deploying or managing intermediate Dataflow jobs or Cloud Functions."
+   },
+   {
+    "letter": "D",
+    "len": 62,
+    "text": "Deploy a 20-node Spark cluster running 24/7 on Compute Engine."
+   }
+  ],
+  "ratio": 3.91
+ },
+ {
+  "id": "PCA-D3-012",
+  "subtopic": "VPC Service Controls: Dry-Run Mode",
+  "caseStudy": "none",
+  "scenario": "An enterprise is planning to apply a VPC Service Controls perimeter around 50 active production projects supporting thousands of microservices. The architecture team wants to identify all existing cross-project API calls, external service dependencies, and potential perimeter violation errors without actually blocking any production traffic during testing. What feature should be used?",
+  "correct": "D",
+  "clave_len": 261,
+  "explanation": "VPC Service Controls Dry-Run Mode evaluates security policies and logs violations in Cloud Audit Logs without blocking requests. This allows teams to identify dependencies and refine ingress/egress rules before enforcing perimeters in production.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/dry-run-mode",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 91,
+    "text": "Ask every developer to list all API calls they made in the last 5 years in a word document."
+   },
+   {
+    "letter": "B",
+    "len": 68,
+    "text": "Enforce the perimeter immediately on production and see what breaks."
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "Disable all logging to save storage costs."
+   },
+   {
+    "letter": "D",
+    "len": 261,
+    "text": "Deploy the Service Perimeter in Dry-Run Mode (specifying spec {} dry-run configuration), analyze dry-run violation logs in Cloud Logging (vpcServiceControlsUniqueId), adjust perimeter rules, and promote to enforced mode once all legitimate traffic is permitted."
+   }
+  ],
+  "ratio": 3.9
+ },
+ {
+  "id": "PCA-D6-019",
+  "subtopic": "Cloud Spanner High Availability & TrueTime SLA",
+  "caseStudy": "none",
+  "scenario": "An enterprise financial audit requires proof that transactions in a globally distributed multi-region database cannot suffer from clock skew anomalies, phantom reads, or out-of-order execution across continents. How does Google Cloud Spanner guarantee strict serializability and external consistency across global regions?",
+  "correct": "B",
+  "clave_len": 275,
+  "explanation": "Google Cloud Spanner leverages TrueTime, a distributed time service using atomic clocks and GPS receivers in every Google datacenter. TrueTime provides a bounded clock uncertainty window (epsilon), enabling Spanner to generate globally unique, monotonically increasing timestamps for strict external consistency.",
+  "doc": "https://cloud.google.com/spanner/docs/true-time-external-consistency",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 69,
+    "text": "Spanner relies on standard software NTP servers over public internet."
+   },
+   {
+    "letter": "B",
+    "len": 275,
+    "text": "Spanner uses Google's TrueTime API, which integrates synchronized GPS receivers and atomic clocks in all Google datacenters to bound clock uncertainty (epsilon), ensuring monotonically increasing commit timestamps that guarantee global external consistency (Linearizability)."
+   },
+   {
+    "letter": "C",
+    "len": 86,
+    "text": "Spanner requires database administrators to manually synchronize clocks every morning."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Spanner uses optimistic locking with eventual consistency."
+   }
+  ],
+  "ratio": 3.87
+ },
+ {
+  "id": "PCA-D2-029",
+  "subtopic": "EHR Healthcare: Sole-Tenant Nodes for Licensing & Isolation",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare runs a proprietary legacy electronic charting database that requires core-based software licenses tied to physical CPU sockets. Furthermore, strict hospital security policy mandates physical hardware isolation from other cloud tenants. How should you provision Compute Engine infrastructure for this database?",
+  "correct": "A",
+  "clave_len": 215,
+  "explanation": "Sole-Tenant Nodes provide dedicated physical Compute Engine servers for a single customer. This satisfies strict regulatory hardware isolation mandates, allows Bring-Your-Own-License (BYOL) per-core/per-socket software licensing, and gives visibility into underlying physical hardware cores.",
+  "doc": "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 215,
+    "text": "Provision Google Cloud Sole-Tenant Node Groups (dedicated physical hardware servers dedicated exclusively to EHR Healthcare), applying Node Affinity labels to schedule database instances onto dedicated host servers."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Purchase physical hardware and place it on an engineer's desk."
+   },
+   {
+    "letter": "C",
+    "len": 69,
+    "text": "Deploy the database on shared public multi-tenant Compute Engine VMs."
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "Use Cloud Run serverless containers."
+   }
+  ],
+  "ratio": 3.86
+ },
+ {
+  "id": "PCA-D2-034",
+  "subtopic": "Dataproc Serverless Batch Workloads",
+  "caseStudy": "none",
+  "scenario": "A data engineering team runs 50 daily Apache Spark batch ETL jobs. Currently, they maintain a 20-node Dataproc cluster running 24/7, resulting in high idle compute costs during inactive hours. The team wants to run their Spark PySpark/Java jobs on-demand without provisioning, sizing, or managing Hadoop clusters. Which service should you adopt?",
+  "correct": "B",
+  "clave_len": 217,
+  "explanation": "Dataproc Serverless runs Apache Spark batch workloads without requiring cluster provisioning or management. Compute resources autoscale per job and terminate immediately, eliminating idle infrastructure spend.",
+  "doc": "https://cloud.google.com/dataproc-serverless/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Execute Spark jobs on a single Compute Engine micro instance."
+   },
+   {
+    "letter": "B",
+    "len": 217,
+    "text": "Submit jobs using Dataproc Serverless for Spark batches, allowing Google Cloud to dynamically provision ephemeral Spark compute resources per job and terminate them immediately upon completion with per-second billing."
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "Maintain the 24/7 Dataproc cluster and increase node count."
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "Rewrite all Spark jobs in Microsoft Visual Basic."
+   }
+  ],
+  "ratio": 3.85
+ },
+ {
+  "id": "PCA-D2-039",
+  "subtopic": "Cloud KMS Automatic Key Rotation",
+  "caseStudy": "none",
+  "scenario": "Corporate compliance policy requires that all Customer-Managed Encryption Keys (CMEK) used across Google Cloud must be rotated automatically every 90 days. When a key is rotated, existing data encrypted with previous versions must remain decryptable without requiring immediate re-encryption of petabytes of existing storage. How does Cloud KMS handle key rotation?",
+  "correct": "C",
+  "clave_len": 250,
+  "explanation": "Cloud KMS automatically manages key versions. When rotated, the new version becomes the primary for subsequent encrypt operations, while previous versions remain enabled for decrypt operations, ensuring zero data loss and no immediate re-encryption requirement.",
+  "doc": "https://cloud.google.com/kms/docs/rotate-key",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Delete the previous key version immediately when creating a new version."
+   },
+   {
+    "letter": "B",
+    "len": 72,
+    "text": "Re-encrypt all 50PB of storage data manually every 90 days from scratch."
+   },
+   {
+    "letter": "C",
+    "len": 250,
+    "text": "Configure a rotation_period = '7776000s' (90 days) on the Cloud KMS CryptoKey; Cloud KMS automatically creates a new primary key version for all new encryptions while keeping older key versions enabled so existing data remains seamlessly decryptable."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Share a single symmetric key in a public text file."
+   }
+  ],
+  "ratio": 3.85
+ }
+]

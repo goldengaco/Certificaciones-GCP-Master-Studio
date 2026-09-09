@@ -1,0 +1,102 @@
+{
+  "fechaMedicion": "2026-08-26",
+  "comandoPrincipal": "node tests/qa/test_fidelidad_banco.js",
+  "resultadoGeneral": {
+    "fallos": 27,
+    "avisos": 3,
+    "estado": "El banco NO está listo para entrenar una certificación"
+  },
+  "metricas": {
+    "puntajeAdivinandoMasLarga": {
+      "cdl": "72.7%",
+      "ace": "86.0%",
+      "pca": "99.3%",
+      "objetivo": "< 45%"
+    },
+    "correctaEsMasLarga": {
+      "cdl": "72.0%",
+      "ace": "85.0%",
+      "pca": "99.3%",
+      "objetivo": "<= 35.0%"
+    },
+    "excesoCaracteresMedia": {
+      "cdl": 69.1,
+      "ace": 66.7,
+      "pca": 173.7,
+      "objetivo": "<= 25"
+    },
+    "bloquesAprobablesASiegas": {
+      "cdl": "5 de 6",
+      "ace": "6 de 6",
+      "pca": "6 de 6",
+      "total": "17 de 18",
+      "objetivo": "0 de 18"
+    },
+    "cicloConsecutivoABCD": {
+      "cdl": "97.7%",
+      "ace": "92.3%",
+      "pca": "97.7%",
+      "objetivo": "<= 40.0%"
+    },
+    "periodicidad4EnClave": {
+      "cdl": "91.9%",
+      "ace": "70.3%",
+      "pca": "91.9%",
+      "objetivo": "<= 40.0%"
+    },
+    "preguntasMultiSelect": {
+      "cdl": "0.0%",
+      "ace": "0.0%",
+      "pca": "0.0%",
+      "objetivo": "12.0% - 20.0%"
+    },
+    "preguntasMultiplesMarcadasUnica": {
+      "cdl": 1,
+      "ace": 0,
+      "pca": 2,
+      "total": 3,
+      "objetivo": 0
+    },
+    "distractoresRelleno": {
+      "cdl": 39,
+      "ace": 1,
+      "pca": 11,
+      "total": 51,
+      "objetivo": 0
+    },
+    "distractoresSinServicioGCP": {
+      "cdl": "63.8%",
+      "ace": "59.6%",
+      "pca": "67.2%",
+      "objetivo": "<= 15.0%"
+    },
+    "areasOficialesSinPreguntas": {
+      "cdl": ["CDL-D5", "CDL-D6"],
+      "ace": [],
+      "pca": [],
+      "total": 2,
+      "objetivo": 0
+    },
+    "mayorDesvioPesoDominio": {
+      "cdl": "18.0 puntos (CDL-D5: Google 18%, banco 0.0%)",
+      "ace": "0.8 puntos (ACE-D2: Google 17.5%, banco 18.3%)",
+      "pca": "3.0 puntos (PCA-D4: Google 15.0%, banco 18.0%)",
+      "objetivo": "<= 3.0 puntos"
+    },
+    "caseStudiesRetirados": {
+      "totalPreguntas": 90,
+      "desglose": {
+        "mountkirk_games": 31,
+        "terramearth": 30,
+        "helicopter_racing_league": 29
+      },
+      "vigentesOficiales": [
+        "altostrat_media",
+        "cymbal_retail",
+        "ehr_healthcare",
+        "knightmotives_automotive"
+      ],
+      "objetivo": 0
+    }
+  }
+}

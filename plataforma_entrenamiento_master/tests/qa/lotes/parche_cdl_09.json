@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D4-005",
+  "options": {
+   "A": "Un Grupo de Google (Google Group) con el rol Storage Object Viewer al que se agregan los desarrolladores del equipo.",
+   "C": "Una cuenta de usuario de Cloud Identity dedicada, cuya contraseña se guarda en un archivo de configuración de la VM.",
+   "D": "Una clave de API (API Key) del proyecto enviada como parámetro de consulta en cada llamada a la API de Cloud Storage."
+  },
+  "distractors": {
+   "A": "Un grupo agrupa identidades humanas para asignarles roles; no puede adjuntarse a una instancia como identidad de ejecución, así que la VM seguiría sin credencial propia.",
+   "C": "Es una identidad humana: exige consentimiento interactivo y credenciales de larga duración almacenadas en disco, justo lo que el escenario quiere evitar.",
+   "D": "Una clave de API solo identifica al proyecto que llama y sirve para cuotas; no autentica una identidad ni autoriza el acceso a los datos de un bucket."
+  }
+ },
+ {
+  "id": "CDL-D4-010",
+  "options": {
+   "A": "Cloud VPN con túneles IPsec redundantes hacia la red local de la empresa",
+   "B": "Cloud Armor con reglas WAF y listas de permitidos por rango de IP de origen",
+   "C": "Identity and Access Management (IAM) con roles predefinidos por proyecto"
+  },
+  "distractors": {
+   "A": "Sigue siendo un perímetro de red: una vez dentro del túnel la confianza es implícita y no se evalúa la identidad ni la postura del dispositivo en cada solicitud.",
+   "B": "Cloud Armor filtra ataques web y DDoS por IP o firma de petición en el borde; la IP de origen no dice quién es el usuario ni si su disco está cifrado.",
+   "C": "IAM autoriza el acceso a recursos de Google Cloud (APIs, buckets, VMs), no la sesión del empleado hacia una aplicación web interna según el contexto del dispositivo."
+  }
+ },
+ {
+  "id": "CDL-D1-007",
+  "options": {
+   "A": "Etapa Táctica (Tactical) del framework CAF",
+   "B": "Etapa Estratégica (Strategic) de adopción",
+   "D": "Tema de Escala (Scale) del CAF de Google"
+  },
+  "distractors": {
+   "A": "En la etapa Táctica hay cargas sueltas migradas por retorno a corto plazo, sin cambio de procesos ni de modelo de negocio como el que describe el escenario.",
+   "B": "La etapa Estratégica alinea la nube con los objetivos de negocio y desarrolla capacidades, pero todavía no genera nuevas fuentes de ingreso impulsadas por IA.",
+   "D": "Scale es uno de los cuatro temas del CAF (Learn, Lead, Scale, Secure) que miden capacidad organizativa, no una de las tres etapas de madurez de adopción."
+  }
+ },
+ {
+  "id": "CDL-D4-034",
+  "options": {
+   "A": "El panel de cumplimiento normativo (Compliance) del nivel Premium de Security Command Center",
+   "C": "Assured Workloads, activando el paquete de controles regulatorios del sector financiero",
+   "D": "Los registros de Cloud Audit Logs del proyecto junto con los informes de Access Transparency"
+  },
+  "distractors": {
+   "A": "Ese panel evalúa los recursos del propio cliente contra referencias como CIS o PCI; no entrega los informes de auditoría independientes sobre la infraestructura de Google.",
+   "C": "Assured Workloads impone residencia de datos y controles de personal sobre las cargas del cliente, pero no publica ni distribuye los certificados de auditoría.",
+   "D": "Son registros de la actividad del propio cliente y de los accesos del personal de Google; no son certificaciones emitidas por un auditor externo independiente."
+  }
+ },
+ {
+  "id": "CDL-D1-009",
+  "options": {
+   "A": "Reducir el costo de licencias manteniendo cada fuente de datos en su plataforma de origen actual y sincronizando extractos mensuales.",
+   "B": "Migrar cada sistema a su propia instancia independiente de Cloud SQL para modernizar la infraestructura sin alterar los procesos actuales.",
+   "D": "Garantizar que cada departamento conserve la propiedad exclusiva de sus datos aplicando controles de acceso separados por sistema."
+  },
+  "distractors": {
+   "A": "El ahorro en licencias es un beneficio real de la migración, pero mantener las fuentes separadas conserva los silos y no produce la visión única del cliente.",
+   "B": "Es un lift-and-shift que reproduce los mismos silos en la nube: el problema no es dónde se alojan los sistemas, sino que no comparten un modelo de datos común.",
+   "D": "La propiedad del dato forma parte de la gobernanza, pero el acceso exclusivo por sistema es justo lo que impide la analítica omnicanal que se busca."
+  }
+ },
+ {
+  "id": "CDL-D1-014",
+  "options": {
+   "A": "Traslada la gestión del hardware a Google, aunque cada entorno de pruebas sigue requiriendo el mismo ciclo de aprobación y compra.",
+   "C": "Permite reservar capacidad con descuentos por uso comprometido (CUD) para que el equipo siempre tenga servidores libres disponibles.",
+   "D": "Ofrece un catálogo de imágenes preconfiguradas que el equipo de infraestructura clona manualmente ante cada solicitud de entorno."
+  },
+  "distractors": {
+   "A": "Describe solo la tercerización del centro de datos; si el aprovisionamiento sigue pasando por un ticket y una compra, el cuello de botella de 8 semanas no desaparece.",
+   "C": "Los CUD son un mecanismo de descuento sobre uso sostenido: optimizan el costo de recursos ya encendidos, no el tiempo que tarda en existir un entorno nuevo.",
+   "D": "Las imágenes acortan la configuración, pero el proceso sigue siendo manual y dependiente del equipo de infraestructura; la agilidad viene del autoservicio por API."
+  }
+ },
+ {
+  "id": "CDL-D2-060",
+  "options": {
+   "B": "Dataproc Metastore (Hive Metastore)",
+   "C": "Cloud Data Loss Prevention (DLP)",
+   "D": "Vistas de BigQuery INFORMATION_SCHEMA"
+  },
+  "distractors": {
+   "B": "Es un metastore de Hive administrado para trabajos de Spark y Hive: guarda esquemas de tablas para los motores, sin búsqueda por palabra clave ni etiquetas de negocio.",
+   "C": "DLP inspecciona el contenido para descubrir y ocultar datos sensibles; clasifica valores, pero no es un catálogo consultable de metadatos con etiquetas personalizadas.",
+   "D": "Expone metadatos de esquema mediante SQL y solo dentro de BigQuery; no cubre Cloud Storage ni admite etiquetas de negocio ni búsqueda para los analistas."
+  }
+ },
+ {
+  "id": "CDL-D2-008",
+  "options": {
+   "A": "Activar el control de versiones de objetos (Object Versioning) para conservar todas las revisiones anteriores del archivo.",
+   "B": "Aplicar una regla de ciclo de vida que mueva los objetos a la clase Archive y los conserve durante los cinco años exigidos.",
+   "C": "Retirar el rol Storage Object Admin a todos los usuarios y dejar los permisos únicamente al administrador de la organización."
+  },
+  "distractors": {
+   "A": "El versionado conserva copias no vigentes, pero quien tenga permisos de administración puede eliminarlas de forma definitiva; no hay inmutabilidad WORM.",
+   "B": "Las reglas de ciclo de vida gestionan la clase de almacenamiento y el costo, e incluso pueden borrar objetos; no impiden sobrescribir ni eliminar un archivo.",
+   "C": "Cualquier restricción de IAM la puede revertir quien conserve el rol; el requisito es que ni siquiera un Owner pueda modificar los registros durante 5 años."
+  }
+ },
+ {
+  "id": "CDL-D2-048",
+  "options": {
+   "A": "Otorgar el rol Storage Object Creator a allUsers sobre el bucket para que cualquier visitante pueda escribir su archivo.",
+   "C": "Subir la foto al servidor de la aplicación y replicarla después al bucket mediante una tarea programada durante la noche.",
+   "D": "Crear una cuenta de servicio por cada usuario registrado y entregar su archivo de clave JSON al navegador del cliente."
+  },
+  "distractors": {
+   "A": "Concede escritura pública permanente sobre todo el bucket: no expira a los 15 minutos ni limita la ruta, y permite que cualquiera suba objetos arbitrarios.",
+   "C": "Evita el requisito de subida directa: el archivo pasa por la capa de aplicación, que asume el tráfico y el almacenamiento temporal, y el enlace nunca expira.",
+   "D": "Reparte credenciales de larga duración a clientes no confiables y no es administrable a escala; además la clave no caduca a los 15 minutos."
+  }
+ },
+ {
+  "id": "CDL-D4-046",
+  "options": {
+   "A": "Los informes de Cloud Billing (Billing Reports) de la cuenta de facturación",
+   "B": "El panel de presupuestos y alertas (Budgets and Alerts) de Cloud Billing",
+   "D": "Las recomendaciones de dimensionamiento de Active Assist Recommender"
+  },
+  "distractors": {
+   "A": "Los informes de facturación analizan el gasto ya incurrido, desglosado por proyecto o SKU; no permiten modelar una arquitectura que todavía no existe.",
+   "B": "Un presupuesto define un umbral y avisa cuando el gasto real se acerca a él; necesita consumo previo y no produce la estimación anticipada que pide el CFO.",
+   "D": "Recommender ajusta el tamaño de recursos que ya están encendidos analizando sus métricas de uso; sin nada desplegado no tiene datos que observar."
+  }
+ },
+ {
+  "id": "CDL-D4-050",
+  "options": {
+   "A": "Cloud Audit Logs, filtrando las entradas de Actividad de administrador",
+   "B": "Policy Analyzer, dentro de la suite de Policy Intelligence de IAM",
+   "D": "Recommender de roles de IAM, que detecta los permisos excesivos"
+  },
+  "distractors": {
+   "A": "Los registros de auditoría muestran que la llamada fue denegada y quién la hizo, pero no evalúan las políticas heredadas ni explican por qué falta el permiso.",
+   "B": "Policy Analyzer responde quién tiene acceso a qué recurso a partir de las políticas; no simula una solicitud ya denegada ni señala qué vinculación la bloquea.",
+   "D": "El recomendador sugiere reducir roles amplios poco usados, es decir, quitar permisos; no diagnostica por qué un permiso concreto no se está aplicando."
+  }
+ },
+ {
+  "id": "CDL-D2-056",
+  "options": {
+   "B": "BigQuery BI Engine para consultas aceleradas",
+   "C": "BigQuery ML con modelos de clustering k-means",
+   "D": "Google Maps Platform Distance Matrix API"
+  },
+  "distractors": {
+   "B": "BI Engine es una capa en memoria que acelera las consultas de los paneles; no aporta el tipo de dato GEOGRAPHY ni funciones espaciales como ST_CONTAINS.",
+   "C": "BigQuery ML entrena modelos con SQL y k-means agrupa por características numéricas, pero no interpreta polígonos ni calcula distancias geodésicas.",
+   "D": "Distance Matrix calcula tiempos y distancias de viaje punto a punto por API; no analiza con SQL petabytes de trayectorias ya almacenadas."
+  }
+ },
+ {
+  "id": "CDL-D2-081",
+  "options": {
+   "B": "Vertex AI Feature Store para servir características",
+   "C": "Vertex AI Model Monitoring (deriva y sesgo de datos)",
+   "D": "Cloud Scheduler invocando una Cloud Function semanal"
+  },
+  "distractors": {
+   "B": "Feature Store centraliza y sirve las características del modelo con baja latencia, pero no orquesta los pasos de validación, reentrenamiento y despliegue.",
+   "C": "Model Monitoring vigila el modelo en producción y alerta cuando los datos se desvían; detecta que hay que reentrenar, pero no ejecuta el flujo.",
+   "D": "Cloud Scheduler solo dispara a intervalos: no encadena pasos, no aplica la condición de precisión antes de desplegar ni registra artefactos ni linaje."
+  }
+ },
+ {
+  "id": "CDL-D3-066",
+  "options": {
+   "A": "(1) Compute-optimized (C2/C3), (2) Memory-optimized (M2/M3), (3) General-purpose (E2/N2)",
+   "B": "(1) General-purpose (E2/N2), (2) Memory-optimized (M2/M3), (3) Compute-optimized (C2/C3)",
+   "C": "(1) Memory-optimized (M2/M3), (2) Compute-optimized (C2/C3), (3) Accelerator-optimized (A2)"
+  },
+  "distractors": {
+   "A": "Invierte el equilibrio: C2/C3 son las más caras por núcleo y no son la opción de uso general, y E2 no llega a los terabytes de RAM que exige SAP HANA.",
+   "B": "Intercambia los dos casos especializados: la codificación de video es intensiva en CPU (C2/C3) y SAP HANA necesita la RAM de la familia M2/M3.",
+   "C": "A2 lleva GPUs para entrenamiento de modelos, no la memoria certificada para SAP HANA, y usar M2/M3 en cargas de uso general dispara el costo."
+  }
+ },
+ {
+  "id": "CDL-D4-040",
+  "options": {
+   "B": "Las comprobaciones de estado (health checks) del balanceador de carga",
+   "C": "Un panel de Cloud Monitoring con la métrica de peticiones por región",
+   "D": "Cloud Trace con muestreo distribuido de las peticiones entrantes"
+  },
+  "distractors": {
+   "B": "El health check sondea los backends desde la red de Google para decidir a dónde enrutar; no mide la experiencia del usuario final desde varios continentes.",
+   "C": "Un panel muestra el tráfico ya servido; si el portal deja de ser accesible desde una región, simplemente dejan de llegar peticiones que graficar.",
+   "D": "Cloud Trace descompone la latencia dentro de la aplicación para peticiones que sí llegaron; no comprueba la accesibilidad externa del sitio."
+  }
+ },
+ {
+  "id": "CDL-D4-068",
+  "options": {
+   "A": "Soporte Enhanced de Customer Care (respuesta P1 en 1 hora)",
+   "B": "Soporte Standard (respuesta P2 en 4 horas hábiles, sin P1)",
+   "D": "Servicios profesionales de Google Cloud Consulting (PSO)"
+  },
+  "distractors": {
+   "A": "Enhanced ya da cobertura 24/7, pero su objetivo P1 es de 1 hora, cuatro veces el exigido, y el Technical Account Manager no viene incluido.",
+   "B": "Standard no admite casos P1: su objetivo más rápido es P2 en 4 horas de horario hábil, sin teléfono 24/7 ni asesoría proactiva dedicada.",
+   "D": "Consulting entrega proyectos de arquitectura y migración facturados por encargo; no es un contrato de soporte reactivo con objetivos de respuesta."
+  }
+ },
+ {
+  "id": "CDL-D3-018",
+  "options": {
+   "A": "Cloud Deploy con canalizaciones de entrega hacia varios clústeres",
+   "B": "GKE Autopilot en modo regional totalmente gestionado por Google",
+   "D": "Cloud Monitoring con paneles unificados de métricas de la flota"
+  },
+  "distractors": {
+   "A": "Cloud Deploy promueve versiones de aplicación entre entornos; entrega releases, pero no gobierna la configuración ni las políticas de seguridad del clúster.",
+   "B": "Autopilot es un modo de operación de GKE que solo existe dentro de Google Cloud, así que no alcanza a los clústeres locales ni a los de otras nubes públicas.",
+   "D": "La observabilidad revela que las configuraciones divergen, pero no las aplica ni las corrige: es diagnóstico, no gobierno declarativo de la flota."
+  }
+ },
+ {
+  "id": "CDL-D4-057",
+  "options": {
+   "B": "SAML 2.0 con aserciones firmadas emitidas por el proveedor de identidad corporativo",
+   "C": "Kerberos con tickets emitidos por un controlador de dominio de Active Directory",
+   "D": "Claves de API del proyecto enviadas como parámetro en cada petición del usuario"
+  },
+  "distractors": {
+   "B": "SAML federa el inicio de sesión corporativo hacia Cloud Identity, pero no define el consentimiento por alcances (scopes) que permite a la app leer solo el perfil.",
+   "C": "Kerberos autentica dentro de una red corporativa con dominio; no sirve para delegar autorización entre un navegador y una aplicación publicada en Internet.",
+   "D": "Una clave de API identifica al proyecto que llama, no al usuario final, y no ofrece pantalla de consentimiento ni permisos limitados al perfil básico."
+  }
+ },
+ {
+  "id": "CDL-D2-067",
+  "options": {
+   "A": "Vertex AI Model Monitoring, que detecta la deriva de datos y el sesgo de entrenamiento del modelo",
+   "B": "Data Catalog en Dataplex, documentando el linaje y el propietario de cada columna del conjunto",
+   "C": "Vertex AI Model Registry, que versiona los modelos y almacena sus métricas globales de evaluación"
+  },
+  "distractors": {
+   "A": "Model Monitoring compara distribuciones sobre el conjunto de predicciones para alertar de deriva; trabaja a nivel de población, no explica una decisión individual.",
+   "B": "Data Catalog documenta de dónde viene cada columna y quién la gobierna, pero no cuantifica cuánto pesó cada variable en el rechazo de una solicitud concreta.",
+   "C": "El registro versiona modelos y guarda métricas agregadas como la precisión o el AUC; esas cifras globales no justifican ante el regulador un rechazo individual."
+  }
+ },
+ {
+  "id": "CDL-D1-001",
+  "options": {
+   "A": "Cambio de un modelo de gastos operativos (OpEx) mensuales a un modelo de gastos de capital (CapEx) en el que la empresa amortiza en su balance los servidores virtuales que contrata en la nube.",
+   "B": "Conservación del modelo de gastos de capital (CapEx), dado que la empresa sigue comprando y amortizando su propio hardware, alojado ahora físicamente en los centros de datos de Google.",
+   "C": "Sustitución de los gastos de capital (CapEx) por una cuota anual fija negociada por adelantado con Google Cloud, independiente de los recursos que la organización consuma cada mes."
+  },
+  "distractors": {
+   "A": "Describe el movimiento en sentido contrario: la nube sustituye la inversión inicial en activos por gasto corriente, no al revés; además el cliente no capitaliza lo que alquila.",
+   "B": "Eso describe alojamiento o colocation, donde el hardware sigue siendo del cliente. En Google Cloud el cliente nunca compra ni amortiza el equipo, solo paga por su uso.",
+   "C": "Una cuota fija anticipada sigue siendo un compromiso desligado del consumo; el rasgo que define el modelo OpEx es pagar solo por los recursos efectivamente usados."
+  }
+ },
+ {
+  "id": "CDL-D4-062",
+  "options": {
+   "A": "Cloud Armor con reglas preconfiguradas de OWASP",
+   "C": "Artifact Analysis (análisis de vulnerabilidades)",
+   "D": "Security Health Analytics del Security Command Center"
+  },
+  "distractors": {
+   "A": "Cloud Armor bloquea peticiones maliciosas en el borde durante el ataque; mitiga el XSS en tiempo real, pero no rastrea el sitio para descubrir la vulnerabilidad.",
+   "C": "Analiza imágenes de contenedor y paquetes del sistema operativo en Artifact Registry; no recorre la aplicación web en ejecución buscando XSS.",
+   "D": "Detecta configuraciones incorrectas de los recursos de la nube (buckets abiertos, reglas de firewall), no fallas en el código de la aplicación web."
+  }
+ },
+ {
+  "id": "CDL-D2-007",
+  "options": {
+   "A": "Regional con control de versiones de objetos activado",
+   "B": "Regional en us-central1 con clase Nearline y ciclo de vida",
+   "C": "Zonal, replicado con discos persistentes regionales"
+  },
+  "distractors": {
+   "A": "El versionado protege del borrado accidental dentro de la misma región; si la región completa cae, todas las versiones quedan igualmente inaccesibles.",
+   "B": "La clase de almacenamiento cambia el costo y la frecuencia de acceso, no la geografía: los datos siguen alojados en una sola región.",
+   "C": "Cloud Storage no tiene ubicación zonal: eso confunde el almacenamiento de objetos con los discos persistentes de las máquinas virtuales."
+  }
+ },
+ {
+  "id": "CDL-D3-023",
+  "options": {
+   "A": "Cloud Interconnect Dedicado hacia un proveedor de red australiano",
+   "B": "Un bucket de Cloud Storage Multi-Region en la ubicación 'asia'",
+   "D": "Cloud Load Balancing global sin habilitar el almacenamiento en caché"
+  },
+  "distractors": {
+   "A": "Interconnect da conectividad privada entre la red corporativa y Google; los lectores del diario llegan por Internet pública y no usan ese enlace.",
+   "B": "Multi-Region aporta redundancia geográfica y durabilidad, no caché en el borde; además Australia no forma parte de la ubicación 'asia'.",
+   "D": "El balanceador global acerca el punto de entrada al usuario, pero sin CDN cada petición viaja hasta el origen y su tráfico no se descarga."
+  }
+ },
+ {
+  "id": "CDL-D1-015",
+  "options": {
+   "B": "Automatización de la ingesta con canalizaciones de Dataflow para que los reportes existentes se actualicen cada noche.",
+   "C": "Centralización del almacenamiento en un data warehouse de BigQuery gestionado en exclusiva por el equipo de ingeniería.",
+   "D": "Creación de un centro de excelencia que priorice y planifique cada trimestre las solicitudes de reportes del área comercial."
+  },
+  "distractors": {
+   "B": "Mejora la frescura del dato, pero el analista sigue pidiendo a ingeniería que construya cada reporte nuevo: la dependencia y la demora permanecen.",
+   "C": "Consolidar el almacén rompe los silos técnicos; sin embargo, el acceso exclusivo de ingeniería mantiene intacto el cuello de botella organizativo.",
+   "D": "Un comité ordena la cola de peticiones y da visibilidad, pero sigue siendo un proceso de solicitud: no habilita el autoservicio del analista."
+  }
+ },
+ {
+  "id": "CDL-D3-049",
+  "options": {
+   "A": "Migrar la aplicación a Cloud Run con etiquetas de revisión",
+   "B": "Desplegar cada versión con su propia URL de destino",
+   "C": "Cloud Load Balancing con NEG sin servidor por versión"
+  },
+  "distractors": {
+   "A": "Cloud Run sí reparte tráfico entre revisiones, pero exige migrar la aplicación; la pregunta pide una funcionalidad nativa de App Engine.",
+   "B": "Cada versión queda accesible en su propia URL, así que es el usuario quien elige cuál visita: el tráfico de producción no se reparte al 50%.",
+   "C": "Añade el balanceador externo que el requisito excluye y reparte por backend, no por cookie o IP del usuario como pide la prueba A/B."
+  }
+ }
+]

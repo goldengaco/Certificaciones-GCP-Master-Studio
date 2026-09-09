@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D2-011",
+  "subtopic": "Cloud SQL: Escalabilidad de Lecturas mediante Read Replicas",
+  "caseStudy": "none",
+  "scenario": "Una tienda en línea utiliza Cloud SQL para procesar pedidos. Durante el horario comercial, los analistas de negocio ejecutan consultas de reportes muy pesadas que ralentizan las transacciones de compra de los clientes. ¿Cómo debe resolverse este problema de rendimiento?",
+  "correct": "B",
+  "clave_len": 175,
+  "explanation": "Las réplicas de lectura (Read Replicas) permiten escalar horizontalmente la capacidad de lectura de Cloud SQL, aislando las consultas pesadas de Business Intelligence de la base de datos primaria transaccional (OLTP).",
+  "doc": "https://cloud.google.com/sql/docs/mysql/replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Prohibir totalmente la generación de reportes comerciales en la empresa."
+   },
+   {
+    "letter": "B",
+    "len": 175,
+    "text": "Crear una o más réplicas de lectura (Read Replicas) en Cloud SQL y redirigir las consultas de reportes a estas réplicas para no sobrecargar la instancia primaria de escritura."
+   },
+   {
+    "letter": "C",
+    "len": 82,
+    "text": "Convertir la base de datos en un archivo de texto TXT plano compartido por correo."
+   },
+   {
+    "letter": "D",
+    "len": 70,
+    "text": "Apagar la base de datos principal cada 10 minutos para enfriar la CPU."
+   }
+  ],
+  "ratio": 2.34
+ },
+ {
+  "id": "CDL-D4-017",
+  "subtopic": "Cloud Logging: Registros de Auditoría de Cloud (Cloud Audit Logs)",
+  "caseStudy": "none",
+  "scenario": "Un auditor de seguridad necesita saber exactamente: ¿Quién eliminó una base de datos de producción a las 03:00 AM?, ¿Desde qué dirección IP se ejecutó la acción?, y ¿Qué API específica de Google Cloud fue invocada? ¿Qué tipo de registros en Cloud Logging proporcionan esta evidencia forense inmutable?",
+  "correct": "C",
+  "clave_len": 94,
+  "explanation": "Cloud Audit Logs mantiene registros inmutables de auditoría en Cloud Logging que responden a '¿Quién hizo qué, dónde y cuándo?' en Google Cloud. Los registros de Actividad de Administrador (Admin Activity) registran todas las modificaciones de configuración o llamadas de administración y se conservan de forma gratuita e inalterable por 400 días.",
+  "doc": "https://cloud.google.com/logging/docs/audit",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 20,
+    "text": "Cloud DNS Query Logs"
+   },
+   {
+    "letter": "B",
+    "len": 45,
+    "text": "Una servilleta de papel con notas manuscritas"
+   },
+   {
+    "letter": "C",
+    "len": 94,
+    "text": "Registros de Auditoría de Actividad de Administrador (Admin Activity Logs en Cloud Audit Logs)"
+   },
+   {
+    "letter": "D",
+    "len": 56,
+    "text": "El historial de navegación de Google Chrome del empleado"
+   }
+  ],
+  "ratio": 2.33
+ },
+ {
+  "id": "CDL-D4-076",
+  "subtopic": "Google Cloud Armor: Políticas de Seguridad con Restricción Geográfica (Geo-Blocking)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de servicios de streaming de video solo tiene licencias legales para transmitir contenidos en México, Estados Unidos y Canadá. Por requerimientos de derechos de autor y seguridad, deben bloquear automáticamente todo el tráfico web entrante proveniente de cualquier otro país en el borde de la red antes de que llegue a sus servidores web. ¿Qué servicio y función implementan esta restricción?",
+  "correct": "A",
+  "clave_len": 131,
+  "explanation": "Cloud Armor permite definir reglas de seguridad basadas en geolocalización (Geo-blocking), evaluando el código de país de origen de la dirección IP del cliente en la red perimetral de Google y bloqueando o permitiendo el acceso según las necesidades legales y de seguridad.",
+  "doc": "https://cloud.google.com/armor/docs/rules-overview#geo_matching",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 131,
+    "text": "Reglas de filtrado geográfico (Geo-blocking) en las políticas de seguridad de Google Cloud Armor asociadas al balanceador de carga."
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "Apagar los servidores web durante las noches"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "D",
+    "len": 104,
+    "text": "Preguntar amablemente por correo a los usuarios extranjeros si pueden cerrar la ventana de su navegador."
+   }
+  ],
+  "ratio": 2.31
+ },
+ {
+  "id": "CDL-D2-045",
+  "subtopic": "Resumen Estratégico del Ciclo de Vida de los Datos",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto de datos diseña una solución para una aplicación de autos compartidos (ride-sharing). La solución requiere: (1) Ingesta continua de viajes y eventos, (2) Procesamiento y transformación en tiempo real, (3) Almacenamiento en Data Warehouse para consultas SQL, y (4) Dashboards visuales para ejecutivos. ¿Qué secuencia arquitectónica de Google Cloud representa la mejor práctica?",
+  "correct": "A",
+  "clave_len": 159,
+  "explanation": "La arquitectura canónica de referencia para analítica de datos en tiempo real en Google Cloud es: Cloud Pub/Sub para ingesta desacoplada masiva -> Cloud Dataflow para transformación y enriquecimiento en streaming -> BigQuery para almacenamiento analítico y consultas SQL de alto rendimiento -> Looker para gobierno semántico y tableros de control ejecutivos.",
+  "doc": "https://cloud.google.com/architecture/smart-analytics-reference-architecture",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 159,
+    "text": "Cloud Pub/Sub (ingesta) -> Cloud Dataflow (procesamiento streaming) -> BigQuery (data warehouse analítico) -> Looker / Looker Studio (visualización de negocio)"
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Cloud VPN -> Cloud Spanner -> Compute Engine Spot -> Cloud Armor"
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Cloud Storage Archive -> Google Sheets -> Cloud Logging -> Cloud DNS"
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "Cloud SQL -> Discos magnéticos locales -> Enviar memorias USB por mensajería"
+   }
+  ],
+  "ratio": 2.29
+ },
+ {
+  "id": "CDL-D1-018",
+  "subtopic": "Alineación de KPIs de Negocio con Métricas Cloud",
+  "caseStudy": "none",
+  "scenario": "Una empresa de comercio electrónico mide la salud de su TI a través del tiempo de actividad de los servidores (uptime 99.9%). Sin embargo, la dirección quiere vincular estas métricas con el impacto real en el negocio, como la tasa de conversión y la tasa de carritos abandonados. ¿Cuál es el enfoque recomendado por Google Cloud?",
+  "correct": "A",
+  "clave_len": 235,
+  "explanation": "Alinear la ingeniería con el negocio requiere métricas que reflejen directamente la satisfacción y comportamiento del usuario final. Diseñar SLIs/SLOs alrededor de transacciones críticas permite entender cómo el rendimiento del sistema impacta las ventas y los objetivos comerciales.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 235,
+    "text": "Definir Objetivos de Nivel de Servicio (SLOs) e Indicadores de Nivel de Servicio (SLIs) centrados en la experiencia del usuario (como latencia de checkout y éxito de transacciones) directamente correlacionados con los KPIs de ingresos."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Desactivar la observabilidad en producción para ahorrar costos de almacenamiento de registros."
+   },
+   {
+    "letter": "C",
+    "len": 102,
+    "text": "Ignorar las métricas de negocio y enfocarse exclusivamente en el uso de CPU de las máquinas virtuales."
+   },
+   {
+    "letter": "D",
+    "len": 112,
+    "text": "Medir el éxito del proyecto únicamente por el número total de correos electrónicos enviados entre departamentos."
+   }
+  ],
+  "ratio": 2.29
+ },
+ {
+  "id": "CDL-D2-086",
+  "subtopic": "Gobernanza de Acceso a Nivel de Columnas y Filas en BigQuery",
+  "caseStudy": "none",
+  "scenario": "Una empresa de recursos humanos tiene una tabla de empleados en BigQuery. La política de seguridad exige que: (1) Los gerentes regionales solo puedan ver las filas correspondientes a los empleados de su propio país, y (2) La columna de salario (`salary`) se enmascare automáticamente con asteriscos para todos los usuarios excepto para los directores de RRHH. ¿Qué funcionalidades de BigQuery implementan estos controles?",
+  "correct": "D",
+  "clave_len": 207,
+  "explanation": "BigQuery ofrece seguridad granular empresarial: Row-Level Security aplica filtros condicionales transparentes para que cada usuario solo consulte las filas autorizadas según su rol; y Column-Level Security con Dynamic Data Masking enmascara datos sensibles (como salarios o tarjetas) según las Policy Tags asignadas.",
+  "doc": "https://cloud.google.com/bigquery/docs/column-level-security-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 101,
+    "text": "Crear 200 copias manuales de la tabla en proyectos diferentes y actualizarlas por correo electrónico."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Apagar BigQuery y usar hojas de cálculo compartidas sin contraseña."
+   },
+   {
+    "letter": "C",
+    "len": 103,
+    "text": "Hacer públicos todos los salarios en el sitio web de la empresa para no tener que configurar políticas."
+   },
+   {
+    "letter": "D",
+    "len": 207,
+    "text": "Seguridad a nivel de fila (Row-Level Security) para filtrar registros por país y Seguridad a nivel de columna con enmascaramiento dinámico de datos (Dynamic Data Masking / Policy Tags) para ocultar salarios."
+   }
+  ],
+  "ratio": 2.29
+ },
+ {
+  "id": "CDL-D4-012",
+  "subtopic": "Cloud HSM: Módulos de Seguridad de Hardware Certificados FIPS 140-2 Nivel 3",
+  "caseStudy": "none",
+  "scenario": "Una entidad financiera internacional está sujeta a regulaciones que exigen que sus claves criptográficas maestras residan exclusivamente dentro de Módulos de Seguridad de Hardware (Hardware Security Modules - HSM) certificados bajo el estándar FIPS 140-2 Nivel 3, garantizando que las claves nunca salgan del hardware físico. ¿Qué servicio administrado de Google Cloud cumple con esta certificación?",
+  "correct": "D",
+  "clave_len": 41,
+  "explanation": "Cloud HSM es un servicio de módulos de seguridad de hardware en la nube totalmente administrado que permite alojar claves de cifrado y realizar operaciones criptográficas dentro de clústeres HSM certificados FIPS 140-2 Nivel 3 sin la sobrecarga de mantener hardware físico local.",
+  "doc": "https://cloud.google.com/kms/docs/hsm",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 16,
+    "text": "Google Fonts API"
+   },
+   {
+    "letter": "C",
+    "len": 29,
+    "text": "Compute Engine Spot Instances"
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "Cloud HSM (integrado dentro de Cloud KMS)"
+   }
+  ],
+  "ratio": 2.28
+ },
+ {
+  "id": "CDL-D2-063",
+  "subtopic": "Speech-to-Text: Separación de Interlocutores (Speaker Diarization)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de consultoría graba reuniones entre múltiples participantes (médicos y pacientes, o asesores y clientes). Necesitan una transcripción automática que no solo convierta las palabras en texto, sino que identifique claramente quién dijo cada frase (por ejemplo, 'Interlocutor 1: Buenos días; Interlocutor 2: Hola, doctor'). ¿Qué función de Cloud Speech-to-Text deben activar?",
+  "correct": "A",
+  "clave_len": 75,
+  "explanation": "La diarización de interlocutores (Speaker Diarization) en Cloud Speech-to-Text reconoce automáticamente las diferencias de voz en el audio y asigna etiquetas numeradas a cada hablante individual a lo largo de la transcripción.",
+  "doc": "https://cloud.google.com/speech-to-text/docs/diarization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Diarización de interlocutores (Speaker Diarization) en Cloud Speech-to-Text"
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Subir el audio a un bucket bloqueado y borrarlo"
+   },
+   {
+    "letter": "C",
+    "len": 27,
+    "text": "Cloud Spanner Read Replicas"
+   },
+   {
+    "letter": "D",
+    "len": 25,
+    "text": "Cloud VPN con túneles BGP"
+   }
+  ],
+  "ratio": 2.27
+ },
+ {
+  "id": "CDL-D2-051",
+  "subtopic": "Firestore: Modo Datastore vs Modo Nativo",
+  "caseStudy": "none",
+  "scenario": "Un equipo de desarrollo está decidiendo cómo configurar una nueva base de datos Firestore. El proyecto 1 es una aplicación web y móvil interactiva que requiere listeners en tiempo real y SDKs cliente. El proyecto 2 es una aplicación de servidor backend heredada que utiliza la API clásica de Datastore para almacenar millones de entidades sin requerir funciones móviles. ¿Qué modos deben seleccionarse?",
+  "correct": "C",
+  "clave_len": 108,
+  "explanation": "El Modo Nativo de Firestore habilita todas las funciones avanzadas para aplicaciones cliente, como listeners en tiempo real y soporte sin conexión para móviles. El Modo Datastore optimiza el comportamiento para servidores backend que requieren compatibilidad con la API de Cloud Datastore y alta concurrencia de escritura sin funciones móviles.",
+  "doc": "https://cloud.google.com/datastore/docs/firestore-or-datastore",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Proyecto 1: Firestore en Modo Datastore; Proyecto 2: Firestore en Modo Nativo"
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "Ambos deben usar Cloud Storage Coldline"
+   },
+   {
+    "letter": "C",
+    "len": 108,
+    "text": "Proyecto 1: Firestore en Modo Nativo (Native Mode); Proyecto 2: Firestore en Modo Datastore (Datastore Mode)"
+   },
+   {
+    "letter": "D",
+    "len": 28,
+    "text": "Ninguno puede usar Firestore"
+   }
+  ],
+  "ratio": 2.25
+ },
+ {
+  "id": "CDL-D2-084",
+  "subtopic": "Afinamiento de Modelos (Fine-Tuning) vs Ingeniería de Prompts (Prompt Design)",
+  "caseStudy": "none",
+  "scenario": "Un equipo de producto evalúa cómo adaptar un modelo fundacional de Vertex AI para generar resúmenes médicos con terminología clínica extremadamente específica. Inicialmente probaron proporcionar ejemplos en el prompt (Few-shot Prompting), pero los resultados requieren que el modelo internalice permanentemente miles de términos de patología médica. ¿Qué técnica avanzada de adaptación deben aplicar?",
+  "correct": "A",
+  "clave_len": 174,
+  "explanation": "El ajuste fino (Fine-Tuning) en Vertex AI entrena un modelo fundacional existente con un conjunto de datos especializado del cliente para ajustar sus parámetros, permitiéndole dominar tareas específicas, jergas de nicho o estilos estructurados que no se logran solo con prompts.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/generative-ai/models/tune-models",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 174,
+    "text": "Realizar un ajuste fino (Fine-Tuning / Model Tuning) del modelo en Vertex AI utilizando un conjunto de datos etiquetado de ejemplos médicos para ajustar los pesos del modelo."
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "Eliminar todos los términos médicos y reemplazarlos por palabras genéricas en inglés básico."
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Reescribir el modelo completo en lenguaje ensamblador desde cero."
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "Desactivar la inteligencia artificial y redactar todos los resúmenes a mano."
+   }
+  ],
+  "ratio": 2.24
+ },
+ {
+  "id": "CDL-D1-022",
+  "subtopic": "Desarrollo Ágil de Productos vs Enfoque en Cascada",
+  "caseStudy": "none",
+  "scenario": "Una empresa de medios digitales solía planificar proyectos de software con especificaciones rígidas de dos años utilizando el modelo en cascada (Waterfall). Al migrar a Google Cloud, ¿por qué es fundamental adoptar metodologías de desarrollo ágiles?",
+  "correct": "B",
+  "clave_len": 214,
+  "explanation": "La elasticidad y el aprovisionamiento instantáneo de la nube se complementan naturalmente con el desarrollo ágil: permiten lanzar versiones tempranas (MVPs), validar hipótesis con usuarios reales y ajustar la dirección del producto con mínimo costo y desperdicio.",
+  "doc": "https://cloud.google.com/solutions/devops",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 106,
+    "text": "Porque la nube solo funciona si todos los requisitos de software se definen irrevocablemente 5 años antes."
+   },
+   {
+    "letter": "B",
+    "len": 214,
+    "text": "Porque la nube permite realizar experimentos rápidos, iterar sobre productos mínimos viables (MVP) y adaptarse con agilidad a la retroalimentación continua del usuario sin grandes compromisos iniciales de hardware."
+   },
+   {
+    "letter": "C",
+    "len": 90,
+    "text": "Porque Google Cloud bloquea automáticamente los proyectos que utilizan diagramas de Gantt."
+   },
+   {
+    "letter": "D",
+    "len": 92,
+    "text": "Porque las metodologías ágiles garantizan que ningún desarrollador cometa errores de código."
+   }
+  ],
+  "ratio": 2.23
+ },
+ {
+  "id": "CDL-D3-060",
+  "subtopic": "Estrategia 6 R: Retire (Dar de Baja Aplicaciones Obsoletas)",
+  "caseStudy": "none",
+  "scenario": "Durante el análisis de inventario previo a la migración a la nube, una empresa descubre que 45 servidores alojan aplicaciones obsoletas que ya ningún departamento de la empresa utiliza desde hace dos años. ¿Qué acción debe tomarse con estos recursos según el marco de las 6 R?",
+  "correct": "A",
+  "clave_len": 165,
+  "explanation": "La estrategia 'Retire' consiste en identificar y dar de baja de forma segura las aplicaciones que ya no aportan valor al negocio (representando frecuentemente entre el 10% y el 20% del inventario corporativo), ahorrando costos de licencias y eliminando vectores de ataque de seguridad.",
+  "doc": "https://cloud.google.com/solutions/migration-center",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 165,
+    "text": "Retirar y apagar permanentemente los servidores y aplicaciones obsoletas (estrategia Retire), reduciendo costos de licencias, infraestructura y riesgos de seguridad."
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "Duplicar el número de servidores obsoletos cada semana"
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Obligar a los empleados a utilizar las aplicaciones obsoletas a la fuerza"
+   },
+   {
+    "letter": "D",
+    "len": 101,
+    "text": "Migrar todas las aplicaciones obsoletas a las máquinas virtuales más caras y potentes de Google Cloud"
+   }
+  ],
+  "ratio": 2.17
+ },
+ {
+  "id": "CDL-D2-087",
+  "subtopic": "Cloud Spanner: Actualizaciones de Esquema sin Tiempo de Inactividad (Zero Downtime Schema Updates)",
+  "caseStudy": "none",
+  "scenario": "Un juego multijugador global que utiliza Cloud Spanner necesita agregar tres nuevas columnas y un índice secundario a su tabla principal de jugadores. El juego tiene millones de usuarios activos concurrentes las 24 horas y no puede permitirse ninguna ventana de mantenimiento ni bloqueo de tablas. ¿Cómo maneja Cloud Spanner las actualizaciones de esquema (DDL)?",
+  "correct": "C",
+  "clave_len": 189,
+  "explanation": "Cloud Spanner está diseñado para una disponibilidad continua del 99.999%. Soporta modificaciones de esquema en línea (DDL) sin bloquear tablas para lecturas o escrituras, permitiendo que las aplicaciones globales evolucionen sin tiempos de inactividad planificados.",
+  "doc": "https://cloud.google.com/spanner/docs/schema-updates",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 85,
+    "text": "Cloud Spanner borra todos los datos de los usuarios cuando se ejecuta un comando DDL."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Cloud Spanner requiere apagar el servicio durante 48 horas cada vez que se agrega una columna."
+   },
+   {
+    "letter": "C",
+    "len": 189,
+    "text": "Cloud Spanner ejecuta cambios de esquema (DDL) en línea y en segundo plano sin bloquear las lecturas ni escrituras de la base de datos y sin requerir tiempo de inactividad de la aplicación."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "text": "No es posible modificar esquemas en Cloud Spanner una vez creada la base de datos."
+   }
+  ],
+  "ratio": 2.17
+ },
+ {
+  "id": "CDL-D4-087",
+  "subtopic": "Cloud Monitoring: Pruebas Sintéticas y Monitoreo de Experiencia de Usuario",
+  "caseStudy": "none",
+  "scenario": "Un portal bancario no solo necesita saber si el servidor web responde en el puerto 443, sino validar que un usuario simulado pueda completar un flujo completo: iniciar sesión, consultar su saldo y simular una transferencia bancaria cada 5 minutos de forma automática. ¿Qué tipo de monitoreo proporciona esta validación de flujos sintéticos de extremo a extremo?",
+  "correct": "A",
+  "clave_len": 117,
+  "explanation": "Los Synthetic Monitors en Cloud Monitoring ejecutan código automatizado personalizado (mediante Cloud Functions) para simular transacciones completas de usuarios de varios pasos a intervalos regulares, validando que la lógica de negocio y las dependencias complejas funcionen correctamente.",
+  "doc": "https://cloud.google.com/monitoring/synthetic-monitoring/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 117,
+    "text": "Monitores Sintéticos (Synthetic Monitors en Cloud Monitoring basados en scripts de Cloud Functions con Mocha/Node.js)"
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Desactivar las transferencias bancarias para evitar errores"
+   },
+   {
+    "letter": "C",
+    "len": 81,
+    "text": "Contratar a 100 personas para hacer transferencias bancarias manuales todo el día"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   }
+  ],
+  "ratio": 2.17
+ },
+ {
+  "id": "CDL-D2-005",
+  "subtopic": "Cloud Storage: Ciclo de Vida de Objetos (Object Lifecycle Management)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de imágenes médicas genera archivos DICOM que se consultan activamente durante los primeros 30 días posteriores al estudio. Entre los días 31 y 365 solo se consultan ocasionalmente, y después de un año deben conservarse por 7 años por regulación. ¿Cómo debe implementarse esto sin intervención manual?",
+  "correct": "D",
+  "clave_len": 196,
+  "explanation": "Object Lifecycle Management en Cloud Storage permite definir reglas basadas en la antigüedad del objeto para cambiar automáticamente su clase de almacenamiento (ej. Standard -> Coldline -> Archive) o eliminarlo cuando cumpla su vigencia legal, optimizando costos de forma 100% desatendida.",
+  "doc": "https://cloud.google.com/storage/docs/lifecycle",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Borrar todos los archivos a los 30 días para evitar pagar almacenamiento."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Crear 365 máquinas virtuales Compute Engine para mover un archivo por día."
+   },
+   {
+    "letter": "C",
+    "len": 127,
+    "text": "Escribir un script manual que un operador ejecute cada fin de semana para descargar y subir los archivos a diferentes carpetas."
+   },
+   {
+    "letter": "D",
+    "len": 196,
+    "text": "Configurar una política de Object Lifecycle Management en el bucket de Cloud Storage para transicionar automáticamente los objetos de Standard a Coldline a los 30 días, y a Archive a los 365 días."
+   }
+  ],
+  "ratio": 2.15
+ },
+ {
+  "id": "CDL-D2-025",
+  "subtopic": "BigQuery BI Engine: Aceleración de Dashboards en Memoria",
+  "caseStudy": "none",
+  "scenario": "Los directores ejecutivos utilizan paneles interactivos en Looker Studio conectados a BigQuery. Se quejan de que al cambiar los filtros de visualización, las gráficas tardan 8 segundos en refrescarse. La empresa requiere que las consultas interactivas respondan en sub-segundos sin cambiar la estructura de datos. ¿Qué servicio acelera este rendimiento?",
+  "correct": "A",
+  "clave_len": 155,
+  "explanation": "BigQuery BI Engine es un servicio de análisis en memoria de alta velocidad integrado de forma transparente en BigQuery que analiza e interactúa de manera fluida con datos a nivel de sub-segundos desde herramientas como Looker, Looker Studio o Tableau.",
+  "doc": "https://cloud.google.com/bigquery/docs/bi-engine-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 155,
+    "text": "Habilitar BigQuery BI Engine para almacenar en memoria de forma inteligente las tablas analíticas más consultadas y acelerar las respuestas a sub-segundos."
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "Contratar a 10 personas para que redibujen las gráficas manualmente en una pizarra."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Desconectar los dashboards de BigQuery y usar datos simulados fijos."
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Imprimir los dashboards en hojas de papel bond todas las mañanas."
+   }
+  ],
+  "ratio": 2.15
+ },
+ {
+  "id": "CDL-D4-089",
+  "subtopic": "Cloud Identity: Control de Dispositivos Móviles y Endpoint Management",
+  "caseStudy": "none",
+  "scenario": "Una empresa permite a sus empleados acceder a Google Workspace y a la consola de Google Cloud desde sus teléfonos móviles inteligentes y laptops personales. El equipo de seguridad requiere poder imponer el uso de contraseñas de bloqueo de pantalla, exigir el cifrado del almacenamiento del dispositivo y poder borrar de forma remota las cuentas y datos corporativos si un teléfono es extraviado o robado. ¿Qué funcionalidad de Cloud Identity proporciona esta protección?",
+  "correct": "D",
+  "clave_len": 86,
+  "explanation": "Google Endpoint Management (integrado en Cloud Identity y Google Workspace) permite a las empresas asegurar y gestionar los dispositivos móviles y computadoras de los empleados, aplicando políticas de bloqueo, cifrado y borrado remoto selectivo de datos corporativos ante robo o extravío.",
+  "doc": "https://cloud.google.com/identity/docs/overview-endpoint-management",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 28,
+    "text": "Cloud Interconnect Dedicated"
+   },
+   {
+    "letter": "B",
+    "len": 70,
+    "text": "Pedir al ladrón por correo electrónico que devuelva el teléfono robado"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "D",
+    "len": 86,
+    "text": "Gestión de Endpoints de Google Workspace y Cloud Identity (Google Endpoint Management)"
+   }
+  ],
+  "ratio": 2.15
+ },
+ {
+  "id": "CDL-D4-043",
+  "subtopic": "Privacidad de Datos del Cliente: Cláusulas Contractuales y Auditorías Externas",
+  "caseStudy": "none",
+  "scenario": "Un cliente empresarial pregunta si Google analiza los datos que almacenan en Google Cloud para vender publicidad dirigida o compartirlos con anunciantes. ¿Cuál es la postura contractual estricta de Google Cloud?",
+  "correct": "C",
+  "clave_len": 204,
+  "explanation": "Google Cloud mantiene un estricto compromiso de privacidad: los clientes son los únicos dueños de sus datos. Google procesa los datos únicamente de acuerdo con las instrucciones contractuales del cliente y nunca los utiliza para fines publicitarios ni los comercializa a terceros.",
+  "doc": "https://cloud.google.com/security/privacy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 89,
+    "text": "Google vende todos los datos de los clientes empresariales en subastas públicas en línea."
+   },
+   {
+    "letter": "B",
+    "len": 100,
+    "text": "Google Cloud muestra anuncios comerciales emergentes dentro de las máquinas virtuales de producción."
+   },
+   {
+    "letter": "C",
+    "len": 204,
+    "text": "Google Cloud NO utiliza los datos de los clientes empresariales para fines publicitarios, no vende datos de clientes a terceros y el cliente mantiene la propiedad total y exclusiva de toda su información."
+   },
+   {
+    "letter": "D",
+    "len": 97,
+    "text": "Los clientes ceden todos los derechos de propiedad intelectual de sus datos al crear un proyecto."
+   }
+  ],
+  "ratio": 2.14
+ },
+ {
+  "id": "CDL-D3-010",
+  "subtopic": "App Engine: Entorno Estándar vs Entorno Flexible",
+  "caseStudy": "none",
+  "scenario": "Un desarrollador evalúa Google App Engine para dos aplicaciones web: (1) Una app web en Python estándar con tráfico muy variable que necesita escalar de 0 a cientos de instancias en segundos, y (2) Una app web que requiere instalar librerías C++ personalizadas del sistema operativo y utilizar contenedores Docker personalizados. ¿Qué entorno de App Engine corresponde a cada caso?",
+  "correct": "D",
+  "clave_len": 110,
+  "explanation": "App Engine Standard ejecuta aplicaciones en entornos seguros y optimizados (sandboxes) que escalan casi instantáneamente a cero y responden en segundos. App Engine Flexible ejecuta contenedores Docker personalizados en VMs de Compute Engine, permitiendo modificar el sistema operativo e instalar binarios personalizados a cambio de un escalado más gradual.",
+  "doc": "https://cloud.google.com/appengine/docs/the-appengine-environments",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "(1) App Engine Entorno Flexible; (2) App Engine Entorno Estándar"
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Ambas deben ejecutarse en Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 45,
+    "text": "App Engine prohíbe el uso de código en Python"
+   },
+   {
+    "letter": "D",
+    "len": 110,
+    "text": "(1) App Engine Entorno Estándar (Standard Environment); (2) App Engine Entorno Flexible (Flexible Environment)"
+   }
+  ],
+  "ratio": 2.12
+ },
+ {
+  "id": "CDL-D2-054",
+  "subtopic": "Vistas Materializadas en BigQuery (Materialized Views)",
+  "caseStudy": "none",
+  "scenario": "Un panel de control ejecutivo consulta cada 5 minutos la suma total de ventas diarias agrupadas por región sobre una tabla de transacciones de 100 millones de filas. Para acelerar las consultas y reducir los costos de escaneo continuo de la tabla base, ¿qué objeto de base de datos debe crearse en BigQuery?",
+  "correct": "D",
+  "clave_len": 194,
+  "explanation": "Las Vistas Materializadas en BigQuery calculan y almacenan previamente los resultados de consultas agregadas complejas. Cuando se consultan, BigQuery lee solo los datos agregados ya procesados, reduciendo drásticamente la latencia y los bytes escaneados.",
+  "doc": "https://cloud.google.com/bigquery/docs/materialized-views-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 84,
+    "text": "Borrar la tabla de transacciones después de que se genere el primer reporte del día."
+   },
+   {
+    "letter": "B",
+    "len": 111,
+    "text": "Una vista lógica tradicional que vuelva a ejecutar el cálculo completo de 100 millones de filas cada 5 minutos."
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "Un archivo de texto TXT guardado en el escritorio de la secretaria del director."
+   },
+   {
+    "letter": "D",
+    "len": 194,
+    "text": "Una Vista Materializada (Materialized View), que almacena en caché de forma precalculada y periódica los resultados agregados y se actualiza automáticamente cuando cambian los datos subyacentes."
+   }
+  ],
+  "ratio": 2.12
+ },
+ {
+  "id": "CDL-D2-074",
+  "subtopic": "Cloud KMS: Llaves Gestionadas por el Cliente (CMEK) vs Llaves Suministradas por el Cliente (CSEK)",
+  "caseStudy": "none",
+  "scenario": "Una entidad bancaria está sujeta a normativas que le exigen tener control directo sobre el ciclo de vida, rotación y revocación inmediata de las claves de cifrado que protegen sus bases de datos en BigQuery y Cloud Storage. ¿Qué solución de Google Cloud satisface este requerimiento?",
+  "correct": "B",
+  "clave_len": 106,
+  "explanation": "Customer-Managed Encryption Keys (CMEK) permite a los clientes utilizar sus propias claves de cifrado creadas y administradas en Cloud KMS para proteger datos en servicios de Google Cloud (BigQuery, Cloud Storage, Compute Engine), manteniendo el control total para rotar o revocar el acceso a las llaves en cualquier momento.",
+  "doc": "https://cloud.google.com/kms/docs/cmek",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 18,
+    "text": "Cloud Interconnect"
+   },
+   {
+    "letter": "B",
+    "len": 106,
+    "text": "Customer-Managed Encryption Keys (CMEK) administradas a través de Cloud Key Management Service (Cloud KMS)"
+   },
+   {
+    "letter": "C",
+    "len": 60,
+    "text": "Desactivar el cifrado para evitar tener que gestionar llaves"
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "Anotar la clave de cifrado en un post-it en la pantalla del administrador"
+   }
+  ],
+  "ratio": 2.11
+ },
+ {
+  "id": "CDL-D2-024",
+  "subtopic": "Optimización de Consultas en BigQuery: Particionamiento y Agrupamiento (Clustering)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de telecomunicaciones consulta registros de llamadas en BigQuery filtrando siempre por la columna de fecha (`call_date`). Para evitar escanear la tabla completa de 10 años en cada consulta y reducir los costos de facturación bajo demanda, ¿qué práctica debe implementarse?",
+  "correct": "C",
+  "clave_len": 173,
+  "explanation": "El particionamiento de tablas en BigQuery divide una tabla grande en segmentos más pequeños basados en una columna (como fecha o timestamp). Al consultar con filtros de fecha, BigQuery solo escanea las particiones requeridas, reduciendo dramáticamente el tiempo de respuesta y los costos en el modelo bajo demanda.",
+  "doc": "https://cloud.google.com/bigquery/docs/partitioned-tables",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 90,
+    "text": "Eliminar todos los datos históricos para que solo queden registros de las últimas 2 horas."
+   },
+   {
+    "letter": "B",
+    "len": 88,
+    "text": "Ejecutar consultas con `SELECT *` sobre toda la tabla sin cláusula WHERE en cada minuto."
+   },
+   {
+    "letter": "C",
+    "len": 173,
+    "text": "Crear la tabla particionada por fecha (`call_date`), lo que permite a BigQuery podar particiones irrelevantes y escanear únicamente los datos del rango de fechas consultado."
+   },
+   {
+    "letter": "D",
+    "len": 72,
+    "text": "Exportar todos los datos a 5,000 hojas de cálculo de Excel individuales."
+   }
+  ],
+  "ratio": 2.08
+ },
+ {
+  "id": "CDL-D4-016",
+  "subtopic": "Cloud Monitoring: Métricas, Paneles y Políticas de Alerta",
+  "caseStudy": "none",
+  "scenario": "Un equipo de ingeniería requiere recibir una notificación inmediata por correo electrónico y en su canal de Slack si la utilización de CPU de sus servidores web de producción supera el 85% durante más de 5 minutos consecutivos, o si el balanceador de carga reporta errores HTTP 500. ¿Qué servicio de Google Cloud deben configurar?",
+  "correct": "C",
+  "clave_len": 126,
+  "explanation": "Cloud Monitoring recopila métricas, eventos y metadatos de Google Cloud, AWS y entornos locales, permitiendo crear paneles de control interactivos y definir políticas de alerta automatizadas con múltiples canales de notificación (correo, Slack, PagerDuty, Webhooks, SMS).",
+  "doc": "https://cloud.google.com/monitoring/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "B",
+    "len": 85,
+    "text": "Pedir a un operador que mire la pantalla de la consola sin parpadear durante 24 horas"
+   },
+   {
+    "letter": "C",
+    "len": 126,
+    "text": "Cloud Monitoring (creando políticas de alerta y canales de notificación vinculados a métricas de infraestructura y aplicación)"
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "Desactivar las alertas para no ser molestados durante las caídas de servicio"
+   }
+  ],
+  "ratio": 2.07
+ },
+ {
+  "id": "CDL-D2-075",
+  "subtopic": "VPC Service Controls para Proteger Datos Analíticos contra Exfiltración",
+  "caseStudy": "none",
+  "scenario": "Un laboratorio farmacéutico almacena fórmulas moleculares secretas en BigQuery y Cloud Storage. Quieren asegurarse de que ningún empleado interno o cuenta de servicio comprometida pueda transferir o copiar estos datos hacia buckets o proyectos de Google Cloud fuera de la organización corporativa, incluso si tienen permisos válidos de IAM. ¿Qué mecanismo de seguridad perimetral deben implementar?",
+  "correct": "C",
+  "clave_len": 116,
+  "explanation": "VPC Service Controls permite definir perímetros de seguridad alrededor de los servicios administrados de Google Cloud (como BigQuery y Cloud Storage) para aislar los datos dentro de la red confiable y prevenir la exfiltración de información hacia proyectos o cuentas externas no autorizadas.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Apagar los servidores de la empresa a las 5:00 PM"
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "Cambiar el nombre del bucket para que nadie pueda adivinarlo"
+   },
+   {
+    "letter": "C",
+    "len": 116,
+    "text": "VPC Service Controls (creando un perímetro de servicio seguro alrededor de los recursos de BigQuery y Cloud Storage)"
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "Asignar el rol roles/owner a todos los empleados temporales"
+   }
+  ],
+  "ratio": 2.07
+ },
+ {
+  "id": "CDL-D3-029",
+  "subtopic": "Migration Center / StratoZone: Descubrimiento y Evaluación de Cargas",
+  "caseStudy": "none",
+  "scenario": "Antes de iniciar una migración masiva, el Director de TI necesita descubrir automáticamente todos los servidores, bases de datos y aplicaciones que se ejecutan en su centro de datos local, mapear sus dependencias de red y generar una estimación financiera precisa del TCO para migrar a Google Cloud. ¿Qué plataforma unificada de evaluación de Google Cloud deben utilizar?",
+  "correct": "B",
+  "clave_len": 70,
+  "explanation": "Migration Center es la plataforma unificada de Google Cloud que ayuda a las organizaciones a descubrir su infraestructura local existente, analizar la utilización real de recursos, modelar escenarios de costos en la nube (TCO) y planificar olas de migración estructuradas con base en datos reales.",
+  "doc": "https://cloud.google.com/migration-center/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Armor WAF Rules"
+   },
+   {
+    "letter": "B",
+    "len": 70,
+    "text": "Migration Center (que incluye capacidades de evaluación de StratoZone)"
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "Revisar facturas de papel guardadas en un cajón de 2005"
+   },
+   {
+    "letter": "D",
+    "len": 26,
+    "text": "Cloud Bigtable Time-Series"
+   }
+  ],
+  "ratio": 2.06
+ }
+]

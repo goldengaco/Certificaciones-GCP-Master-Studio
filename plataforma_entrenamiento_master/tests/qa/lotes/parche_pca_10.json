@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D1-026",
+  "options": {
+   "A": "Rely on the Pub/Sub client library's built-in publisher retry settings with a long total timeout, keeping the unacknowledged telemetry in the publisher's in-process outstanding message buffer until the cellular link returns.",
+   "B": "Buffer the readings in a bounded in-memory ring buffer sized for two minutes of telemetry and overwrite the oldest records when it fills, publishing whatever the buffer still holds as soon as the cellular modem reattaches.",
+   "D": "Accumulate every unsent reading in an unbounded in-memory list inside the telemetry process and flush the whole list in a single Pub/Sub publish call when the modem regains signal, ordering entries by capture timestamp."
+  },
+  "distractors": {
+   "A": "El buffer del publicador vive en memoria y se pierde con un reinicio del ECU o un corte de alimentacion, y 30 minutos acumulados agotan la RAM del gateway antes de reconectar.",
+   "B": "Un buffer circular de dos minutos descarta los 28 minutos restantes del tunel: el escenario exige no perder ningun registro durante 30 minutos sin cobertura.",
+   "D": "Una lista sin limite crece hasta agotar la memoria en un corte largo, y un unico publish con 30 minutos de datos supera el limite de 10 MB por mensaje de Pub/Sub."
+  }
+ },
+ {
+  "id": "PCA-D2-007",
+  "options": {
+   "A": "Attach a TCP health check on the application port to the load balancer's backend service so that traffic stops being sent to instances failing the probe, and leave the Managed Instance Group without an autohealing policy.",
+   "B": "Enable the instance availability policy with automatic restart and host maintenance set to migrate, so Compute Engine recreates or moves the virtual machine whenever the underlying host reports a fault or needs maintenance.",
+   "D": "Install the Ops Agent to export the application process uptime as a custom metric and create a Cloud Monitoring alerting policy that pages the on-call engineer whenever the metric stops reporting for a given instance."
+  },
+  "distractors": {
+   "A": "El health check del balanceador solo saca la instancia de la rotacion; sin politica de autohealing en el MIG la VM colgada nunca se recrea y la capacidad se degrada indefinidamente.",
+   "B": "automaticRestart actua sobre fallos del host, no sobre el proceso de la aplicacion: la VM que responde a ping con el proceso bloqueado se considera sana y nunca se reinicia.",
+   "D": "Una alerta avisa pero no sustituye la instancia: la reparacion sigue siendo manual, y el escenario pide que el MIG reemplace automaticamente las instancias con la aplicacion bloqueada."
+  }
+ },
+ {
+  "id": "PCA-D1-033",
+  "options": {
+   "A": "Create one Pub/Sub topic per vehicle VIN so each modem publishes to its own topic, and attach a regional subscription that fans the 200,000 topics into the downstream telemetry processing pipeline.",
+   "B": "Open a raw TCP socket from each modem to a Compute Engine ingestion fleet behind a passthrough load balancer and forward the readings as uncompressed XML documents that the fleet republishes to Pub/Sub.",
+   "C": "Send each reading as an individual HTTP request to a Cloud Run endpoint that forwards it to Pub/Sub, relying on connection keep-alive so the client does not renegotiate TLS on every telemetry message."
+  },
+  "distractors": {
+   "A": "No reduce el numero de llamadas publish, que sigue siendo una por mensaje, y 200.000 topics rebasan de largo la cuota de topics por proyecto de Pub/Sub.",
+   "B": "XML sin comprimir aumenta el volumen sobre el enlace celular en vez de reducirlo, y anade una flota de VM que hay que operar y escalar solo para reempaquetar mensajes.",
+   "C": "Mantiene las 1.666 peticiones por segundo, ahora contra Cloud Run: ni el numero de llamadas ni el trafico celular bajan, y se anade un salto de computo facturado."
+  }
+ },
+ {
+  "id": "PCA-D2-019",
+  "options": {
+   "A": "Use Terraform to create the same deny ingress rule for TCP 22 and 3389 from 0.0.0.0/0 with priority 1000 in every VPC of the 500 projects, and run a nightly pipeline that re-applies the module to correct any drift.",
+   "B": "Enforce the organization policy constraint constraints/compute.vmExternalIpAccess with an empty allowed list so that no virtual machine can receive an external IP address and none is reachable over SSH or RDP.",
+   "D": "Create a global network firewall policy holding the deny rules for TCP 22 and 3389 and associate it with each of the 500 VPC networks, so the policy is evaluated together with the rules the project teams maintain."
+  },
+  "distractors": {
+   "A": "La regla vive dentro del proyecto: un administrador local puede borrarla o crear otra con prioridad menor, y el drift solo se corrige en la siguiente ejecucion nocturna.",
+   "B": "Bloquea las IP externas pero no el trafico entrante: una VM sigue siendo alcanzable en 22 y 3389 a traves de un balanceador o de un bastion, y no es una regla de firewall.",
+   "D": "Una politica de firewall de red se asocia por VPC y el propietario del proyecto puede desasociarla; solo la jerarquica, anclada en la organizacion, resulta inamovible desde el proyecto."
+  }
+ },
+ {
+  "id": "PCA-D1-052",
+  "options": {
+   "A": "Create one authorized view per team in a separate dataset, selecting only the billing columns for the billing analysts and adding a WHERE hospital_id predicate in each administrator's view, then grant the teams access to the views rather than the base table.",
+   "B": "Split the analytical table into a financial table and a clinical table, grant the billing team roles/bigquery.dataViewer only on the financial dataset, and create one dataset per hospital branch holding that branch's rows for its own administrators.",
+   "C": "Apply Dataplex policy tags to the SSN and diagnosis columns for documentation purposes, and have the Looker reporting layer enforce the hospital filter by injecting the analyst's branch identifier into the WHERE clause of every generated SQL query."
+  },
+  "distractors": {
+   "A": "La proteccion depende por completo de que nadie reciba acceso a la tabla base: no hay control a nivel de columna, asi que un permiso directo sobre la tabla revela SSN y diagnosticos.",
+   "B": "Duplica los datos en cientos de datasets y rompe la tabla unificada: cada hospital nuevo exige un dataset y una copia, y no hay filtrado por identidad en tiempo de consulta.",
+   "C": "Sin activar el control de acceso de nivel de columna las policy tags son solo metadatos, y un analista que consulte BigQuery directamente esquiva el filtro que aplica Looker."
+  }
+ },
+ {
+  "id": "PCA-D1-047",
+  "options": {
+   "A": "Terminate the remote clinician laptops on an HA VPN gateway into the production VPC and rely on VPC firewall rules plus a per-user IPsec pre-shared key and static route set to limit which internal subnets each clinician's tunnel is allowed to reach.",
+   "B": "Expose the charting portals through an External Application Load Balancer protected by Cloud Armor rules that allow only the known clinic IP ranges, and let each application implement its own Google OAuth sign-in flow for the clinician's identity.",
+   "C": "Publish the portals only inside the VPC and have clinicians reach them by opening an IAP TCP forwarding tunnel from their laptop to a bastion host with the gcloud CLI, then browsing to the forwarded local port over that tunnel from the browser."
+  },
+  "distractors": {
+   "A": "Es exactamente el concentrador VPN que se quiere eliminar: concede acceso a nivel de red y no evalua la identidad, la MFA ni el estado del dispositivo en cada peticion HTTPS.",
+   "B": "Filtrar por rango de IP no funciona con medicos en casa y clinicas moviles de direccion dinamica, y la autorizacion queda dispersa en cada aplicacion sin verificar el dispositivo.",
+   "C": "Da acceso al bastion en capa 4, no a la aplicacion: una vez dentro del tunel el clinico alcanza cualquier backend del VPC y no hay autorizacion por aplicacion web."
+  }
+ },
+ {
+  "id": "PCA-D2-013",
+  "options": {
+   "A": "Assign external IP addresses to the europe-west1 instances and let the on-premises datacenter reach them over the internet, restricting the traffic with VPC firewall rules that allow only the corporate egress ranges.",
+   "B": "Build an HA VPN tunnel between a gateway in us-central1 and another in europe-west1 inside the same VPC, so that the European subnets become reachable from the Interconnect through the newly created tunnel.",
+   "D": "Create custom static routes in the Google Cloud VPC for each europe-west1 subnet with the Cloud Interconnect VLAN attachment as the next hop, so traffic destined for Europe leaves through the on-premises connection."
+  },
+  "distractors": {
+   "A": "Saca el trafico del Interconnect a internet, pierde la conectividad privada y no resuelve el problema real, que es el anuncio de rutas del Cloud Router al peer BGP.",
+   "B": "Las subredes de una misma VPC ya son alcanzables entre regiones sin tunel: el problema es que el Cloud Router en modo regional no las anuncia al on-premises, y el tunel no cambia eso.",
+   "D": "Las rutas estaticas dirigen el trafico que sale de Google Cloud, pero el sentido que falla es el contrario: el router on-premises sigue sin aprender los prefijos europeos por BGP."
+  }
+ },
+ {
+  "id": "PCA-D2-022",
+  "options": {
+   "A": "Create a dedicated Kubernetes namespace for the inference workloads with a ResourceQuota granting nvidia.com/gpu resources, and rely on the scheduler to place any pod that requests a GPU on the node pool that provides them.",
+   "B": "Label the GPU node pool with accelerator=nvidia-a100 and add a matching nodeSelector to the ML inference pod specs, leaving the web microservice manifests untouched so the scheduler places them wherever capacity exists.",
+   "C": "Add a podAntiAffinity rule to the web microservice deployments so that they avoid nodes already running inference pods, and enable the cluster autoscaler on both node pools so capacity follows the actual demand."
+  },
+  "distractors": {
+   "A": "La cuota limita cuantas GPU puede pedir el namespace, pero no repele a los pods sin GPU: el planificador puede colocar los pods web en los nodos A100 porque tienen CPU y memoria libres.",
+   "B": "El nodeSelector ata los pods de ML al pool correcto, pero sin taint nada impide que los pods web se planifiquen en esos mismos nodos A100 cuando el resto del cluster esta lleno.",
+   "C": "La antiafinidad se evalua contra los pods ya presentes: si un nodo GPU esta vacio no hay nada que repeler y el pod web aterriza igualmente sobre la A100."
+  }
+ },
+ {
+  "id": "PCA-D1-042",
+  "options": {
+   "A": "Create Customer-Managed Encryption Keys in Cloud KMS with the default SOFTWARE protection level, set a 90-day automatic rotation schedule, and enable Data Access audit logs so every encrypt and decrypt call is recorded.",
+   "B": "Use Cloud External Key Manager to reference keys held in a third-party key management service outside Google Cloud, rotating them on the vendor's 90-day schedule and binding them to Cloud SQL and BigQuery through Cloud KMS.",
+   "D": "Rely on Google's default encryption at rest, which already stores the key encryption keys in Google's own hardware infrastructure, and enable Cloud Audit Logs on Cloud SQL, BigQuery and Cloud Storage to record every access."
+  },
+  "distractors": {
+   "A": "El nivel SOFTWARE de Cloud KMS esta validado en FIPS 140-2 nivel 1, no nivel 3: la clave no reside en un modulo hardware certificado como exige el estatuto de cumplimiento.",
+   "B": "La certificacion pasa a depender del proveedor externo, que Google no valida: el estatuto exige HSM certificados FIPS 140-2 nivel 3 y solo Cloud HSM lo acredita dentro de la plataforma.",
+   "D": "Con claves gestionadas por Google el cliente no controla la rotacion cada 90 dias ni obtiene registros de uso criptografico por clave que pueda presentar al auditor."
+  }
+ },
+ {
+  "id": "PCA-D1-053",
+  "options": {
+   "B": "Enable Artifact Registry automatic vulnerability scanning and make the Cloud Build pipeline fail whenever the scan reports a critical CVE, so that only images which finished the pipeline successfully are pushed to the production repository.",
+   "C": "Install Policy Controller with a constraint that only admits pods whose image reference starts with the production Artifact Registry repository path, rejecting any manifest that pulls from Docker Hub or a developer's personal registry.",
+   "D": "Have Cloud Build sign each image digest with a Cloud KMS key and record the signature in a Cloud Storage manifest that the deployment script consults before running kubectl apply against the production GKE cluster."
+  },
+  "distractors": {
+   "B": "El control vive en la pipeline, no en el cluster: cualquiera con permisos de despliegue puede aplicar un manifiesto que apunte a una imagen que nunca paso por Cloud Build.",
+   "C": "Comprueba la procedencia por el nombre de la imagen, no una firma criptografica: basta con etiquetar y subir una imagen sin escanear a ese mismo repositorio para superar la admision.",
+   "D": "La verificacion la hace el script de despliegue, que se puede saltar: sin regla de admision en GKE el cluster acepta igualmente un pod creado directamente contra su API."
+  }
+ },
+ {
+  "id": "PCA-D1-037",
+  "options": {
+   "A": "Provision four Partner Interconnect VLAN attachments across two metros and layer HA VPN tunnels over them so that the PHI traffic is encrypted with IPsec between the on-premises routers and the Cloud VPN gateways.",
+   "B": "Provision two Dedicated Interconnect circuits with MACsec enabled inside a single metropolitan colocation facility, terminating both on redundant on-premises routers and pairing them with Cloud Routers in global dynamic routing mode.",
+   "C": "Provision four Dedicated Interconnect circuits across two metros without MACsec, and encrypt the PHI at the application layer with TLS 1.3 between the hospital systems and the Google Cloud services receiving the telemetry."
+  },
+  "distractors": {
+   "A": "HA VPN over Cloud Interconnect cifra en capa 3 con IPsec, no en capa 2 como exige el mandato MACsec, y cada tunel topa en unos pocos gigabits para un flujo continuo de terabytes.",
+   "B": "Dos circuitos en una sola area metropolitana dan el SLA del 99,9 %, no del 99,99 %: el segundo nivel exige cuatro circuitos repartidos en dos zonas metropolitanas distintas.",
+   "C": "Alcanza el SLA del 99,99 % pero deja el circuito fisico sin cifrar: el requisito pide cifrado punto a punto en el propio transporte, no solo en la capa de aplicacion."
+  }
+ },
+ {
+  "id": "PCA-D1-071",
+  "options": {
+   "A": "Serve the two-second segments with Cache-Control: public, max-age=86400 so that the edge POPs keep every segment for a full day and no request for an already generated segment ever reaches the origin bucket again.",
+   "C": "Enable Cloud CDN in CACHE_ALL_STATIC mode on the backend bucket and configure negative caching for 404 responses, letting the default heuristic TTLs decide how long each video segment stays in the edge cache.",
+   "D": "Put a Cloud Memorystore for Redis cluster in front of the origin bucket and have a Cloud Run service read each requested segment from Redis, falling back to Cloud Storage and repopulating the cache on a miss."
+  },
+  "distractors": {
+   "A": "Un TTL de un dia no evita la estampida: el primer acceso a cada segmento recien generado sigue llegando simultaneamente al origen desde todos los POP, que es el problema real.",
+   "C": "El cache negativo evita repetir los 404, pero sin request collapsing ni origin shield las peticiones al mismo segmento nuevo se convierten en 30 millones de fallos de cache contra el bucket.",
+   "D": "Mueve el cache a una unica region en vez de a los POP de borde: los espectadores globales siguen atravesando internet hasta el origen y no se sirve el 99,9 % desde el borde."
+  }
+ },
+ {
+  "id": "PCA-D3-002",
+  "options": {
+   "A": "Store the service account JSON key in AWS Secrets Manager, restrict its retrieval to the EC2 instance profile role, and have the analytics application fetch the key at start-up so that no credential file is ever written to disk.",
+   "B": "Create a service account key, distribute it through the EC2 user data script, and rotate it every 24 hours with a Lambda function that mints a new key with the IAM API and disables the previous one automatically.",
+   "C": "Configure a Workforce Identity Pool federated with the corporate identity provider and have the EC2 analytics application sign in with a service user of that pool to obtain short-lived credentials for querying BigQuery."
+  },
+  "distractors": {
+   "A": "La clave estatica sigue existiendo y sale de Google Cloud para vivir en AWS, que es justo lo que la politica prohibe: donde se guarde no cambia que sea credencial de larga duracion.",
+   "B": "Rotar acorta la ventana pero la politica es categorica: no puede existir ninguna clave JSON estatica fuera de Google Cloud, y la propia Lambda necesita otra credencial para rotarla.",
+   "C": "Workforce Identity Federation federa identidades humanas de empleados; para una carga automatizada en EC2 el producto es Workload Identity Federation con proveedor de AWS."
+  }
+ },
+ {
+  "id": "PCA-D1-055",
+  "options": {
+   "B": "Ingest the RTMP camera feeds into a Compute Engine relay, write two-second chunks to Cloud Storage, and process each chunk with the Transcoder API into multi-bitrate HLS renditions delivered by a Global External Application Load Balancer with Cloud CDN.",
+   "C": "Terminate all the camera RTMP feeds on a regional managed instance group in us-central1 running the NGINX RTMP module and FFmpeg for the bitrate ladder, serving the HLS playlists and segments straight from the instances to viewers worldwide.",
+   "D": "Distribute the raw camera feeds to viewers as individual WebRTC peer connections negotiated through a signalling service on GKE, with TURN relay instance groups deployed in each continent to traverse the viewers' network address translation."
+  },
+  "distractors": {
+   "B": "La Transcoder API es un servicio de VOD por trabajos sobre ficheros completos: encolar y transcodificar cada fragmento impide bajar de dos segundos de latencia glass-to-glass en directo.",
+   "C": "Los espectadores globales tiran directamente de us-central1 sin cache de borde: el coste de egreso se dispara y la latencia transcontinental rompe la estabilidad para 30 millones de conexiones.",
+   "D": "WebRTC da latencia minima pero no escala a 30 millones de sesiones punto a punto: exigiria una flota enorme de relays TURN y pierde el cache de borde que abarata el egreso."
+  }
+ },
+ {
+  "id": "PCA-D2-020",
+  "options": {
+   "B": "Build a full mesh of HA VPN tunnels between the 20 branch offices, the 3 datacenters and each of the 10 VPC networks, with Cloud Routers exchanging BGP on every tunnel so that every site learns the prefixes of every other site.",
+   "C": "Designate one VPC as the hub, peer the other nine VPC networks to it with VPC Network Peering, and attach the Interconnects and Cloud VPN gateways to that hub so all branch and datacenter traffic transits through it.",
+   "D": "Deploy a pair of third-party SD-WAN router appliances on Compute Engine instances that terminate the branch VPN tunnels and the datacenter Interconnects, redistributing routes between all 10 VPC networks through their interfaces."
+  },
+  "distractors": {
+   "B": "Una malla completa crece de forma cuadratica en tuneles y sesiones BGP que mantener, y no usa el backbone de Google como transito: es exactamente la topologia que NCC viene a sustituir.",
+   "C": "El peering de VPC no es transitivo: las VPC radiales se ven con el hub pero no entre si ni con los Interconnects conectados al hub, asi que no existe transito WAN real.",
+   "D": "Introduce appliances que hay que dimensionar, parchear y escalar como cuello de botella de todo el transito, en lugar del hub gestionado que enruta directamente sobre el backbone."
+  }
+ },
+ {
+  "id": "PCA-D2-021",
+  "options": {
+   "A": "Create a second Cloud DNS private zone for 'corp.internal' in Project B authorized for VPC-B and keep its record set synchronized with the zone in Project A through a Cloud Build job that runs on every change merged.",
+   "C": "Publish 'corp.internal' as a Cloud DNS public managed zone containing the RFC 1918 addresses of the microservices, and restrict who can reach them with VPC firewall rules rather than with the visibility of the records.",
+   "D": "Deploy a pair of BIND9 resolvers on Compute Engine instances inside VPC-A holding the corp.internal records, and reconfigure every virtual machine in VPC-B to use those two resolver addresses instead of the metadata server."
+  },
+  "distractors": {
+   "A": "Duplica los registros en dos zonas independientes: cualquier alta o cambio en VPC-A tarda en propagarse y una sincronizacion fallida deja a VPC-B resolviendo direcciones obsoletas.",
+   "C": "Publica el mapa de la red interna en internet, que es justo lo que el escenario prohibe; el firewall protege el trafico pero no oculta los registros ya publicados.",
+   "D": "Despliega los servidores BIND que el escenario descarta, y apuntar las VM a resolvers propios les hace perder la resolucion nativa de los nombres internos de Compute Engine."
+  }
+ },
+ {
+  "id": "PCA-D2-040",
+  "options": {
+   "A": "Deploy GKE on VMware on the factory servers, registering the user clusters with GKE Connect so the robotics workloads run on-premises under a vSphere-managed virtualization layer.",
+   "C": "Order Google Distributed Cloud Edge appliances for each factory and run the sensor processing workloads on the Google-supplied hardware racks, managed from the Google Cloud console.",
+   "D": "Run the sensor processing containers on a regional GKE Autopilot cluster in the nearest Google Cloud region and connect the factory robots through a Dedicated Interconnect with global routing."
+  },
+  "distractors": {
+   "A": "Introduce el hipervisor ESXi que el escenario excluye: anade licencias, sobrecarga y una capa que impide el acceso directo submilisegundo al hardware de los robots.",
+   "C": "Obliga a sustituir los servidores fisicos que la fabrica ya tiene por hardware suministrado por Google, mientras que el requisito es instalar Kubernetes sobre esos mismos servidores.",
+   "D": "El procesamiento se va a la nube: la latencia de ida y vuelta por el enlace impide el control submilisegundo del brazo robotico y la fabrica se detiene si cae el circuito."
+  }
+ },
+ {
+  "id": "PCA-D3-003",
+  "options": {
+   "B": "Create a custom IAM role containing only the compute.instances permissions and grant it to the contractor at the project level, removing the binding with a Cloud Scheduler job that runs on Monday morning.",
+   "C": "Grant roles/compute.admin on the production project and configure a VPC Service Controls perimeter with an access level that only admits requests coming from 198.51.100.0/24, revoking the role by hand after the window.",
+   "D": "Create a dedicated service account holding roles/compute.admin, hand the contractor a JSON key for it, and disable that service account with a scheduled job once the maintenance window closes on Sunday night."
+  },
+  "distractors": {
+   "B": "Un rol personalizado acota que se puede hacer, pero no cuando ni desde donde: no restringe la ventana horaria ni el rango de IP de origen que exige el escenario.",
+   "C": "El perimetro filtra por IP pero no por tiempo, y la revocacion manual del rol depende de que alguien se acuerde el lunes: la condicion temporal nunca queda aplicada.",
+   "D": "Entrega una credencial de larga duracion que el contratista conserva y puede copiar, y desactivarla despues no impide que la use desde cualquier IP durante la ventana."
+  }
+ },
+ {
+  "id": "PCA-D2-010",
+  "options": {
+   "B": "Create a Cloud DNS geolocation routing policy that resolves the service name to the regional load balancer address closest to the client, with health-checked failover to the other region and a 30-second record TTL.",
+   "C": "Install the NGINX Ingress Controller in each cluster behind its own regional External Application Load Balancer, and split the canary traffic by weighting the upstream blocks in the us-east1 cluster configuration.",
+   "D": "Configure legacy Multi-Cluster Ingress with a MultiClusterIngress and MultiClusterService pair registered on the fleet, provisioning a Global External Application Load Balancer that fronts both the us-east1 and europe-west1 clusters."
+  },
+  "distractors": {
+   "B": "DNS reparte respuestas cacheadas, no peticiones: no permite un canary ponderado del 10 % con precision y el TTL retrasa la conmutacion frente al failover inmediato del balanceador global.",
+   "C": "Cada cluster queda detras de su propia IP regional: no hay una entrada Anycast global que enrute al cluster mas cercano ni conmutacion automatica entre regiones.",
+   "D": "MCI da la IP anycast global y el failover, pero su API no expresa reparto ponderado de trafico: el canary del 10 % hacia europe-west1 no se puede declarar."
+  }
+ },
+ {
+  "id": "PCA-D2-001",
+  "options": {
+   "A": "Store the state in a Cloud Storage bucket inside each of the 50 projects without Object Versioning, and serialize the pipelines by having every CI job acquire a lock row in a shared Cloud SQL table before running terraform apply.",
+   "B": "Keep terraform.tfstate on each engineer's workstation and on the CI runner, synchronizing the files into a shared Cloud Storage bucket with gsutil rsync at the end of every apply so the team always holds the newest copy.",
+   "C": "Configure the GCS backend in a single shared bucket with default settings, relying on Terraform's built-in state locking and on the bucket's default Google-managed encryption to protect the 50 project state files."
+  },
+  "distractors": {
+   "A": "El bloqueo casero en Cloud SQL no se libera si el job muere a mitad y deja la infraestructura bloqueada, y sin versionado de objetos un state corrupto no se puede revertir.",
+   "B": "Cada copia local es un state independiente: dos apply concurrentes se sobrescriben mutuamente en la sincronizacion, y gsutil rsync no implementa ningun tipo de bloqueo.",
+   "C": "El bloqueo funciona, pero sin Object Versioning el borrado accidental o la corrupcion del fichero de estado son irreversibles, que es justo el riesgo que plantea el escenario."
+  }
+ },
+ {
+  "id": "PCA-D1-056",
+  "options": {
+   "A": "Keep a regional managed instance group of 1,000 Compute Engine instances running continuously behind a Global External Application Load Balancer, sized for the peak so that no scaling event can ever delay a live telemetry request.",
+   "C": "Deploy the telemetry and betting odds endpoints as Cloud Functions (1st gen) with concurrency fixed at one request per instance and the maximum instance count raised to 3,000 to absorb the race-day burst of traffic.",
+   "D": "Run the microservices on a GKE Autopilot cluster with a Horizontal Pod Autoscaler targeting 70 percent CPU and cluster autoscaling enabled, letting the cluster grow from a minimal baseline when the race traffic arrives."
+  },
+  "distractors": {
+   "A": "Paga 1.000 instancias los dias sin carrera, cuando el trafico es casi cero: el escenario exige coste de computo nulo fuera de las ventanas de dos horas.",
+   "C": "Con concurrencia 1 harian falta cientos de miles de instancias para 500.000 req/s y el tope de 3.000 se queda cortisimo, ademas de arrancar en frio una instancia por peticion.",
+   "D": "El autoescalado de nodos tarda minutos en aprovisionar capacidad y el cluster mantiene siempre un minimo facturado: ni absorbe el salto instantaneo ni llega a coste cero."
+  }
+ },
+ {
+  "id": "PCA-D3-054",
+  "options": {
+   "A": "Create the Cloud KMS key ring in the 'global' location so a single key protects the European fleet data, restricting its use with an IAM condition that only allows callers from the EU project.",
+   "B": "Create the key ring in the 'europe' multi-region location so the key is available across every European region, binding it through CMEK to the BigQuery datasets that hold the fleet data.",
+   "C": "Keep a single Cloud HSM key ring in us-central1 and replicate the European vehicle data into a europe-west1 bucket encrypted with that same customer-managed key held in the US project."
+  },
+  "distractors": {
+   "A": "El emplazamiento 'global' replica el material de clave en varias regiones, incluidas las de Estados Unidos: la clave sale del territorio europeo aunque IAM restrinja quien la usa.",
+   "B": "Una clave en la multirregion 'europe' no puede cifrar un recurso regional de europe-west1, porque CMEK exige que la localizacion de la clave coincida con la del recurso.",
+   "C": "La clave sigue viviendo y operandose en us-central1: el dato europeo depende de infraestructura estadounidense para descifrarse, que es exactamente lo que la norma prohibe."
+  }
+ },
+ {
+  "id": "PCA-D1-043",
+  "options": {
+   "A": "Provision a zonal Cloud SQL instance with Private Service Access and create a cross-zone read replica that the operations team promotes to primary with gcloud sql instances promote-replica when the primary zone fails.",
+   "B": "Provision a Regional Cloud SQL instance with high availability and a public IP address, restricting access with an Authorized Networks list containing only the corporate egress ranges and the application's connector range.",
+   "C": "Provision a Regional Cloud SQL instance with high availability and Private Service Access, leaving the SSL mode at 'Allow unencrypted and encrypted' so legacy billing clients without a certificate keep working."
+  },
+  "distractors": {
+   "A": "Promover una replica de lectura es un procedimiento manual y asincrono: no cumple el RTO de 60 segundos y puede perder transacciones ya confirmadas en el primario.",
+   "B": "Mantiene una IP publica, que el escenario prohibe de forma explicita: las redes autorizadas filtran quien conecta pero el endpoint sigue publicado en internet.",
+   "C": "Cumple la alta disponibilidad y la privacidad de red, pero incumple el cifrado obligatorio: el modo permisivo deja pasar conexiones de cliente sin TLS."
+  }
+ },
+ {
+  "id": "PCA-D1-032",
+  "options": {
+   "A": "Trigger a Cloud Run function on every Pub/Sub reading, keeping the running count of consecutive readings above 105 degrees per vehicle in a Firestore document, and emit the alert once the document shows sixty seconds of sustained readings.",
+   "C": "Stream the telemetry into BigQuery with the Storage Write API and run a scheduled query every minute that groups the last sixty seconds of readings by vehicle_id, publishing an alert row for each vehicle whose minimum reading exceeds 105 degrees.",
+   "D": "Use a Dataflow streaming pipeline with sixty-second processing-time windows over the Pub/Sub subscription, counting per vehicle_id how many readings in each window exceeded 105 degrees and emitting the alert when the window closes."
+  },
+  "distractors": {
+   "A": "Cada invocacion procesa un mensaje aislado y sin marca de agua: las lecturas que llegan desordenadas o duplicadas corrompen el contador que decide la alerta de seguridad.",
+   "C": "La consulta programada tiene un periodo minimo de un minuto y el propio escaneo anade retardo: la alerta en cabina llega tarde para una condicion de seguridad inmediata.",
+   "D": "Agrupar por tiempo de proceso mezcla lecturas de instantes distintos cuando la red del tractor se retrasa: la condicion sostenida debe evaluarse en tiempo de evento."
+  }
+ },
+ {
+  "id": "PCA-D2-026",
+  "options": {
+   "A": "Create a Bigtable instance with two replicated clusters and a single-cluster App Profile pinned to the primary, letting the ingestion client catch errors and switch to a second profile targeting the replica.",
+   "B": "Deploy two independent single-cluster Bigtable instances in different zones and have the ingestion service write every telemetry row to both, reading from whichever instance answers first.",
+   "C": "Deploy a single Bigtable cluster and schedule managed backups every hour into a second region, restoring the most recent backup into a new cluster whenever the original zone becomes unavailable during maintenance."
+  },
+  "distractors": {
+   "A": "El failover pasa a depender del cliente: hay que detectar el fallo, reintentar y cambiar de perfil, lo que rompe el requisito de conmutacion automatica y sub-segundo sin intervencion.",
+   "B": "Dos instancias separadas no comparten replicacion: una escritura que falle en una de ellas deja divergencia permanente entre zonas y el cliente carga con la consistencia.",
+   "C": "Restaurar una copia de seguridad lleva minutos u horas y pierde lo escrito desde el ultimo backup: no hay conmutacion sub-segundo ni los cinco nueves de disponibilidad."
+  }
+ }
+]

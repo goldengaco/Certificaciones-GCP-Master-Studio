@@ -40,7 +40,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  background: rgba(66, 133, 244, 0.18);
+  background: var(--gcp-blue-subtle);
   color: var(--gcp-blue);
   border: 1px solid rgba(138, 180, 248, 0.4);
   padding: 4px 10px;
@@ -91,9 +91,10 @@
   flex-direction: column;
   gap: 6px;
   box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.35), 0 1px 3px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
   position: relative;
   overflow: hidden;
+  will-change: transform;
 }
 
 .stat-pill:hover, .stat-card:hover {
@@ -265,8 +266,8 @@
 .action-meta {
   font-size: 0.84rem;
   font-weight: 600;
-  color: var(--text-muted);
-  background: rgba(0, 0, 0, 0.35);
+  color: var(--text-secondary);
+  background: var(--bg-surface-high);
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 6px 14px;
   border-radius: var(--radius-full);
@@ -622,6 +623,7 @@
 }
 
 .free-cert-gcp-sync {
+  color: var(--text-primary);
   background: var(--gcp-blue-subtle);
   border-left: 3px solid var(--gcp-blue);
   padding: 8px 10px;
@@ -642,7 +644,9 @@
   display: block;
   text-align: center;
   background: var(--gcp-green);
-  color: #fff;
+  /* El verde de marca es claro en tema oscuro; blanco encima daba 1.95:1.
+     Con tinta oscura sube por encima de 4.5:1 y pasa WCAG AA. */
+  color: var(--on-brand-green);
   font-weight: 700;
   font-size: 0.9rem;
   padding: 10px 16px;
@@ -758,12 +762,13 @@
 }
 
 .cert-pill:hover:not(.active) {
-  color: #ffffff;
+  color: var(--text-primary);
   background: rgba(255, 255, 255, 0.08);
 }
 
 .cert-pill.active {
-  background: #1a73e8 !important;
+  /* Azul solido oscuro (no el pastel de marca): encima va blanco, 4.87:1. */
+  background: var(--brand-blue-solid) !important;
   color: #ffffff !important;
   box-shadow: 0 2px 10px rgba(26, 115, 232, 0.4);
 }
@@ -814,7 +819,7 @@
 }
 
 .nav-tab:hover {
-  color: #e8eaed;
+  color: var(--text-primary);
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -823,8 +828,8 @@
 }
 
 .nav-tab.active {
-  color: #8ab4f8;
-  background: rgba(138, 180, 248, 0.12);
+  color: var(--gcp-blue);
+  background: var(--gcp-blue-subtle);
   border-color: rgba(138, 180, 248, 0.25);
   font-weight: 700;
 }
@@ -838,6 +843,30 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.35rem 0.65rem;
+}
+
+.lang-btn .lang-tag {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  line-height: 1;
+}
+
+.lang-btn .lang-tag.lang-active {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.lang-btn .lang-tag.lang-inactive {
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 /* Search Question Card & Luxury Option Cards */
@@ -885,20 +914,20 @@
 }
 
 .badge-cdl {
-  background: rgba(66, 133, 244, 0.18);
-  color: #8ab4f8;
+  background: var(--gcp-blue-subtle);
+  color: var(--gcp-blue);
   border: 1px solid rgba(138, 180, 248, 0.4);
 }
 
 .badge-ace {
-  background: rgba(52, 168, 83, 0.18);
-  color: #81c995;
+  background: var(--gcp-green-subtle);
+  color: var(--gcp-green);
   border: 1px solid rgba(129, 201, 149, 0.4);
 }
 
 .badge-pca {
-  background: rgba(251, 188, 4, 0.18);
-  color: #fdd663;
+  background: var(--gcp-yellow-subtle);
+  color: var(--gcp-yellow);
   border: 1px solid rgba(253, 214, 99, 0.4);
 }
 
@@ -987,7 +1016,7 @@
 }
 
 .is-correct-opt .opt-letter {
-  background: #34a853;
+  background: var(--opt-correct-bg);
   color: #ffffff;
   border-color: #34a853;
 }
@@ -1003,7 +1032,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   color: var(--gcp-green);
-  background: rgba(52, 168, 83, 0.2);
+  background: var(--gcp-green-subtle);
   border: 1px solid var(--gcp-green-border);
   padding: 2px 8px;
   border-radius: var(--radius-xs);
@@ -1187,7 +1216,24 @@
   --gcp-yellow-subtle: rgba(251, 188, 4, 0.20);
   --gcp-yellow-border: rgba(253, 214, 99, 0.55);
 
-  --gcp-purple: #af5cf7;           /* Analytics, AI/ML badges */
+  --gcp-purple: #c58ffa;           /* Analytics, AI/ML badges — WCAG AA 5.7:1 sobre purple-subtle */
+  --gcp-purple-accessible: #c58ffa;
+
+  /* Tinta para texto QUE VA ENCIMA de un color de marca.
+     En tema oscuro los colores de marca son pasteles claros, asi que el texto
+     encima debe ser tinta oscura. #0b1b2b da 7.2:1 o mas sobre los seis. */
+  --on-brand-ink: #0b1b2b;
+  --brand-blue-solid: #1557b0;     /* azul solido para fondos: blanco encima da 6.4:1 */
+  --on-brand-blue: var(--on-brand-ink);
+  --on-brand-green: var(--on-brand-ink);
+  --on-brand-red: var(--on-brand-ink);
+  --on-brand-yellow: var(--on-brand-ink);
+  --on-brand-purple: var(--on-brand-ink);
+  --on-brand-cyan: var(--on-brand-ink);
+  /* Fondos saturados de las insignias de opcion: los originales (#34a853 / #ea4335)
+     daban 3.06:1 y 3.92:1 con texto blanco. */
+  --opt-correct-bg: #0d652d;
+  --opt-incorrect-bg: #b3261e;
   --gcp-purple-subtle: rgba(175, 92, 247, 0.15);
   --gcp-purple-border: rgba(175, 92, 247, 0.45);
 
@@ -1233,34 +1279,47 @@
 
   --text-primary: #202124;
   --text-secondary: #5f6368;
-  --text-muted: #80868b;
+  --text-muted: #62676c;           /* era #80868b: 3.06:1 sobre superficies claras */
   --text-inverse: #ffffff;
 
-  --gcp-blue: #1a73e8;
+  /* En tema claro los colores de marca son oscuros, asi que el texto encima va blanco. */
+  --on-brand-ink: #ffffff;
+  --brand-blue-solid: #1463ca;
+
+  --gcp-blue: #1463ca;             /* era #1a73e8: 3.85:1 sobre blue-subtle */
   --gcp-blue-hover: #1557b0;
   --gcp-blue-subtle: rgba(26, 115, 232, 0.08);
   --gcp-blue-border: rgba(26, 115, 232, 0.35);
 
-  --gcp-green: #1e8e3e;
-  --gcp-green-hover: #188038;
+  --gcp-green: #197533;            /* era #1e8e3e: 4.11:1 sobre green-subtle */
+  --gcp-green-hover: #14602a;
   --gcp-green-subtle: rgba(30, 142, 62, 0.08);
   --gcp-green-border: rgba(30, 142, 62, 0.35);
 
-  --gcp-red: #d93025;
-  --gcp-red-hover: #c5221f;
+  --gcp-red: #c32b21;              /* era #d93025: 3.69:1 sobre red-subtle */
+  --gcp-red-hover: #a5241b;
   --gcp-red-subtle: rgba(217, 48, 37, 0.08);
   --gcp-red-border: rgba(217, 48, 37, 0.35);
 
-  --gcp-yellow: #f29900;
-  --gcp-yellow-hover: #e37400;
+  --gcp-yellow: #915c00;           /* era #f29900: 2.11:1 — ilegible como texto */
+  --gcp-yellow-hover: #7a4d00;
   --gcp-yellow-subtle: rgba(242, 153, 0, 0.08);
   --gcp-yellow-border: rgba(242, 153, 0, 0.35);
 
-  --gcp-purple: #9334e6;
+  --gcp-purple: #7726c4;           /* WCAG AA sobre fondo claro */
+  --gcp-purple-accessible: #7726c4;
+  --on-brand-blue: var(--on-brand-ink);
+  --on-brand-green: var(--on-brand-ink);
+  --on-brand-red: var(--on-brand-ink);
+  --on-brand-yellow: var(--on-brand-ink);
+  --on-brand-purple: var(--on-brand-ink);
+  --on-brand-cyan: var(--on-brand-ink);
+  --opt-correct-bg: #0d652d;
+  --opt-incorrect-bg: #b3261e;
   --gcp-purple-subtle: rgba(147, 52, 230, 0.08);
   --gcp-purple-border: rgba(147, 52, 230, 0.35);
 
-  --gcp-cyan: #12b5cb;
+  --gcp-cyan: #0b7280;             /* era #12b5cb: 2.30:1 */
   --gcp-cyan-subtle: rgba(18, 181, 203, 0.08);
 
   --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
@@ -1313,12 +1372,30 @@ body {
   outline-offset: 2px !important;
 }
 
+/* Foco propio en navegacion y controles (refuerza el anillo global con
+   borde + halo; el outline lo garantiza la regla global de arriba). */
+.btn:focus-visible,
+.nav-tab:focus-visible,
+.cert-pill:focus-visible,
+.cs-tab:focus-visible,
+.palette-btn:focus-visible,
+.palette-filter-chip:focus-visible,
+.free-cat-chip:focus-visible,
+.tool-subtab-btn:focus-visible,
+.study-select-tab:focus-visible,
+.review-item-chip:focus-visible,
+.brand-container:focus-visible,
+#view-drill .drill-option-card:focus-visible {
+  border-color: var(--gcp-blue);
+  box-shadow: 0 0 0 3px var(--gcp-blue-subtle);
+}
+
 .skip-to-content {
   position: absolute;
   top: -60px;
   left: 1rem;
   background: var(--gcp-blue);
-  color: #ffffff;
+  color: var(--on-brand-blue);
   padding: 10px 18px;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -1418,7 +1495,7 @@ button:disabled {
 .btn-secondary:hover:not(:disabled) {
   background: var(--bg-surface-high);
   border-color: var(--border-bright);
-  color: #ffffff;
+  color: var(--text-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px) scale(1.01);
 }
@@ -1566,6 +1643,77 @@ button:disabled {
 }
 
 /* Form Controls */
+
+/* .form-input NO EXISTIA en la hoja de estilos. El buscador la usaba, asi que
+   heredaba el texto blanco del tema sobre el fondo blanco por defecto del
+   navegador: se escribia y no se veia nada. Ese era el bug del buscador. */
+.form-input {
+  width: 100%;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  caret-color: var(--gcp-blue);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.form-input::placeholder { color: var(--text-muted); opacity: 1; }
+.form-input:hover:not(:disabled) { border-color: var(--border-bright); }
+.form-input:focus { border-color: var(--gcp-blue); box-shadow: 0 0 0 3px var(--gcp-blue-subtle); }
+.form-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* La X nativa de <input type="search"> se pinta negra y desaparece en oscuro. */
+.form-input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  cursor: pointer;
+  background-color: var(--text-muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.form-input[type="search"]::-webkit-search-cancel-button:hover { background-color: var(--text-primary); }
+
+/* Sugerencias del buscador vacio: por donde empieza quien no sabe nada. */
+.search-suggest { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; justify-content: center; }
+.search-suggest-chip {
+  background: var(--bg-surface-elevated);
+  color: var(--gcp-blue);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.search-suggest-chip:hover, .search-suggest-chip:focus-visible {
+  background: var(--gcp-blue-subtle);
+  border-color: var(--gcp-blue);
+}
+
+.form-textarea {
+  width: 100%;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  caret-color: var(--gcp-blue);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  outline: none;
+}
+.form-textarea::placeholder { color: var(--text-muted); opacity: 1; }
+.form-textarea:focus { border-color: var(--gcp-blue); box-shadow: 0 0 0 3px var(--gcp-blue-subtle); }
+
 .form-select, .form-select-sm {
   background-color: var(--bg-input);
   color: var(--text-primary);
@@ -1581,6 +1729,7 @@ button:disabled {
 }
 .form-select:focus, .form-select-sm:focus {
   border-color: var(--gcp-blue);
+  box-shadow: 0 0 0 3px var(--gcp-blue-subtle);
 }
 
 .form-textarea-sm {
@@ -1721,7 +1870,7 @@ button:disabled {
 }
 
 .cert-pill.active {
-  background: var(--gcp-blue);
+  background: var(--brand-blue-solid);
   color: #ffffff;
   box-shadow: 0 2px 4px rgba(26, 115, 232, 0.4);
 }
@@ -1865,7 +2014,7 @@ button:disabled {
 .exam-code-badge {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   background: var(--bg-surface-high);
   padding: 2px 8px;
   border-radius: var(--radius-xs);
@@ -2379,7 +2528,7 @@ button:disabled {
 
 .tag-bloom {
   background: var(--gcp-purple-subtle);
-  color: var(--gcp-purple);
+  color: var(--gcp-purple-accessible);
 }
 
 .tag-cs {
@@ -2512,7 +2661,7 @@ button:disabled {
   border-color: var(--gcp-green) !important;
 }
 .option-card.correct .option-letter-badge, .option-item.correct .option-letter, .drill-option-card.correct .drill-opt-badge {
-  background: #34a853 !important;
+  background: var(--opt-correct-bg) !important;
   border-color: #34a853 !important;
   color: #ffffff !important;
 }
@@ -2522,7 +2671,7 @@ button:disabled {
   border-color: var(--gcp-red) !important;
 }
 .option-card.incorrect .option-letter-badge, .option-item.incorrect .option-letter, .drill-option-card.incorrect .drill-opt-badge {
-  background: #ea4335 !important;
+  background: var(--opt-incorrect-bg) !important;
   border-color: #ea4335 !important;
   color: #ffffff !important;
 }
@@ -2548,12 +2697,12 @@ button:disabled {
 
 .feedback-banner.banner-correct {
   background: var(--gcp-green);
-  color: #ffffff;
+  color: var(--on-brand-green);
 }
 
 .feedback-banner.banner-incorrect {
   background: var(--gcp-red);
-  color: #ffffff;
+  color: var(--on-brand-red);
 }
 
 .feedback-body {
@@ -2770,38 +2919,66 @@ button:disabled {
   animation: pulse-timer-red-urgent 1s infinite ease-in-out;
 }
 
+/* El resplandor vive en un ::after y solo se anima opacity/transform,
+   para que el compositor lo resuelva en GPU (Lighthouse: non-composited animations). */
+.timer-badge.timer-warning,
+.timer-badge.timer-critical { position: relative; }
+.timer-badge.timer-warning::after,
+.timer-badge.timer-critical::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.timer-badge.timer-warning::after {
+  box-shadow: 0 0 10px 3px rgba(251, 188, 4, 0.35);
+  animation: pulse-timer-glow 1.5s infinite ease-in-out;
+}
+.timer-badge.timer-critical::after {
+  box-shadow: 0 0 16px 5px rgba(234, 67, 53, 0.5);
+  animation: pulse-timer-glow 1s infinite ease-in-out;
+}
+
+@keyframes pulse-timer-glow {
+  0%, 100% { opacity: 0; transform: scale(0.98); }
+  50%      { opacity: 1; transform: scale(1.03); }
+}
+
 @keyframes pulse-timer-amber {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(251, 188, 4, 0.45);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 10px 3px rgba(251, 188, 4, 0.2);
-    transform: scale(1.02);
-  }
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
 }
 
 @keyframes pulse-timer-red-urgent {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 16px 5px rgba(234, 67, 53, 0.35);
-    transform: scale(1.04);
-  }
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-badge.timer-warning,
+  .timer-badge.timer-critical,
+  .timer-badge.timer-warning::after,
+  .timer-badge.timer-critical::after { animation: none; }
 }
 
 /* Exam Workspace Layout (Split Panel for Case Studies) */
+/* El JS marca "layout-split-active" solo cuando la pregunta trae caso de
+   estudio (PCA). Por defecto habia tres columnas siempre, asi que sin caso de
+   estudio la pregunta quedaba en una columna de ~450 px con medio ancho de
+   pantalla vacio al lado: escenarios de seis lineas y opciones partidas en
+   tres. Ahora el reparto por defecto son dos columnas. */
 .exam-workspace-layout {
   display: grid;
-  grid-template-columns: minmax(400px, 1.2fr) minmax(500px, 1.5fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 1.25rem;
   align-items: start;
 }
 
-.exam-workspace-layout.no-case-study {
-  grid-template-columns: minmax(600px, 1fr) 300px;
+.exam-workspace-layout.layout-split-active {
+  grid-template-columns: minmax(340px, 1fr) minmax(460px, 1.4fr) 280px;
 }
 
 /* PCA Case Study Panel */
@@ -2872,6 +3049,9 @@ button:disabled {
 
 /* Exam Question Area (Center) */
 .exam-question-area {
+  /* Una linea de 120 caracteres cansa: se pierde el renglon al volver. El
+     limite de lectura va en el texto, no en la rejilla. */
+  --exam-medida: 78ch;
   background: var(--bg-surface);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
@@ -2958,7 +3138,9 @@ button:disabled {
 
 .palette-filter-chip.active {
   background: var(--gcp-blue);
-  color: #ffffff;
+  /* El azul de marca es claro en tema oscuro; texto blanco encima daba 2.1:1.
+     Con tinta oscura sube a 8.4:1 y pasa WCAG AA. */
+  color: var(--on-brand-blue);
   border-color: var(--gcp-blue);
 }
 
@@ -3002,7 +3184,7 @@ button:disabled {
 .palette-btn.answered {
   background: var(--gcp-blue);
   border: 1px solid var(--gcp-blue);
-  color: #ffffff;
+  color: var(--on-brand-blue);
 }
 .palette-btn.answered:hover {
   background: var(--gcp-blue-hover);
@@ -3234,7 +3416,7 @@ button:disabled {
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
   font-size: 0.82rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   text-align: right;
 }
 
@@ -3437,12 +3619,12 @@ kbd {
 
 .scorecard-pass-fail-banner.pass {
   background: var(--gcp-green);
-  color: #ffffff;
+  color: var(--on-brand-green);
 }
 
 .scorecard-pass-fail-banner.fail {
   background: var(--gcp-red);
-  color: #ffffff;
+  color: var(--on-brand-red);
 }
 
 .scorecard-scores-row {
@@ -3604,7 +3786,10 @@ kbd {
     grid-template-columns: 1fr;
   }
   .exam-workspace-layout {
-    grid-template-columns: minmax(340px, 1fr) minmax(400px, 1.2fr) 240px;
+    grid-template-columns: minmax(0, 1fr) 240px;
+  }
+  .exam-workspace-layout.layout-split-active {
+    grid-template-columns: minmax(300px, 1fr) minmax(400px, 1.2fr) 240px;
   }
 }
 
@@ -3639,7 +3824,22 @@ kbd {
     position: static;
   }
   .palette-grid-50 {
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+  }
+  /* 360px: 10 columnas daban celdas de ~30px, intocables. */
+  .review-stats-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .review-items-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .palette-grid-50 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .review-items-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -3700,4 +3900,432 @@ kbd {
   .drill-card {
     padding: 1.25rem;
   }
+}
+
+
+/* Fila vacía del desglose forense: mantiene los <th> con celdas asociadas
+   (Lighthouse a11y: "th elements have data cells they describe"). */
+.distractor-empty-row td {
+  text-align: center;
+  padding: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* El navegador de preguntas es h2 por orden de encabezados (a11y), pero
+   visualmente sigue siendo el título pequeño del panel lateral. */
+.palette-header .panel-heading {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Mensaje cuando el historial esta vacio (sustituye a la tabla, que se oculta). */
+.empty-state-msg {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  background: var(--bg-surface-elevated);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+/* Estos encabezados son <h3> por orden de niveles (accesibilidad), pero
+   visualmente conservan el tamaño pequeño de subtítulo de sección. */
+.section-subheading {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+/* Explicación bajo el interruptor de preguntas verificadas. */
+.setting-hint {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  max-width: 56ch;
+}
+
+/* =========================================================================
+   VISTA "MI DIAGNÓSTICO"
+   ========================================================================= */
+.dg-intro { color: var(--text-secondary); max-width: 64ch; margin-top: 0.35rem; }
+.dg-bloque { margin-top: 1.75rem; }
+.dg-nota { font-size: 0.8125rem; color: var(--text-secondary); max-width: 68ch; margin: 0 0 0.85rem 0; line-height: 1.5; }
+.dg-meta { font-size: 0.8125rem; color: var(--text-secondary); }
+
+.dg-riesgos { display: flex; flex-direction: column; gap: 1px; background: var(--border-subtle);
+  border: 1px solid var(--border-default); border-radius: var(--radius-sm); overflow: hidden; }
+.dg-riesgo { background: var(--bg-surface); padding: 0.85rem 1.1rem; display: flex; flex-wrap: wrap;
+  gap: 0.75rem 1rem; align-items: center; justify-content: space-between; }
+.dg-riesgo-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 320px; }
+.dg-sub-id { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--gcp-blue); letter-spacing: 0.04em; }
+.dg-sub-nom { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
+
+.dg-seccion { margin-bottom: 1.1rem; }
+.dg-seccion-cab { display: flex; flex-wrap: wrap; gap: 0.4rem 0.75rem; align-items: baseline; margin-bottom: 0.5rem; }
+.dg-sec-id { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--gcp-blue); }
+.dg-sec-nom { font-size: 0.9375rem; font-weight: 700; color: var(--text-primary); }
+.dg-subs { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 8px; }
+
+/* El color nunca es la única señal: cada celda lleva porcentaje y etiqueta. */
+.dg-celda { border: 1px solid var(--border-default); border-left-width: 4px; border-radius: var(--radius-xs);
+  padding: 0.6rem 0.75rem; display: flex; flex-direction: column; gap: 2px; background: var(--bg-surface); }
+.dg-celda-id { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; color: var(--text-secondary); }
+.dg-celda-pct { font-family: var(--font-mono); font-size: 1.0625rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.dg-celda-est { font-size: 0.75rem; font-weight: 600; }
+.dg-dominado { border-left-color: var(--gcp-green); }   .dg-dominado .dg-celda-est { color: var(--gcp-green); }
+.dg-progreso { border-left-color: var(--gcp-blue); }    .dg-progreso .dg-celda-est { color: var(--gcp-blue); }
+.dg-debil    { border-left-color: var(--gcp-red); }     .dg-debil    .dg-celda-est { color: var(--gcp-red); }
+.dg-insuf    { border-left-color: var(--gcp-yellow); }  .dg-insuf    .dg-celda-est { color: var(--gcp-yellow); }
+.dg-sinver   { border-left-color: var(--border-bright); } .dg-sinver .dg-celda-est { color: var(--text-muted); }
+
+.dg-conceptos { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.dg-concepto { background: var(--gcp-red-subtle); color: var(--gcp-red); border: 1px solid var(--gcp-red-border);
+  border-radius: var(--radius-full); padding: 0.3rem 0.8rem; font-size: 0.8125rem; }
+.dg-concepto b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.dg-listo { list-style: none; padding: 0; margin: 0 0 0.85rem 0; display: flex; flex-direction: column; gap: 1px;
+  background: var(--border-subtle); border: 1px solid var(--border-default); border-radius: var(--radius-sm); overflow: hidden; }
+.dg-listo li { background: var(--bg-surface); padding: 0.7rem 1.1rem 0.7rem 2.4rem; position: relative;
+  display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem; align-items: baseline; }
+.dg-listo li::before { position: absolute; left: 1.1rem; font-weight: 800; font-family: var(--font-mono); }
+.dg-ok::before { content: "✓"; color: var(--gcp-green); }
+.dg-no::before { content: "·"; color: var(--text-muted); }
+.dg-listo-txt { font-size: 0.9375rem; color: var(--text-primary); font-weight: 500; }
+
+/* Subsección sin preguntas aún: no es un fallo del alumno, es un hueco del banco. */
+.dg-sinbanco { border-left-color: var(--border-default); opacity: 0.72; }
+.dg-sinbanco .dg-celda-est { color: var(--text-muted); font-style: italic; }
+.dg-aviso {
+  background: var(--gcp-yellow-subtle);
+  border: 1px solid var(--gcp-yellow-border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+  max-width: 76ch;
+}
+
+
+/* =========================================================================
+   AVISOS EMERGENTES
+   .toast-card no tenia ni una regla: se creaba desde JS con esa clase pero el
+   CSS solo definia .toast. Por eso salian como texto suelto, sin fondo, apilados
+   encima del boton de "Siguiente Pregunta".
+   ========================================================================= */
+.toast-container {
+  /* Arriba a la derecha, no abajo: abajo esta la accion principal de cada vista. */
+  top: 5.5rem;
+  bottom: auto;
+  max-width: min(380px, calc(100vw - 3rem));
+}
+.toast-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--bg-surface-high);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-left: 4px solid var(--gcp-blue);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  box-shadow: var(--shadow-lg);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  pointer-events: auto;
+  animation: toastIn 0.18s ease-out;
+}
+.toast-card .toast-icon {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  flex: 0 0 auto;
+  padding-top: 2px;
+}
+.toast-card .toast-message { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.toast-success { border-left-color: var(--gcp-green); }
+.toast-success .toast-icon { color: var(--gcp-green); }
+.toast-error   { border-left-color: var(--gcp-red); }
+.toast-error   .toast-icon { color: var(--gcp-red); }
+.toast-warning { border-left-color: var(--gcp-yellow); }
+.toast-warning .toast-icon { color: var(--gcp-yellow); }
+.toast-info    .toast-icon { color: var(--gcp-blue); }
+@media (prefers-reduced-motion: reduce) { .toast-card { animation: none; } }
+
+/* Idioma del curso en las tarjetas de formacion gratuita. */
+.free-cert-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  padding: 2px 9px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-left: 0.4rem;
+}
+
+/* ============================================================
+   Selección múltiple en el modo Drill
+   El primer clic de una pregunta "elige 2" no envía: marca.
+   Sin señal visual el usuario cree que la app no responde.
+   ============================================================ */
+
+.drill-multi-aviso {
+  display: block;
+  margin: 0 0 1rem 0;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-focus);
+  border-left: 4px solid var(--border-focus);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.drill-option-card.option-selected {
+  border-color: var(--border-focus);
+  border-width: 2px;
+  background: var(--bg-surface-high);
+  box-shadow: inset 3px 0 0 var(--border-focus);
+}
+
+/* La casilla marcada se anuncia también con un símbolo, no solo con color:
+   el color por sí solo no es accesible. */
+.drill-option-card.option-selected .drill-hotkey-badge::after {
+  content: " ✓";
+  font-weight: 700;
+}
+
+/* =========================================================================
+   PARCHE DE LEGIBILIDAD — MODO ESTUDIO (2026-09-02)
+   Objetivo: leer sin fatiga, responder sin scroll, y que la barra inferior
+   deje de tapar la justificación.
+   ========================================================================= */
+
+/* 1. Medida de lectura cómoda. Antes la línea medía ~1700px. */
+#view-study .question-title { max-width: 58ch; }
+#view-study .scenario-box   { max-width: 68ch; line-height: 1.68; }
+#view-study #study-options-container { max-width: 78ch; gap: 0.5rem; }
+#view-study .justification-drawer    { max-width: 82ch; }
+
+/* 2. Opciones compactas: las cuatro entran en pantalla. */
+#view-study .option-card {
+  padding: 0.7rem 0.9rem;
+  align-items: flex-start;
+  gap: 0.8rem;
+  min-height: 0;
+}
+#view-study .option-card .option-content-text { font-size: 0.95rem; line-height: 1.5; }
+#view-study .option-card .option-letter-badge {
+  flex: 0 0 auto; width: 26px; height: 26px; font-size: 0.78rem; margin-top: 1px;
+}
+
+/* 3. El veredicto va pegado a su opción, no en el borde derecho de la pantalla. */
+#view-study .option-card .option-feedback-status {
+  margin-left: auto; align-self: center; white-space: nowrap;
+  font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700;
+}
+
+/* 4. La barra pegajosa ya no oculta el final de la justificación. */
+#view-study .justification-drawer { scroll-margin-bottom: 7rem; }
+#view-study .justification-drawer::after { content: ""; display: block; height: 4.5rem; }
+#view-study .sticky-action-bar { margin-top: 1.25rem; }
+
+/* 5. Palabras clave: ahora salen tras responder, como resumen de lo aprendido. */
+#view-study .keywords-bar { max-width: 78ch; margin-top: 0.25rem; }
+#view-study .keywords-bar .keywords-label { opacity: 0.75; font-weight: 600; }
+
+/* 6. Teclado: foco siempre visible. */
+#view-study .option-card:focus-visible,
+#view-study .option-card:hover:not(.disabled) { outline-offset: 2px; }
+#view-study .option-card:focus-visible { outline: 2px solid var(--gcp-blue); }
+
+/* 7. Pista de atajos: va DENTRO de la barra, no flotando sobre las opciones. */
+#view-study .kbd-hint {
+  font-size: 0.72rem; letter-spacing: 0.03em; color: var(--text-secondary);
+  opacity: 0.7; white-space: nowrap; margin-right: auto; padding-left: 1rem;
+}
+
+/* 8. Pantallas anchas: escenario a la izquierda, opciones a la derecha.
+      Las cuatro opciones y el enunciado caben juntos, sin scroll. */
+@media (min-width: 1180px) {
+  #view-study .question-container {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    grid-template-areas:
+      "meta opts"
+      "scen opts"
+      "kw   opts"
+      "just just";
+    column-gap: 2.25rem;
+    align-items: start;
+  }
+  #view-study .question-header-meta     { grid-area: meta; }
+  #view-study .scenario-box             { grid-area: scen; max-width: none; }
+  #view-study .keywords-bar             { grid-area: kw;   max-width: none; }
+  #view-study #study-options-container  { grid-area: opts; max-width: none; }
+  #view-study .justification-drawer     { grid-area: just; max-width: none; }
+  #view-study .justification-drawer .explanation-text,
+  #view-study .justification-drawer .feedback-status-text { max-width: 82ch; }
+  #view-study .distractor-table { width: 100%; }
+  #view-study .justification-drawer .feedback-section { max-width: none; }
+  #view-study .question-title           { max-width: none; }
+  #view-study .scenario-box             { padding: 1rem 1.25rem; }
+}
+
+/* 9. Opciones aún más compactas: cuatro en pantalla sin desplazarse. */
+#view-study .option-card { padding: 0.6rem 0.8rem; }
+#view-study .option-card .option-content-text { font-size: 0.92rem; line-height: 1.45; }
+
+@media (max-width: 720px) { #view-study .kbd-hint { display: none; } }
+
+/* =========================================================================
+   PARCHE DE LEGIBILIDAD — MODO DRILL (2026-09-02)
+   La insignia usaba una clase sin estilo y las líneas ocupaban toda la pantalla.
+   ========================================================================= */
+
+#view-drill .drill-option-card {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: start;
+  gap: 0.85rem;
+  padding: 0.7rem 0.9rem;
+}
+#view-drill .drill-option-text { font-size: 0.95rem; line-height: 1.5; }
+
+/* Insignia: letra grande, número de atajo pequeño debajo. */
+#view-drill .drill-opt-badge {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 36px; min-height: 46px; padding: 4px 0; gap: 1px; margin-top: 1px;
+  border: 1px solid var(--border-default); border-radius: var(--radius-sm);
+  background: var(--bg-surface-elevated); line-height: 1;
+}
+#view-drill .drill-opt-letra { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); }
+#view-drill .drill-opt-num   { font-size: 0.58rem; font-weight: 600; color: var(--text-secondary); opacity: 0.75; margin-top: 2px; }
+#view-drill .drill-option-card.selected .drill-opt-letra,
+#view-drill .drill-option-card.selected .drill-opt-num { color: inherit; }
+
+/* Medida de lectura: en pantallas anchas el enunciado y las opciones no ocupan 1700px. */
+#view-drill #drill-options-grid,
+#view-drill .drill-scenario,
+#view-drill .drill-multi-aviso,
+#view-drill .drill-feedback-panel { max-width: 86ch; margin-left: auto; margin-right: auto; }
+
+@media (min-width: 1180px) {
+  #view-drill #drill-options-grid { gap: 0.5rem; }
+}
+
+/* ==========================================================================
+   Examen — responder con teclado (UX/UI 2026-09)
+   Las tarjetas de opcion del examen eran <div> sin foco: se veian pero no se
+   podian alcanzar con Tab. Aqui van el anillo de foco, el numero de atajo,
+   la leyenda de teclas y el contador de seleccion multiple.
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+#view-exam .option-card {
+  cursor: pointer;
+}
+
+#view-exam .option-card:focus-visible {
+  outline: 3px solid var(--gcp-blue);
+  outline-offset: 2px;
+}
+
+#view-exam .option-letter-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Insignia de dos lineas legible: caja amplia y elevada (no el pozo negro
+     de 32px), letra protagonista y numero de atajo secundario. */
+  width: 38px;
+  height: auto;
+  min-height: 48px;
+  padding: 4px 0;
+  gap: 1px;
+  line-height: 1;
+  background: var(--bg-surface-elevated);
+}
+
+#view-exam .option-letra {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+#view-exam .option-num {
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+#view-exam .option-card.selected .option-num {
+  color: inherit;
+  opacity: 0.9;
+}
+
+.exam-kbd-hint {
+  margin: 0.6rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  align-items: center;
+}
+
+.exam-kbd-hint kbd {
+  font-size: 0.72rem;
+  padding: 1px 5px;
+}
+
+/* Cuando ya se han marcado todas las opciones que pide la pregunta, el aviso
+   deja de ser una advertencia amarilla y pasa a confirmar en verde. */
+.multi-select-badge.multi-completo {
+  background: var(--gcp-green-subtle, rgba(52, 168, 83, 0.15));
+  color: var(--gcp-green, #34a853);
+}
+
+@media (max-width: 720px) {
+  .exam-kbd-hint { display: none; }
+}
+
+
+/* Medida de lectura del examen sin caso de estudio (UX/UI 2026-09) */
+.exam-workspace-layout:not(.layout-split-active) #exam-scenario-text,
+.exam-workspace-layout:not(.layout-split-active) #exam-options-container,
+.exam-workspace-layout:not(.layout-split-active) .exam-kbd-hint {
+  max-width: var(--exam-medida, 78ch);
+}
+
+.exam-workspace-layout:not(.layout-split-active) .exam-navigation-footer {
+  max-width: var(--exam-medida, 78ch);
 }

@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D4-017",
+  "options": {
+   "A": "Cloud Logging log-based alerts.",
+   "B": "Cloud Trace distributed tracing.",
+   "D": "Cloud Monitoring uptime checks."
+  },
+  "distractors": {
+   "A": "A log-based alert fires per matching log entry and has no grouping model: identical stack traces are never deduplicated into one tracked error with an occurrence count, so you get a stream of notifications instead of the aggregated exception dashboard the team asked for.",
+   "B": "Cloud Trace samples request latency across spans. It records timing and call structure, not exception payloads, so it cannot count unhandled runtime errors or group them by stack trace.",
+   "D": "An uptime check probes an endpoint from outside the service to prove it answers. It detects that the service is down or slow, never which exception was thrown inside it, and it groups nothing by stack trace."
+  }
+ },
+ {
+  "id": "ACE-D4-038",
+  "options": {
+   "B": "gcloud app versions delete v1-beta --service=staging-api",
+   "C": "gcloud app services set-traffic staging-api --splits=v2=1",
+   "D": "gcloud app versions stop v1-beta --service=default"
+  },
+  "distractors": {
+   "B": "delete does release the VM instances, but it removes the version and its deployed code permanently, so v1-beta can never be started again. The requirement is to keep the code available for a future start.",
+   "C": "set-traffic only re-routes incoming requests to another version. v1-beta stays in the SERVING state with its Flexible VM instances provisioned, so the Compute Engine charges the scenario is trying to eliminate keep accruing.",
+   "D": "Right command, wrong service: version IDs are scoped per service and v1-beta belongs to staging-api, so this targets the default service and fails with a version-not-found error."
+  }
+ },
+ {
+  "id": "ACE-D4-033",
+  "options": {
+   "A": "Run gcloud container clusters get-credentials prod-cluster --zone=us-central1-a.",
+   "B": "Run gcloud auth application-default login and then retry kubectl get pods.",
+   "D": "Run kubectl config set-cluster prod-cluster --server=https://34.72.15.8:443."
+  },
+  "distractors": {
+   "A": "Correct command, wrong location type: prod-cluster is registered as a regional cluster in us-central1, so a --zone lookup for us-central1-a returns 'cluster not found' and no kubeconfig entry is written.",
+   "B": "Application Default Credentials are consumed by client libraries, not by kubectl, which reads ~/.kube/config. That file still has no cluster entry, so kubectl keeps falling back to the default localhost:8080 endpoint.",
+   "D": "This records an endpoint only. The context gets no cluster CA and no user with the gke-gcloud-auth-plugin exec block, so kubectl now fails certificate validation and is rejected as unauthenticated."
+  }
+ },
+ {
+  "id": "ACE-D3-033",
+  "options": {
+   "A": "A Kubernetes Deployment of 3 replicas mounting one shared ReadWriteMany Filestore PVC.",
+   "B": "Three separate Deployments of one replica each, bound to its own ReadWriteOnce PVC.",
+   "D": "A Kubernetes DaemonSet with a hostPath volume and a NodePort Service on every node."
+  },
+  "distractors": {
+   "A": "A Deployment names its pods with a random suffix and every replica writes to the same volume, so no node owns a dedicated disk and no pod keeps the identity cassandra-0 across restarts.",
+   "B": "Per-replica disks work here, but a Deployment still regenerates the pod name on every restart, so there is no ordered, stable hostname or DNS record for the Cassandra seed list.",
+   "D": "A DaemonSet pins one pod per node and hostPath data stays on that node's local filesystem, so a rescheduled pod starts on empty storage and the replica count is dictated by the node count."
+  }
+ },
+ {
+  "id": "ACE-D3-042",
+  "options": {
+   "B": "gcloud sql instances create db-replica-europewest1 --master-instance-name=db-master-uscentral1 --region=us-central1",
+   "C": "gcloud sql instances clone db-master-uscentral1 db-replica-europewest1 --point-in-time=2026-08-30T02:00:00Z",
+   "D": "gcloud sql instances patch db-master-uscentral1 --availability-type=REGIONAL --secondary-zone=europe-west1-b"
+  },
+  "distractors": {
+   "B": "The right replica command with the wrong region value: it builds an in-region read replica beside the primary, which adds read capacity but leaves European reads crossing the Atlantic and keeps DR inside the same regional failure domain.",
+   "C": "A clone is an independent copy frozen at that timestamp: it never receives further changes from the primary. The clone command also has no region flag, so the copy is created in the source instance's region.",
+   "D": "That configures high availability, whose standby must sit in another zone of the primary's own region and never serves read queries, so europe-west1-b is rejected and no readable European endpoint is produced."
+  }
+ },
+ {
+  "id": "ACE-D4-044",
+  "options": {
+   "A": "gcloud storage buckets update gs://corp-legal-archives --default-storage-class=ARCHIVE",
+   "B": "gcloud storage buckets update gs://corp-legal-archives --lifecycle-file=archive.json",
+   "D": "gcloud storage buckets update gs://corp-legal-archives --enable-autoclass"
+  },
+  "distractors": {
+   "A": "The bucket default applies only to objects written after the change. The 5 TB already stored keeps its STANDARD class and its STANDARD price, so the existing bill does not move.",
+   "B": "Lifecycle rules are evaluated asynchronously, roughly once every 24 hours, and act on conditions such as object age, so the transition is neither immediate nor applied to objects that do not yet match the rule.",
+   "D": "Autoclass reacts to access patterns over time: an untouched object reaches Nearline after 30 days and Archive only after 365, and it adds a per-object management fee. Nothing changes class today."
+  }
+ },
+ {
+  "id": "ACE-D3-015",
+  "options": {
+   "A": "gcloud app create --project=retail-app-prod --region=us-central",
+   "B": "gcloud app versions migrate v2 --project=retail-app-prod",
+   "C": "gcloud app deploy app.yaml --project=retail-app-prod --no-promote"
+  },
+  "distractors": {
+   "A": "This only creates the App Engine application container and pins its region for the project. No source is uploaded and no version exists, so there is nothing to serve the production traffic.",
+   "B": "migrate shifts traffic to a version that already exists. Nothing has been deployed yet, so the command fails on an unknown version instead of uploading the app.yaml source.",
+   "C": "The code is uploaded and a version is created, but --no-promote leaves 100% of traffic on the previously serving version, so the new release receives no live requests until traffic is migrated by hand."
+  }
+ },
+ {
+  "id": "ACE-D4-007",
+  "options": {
+   "A": "gcloud sql backups restore 1692540000000 --backup-instance=prod-db",
+   "B": "gcloud sql backups create --instance=prod-db --description=pre-fix",
+   "D": "gcloud sql import sql prod-db gs://prod-db-backups/1692540000000.sql"
+  },
+  "distractors": {
+   "A": "--backup-instance only names the instance the backup was taken from; the flag that names the target of the restore is --restore-instance, and it is required, so this call is rejected for a missing argument.",
+   "B": "This takes a new on-demand backup of the database in its current state, capturing the corrupted table instead of restoring the known-good backup 1692540000000.",
+   "D": "Automated Cloud SQL backups live inside the service and are not exposed as SQL dump objects in a bucket. import sql only reads a dump you produced yourself with gcloud sql export sql."
+  }
+ },
+ {
+  "id": "ACE-D3-014",
+  "options": {
+   "A": "gcloud sql export sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db",
+   "C": "gcloud sql connect prod-mysql-1 --user=root --database=app_db < db-backup.sql.gz",
+   "D": "gcloud sql import bak prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db"
+  },
+  "distractors": {
+   "A": "The direction is reversed: export writes the instance's current contents out to that object, overwriting the 20 GB dump the pipeline was about to load into the database.",
+   "C": "connect opens an interactive mysql client from your workstation through the proxy, so the redirected bytes are still gzip-compressed binary the client cannot parse, and all 20 GB would travel via the local machine.",
+   "D": "import bak is SQL Server only and expects a native .bak backup set, so against a MySQL instance holding a gzipped SQL dump the request is rejected."
+  }
+ },
+ {
+  "id": "ACE-D4-029",
+  "options": {
+   "A": "Cloud Trace latency.",
+   "B": "GKE workload metrics.",
+   "D": "Ops Agent CPU metrics."
+  },
+  "distractors": {
+   "A": "Trace measures how long requests and spans take between services. It attributes time to RPCs, never CPU cycles to a function or a line, so it cannot show which code is burning the CPU.",
+   "B": "Those report CPU, memory and restart counts per container and pod, one level above the code: they prove the pod is saturated but not which function inside it is responsible.",
+   "D": "The Ops Agent has to be installed on the nodes and samples per-process CPU and memory on the host, so it adds the instrumentation the scenario rules out and still stops short of function-level attribution."
+  }
+ },
+ {
+  "id": "ACE-D5-031",
+  "options": {
+   "A": "gcloud secrets versions disable 1 --secret=db-password",
+   "C": "gcloud secrets versions destroy latest --secret=db-password",
+   "D": "gcloud secrets update db-password --version-destroy-ttl=24h"
+  },
+  "distractors": {
+   "A": "Disabling is reversible: the encrypted payload is retained, so anyone able to run versions enable can read the compromised password again. Only destroy removes the material.",
+   "C": "Right command, wrong version selector: latest resolves to version 2, so this destroys the freshly rotated password and leaves the compromised version 1 intact and accessible.",
+   "D": "This only configures delayed destruction for future requests. Version 1 is untouched, and with a TTL in place a later destroy call merely disables the version until the TTL expires, so it stays recoverable meanwhile."
+  }
+ },
+ {
+  "id": "ACE-D1-024",
+  "options": {
+   "A": "Grant roles/cloudsql.admin with an IAM Condition checking request.time > timestamp('2026-09-30T23:59:59Z').",
+   "B": "Grant roles/cloudsql.admin and schedule a Cloud Scheduler job that runs remove-iam-policy-binding that night.",
+   "C": "Grant roles/cloudsql.admin with an IAM Condition matching resource.name on the finance-prod SQL instances."
+  },
+  "distractors": {
+   "A": "The comparison is inverted. This denies the consultant access during the maintenance window and grants permanent Cloud SQL admin from October 1 onwards, the exact opposite of an expiring grant.",
+   "B": "Expiry now depends on a separate job that can fail, be paused or be deleted, and its service account needs IAM admin rights of its own. If anything goes wrong the binding stays live and someone must revoke it manually.",
+   "C": "A resource.name condition narrows which instances the role reaches but carries no time attribute, so the binding never expires and an administrator still has to remove it by hand at the deadline."
+  }
+ },
+ {
+  "id": "ACE-D4-018",
+  "options": {
+   "B": "gcloud compute disks resize prod-mysql-db-data --size=500GB",
+   "C": "gcloud sql instances patch prod-mysql-db --tier=db-n1-standard-8",
+   "D": "gcloud sql instances patch prod-mysql-db --storage-auto-increase"
+  },
+  "distractors": {
+   "B": "The data disk of a Cloud SQL instance is provisioned inside a Google-managed tenant project and never appears among your own Compute Engine disks, so this returns NOT_FOUND; capacity is only changed through the Cloud SQL API.",
+   "C": "--tier changes the machine type, that is vCPU and RAM, and restarts the instance. The provisioned disk stays at 100 GB, so the database is still sitting at 88% of its storage.",
+   "D": "This re-enables the automatic growth that is already on. It adds capacity in small increments only once free space is nearly exhausted, so it never pre-provisions the 500 GB the weekend migration needs."
+  }
+ },
+ {
+  "id": "ACE-D4-046",
+  "options": {
+   "A": "gcloud run services update order-service --region=us-central1 --max-instances=80",
+   "B": "gcloud run services update order-service --region=us-central1 --cpu=4 --memory=4Gi",
+   "C": "gcloud run services update order-service --region=us-central1 --no-cpu-throttling"
+  },
+  "distractors": {
+   "A": "This raises the ceiling on how many instances may exist, not how many requests one instance accepts. With concurrency still at 1, the same traffic spins up 80 containers and the latency spikes simply cost more.",
+   "B": "A larger container does not lift the per-instance request limit: while concurrency is 1 the extra vCPU and memory sit idle and the second request still waits for another instance to start.",
+   "C": "That keeps CPU allocated outside request handling, which changes billing and background work but not how many simultaneous requests a single container instance is allowed to serve."
+  }
+ },
+ {
+  "id": "ACE-D3-044",
+  "options": {
+   "A": "gcloud run services update payment-api --region=us-central1 --max-instances=2",
+   "B": "gcloud run services update payment-api --region=us-central1 --no-cpu-throttling",
+   "D": "gcloud run services update payment-api --region=us-central1 --cpu-boost"
+  },
+  "distractors": {
+   "A": "This caps the service at two instances instead of keeping two warm: it still scales to zero when idle, so the first request after a quiet period pays the full cold start, and now peak traffic is throttled too.",
+   "B": "CPU stays allocated for the lifetime of an instance, but idle instances are still shut down, so the container answering the next request after an idle period still has to start from scratch.",
+   "D": "Startup CPU boost only shortens the cold start by giving the container extra CPU while it initialises. The cold start still happens, so the first request after idle still misses the 50 ms budget."
+  }
+ },
+ {
+  "id": "ACE-D4-024",
+  "options": {
+   "A": "cloudsql.googleapis.com/database/cpu/usage_time",
+   "B": "cloudsql.googleapis.com/database/cpu/reserved_cores",
+   "D": "cloudsql.googleapis.com/database/memory/utilization"
+  },
+  "distractors": {
+   "A": "A cumulative counter of CPU-seconds consumed. It grows with instance size and uptime and has to be divided by the reserved cores over the interval before it says anything about saturation.",
+   "B": "This reports how many vCPUs are provisioned for the instance, a flat capacity figure that does not move when the database is overloaded, so it cannot show CPU pressure.",
+   "D": "The adjacent resource: the fraction of the RAM quota in use. It can sit flat while the CPU is pegged, so it does not justify moving to a higher compute tier."
+  }
+ },
+ {
+  "id": "ACE-D4-057",
+  "options": {
+   "B": "kubectl get pvc db-data-pvc --namespace=prod -o wide",
+   "C": "kubectl describe storageclass standard-rwo premium-rwo",
+   "D": "kubectl describe pod db-pod-0 --namespace=prod"
+  },
+  "distractors": {
+   "B": "get prints status, capacity and storage class on one line but no event stream, so the provisioner message explaining why the claim is still unbound is exactly what is missing.",
+   "C": "This dumps the provisioner and parameters of the GKE storage classes, which is cluster-wide configuration shared by every claim; it reports nothing about this PVC's binding state or the events recorded against it.",
+   "D": "The pod's events only repeat the scheduling failure already visible. The requested storage class and the binding events belong to the PersistentVolumeClaim object, not to the pod."
+  }
+ }
+]

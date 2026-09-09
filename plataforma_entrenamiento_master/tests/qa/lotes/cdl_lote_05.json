@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D2-083",
+  "subtopic": "Vertex AI Endpoints: Predicción en Línea (Online) vs Predicción por Lotes (Batch)",
+  "caseStudy": "none",
+  "scenario": "Un equipo de ingeniería de IA debe desplegar dos modelos: (1) Un modelo de aprobación instantánea de transacciones con tarjeta que debe responder en 50 milisegundos cuando el usuario paga, y (2) Un modelo que calcula calificaciones de riesgo para 10 millones de clientes una vez por semana durante la noche. ¿Qué método de predicción de Vertex AI corresponde a cada caso?",
+  "correct": "D",
+  "clave_len": 124,
+  "explanation": "Online Prediction despliega el modelo en un endpoint siempre activo para procesar solicitudes HTTP inmediatas con baja latencia (50 ms). Batch Prediction procesa grandes volúmenes de datos almacenados en Cloud Storage o BigQuery de forma asíncrona y eficiente, apagando los recursos cuando el trabajo finaliza.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/predictions/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "(1) Predicción por lotes; (2) Predicción en línea"
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "Ningún modelo puede ejecutarse en la nube"
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Ambos deben ejecutarse en un teléfono móvil apagado"
+   },
+   {
+    "letter": "D",
+    "len": 124,
+    "text": "(1) Predicción en línea (Online Prediction en Vertex AI Endpoints); (2) Predicción por lotes (Batch Prediction en Vertex AI)"
+   }
+  ],
+  "ratio": 2.64
+ },
+ {
+  "id": "CDL-D2-079",
+  "subtopic": "Arquitectura Lambda vs Arquitectura Kappa",
+  "caseStudy": "none",
+  "scenario": "Tradicionalmente, las arquitecturas Lambda requerían mantener dos bases de código separadas: una para procesamiento por lotes (batch) y otra para tiempo real (streaming). ¿Cómo simplifica Google Cloud (con Apache Beam y Dataflow) esta complejidad arquitectónica hacia un modelo unificado (Arquitectura Kappa)?",
+  "correct": "C",
+  "clave_len": 207,
+  "explanation": "El modelo unificado de Apache Beam y Cloud Dataflow elimina la necesidad de mantener canalizaciones duales desconectadas (Arquitectura Lambda). Con un único marco conceptual (`PCollection` y `PTransform`), el mismo pipeline procesa tanto datos finitos (lotes) como infinitos (streaming).",
+  "doc": "https://cloud.google.com/dataflow/docs/concepts/beam-programming-model",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Eliminando la capacidad de procesar datos históricos en la empresa."
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "text": "Reemplazando todo el software por llamadas telefónicas manuales a los clientes."
+   },
+   {
+    "letter": "C",
+    "len": 207,
+    "text": "Permitiendo escribir una única lógica de procesamiento en Apache Beam que se ejecuta de forma idéntica tanto para fuentes de datos por lotes (históricas) como en streaming (tiempo real) sobre Cloud Dataflow."
+   },
+   {
+    "letter": "D",
+    "len": 90,
+    "text": "Obligando a los desarrolladores a programar el sistema tres veces en diferentes lenguajes."
+   }
+  ],
+  "ratio": 2.63
+ },
+ {
+  "id": "CDL-D2-013",
+  "subtopic": "Cloud Spanner vs Cloud SQL: Matriz de Decisión",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto de soluciones debe asesorar a dos equipos: (1) Una aplicación departamental de nómina con 50 GB de datos y (2) Una plataforma global de banca digital con millones de transacciones por segundo en 4 continentes. ¿Cuál es la asignación correcta de base de datos?",
+  "correct": "D",
+  "clave_len": 229,
+  "explanation": "Cloud SQL es la opción ideal y económica para cargas relacionales medianas o regionales (hasta unos pocos terabytes), mientras que Cloud Spanner está diseñado para sistemas que superan la capacidad de una sola máquina y requieren distribución global con consistencia estricta.",
+  "doc": "https://cloud.google.com/products/databases",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 99,
+    "text": "Asignar Cloud Spanner a la aplicación pequeña de 50 GB y Cloud SQL a la plataforma bancaria global."
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "Guardar ambas bases de datos en archivos JSON dentro de un bucket de Cloud Storage."
+   },
+   {
+    "letter": "C",
+    "len": 81,
+    "text": "Utilizar Cloud Bigtable para ambas aplicaciones sin importar los requisitos ACID."
+   },
+   {
+    "letter": "D",
+    "len": 229,
+    "text": "Asignar Cloud SQL a la aplicación departamental de nómina por su simplicidad y bajo costo, y asignar Cloud Spanner a la plataforma de banca digital global por su escalabilidad horizontal y consistencia transaccional multi-región."
+   }
+  ],
+  "ratio": 2.61
+ },
+ {
+  "id": "CDL-D2-053",
+  "subtopic": "Ediciones de BigQuery y Asignación de Capacidad (Slots)",
+  "caseStudy": "none",
+  "scenario": "El Director Financiero de una empresa desea que los costos mensuales de analítica en BigQuery sean 100% predecibles y constantes, evitando picos de facturación inesperados derivados de consultas pesadas ejecutadas por los analistas. ¿Qué modelo de precios de BigQuery debe contratarse?",
+  "correct": "D",
+  "clave_len": 197,
+  "explanation": "Las Ediciones de BigQuery (Standard, Enterprise, Enterprise Plus) ofrecen modelos basados en capacidad de procesamiento (slots), lo que garantiza costos fijos y predecibles para grandes organizaciones independientemente del volumen de datos escaneados en las consultas.",
+  "doc": "https://cloud.google.com/bigquery/docs/editions-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Comprar computadoras portátiles individuales para cada analista de datos."
+   },
+   {
+    "letter": "B",
+    "len": 78,
+    "text": "Desactivar el acceso a BigQuery a fin de mes cuando se alcance el presupuesto."
+   },
+   {
+    "letter": "C",
+    "len": 76,
+    "text": "Modelo bajo demanda (On-Demand) sin límite de bytes escaneados por consulta."
+   },
+   {
+    "letter": "D",
+    "len": 197,
+    "text": "Modelo basado en capacidad con las Ediciones de BigQuery (Standard, Enterprise o Enterprise Plus), que permite reservar una cantidad fija de slots de cómputo dedicados con costo mensual predecible."
+   }
+  ],
+  "ratio": 2.6
+ },
+ {
+  "id": "CDL-D2-080",
+  "subtopic": "Dataplex: Zonas de Datos (Raw vs Curated)",
+  "caseStudy": "none",
+  "scenario": "Una empresa organiza su Data Lake en Dataplex. Tienen datos recién ingresados sin procesar que contienen posibles inconsistencias (Zona Cruda o Raw Zone) y datos limpios, estandarizados y validados listos para el consumo de los analistas de negocio (Zona Curada o Curated Zone). ¿Cuál es la ventaja de separar estas zonas lógicas?",
+  "correct": "C",
+  "clave_len": 190,
+  "explanation": "Dataplex permite agrupar recursos de almacenamiento en zonas lógicas (Raw y Curated). Esto facilita una gobernanza granular, asegurando que los científicos de datos puedan acceder a datos crudos mientras los analistas de negocio consumen datos aprobados y estandarizados.",
+  "doc": "https://cloud.google.com/dataplex/docs/organize-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Duplica la tarifa de almacenamiento de Google Cloud por diez."
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "Obliga a que todos los datos se borren cada 30 minutos de forma irrevocable."
+   },
+   {
+    "letter": "C",
+    "len": 190,
+    "text": "Permite aislar datos no confiables o crudos, aplicar políticas de acceso diferenciadas y garantizar que las decisiones de negocio se tomen únicamente sobre datos validados y de alta calidad."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "text": "Evita que los analistas puedan utilizar herramientas de visualización como Looker."
+   }
+  ],
+  "ratio": 2.6
+ },
+ {
+  "id": "CDL-D4-001",
+  "subtopic": "Modelo de Responsabilidad Compartida: IaaS vs PaaS vs SaaS vs On-Premises",
+  "caseStudy": "none",
+  "scenario": "Una empresa traslada cargas de trabajo a Compute Engine (IaaS). El equipo de seguridad necesita clarificar qué aspectos de seguridad administra Google Cloud y cuáles son responsabilidad exclusiva del cliente. ¿Cómo se distribuyen las responsabilidades en IaaS?",
+  "correct": "D",
+  "clave_len": 299,
+  "explanation": "En el modelo de responsabilidad compartida para IaaS (Compute Engine), Google asegura la infraestructura física, hardware, red física e hipervisor, mientras que el cliente retiene la responsabilidad sobre el sistema operativo invitado, parches de software, configuración de red/firewall, aplicaciones, datos y políticas de acceso IAM.",
+  "doc": "https://cloud.google.com/learn/what-is-the-shared-responsibility-model",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 126,
+    "text": "El cliente es responsable de fabricar los chips de silicio y comprar los generadores diésel de los centros de datos de Google."
+   },
+   {
+    "letter": "B",
+    "len": 127,
+    "text": "Google es responsable de escribir el código de las aplicaciones del cliente y gestionar las contraseñas de todos los empleados."
+   },
+   {
+    "letter": "C",
+    "len": 94,
+    "text": "En la nube nadie es responsable de la seguridad porque la nube es 100% inmune de forma mágica."
+   },
+   {
+    "letter": "D",
+    "len": 299,
+    "text": "Google es responsable de la seguridad física de los centros de datos, el hardware y la capa del hipervisor; el cliente es responsable de aplicar parches al sistema operativo de la VM, configurar el firewall, la seguridad de las aplicaciones, el control de accesos (IAM) y la protección de sus datos."
+   }
+  ],
+  "ratio": 2.59
+ },
+ {
+  "id": "CDL-D4-026",
+  "subtopic": "Exportación de Datos de Facturación a BigQuery (Billing Export)",
+  "caseStudy": "none",
+  "scenario": "Un equipo de FinOps necesita realizar análisis detallados de costos en la nube: desglosar el gasto por etiquetas (labels) de centro de costos, analizar el consumo hora por hora, rastrear el ahorro generado por descuentos (CUDs/SUDs) y construir tableros ejecutivos interactivos en Looker Studio. ¿Qué funcionalidad de facturación deben habilitar?",
+  "correct": "B",
+  "clave_len": 127,
+  "explanation": "Cloud Billing Export hacia BigQuery permite exportar automáticamente datos detallados y continuos de facturación (estándar, detallada con uso a nivel de recursos y precios) hacia conjuntos de datos de BigQuery para ejecutar consultas SQL avanzadas y construir reportes visuales personalizados en Looker o Looker Studio.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/export-data-bigquery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "Copiar los números de la factura a mano en un cuaderno de papel con pluma."
+   },
+   {
+    "letter": "B",
+    "len": 127,
+    "text": "Habilitar la exportación automática de datos de facturación de Cloud Billing hacia BigQuery (Cloud Billing Export to BigQuery)."
+   },
+   {
+    "letter": "C",
+    "len": 34,
+    "text": "Cloud Storage Archive sin esquemas"
+   },
+   {
+    "letter": "D",
+    "len": 39,
+    "text": "Desactivar la facturación de la empresa"
+   }
+  ],
+  "ratio": 2.59
+ },
+ {
+  "id": "CDL-D1-021",
+  "subtopic": "Seguridad y Postura de Riesgo en la Nube Pública",
+  "caseStudy": "none",
+  "scenario": "El Consejo de Administración de una aseguradora expresa preocupación sobre si sus datos estarán más seguros en la nube pública de Google que en su propio centro de datos corporativo. ¿Qué argumento técnico fundamenta la alta seguridad de Google Cloud?",
+  "correct": "D",
+  "clave_len": 275,
+  "explanation": "La infraestructura física y lógica de Google Cloud ofrece una escala de protección que pocas empresas individuales pueden replicar: chips de seguridad Titan en hardware propietario, cifrado automático por defecto, defensa contra DDoS global y certificaciones de cumplimiento internacionales continuas.",
+  "doc": "https://cloud.google.com/security",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 109,
+    "text": "Google Cloud garantiza contractualmente que ningún atacante podrá intentar un ataque informático en el mundo."
+   },
+   {
+    "letter": "B",
+    "len": 120,
+    "text": "Los centros de datos locales pequeños siempre tienen mayor protección porque los servidores se pueden tocar físicamente."
+   },
+   {
+    "letter": "C",
+    "len": 91,
+    "text": "La nube no implementa seguridad porque confía ciegamente en todos los usuarios de Internet."
+   },
+   {
+    "letter": "D",
+    "len": 275,
+    "text": "Google invierte miles de millones de dólares en seguridad de infraestructura multicapa, emplea a miles de expertos globales, cifra los datos de forma predeterminada tanto en reposo como en tránsito y somete sus servicios a rigurosas auditorías de cumplimiento independientes."
+   }
+  ],
+  "ratio": 2.58
+ },
+ {
+  "id": "CDL-D3-076",
+  "subtopic": "Firebase y Google Cloud: Sinergia para el Desarrollo Móvil y Web",
+  "caseStudy": "none",
+  "scenario": "Un equipo de desarrollo móvil crea una aplicación para iOS y Android. Quieren herramientas integradas para autenticación de usuarios por redes sociales, base de datos en tiempo real, pruebas de aplicaciones (Crashlytics) y notificaciones push (FCM), integradas nativamente con los servicios de infraestructura de Google Cloud. ¿Qué plataforma para desarrolladores deben utilizar?",
+  "correct": "C",
+  "clave_len": 87,
+  "explanation": "Firebase es la plataforma de desarrollo de aplicaciones móviles y web de Google que acelera la creación de apps con SDKs enriquecidos (Authentication, Cloud Firestore, Cloud Functions, Crashlytics, FCM), compartiendo la misma infraestructura escalable de Google Cloud.",
+  "doc": "https://firebase.google.com",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Desactivar el soporte para teléfonos inteligentes"
+   },
+   {
+    "letter": "B",
+    "len": 28,
+    "text": "Cloud Interconnect Dedicated"
+   },
+   {
+    "letter": "C",
+    "len": 87,
+    "text": "Firebase (la plataforma de desarrollo móvil y web de Google integrada con Google Cloud)"
+   },
+   {
+    "letter": "D",
+    "len": 25,
+    "text": "Compute Engine Bare Metal"
+   }
+  ],
+  "ratio": 2.56
+ },
+ {
+  "id": "CDL-D2-072",
+  "subtopic": "Migración de Almacenes de Datos Legados a BigQuery",
+  "caseStudy": "none",
+  "scenario": "Un banco internacional gasta millones de dólares al año en licencias de hardware y mantenimiento para su almacén de datos tradicional local (Teradata/Exadata). Al migrar a BigQuery, ¿cuáles son los beneficios operativos y económicos inmediatos?",
+  "correct": "A",
+  "clave_len": 224,
+  "explanation": "BigQuery es una plataforma analítica completamente serverless donde Google administra el aprovisionamiento, mantenimiento, replicación y seguridad, permitiendo a las empresas migrar de almacenes propietarios costosos a un modelo de pago por uso altamente escalable.",
+  "doc": "https://cloud.google.com/solutions/migration-to-bigquery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 224,
+    "text": "Eliminación de la administración y aprovisionamiento de hardware, escalabilidad elástica instantánea sin tiempos de inactividad, mantenimiento automático de software y reducción sustancial del Costo Total de Propiedad (TCO)."
+   },
+   {
+    "letter": "B",
+    "len": 66,
+    "text": "Pérdida de la capacidad de ejecutar consultas SQL sobre los datos."
+   },
+   {
+    "letter": "C",
+    "len": 112,
+    "text": "Obligación de comprar servidores físicos idénticos a los de Teradata para instalarlos en las oficinas de Google."
+   },
+   {
+    "letter": "D",
+    "len": 86,
+    "text": "Requisito de tener un operador humano conectado manualmente a cada consulta analítica."
+   }
+  ],
+  "ratio": 2.55
+ },
+ {
+  "id": "CDL-D1-002",
+  "subtopic": "Total Cost of Ownership (TCO) y Retorno de Inversión (ROI)",
+  "caseStudy": "none",
+  "scenario": "Un minorista multinacional está evaluando el Costo Total de Propiedad (TCO) de migrar su plataforma de comercio electrónico a Google Cloud en comparación con renovar su centro de datos local. ¿Qué factores integrales deben incluirse en el análisis del TCO para reflejar con precisión el valor económico de la nube?",
+  "correct": "B",
+  "clave_len": 194,
+  "explanation": "El Costo Total de Propiedad (TCO) abarca todos los costos directos e indirectos asociados a la infraestructura durante su ciclo de vida, incluyendo adquisición de hardware, energía, refrigeración, espacio físico, mantenimiento y costos de personal operativo.",
+  "doc": "https://cloud.google.com/solutions/cost-optimization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 88,
+    "text": "El costo de las conexiones a Internet públicas sin considerar los servidores de cómputo."
+   },
+   {
+    "letter": "B",
+    "len": 194,
+    "text": "Costos directos (hardware, almacenamiento, redes) y costos indirectos (energía eléctrica, refrigeración, mantenimiento de instalaciones, personal de administración de TI y costo de inactividad)."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Solo los salarios del personal de soporte técnico de nivel 1."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Únicamente el costo de adquisición de licencias de software y servidores físicos."
+   }
+  ],
+  "ratio": 2.53
+ },
+ {
+  "id": "CDL-D2-044",
+  "subtopic": "Privacidad y Propiedad de los Datos del Cliente en Servicios de IA",
+  "caseStudy": "none",
+  "scenario": "El Director de Seguridad de la Información (CISO) de un banco pregunta qué sucede con los datos confidenciales de los clientes cuando se envían como prompts a los modelos de Vertex AI y Gemini Enterprise. ¿Cuál es el compromiso contractual de Google Cloud respecto a los datos del cliente?",
+  "correct": "C",
+  "clave_len": 222,
+  "explanation": "Bajo las políticas de gobernanza y privacidad de Google Cloud, los clientes retienen el control total y la propiedad de sus datos y prompts. Los datos confidenciales empresariales utilizados con Vertex AI y Gemini no se utilizan para entrenar los modelos base compartidos de Google.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/generative-ai/data-governance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Google exige que todos los datos bancarios se borren permanentemente cada 24 horas."
+   },
+   {
+    "letter": "B",
+    "len": 91,
+    "text": "Los datos pasan a ser propiedad exclusiva de Google y se venden a competidores comerciales."
+   },
+   {
+    "letter": "C",
+    "len": 222,
+    "text": "Los datos y prompts del cliente son de su exclusiva propiedad; Google Cloud nunca utiliza los datos ni las entradas del cliente para entrenar o mejorar sus modelos fundacionales de uso general sin consentimiento explícito."
+   },
+   {
+    "letter": "D",
+    "len": 89,
+    "text": "Google publica automáticamente todos los datos del cliente en foros públicos de Internet."
+   }
+  ],
+  "ratio": 2.53
+ },
+ {
+  "id": "CDL-D2-077",
+  "subtopic": "Generative AI: Ingeniería de Prompts (Prompt Engineering) y Anclaje (Grounding)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de seguros utiliza un modelo de lenguaje en Vertex AI para responder dudas de pólizas a los asegurados. En las pruebas iniciales, el modelo a veces 'inventa' coberturas que no existen en el contrato (alucinación). ¿Qué técnica y capacidad de Google Cloud debe aplicarse para fundamentar las respuestas únicamente en los documentos contractuales reales de la empresa?",
+  "correct": "C",
+  "clave_len": 181,
+  "explanation": "El anclaje (Grounding) vincula la salida de los modelos fundacionales de IA generativa a fuentes de información verificadas y específicas de la empresa (como repositorios en Vertex AI Search). Esto minimiza las alucinaciones y garantiza que las respuestas se basen en datos fácticos y auditables.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/generative-ai/grounding/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 68,
+    "text": "Apagar el sistema de seguros y no ofrecer atención a ningún cliente."
+   },
+   {
+    "letter": "B",
+    "len": 73,
+    "text": "Aumentar la creatividad y temperatura del modelo al valor máximo posible."
+   },
+   {
+    "letter": "C",
+    "len": 181,
+    "text": "Anclar el modelo (Grounding) conectándolo a la base de conocimiento y documentos oficiales de la empresa a través de Vertex AI Search (técnica RAG - Retrieval-Augmented Generation)."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Aceptar todas las reclamaciones falsas inventadas por el modelo sin verificar."
+   }
+  ],
+  "ratio": 2.48
+ },
+ {
+  "id": "CDL-D4-066",
+  "subtopic": "Cloud Monitoring: Paneles Personalizados y Visualización de Métricas",
+  "caseStudy": "none",
+  "scenario": "Un equipo de operaciones de TI necesita una pantalla de monitoreo en su sala de control (NOC) que muestre en tiempo real el tráfico de red, el uso de CPU de las máquinas virtuales, los errores HTTP por segundo y la latencia de las consultas de BigQuery. ¿Qué herramienta nativa de Google Cloud permite construir estos paneles visuales?",
+  "correct": "A",
+  "clave_len": 73,
+  "explanation": "Cloud Monitoring permite crear cuadros de mando (Dashboards) personalizados con gráficos de líneas, barras, mapas de calor y medidores numéricos para visualizar la telemetría operativa de la infraestructura y aplicaciones en tiempo real.",
+  "doc": "https://cloud.google.com/monitoring/dashboards",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Paneles de Control Personalizados (Custom Dashboards) en Cloud Monitoring"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Dibujar gráficas en una pizarra con plumón cada 10 minutos"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud DNS"
+   }
+  ],
+  "ratio": 2.46
+ },
+ {
+  "id": "CDL-D2-047",
+  "subtopic": "Transfer Appliance para Migraciones Masivas Fuera de Línea (Offline)",
+  "caseStudy": "none",
+  "scenario": "Un centro de investigación geológica tiene 500 Terabytes de datos sísmicos en una ubicación remota con una conexión a Internet de solo 10 Mbps. Subir los datos por la red tomaría más de 12 años. ¿Qué solución de Google Cloud permite transferir estos datos a la nube en cuestión de días?",
+  "correct": "C",
+  "clave_len": 196,
+  "explanation": "Transfer Appliance es un servidor de almacenamiento resistente y cifrado de alta capacidad que Google envía físicamente a las instalaciones del cliente para copiar petabytes de datos a través de la red local y transferirlos rápidamente a Cloud Storage.",
+  "doc": "https://cloud.google.com/transfer-appliance/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 88,
+    "text": "Comprimir los 500 TB en un solo archivo ZIP enviado como adjunto por correo electrónico."
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "text": "Imprimir todos los datos sísmicos en hojas de papel y escanearlos con Google Lens."
+   },
+   {
+    "letter": "C",
+    "len": 196,
+    "text": "Transfer Appliance (un dispositivo de hardware seguro y de alta capacidad que Google envía al cliente para cargar los datos localmente y luego enviarlo físicamente a un centro de datos de Google)."
+   },
+   {
+    "letter": "D",
+    "len": 70,
+    "text": "Esperar los 12 años a que termine la carga por la conexión de 10 Mbps."
+   }
+  ],
+  "ratio": 2.45
+ },
+ {
+  "id": "CDL-D2-010",
+  "subtopic": "Cloud SQL: Alta Disponibilidad (HA) y Conmutación por Error (Failover)",
+  "caseStudy": "none",
+  "scenario": "Una aplicación de facturación empresarial en Cloud SQL no puede permitirse tiempos de inactividad si una zona del centro de datos sufre un corte de energía. ¿Qué configuración nativa garantiza que la base de datos conmute por error automáticamente a una zona secundaria sin pérdida de datos?",
+  "correct": "C",
+  "clave_len": 206,
+  "explanation": "La configuración de Alta Disponibilidad (HA) en Cloud SQL aprovisiona automáticamente una instancia principal en una zona y una instancia en espera (standby) en otra zona dentro de la misma región. La replicación síncrona a nivel de disco asegura una conmutación por error (failover) transparente en segundos si la zona primaria falla.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/high-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Desactivar las copias de seguridad automáticas para evitar bloqueos de disco."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Exportar un archivo CSV diario y guardarlo en una memoria USB."
+   },
+   {
+    "letter": "C",
+    "len": 206,
+    "text": "Habilitar la configuración de Alta Disponibilidad (High Availability - HA) en Cloud SQL, que aprovisiona una instancia en espera (standby) en una zona diferente con replicación sincrónica de almacenamiento."
+   },
+   {
+    "letter": "D",
+    "len": 114,
+    "text": "Crear un recordatorio en el calendario del equipo para encender una VM manualmente si el servidor principal falla."
+   }
+  ],
+  "ratio": 2.44
+ },
+ {
+  "id": "CDL-D4-003",
+  "subtopic": "Principio de Menor Privilegio (Principle of Least Privilege) en IAM",
+  "caseStudy": "none",
+  "scenario": "Un nuevo analista de datos junior se incorpora al equipo de marketing. Solo necesita ejecutar consultas SQL sobre un conjunto de datos específico de BigQuery. ¿Cuál es la forma correcta de otorgarle permisos según las mejores prácticas de seguridad de Google Cloud?",
+  "correct": "D",
+  "clave_len": 215,
+  "explanation": "El Principio de Menor Privilegio (Principle of Least Privilege) establece que a cada usuario o cuenta se le deben otorgar únicamente los permisos mínimos estrictamente necesarios para realizar sus funciones de trabajo, previniendo accesos accidentales o maliciosos no autorizados.",
+  "doc": "https://cloud.google.com/iam/docs/understanding-roles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 119,
+    "text": "Asignarle el rol primitivo `roles/owner` a nivel de toda la organización para que no tenga problemas de permisos nunca."
+   },
+   {
+    "letter": "B",
+    "len": 72,
+    "text": "Hacer público todo el data warehouse en Internet para no configurar IAM."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Compartir la contraseña del administrador general de la empresa por chat."
+   },
+   {
+    "letter": "D",
+    "len": 215,
+    "text": "Asignarle un rol predefinido granular (como `roles/bigquery.dataViewer` en el dataset específico y `roles/bigquery.jobUser` en el proyecto) que otorgue únicamente los permisos estrictamente necesarios para su labor."
+   }
+  ],
+  "ratio": 2.44
+ },
+ {
+  "id": "CDL-D3-002",
+  "subtopic": "Compute Engine: Máquinas Virtuales Personalizadas (Custom Machine Types)",
+  "caseStudy": "none",
+  "scenario": "Una aplicación heredada en Compute Engine requiere exactamente 6 vCPUs y 27 GB de memoria RAM para operar eficientemente. En otros proveedores de nube, la empresa se ve obligada a pagar por una máquina predefinida de 8 vCPUs y 32 GB, desperdiciando recursos. ¿Qué ventaja ofrece Google Cloud Compute Engine?",
+  "correct": "B",
+  "clave_len": 189,
+  "explanation": "Custom Machine Types en Compute Engine permite a los clientes adaptar con precisión quirúrgica el número de vCPUs y la cantidad de gigabytes de memoria RAM de sus VMs, optimizando los costos y evitando el sobredimensionamiento (overprovisioning) que imponen los tamaños rígidos estándar de la industria.",
+  "doc": "https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "Obliga a comprar 10 servidores físicos dedicados en una tienda de informática."
+   },
+   {
+    "letter": "B",
+    "len": 189,
+    "text": "Permite crear Máquinas Virtuales Personalizadas (Custom Machine Types) con la cantidad exacta de vCPUs y memoria RAM requerida, pagando únicamente por los recursos específicos configurados."
+   },
+   {
+    "letter": "C",
+    "len": 76,
+    "text": "Google Cloud no permite modificar la memoria RAM de ninguna máquina virtual."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "Exige que todas las máquinas virtuales tengan 128 vCPUs como mínimo obligatorio."
+   }
+  ],
+  "ratio": 2.42
+ },
+ {
+  "id": "CDL-D3-063",
+  "subtopic": "Eficiencia Energética y Centros de Datos de Google (PUE - Power Usage Effectiveness)",
+  "caseStudy": "none",
+  "scenario": "Al evaluar metas corporativas de sostenibilidad y eficiencia energética, el comité directivo analiza la métrica PUE (Power Usage Effectiveness). ¿Qué significa tener un PUE cercano a 1.0 (como el promedio de 1.10 de Google Cloud frente al promedio de la industria de 1.55)?",
+  "correct": "B",
+  "clave_len": 199,
+  "explanation": "El PUE (Power Usage Effectiveness) es la relación entre la energía total consumida por el centro de datos y la energía consumida por el equipo de TI. Un valor ideal de 1.0 significa cero desperdicio. Google Cloud opera con un PUE promedio líder de ~1.10 mediante diseño avanzado de servidores y refrigeración con IA.",
+  "doc": "https://cloud.google.com/sustainability/progress/data-centers",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 107,
+    "text": "Significa que los servidores consumen 100 veces más electricidad que una ciudad completa sin hacer cómputo."
+   },
+   {
+    "letter": "B",
+    "len": 199,
+    "text": "Significa que casi toda la energía consumida se destina directamente al funcionamiento de los servidores de cómputo, minimizando el desperdicio energético en refrigeración e infraestructura auxiliar."
+   },
+   {
+    "letter": "C",
+    "len": 79,
+    "text": "Significa que los servidores funcionan con baterías desechables no recargables."
+   },
+   {
+    "letter": "D",
+    "len": 62,
+    "text": "El PUE es una métrica de velocidad de internet, no de energía."
+   }
+  ],
+  "ratio": 2.41
+ },
+ {
+  "id": "CDL-D1-024",
+  "subtopic": "Estrategia Cloud-First vs Cloud-Native",
+  "caseStudy": "none",
+  "scenario": "En una reunión de arquitectura de TI, se discute la diferencia entre una estrategia 'Cloud-First' y una arquitectura 'Cloud-Native'. ¿Cuál es la distinción conceptual clave?",
+  "correct": "A",
+  "clave_len": 288,
+  "explanation": "Cloud-First es una política estratégica de aprovisionamiento de TI; Cloud-Native es un patrón de diseño arquitectónico que aprovecha microservicios, contenedores, servicios gestionados y elasticidad nativa para obtener máxima resiliencia y velocidad.",
+  "doc": "https://cloud.google.com/learn/what-is-cloud-native",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 288,
+    "text": "'Cloud-First' establece la prioridad de evaluar soluciones en la nube antes que locales para nuevas iniciativas, mientras que 'Cloud-Native' diseña aplicaciones específicamente para aprovechar al máximo las capacidades de la nube (microservicios, contenedores, serverless y autoescalado)."
+   },
+   {
+    "letter": "B",
+    "len": 126,
+    "text": "'Cloud-Native' se refiere únicamente a migrar servidores antiguos mediante lift-and-shift sin cambiar ninguna línea de código."
+   },
+   {
+    "letter": "C",
+    "len": 127,
+    "text": "'Cloud-First' prohíbe el uso de Internet, mientras que 'Cloud-Native' significa comprar hardware físico directamente de Google."
+   },
+   {
+    "letter": "D",
+    "len": 107,
+    "text": "Ambos términos son sinónimos exactos de la instalación de máquinas virtuales Windows en servidores locales."
+   }
+  ],
+  "ratio": 2.4
+ },
+ {
+  "id": "CDL-D3-013",
+  "subtopic": "Descomposición de Monolitos a Microservicios",
+  "caseStudy": "none",
+  "scenario": "Una empresa de e-commerce tiene una aplicación monolítica gigante de 15 años. Cada vez que el equipo de pagos realiza un cambio menor, se debe compilar y probar toda la aplicación durante horas, y un fallo en el módulo de comentarios de usuarios derriba todo el portal de compras. ¿Cuál es el principal beneficio de descomponer este monolito en microservicios independientes?",
+  "correct": "B",
+  "clave_len": 197,
+  "explanation": "La arquitectura de microservicios divide una aplicación en servicios pequeños, acoplados de forma flexible e independientes. Esto habilita despliegues continuos rápidos por equipos autónomos, mejora la resiliencia (aislando errores) y permite escalar únicamente los módulos bajo alta demanda.",
+  "doc": "https://cloud.google.com/learn/what-are-microservices",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Elimina la necesidad de realizar pruebas de software en cualquier etapa."
+   },
+   {
+    "letter": "B",
+    "len": 197,
+    "text": "Permite que equipos independientes desarrollen, escalen y desplieguen cada funcionalidad de forma autónoma, aislando los fallos para que un error en un servicio no afecte al resto de la plataforma."
+   },
+   {
+    "letter": "C",
+    "len": 90,
+    "text": "Obliga a que todos los desarrolladores utilicen obligatoriamente el mismo editor de texto."
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "Garantiza que la aplicación nunca más tenga que conectarse a una red o base de datos."
+   }
+  ],
+  "ratio": 2.39
+ },
+ {
+  "id": "CDL-D4-021",
+  "subtopic": "Jerarquía de Recursos de Google Cloud: Organización, Carpetas, Proyectos y Recursos",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto de gobernanza diseña la estructura empresarial en Google Cloud para un conglomerado global. ¿Cuál es el orden jerárquico estricto de arriba hacia abajo (de la raíz a las hojas) para la herencia de políticas y recursos?",
+  "correct": "A",
+  "clave_len": 144,
+  "explanation": "La jerarquía de recursos de Google Cloud se estructura como un árbol invertido: el nodo raíz es la Organización (vinculada al dominio de Cloud Identity/Google Workspace), seguida por Carpetas (Folders) para departamentos/entornos, Proyectos (Projects) como unidad base de facturación y habilitación de APIs, y en la base los Recursos individuales (VMs, buckets, etc.).",
+  "doc": "https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 144,
+    "text": "Nodo de Organización (Organization) -> Carpetas (Folders) -> Proyectos (Projects) -> Recursos individuales (Resources como VMs, tablas, buckets)"
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "Google Cloud no tiene ninguna jerarquía; todos los recursos están mezclados al azar"
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Recursos -> Proyectos -> Carpetas -> Organización"
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "Proyectos -> Organización -> Recursos -> Carpetas"
+   }
+  ],
+  "ratio": 2.39
+ },
+ {
+  "id": "CDL-D2-023",
+  "subtopic": "Arquitectura de BigQuery: Desacoplamiento de Almacenamiento y Cómputo",
+  "caseStudy": "none",
+  "scenario": "Un científico de datos necesita ejecutar una consulta analítica masiva muy compleja una vez al mes sobre 50 Terabytes de datos. Durante el resto del mes, los datos solo permanecen almacenados sin recibir consultas. ¿Por qué la arquitectura de BigQuery es altamente costo-eficiente para este escenario?",
+  "correct": "A",
+  "clave_len": 250,
+  "explanation": "El desacoplamiento de almacenamiento (Colossus) y cómputo (Dremel) en BigQuery permite escalar cada componente de forma independiente. Esto elimina la necesidad de aprovisionar y pagar por servidores de cómputo ociosos cuando no se están ejecutando consultas analíticas.",
+  "doc": "https://cloud.google.com/bigquery/docs/architecture",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 250,
+    "text": "Porque BigQuery desacopla totalmente el almacenamiento del cómputo: la empresa solo paga una tarifa muy baja por almacenar los datos en reposo y solo paga por los recursos de cómputo (slots/bytes escaneados) durante los segundos que dura la consulta."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Porque BigQuery borra automáticamente todos los datos después de ejecutar la primera consulta."
+   },
+   {
+    "letter": "C",
+    "len": 142,
+    "text": "Porque BigQuery obliga a mantener un clúster de servidores de cómputo encendido y facturando al 100% las 24 horas del día durante todo el mes."
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "Porque BigQuery no permite consultar más de 10 megabytes de información al año."
+   }
+  ],
+  "ratio": 2.38
+ },
+ {
+  "id": "CDL-D2-065",
+  "subtopic": "Document AI: Extractor Personalizado (Custom Document Extractor)",
+  "caseStudy": "none",
+  "scenario": "Una empresa farmacéutica procesa reportes clínicos altamente especializados con formatos propios que ningún procesador de IA preentrenado reconoce. Cuentan con 500 ejemplos etiquetados de estos reportes y desean entrenar un modelo específico para extraer campos farmacológicos únicos. ¿Qué componente de Document AI deben utilizar?",
+  "correct": "A",
+  "clave_len": 56,
+  "explanation": "Custom Document Extractor en Document AI Workbench permite a las empresas entrenar y evaluar modelos personalizados para extraer campos y entidades específicos de tipos de documentos no estándar o propios de su industria utilizando sus propios documentos de entrenamiento etiquetados.",
+  "doc": "https://cloud.google.com/document-ai/docs/workbench/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Custom Document Extractor (CDE) en Document AI Workbench"
+   },
+   {
+    "letter": "B",
+    "len": 16,
+    "text": "Google Cloud DNS"
+   },
+   {
+    "letter": "C",
+    "len": 18,
+    "text": "Cloud Interconnect"
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "Invoice Parser estándar sin modificar"
+   }
+  ],
+  "ratio": 2.37
+ },
+ {
+  "id": "CDL-D4-080",
+  "subtopic": "Cloud Monitoring: Alertas Basadas en Registros (Log-Based Alerts)",
+  "caseStudy": "none",
+  "scenario": "El equipo de seguridad necesita recibir una alerta instantánea cada vez que aparezca en Cloud Logging una línea de registro específica que indique un intento de acceso no autorizado con error '403 Forbidden' a un recurso confidencial. ¿Qué tipo de alerta permite vincular una búsqueda de registros directamente con una notificación en tiempo real?",
+  "correct": "C",
+  "clave_len": 83,
+  "explanation": "Las Log-Based Alerts en Cloud Logging permiten definir una consulta de filtro de registros específica y disparar automáticamente una notificación de Cloud Monitoring en el momento exacto en que coincide un mensaje de registro crítico (como un fallo 403 de seguridad).",
+  "doc": "https://cloud.google.com/logging/docs/alerting/log-based-alerts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 37,
+    "text": "Desactivar la seguridad de la empresa"
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Revisar los registros una vez al año en Navidad"
+   },
+   {
+    "letter": "C",
+    "len": 83,
+    "text": "Alertas basadas en registros (Log-Based Alerts en Cloud Logging y Cloud Monitoring)"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   }
+  ],
+  "ratio": 2.35
+ }
+]

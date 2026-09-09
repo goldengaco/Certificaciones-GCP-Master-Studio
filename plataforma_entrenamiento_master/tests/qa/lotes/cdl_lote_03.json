@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D4-047",
+  "subtopic": "Uso Compartido de Descuentos por Compromiso de Uso (CUD Sharing)",
+  "caseStudy": "none",
+  "scenario": "Una empresa tiene 15 proyectos en Google Cloud vinculados a una misma Cuenta de Facturación. Compraron un descuento por compromiso de uso (CUD) para 100 vCPUs en el Proyecto A, pero debido a cambios operativos, el Proyecto A solo utiliza 40 vCPUs este mes. ¿Cómo pueden aprovecharse las 60 vCPUs restantes con descuento en los otros 14 proyectos?",
+  "correct": "B",
+  "clave_len": 225,
+  "explanation": "CUD Sharing (Uso compartido de CUDs) permite que los descuentos por compromiso de uso contratados se distribuyan de forma transparente entre todos los proyectos vinculados a la misma Cuenta de Facturación de Cloud Billing, maximizando la tasa de utilización del descuento y el ahorro financiero.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/cud-sharing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "Crear 60 máquinas virtuales ociosas e inútiles en el Proyecto A para forzar el consumo"
+   },
+   {
+    "letter": "B",
+    "len": 225,
+    "text": "Habilitar el uso compartido de descuentos por compromiso de uso (CUD Sharing) a nivel de la Cuenta de Facturación para que el descuento sobrante se aplique automáticamente al consumo de vCPUs elegibles en los demás proyectos."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Desactivar la cuenta de facturación de la empresa"
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Perder el dinero del descuento sin ninguna posibilidad de compartirlo"
+   }
+  ],
+  "ratio": 3.31
+ },
+ {
+  "id": "CDL-D2-033",
+  "subtopic": "Protección de Datos Sensibles (Cloud DLP / Sensitive Data Protection)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de salud transfiere millones de registros clínicos a Google Cloud. Para cumplir con leyes de privacidad como HIPAA y GDPR, necesitan escanear automáticamente los archivos para detectar, clasificar y anonimizar (enmascarar o tokenizar) información de identificación personal (PII) como números de seguro social y tarjetas de crédito antes de que los analistas tengan acceso. ¿Qué servicio proporciona esta capacidad?",
+  "correct": "C",
+  "clave_len": 51,
+  "explanation": "Sensitive Data Protection (Cloud DLP) es un servicio totalmente administrado que ayuda a descubrir, clasificar, enmascarar, tokenizar y redactar automáticamente datos confidenciales (como PII, PHI y credenciales) en Cloud Storage, BigQuery y flujos de datos.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 11,
+    "text": "Cloud Shell"
+   },
+   {
+    "letter": "B",
+    "len": 20,
+    "text": "Cloud Load Balancing"
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Sensitive Data Protection (anteriormente Cloud DLP)"
+   },
+   {
+    "letter": "D",
+    "len": 16,
+    "text": "Google Cloud DNS"
+   }
+  ],
+  "ratio": 3.26
+ },
+ {
+  "id": "CDL-D4-069",
+  "subtopic": "Technical Account Manager (TAM): Asesoría Estratégica y Operativa",
+  "caseStudy": "none",
+  "scenario": "Una empresa contrata el plan de soporte Premium de Google Cloud. ¿Cuál es el valor principal que aporta el Technical Account Manager (TAM) asignado a la cuenta?",
+  "correct": "A",
+  "clave_len": 222,
+  "explanation": "El Technical Account Manager (TAM) es un especialista de Google que trabaja proactivamente con los líderes técnicos del cliente para asegurar el éxito operativo, optimizar la infraestructura, preparar la plataforma para eventos de alta demanda y facilitar el acceso a ingenieros de Google.",
+  "doc": "https://cloud.google.com/support/technical-account-management",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 222,
+    "text": "Actúa como asesor técnico estratégico de confianza, guiando la adopción de mejores prácticas arquitectónicas, coordinando revisiones operativas y sirviendo como punto de escalamiento prioritario durante incidentes mayores."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Fabrica servidores físicos en el garaje de su casa."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Escribe todo el código de las aplicaciones del cliente de forma gratuita."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Reemplaza al Director General de la empresa en la toma de decisiones comerciales."
+   }
+  ],
+  "ratio": 3.25
+ },
+ {
+  "id": "CDL-D3-046",
+  "subtopic": "Tipos de Persistent Disk: Standard, Balanced, SSD y Extreme / Hyperdisk",
+  "caseStudy": "none",
+  "scenario": "Un administrador de sistemas evalúa las opciones de almacenamiento en bloque para diferentes cargas de trabajo: (1) Archivos de registro de acceso infrecuente con costo mínimo, (2) La mayoría de las aplicaciones empresariales estándar que requieren un equilibrio óptimo entre rendimiento y costo, y (3) Una base de datos transaccional de ultra alto rendimiento que requiere cientos de miles de IOPS. ¿Qué tipo de Persistent Disk corresponde?",
+  "correct": "A",
+  "clave_len": 148,
+  "explanation": "Standard Persistent Disk (HDD) optimiza costos para procesamiento por lotes y datos secuenciales; Balanced Persistent Disk (SSD) ofrece la mejor relación rendimiento/precio para la mayoría de las cargas de trabajo empresariales; y Extreme / Hyperdisk proporciona IOPS masivos y configurables para bases de datos de misión crítica.",
+  "doc": "https://cloud.google.com/compute/docs/disks",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 148,
+    "text": "(1) Standard Persistent Disk (pd-standard HDD); (2) Balanced Persistent Disk (pd-balanced SSD); (3) Extreme Persistent Disk / Hyperdisk (pd-extreme)"
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "(1) Extreme; (2) Standard; (3) Balanced"
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "Cloud Storage Archive para los tres casos"
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Usar memorias USB comerciales conectadas a los servidores"
+   }
+  ],
+  "ratio": 3.24
+ },
+ {
+  "id": "CDL-D3-019",
+  "subtopic": "Red Global de Google: Red VPC Global y Fibra Óptica Privada",
+  "caseStudy": "none",
+  "scenario": "Al diseñar una red en la nube, un ingeniero compara el modelo de redes virtuales de Google Cloud con otros proveedores. En Google Cloud, una Virtual Private Cloud (VPC) es un recurso global por defecto y las subredes son regionales conectadas a través de la red privada de fibra óptica de Google. ¿Qué ventaja operativa proporciona esto?",
+  "correct": "B",
+  "clave_len": 270,
+  "explanation": "La VPC Global de Google Cloud es un diferenciador clave: permite que una sola VPC abarque todas las regiones del mundo, conectando instancias mediante IPs privadas internas sobre la red privada de fibra óptica de alta velocidad de Google con cifrado automático y mínima latencia.",
+  "doc": "https://cloud.google.com/vpc/docs/vpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 94,
+    "text": "Obliga a que todos los paquetes de red viajen por cables de cobre telefónicos públicos lentos."
+   },
+   {
+    "letter": "B",
+    "len": 270,
+    "text": "Permite que los recursos en diferentes regiones del mundo se comuniquen entre sí a través de direcciones IP privadas internas sobre la red troncal privada de Google sin tener que atravesar la Internet pública ni requerir configuraciones complejas de VPN interregionales."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Exige pagar una tarifa de $5 por cada paquete de datos TCP enviado."
+   },
+   {
+    "letter": "D",
+    "len": 99,
+    "text": "Prohíbe que las máquinas virtuales se comuniquen con recursos fuera de su propia habitación física."
+   }
+  ],
+  "ratio": 3.12
+ },
+ {
+  "id": "CDL-D4-082",
+  "subtopic": "Cloud Logging: Exclusiones de Registros para Control de Costos (Log Exclusions)",
+  "caseStudy": "none",
+  "scenario": "Una aplicación en Compute Engine genera terabytes de registros de depuración detallada (logs de nivel DEBUG con llamadas de salud HTTP repetitivas) que saturan la cuota de Cloud Logging y aumentan los costos mensuales. El equipo necesita excluir estos registros de depuración de bajo valor para que no se almacenen ni facturen en Cloud Logging, pero manteniendo intactos los registros de errores (ERROR) y advertencias (WARN). ¿Qué funcionalidad deben configurar?",
+  "correct": "D",
+  "clave_len": 75,
+  "explanation": "Las Exclusiones de Registros (Log Exclusions) en Cloud Logging permiten filtrar y descartar registros específicos (como logs de depuración DEBUG de alto volumen) antes de que sean ingeridos y almacenados en los Log Buckets, optimizando significativamente los costos de observabilidad.",
+  "doc": "https://cloud.google.com/logging/docs/routing/overview#exclusions",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "Borrar todos los servidores de la empresa"
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Exclusiones de registros (Log Exclusions en el Log Router de Cloud Logging)"
+   }
+  ],
+  "ratio": 3.12
+ },
+ {
+  "id": "CDL-D4-015",
+  "subtopic": "Cloud Operations Suite: Visibilidad Integral (Monitoreo, Registro, Rastreo)",
+  "caseStudy": "none",
+  "scenario": "Un equipo de operaciones de TI necesita una suite integral para supervisar la salud de sus sistemas en la nube y entornos híbridos, que incluya: métricas y paneles gráficos (Monitoring), recopilación centralizada de registros (Logging), trazabilidad de llamadas de microservicios (Trace) y perfiles de rendimiento de CPU/memoria (Profiler). ¿Cómo se denomina este conjunto de herramientas?",
+  "correct": "D",
+  "clave_len": 57,
+  "explanation": "Google Cloud Operations Suite (anteriormente conocido como Stackdriver) es la solución integrada de observabilidad de Google Cloud que proporciona monitoreo de métricas (Cloud Monitoring), administración de registros (Cloud Logging), rastreo distribuido de latencia (Cloud Trace), perfilado de código (Cloud Profiler) y reporte de errores (Error Reporting).",
+  "doc": "https://cloud.google.com/products/operations",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Google Workspace Meet"
+   },
+   {
+    "letter": "C",
+    "len": 13,
+    "text": "Cloud Domains"
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Google Cloud Operations Suite (anteriormente Stackdriver)"
+   }
+  ],
+  "ratio": 3.11
+ },
+ {
+  "id": "CDL-D3-062",
+  "subtopic": "Modelos de Disaster Recovery: Cold vs Warm vs Hot Standby (Active-Active)",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto debe seleccionar el patrón de recuperación ante desastres para un sistema de pagos que exige RTO cercano a cero y RPO de cero segundos. ¿Qué arquitectura de recuperación proporciona la mayor disponibilidad a pesar de tener el costo de infraestructura más alto?",
+  "correct": "D",
+  "clave_len": 168,
+  "explanation": "Una arquitectura Activo-Activo (Hot Standby multi-región) mantiene sistemas en ejecución continua procesando tráfico en múltiples regiones con replicación sincrónica (usando tecnologías como Cloud Spanner y balanceadores globales), ofreciendo RTO y RPO prácticamente de cero ante fallas de una región entera.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "No implementar ningún plan de recuperación"
+   },
+   {
+    "letter": "B",
+    "len": 36,
+    "text": "Warm Standby con servidores apagados"
+   },
+   {
+    "letter": "C",
+    "len": 84,
+    "text": "Cold Standby (respaldos en cintas magnéticas que se restauran manualmente en 5 días)"
+   },
+   {
+    "letter": "D",
+    "len": 168,
+    "text": "Arquitectura Activo-Activo Multi-Región (Hot Standby / Multi-Region Active-Active), donde ambas regiones procesan tráfico real simultáneamente con replicación síncrona."
+   }
+  ],
+  "ratio": 3.11
+ },
+ {
+  "id": "CDL-D4-025",
+  "subtopic": "Presupuestos y Alertas de Facturación (Budgets and Budget Alerts)",
+  "caseStudy": "none",
+  "scenario": "El Director Financiero de una startup establece un presupuesto mensual de $5,000 USD para Google Cloud. Desea recibir alertas por correo electrónico cuando los costos reales o previstos alcancen el 50%, 90% y 100% del presupuesto. ¿Cómo se comportan las alertas de presupuesto (Budget Alerts) de forma predeterminada en Google Cloud?",
+  "correct": "D",
+  "clave_len": 258,
+  "explanation": "Los presupuestos y alertas de Google Cloud son herramientas de visibilidad y notificación temprana. Por defecto, alcanzar o superar el 100% de un presupuesto no detiene ni elimina los recursos en ejecución, garantizando que los servicios críticos de negocio continúen operando mientras el equipo gestiona la optimización.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/budgets",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 107,
+    "text": "Apagan inmediatamente y borran todas las bases de datos de producción al alcanzar el 50.1% del presupuesto."
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "Las alertas de presupuesto solo pueden enviarse mediante palomas mensajeras."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Llaman por teléfono a la policía para reportar un delito financiero."
+   },
+   {
+    "letter": "D",
+    "len": 258,
+    "text": "Envían notificaciones por correo electrónico a los administradores de facturación cuando se alcanzan los umbrales definidos, pero NO apagan ni interrumpen automáticamente los recursos de los proyectos por defecto para evitar caídas imprevistas de producción."
+   }
+  ],
+  "ratio": 3.08
+ },
+ {
+  "id": "CDL-D3-074",
+  "subtopic": "Cloud Run: Tolerancia a Fallos y Conmutación por Error Multi-Región",
+  "caseStudy": "none",
+  "scenario": "Una empresa requiere que su microservicio en Cloud Run se ejecute en dos regiones (us-central1 y europe-west1). Desean que un único balanceador de carga global enrute el tráfico al servicio más cercano al usuario y conmute automáticamente a la región secundaria si una región completa sufre un corte de servicio. ¿Qué combinación de servicios arquitectónicos implementa esto?",
+  "correct": "B",
+  "clave_len": 181,
+  "explanation": "Combinar Cloud Run multi-región con un Global External Application Load Balancer mediante Serverless NEGs permite distribuir el tráfico globalmente con una sola IP Anycast, logrando balanceo inteligente por latencia y conmutación automática (failover) ante contingencias regionales.",
+  "doc": "https://cloud.google.com/load-balancing/docs/negs/serverless-neg-concepts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 91,
+    "text": "Pedir a los usuarios que cambien manualmente su configuración DNS en sus teléfonos móviles."
+   },
+   {
+    "letter": "B",
+    "len": 181,
+    "text": "Desplegar el servicio de Cloud Run en ambas regiones y colocarlas como backends detrás de un Global External Application Load Balancer con Serverless NEGs (Network Endpoint Groups)."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Desactivar la segunda región para ahorrar un 50% de configuración."
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 3.05
+ },
+ {
+  "id": "CDL-D4-002",
+  "subtopic": "Responsabilidad Compartida en Servicios Serverless y SaaS",
+  "caseStudy": "none",
+  "scenario": "Al migrar de máquinas virtuales en Compute Engine a servicios totalmente administrados y serverless como Cloud Run y BigQuery, ¿cómo cambia la responsabilidad de mantenimiento del cliente?",
+  "correct": "C",
+  "clave_len": 268,
+  "explanation": "Conforme se adoptan niveles superiores de abstracción (PaaS, Serverless y SaaS), Google asume más responsabilidades operativas (parches de SO, escalado, hardware, runtime), reduciendo la carga de mantenimiento del cliente al control de identidades (IAM), gobernanza de datos y lógica de aplicación.",
+  "doc": "https://cloud.google.com/learn/what-is-the-shared-responsibility-model",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 98,
+    "text": "La responsabilidad del cliente aumenta porque debe programar el firmware de los microprocesadores."
+   },
+   {
+    "letter": "B",
+    "len": 89,
+    "text": "El cliente ahora debe administrar manualmente los servidores físicos del centro de datos."
+   },
+   {
+    "letter": "C",
+    "len": 268,
+    "text": "Google asume la responsabilidad de aplicar parches al sistema operativo subyacente, el aprovisionamiento de hardware y el mantenimiento del runtime; el cliente solo es responsable de su código de aplicación, la configuración de acceso IAM y la protección de sus datos."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "Google asume la propiedad legal de todos los datos confidenciales de la empresa."
+   }
+  ],
+  "ratio": 3.01
+ },
+ {
+  "id": "CDL-D3-030",
+  "subtopic": "Grupos de Instancias Administradas (MIGs) y Auto-Recuperación (Autohealing)",
+  "caseStudy": "none",
+  "scenario": "Una empresa hospeda una aplicación web en Compute Engine. Si el proceso del servidor web falla o la máquina virtual se congela en una zona, la empresa requiere que Compute Engine detecte la falla de la aplicación mediante verificaciones de estado (Health Checks) y destruya y recree automáticamente la VM enferma a partir de una plantilla, sin requerir intervención humana de los operadores. ¿Qué configuración deben implementar?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "Los Managed Instance Groups (MIGs) regionales permiten escalar y gestionar grupos de VMs idénticas creadas desde una plantilla de instancia. La política de Autohealing monitorea continuamente la salud de la aplicación mediante Health Checks de nivel HTTP/TCP y recrea automáticamente cualquier VM no saludable, garantizando alta disponibilidad.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "text": "Desplegar las instancias en un Grupo de Instancias Administradas Regional (Regional Managed Instance Group - MIG) y configurar una política de Auto-recuperación (Autohealing) vinculada a un Application Health Check."
+   },
+   {
+    "letter": "C",
+    "len": 70,
+    "text": "Desactivar los Health Checks para que el sistema nunca detecte errores"
+   },
+   {
+    "letter": "D",
+    "len": 123,
+    "text": "Desplegar instancias independientes sin administrar y pedir al guardia nocturno que reinicie el servidor si se cae el sitio"
+   }
+  ],
+  "ratio": 3.0
+ },
+ {
+  "id": "CDL-D4-049",
+  "subtopic": "Recomendador de IAM (IAM Recommender): Reducción de Permisos Excesivos",
+  "caseStudy": "none",
+  "scenario": "Un usuario tiene asignado el rol amplio `roles/editor` en un proyecto desde hace 6 meses. Sin embargo, el análisis de registros demuestra que el usuario solo ha utilizado permisos de lectura en Cloud Storage y nunca ha modificado ningún otro servicio. ¿Qué herramienta de Google Cloud detecta este exceso de permisos y sugiere un rol más específico y restrictivo de forma automática?",
+  "correct": "D",
+  "clave_len": 56,
+  "explanation": "IAM Recommender compara los permisos asignados a los usuarios con los permisos que realmente utilizan basándose en el historial de actividad de los últimos 90 días, recomendando de forma proactiva revocar roles excesivos y sustituirlos por roles de menor privilegio adecuados.",
+  "doc": "https://cloud.google.com/iam/docs/recommender-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 25,
+    "text": "Compute Engine Bare Metal"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "C",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "D",
+    "len": 56,
+    "text": "Recomendador de IAM (IAM Recommender / Role Recommender)"
+   }
+  ],
+  "ratio": 3.0
+ },
+ {
+  "id": "CDL-D4-067",
+  "subtopic": "Auditoría de Acceso a Datos (Data Access Audit Logs)",
+  "caseStudy": "none",
+  "scenario": "Un oficial de seguridad de la información necesita auditar quién leyó o consultó datos confidenciales dentro de un bucket de Cloud Storage o una tabla de BigQuery (operaciones de lectura de datos, no solo cambios de configuración administrativa). ¿Qué tipo de registros de Cloud Audit Logs deben habilitarse explícitamente en el proyecto?",
+  "correct": "D",
+  "clave_len": 100,
+  "explanation": "Los Data Access Audit Logs registran las llamadas a APIs que leen configuraciones o metadatos (ADMIN_READ), o leen/escriben datos creados por el usuario (DATA_READ y DATA_WRITE en Cloud Storage, BigQuery, etc.). Al generar grandes volúmenes de datos, están desactivados por defecto (excepto en BigQuery) y deben habilitarse explícitamente.",
+  "doc": "https://cloud.google.com/logging/docs/audit/data-access-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Cloud DNS Logs exclusivamente"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Historial de compras personales en tiendas físicas"
+   },
+   {
+    "letter": "D",
+    "len": 100,
+    "text": "Registros de Auditoría de Acceso a Datos (Data Access Audit Logs: ADMIN_READ, DATA_READ, DATA_WRITE)"
+   }
+  ],
+  "ratio": 3.0
+ },
+ {
+  "id": "CDL-D4-073",
+  "subtopic": "Network Analyzer: Detección Automática de Fallas de Configuración de Red",
+  "caseStudy": "none",
+  "scenario": "Un administrador de red en Google Cloud desea que una herramienta automatizada detecte de forma proactiva problemas comunes en la VPC como: reglas de firewall que bloquean inadvertidamente el tráfico de los health checks de balanceadores de carga, rutas dinámicas no coincidentes o cuotas de direcciones IP casi agotadas. ¿Qué componente de Active Assist realiza este diagnóstico?",
+  "correct": "D",
+  "clave_len": 84,
+  "explanation": "Network Analyzer monitorea continuamente las configuraciones de red de la VPC y analiza la topología para identificar proactivamente errores de configuración, dependencias rotas y cuotas al límite antes de que causen interrupciones de servicio a los usuarios.",
+  "doc": "https://cloud.google.com/network-intelligence-center/docs/network-analyzer/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Desconectar los cables de red de la oficina"
+   },
+   {
+    "letter": "B",
+    "len": 19,
+    "text": "Google Play Console"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "D",
+    "len": 84,
+    "text": "Network Analyzer (en el Centro de Inteligencia de Red / Network Intelligence Center)"
+   }
+  ],
+  "ratio": 3.0
+ },
+ {
+  "id": "CDL-D4-075",
+  "subtopic": "Resumen de FinOps: Cultura de Responsabilidad Financiera Compartida",
+  "caseStudy": "none",
+  "scenario": "En una empresa tradicional, el departamento de finanzas solo recibía una factura fija de TI al año. En Google Cloud, los ingenieros pueden crear recursos que generan costos en segundos. ¿Cuál es el cambio cultural fundamental que promueve la disciplina de FinOps?",
+  "correct": "B",
+  "clave_len": 233,
+  "explanation": "FinOps es una práctica cultural y operativa que une a los equipos de tecnología, finanzas y negocio, capacitando a los ingenieros para entender el costo de sus arquitecturas y optimizar continuamente el gasto para impulsar el crecimiento empresarial.",
+  "doc": "https://cloud.google.com/learn/what-is-finops",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Prohibir que los ingenieros desplieguen software y regresar al papel y lápiz."
+   },
+   {
+    "letter": "B",
+    "len": 233,
+    "text": "Fomentar la responsabilidad compartida donde los ingenieros toman propiedad del impacto financiero de sus decisiones arquitectónicas, colaborando estrechamente con finanzas para maximizar el valor de negocio por cada dólar invertido."
+   },
+   {
+    "letter": "C",
+    "len": 78,
+    "text": "Hacer que el departamento de finanzas programe todo el software de la empresa."
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "FinOps significa gastar la mayor cantidad de dinero posible sin ningún control."
+   }
+  ],
+  "ratio": 2.99
+ },
+ {
+  "id": "CDL-D2-088",
+  "subtopic": "Cloud Spanner: Copias de Seguridad y Restauración a un Punto en el Tiempo (PITR)",
+  "caseStudy": "none",
+  "scenario": "Un script de mantenimiento defectuoso ejecutó una sentencia `UPDATE` errónea que corrompió los saldos de clientes en Cloud Spanner a las 14:15 horas. La empresa necesita recuperar el estado exacto que tenían los datos a las 14:14 horas (un minuto antes de la corrupción) sin perder transacciones previas. ¿Qué funcionalidad proporciona esta recuperación granular?",
+  "correct": "D",
+  "clave_len": 180,
+  "explanation": "Point-in-Time Recovery (PITR) en Cloud Spanner protege contra la corrupción accidental de datos permitiendo realizar lecturas y recuperaciones a cualquier instante del pasado con precisión de microsegundos dentro del periodo de retención (hasta 7 días).",
+  "doc": "https://cloud.google.com/spanner/docs/pitr",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 85,
+    "text": "Pedir a todos los clientes que recuerden su saldo y lo ingresen manualmente por chat."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Eliminar la base de datos completa y empezar la empresa desde cero."
+   },
+   {
+    "letter": "C",
+    "len": 29,
+    "text": "Cloud Armor Security Policies"
+   },
+   {
+    "letter": "D",
+    "len": 180,
+    "text": "Point-in-Time Recovery (PITR) en Cloud Spanner, que permite consultar o restaurar datos históricos continuos a nivel de microsegundos dentro de la ventana de retención configurada."
+   }
+  ],
+  "ratio": 2.98
+ },
+ {
+  "id": "CDL-D4-058",
+  "subtopic": "Autopsias Sin Culpa (Blameless Post-Mortems): El Proceso de Mejora Continua SRE",
+  "caseStudy": "none",
+  "scenario": "Tras la resolución de una interrupción de servicio en producción, el equipo de SRE redacta un documento formal de Autopsia Sin Culpa (Blameless Post-Mortem). ¿Qué secciones y objetivos esenciales debe contener este documento según la metodología de Google?",
+  "correct": "A",
+  "clave_len": 206,
+  "explanation": "Una autopsia sin culpa (Blameless Post-Mortem) en la cultura SRE documenta qué ocurrió, por qué ocurrió, el impacto en usuarios, la respuesta al incidente y, lo más importante, acciones preventivas concretas para fortalecer el sistema sin buscar culpables individuales.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/why-you-should-practice-blameless-postmortems",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 206,
+    "text": "Descripción del impacto en el negocio, cronología detallada de los hechos, análisis de causas raíz sistémicas y una lista de acciones correctivas preventivas con dueños asignados para evitar la recurrencia."
+   },
+   {
+    "letter": "B",
+    "len": 99,
+    "text": "El nombre y fotografía del ingeniero culpable para que reciba sanciones públicas de sus compañeros."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Un poema ficticio para ocultar que ocurrió el fallo."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Una carta de renuncia firmada por todo el equipo técnico."
+   }
+  ],
+  "ratio": 2.97
+ },
+ {
+  "id": "CDL-D4-059",
+  "subtopic": "Ingeniería del Caos y Simulacros de Recuperación ante Desastres (DiRT - Disaster Recovery Training)",
+  "caseStudy": "none",
+  "scenario": "Google lleva a cabo anualmente eventos conocidos como DiRT (Disaster Recovery Training), donde se simulan fallas catastróficas del mundo real (como cortes masivos de energía en ciudades enteras o terremotos) para probar la capacidad de respuesta de sus sistemas y equipos humanos. ¿Por qué es vital que las empresas realicen simulacros periódicos similares en la nube?",
+  "correct": "B",
+  "clave_len": 247,
+  "explanation": "Los ejercicios DiRT y las pruebas de ingeniería del caos permiten descubrir debilidades latentes, dependencias ocultas y fallas en los manuales de procedimientos (runbooks) antes de que ocurra una catástrofe real, asegurando que la organización esté verdaderamente preparada para recuperarse.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/how-google-uses-chaos-engineering",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Porque Google Cloud exige pagar una multa si no se apaga un centro de datos al mes."
+   },
+   {
+    "letter": "B",
+    "len": 247,
+    "text": "Porque un plan de recuperación ante desastres no probado en la práctica no garantiza la continuidad del negocio; los simulacros validan que los procedimientos de conmutación, la automatización y la respuesta del equipo funcionen bajo presión real."
+   },
+   {
+    "letter": "C",
+    "len": 86,
+    "text": "No tiene ningún valor; es mejor esperar a que ocurra un desastre real para improvisar."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Porque los simulacros son una forma de quemar servidores viejos intencionalmente."
+   }
+  ],
+  "ratio": 2.96
+ },
+ {
+  "id": "CDL-D4-023",
+  "subtopic": "Políticas de Organización (Organization Policies): Guardarraíles Centralizados",
+  "caseStudy": "none",
+  "scenario": "El Director de Seguridad exige que ningún desarrollador en ningún proyecto de la empresa pueda asignar direcciones IP públicas externas a las máquinas virtuales de Compute Engine, y que todos los recursos solo puedan crearse en regiones geográficas de la Unión Europea por leyes de residencia de datos. ¿Qué mecanismo de gobernanza centralizada debe aplicarse a nivel de la Organización?",
+  "correct": "B",
+  "clave_len": 175,
+  "explanation": "El Servicio de Políticas de Organización (Organization Policy Service) proporciona a los administradores de la nube control centralizado y guardarraíles programáticos para restringir cómo se configuran los recursos en toda la jerarquía de la empresa, independientemente de los permisos de IAM de los desarrolladores individuales.",
+  "doc": "https://cloud.google.com/resource-manager/docs/organization-policy/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Desconectar los cables de Internet de todos los empleados"
+   },
+   {
+    "letter": "B",
+    "len": 175,
+    "text": "Políticas de Organización (Organization Policies), configurando restricciones predefinidas como `constraints/compute.vmExternalIpAccess` y `constraints/gcp.resourceLocations`."
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "D",
+    "len": 99,
+    "text": "Enviar un recordatorio por correo y esperar que todos los desarrolladores obedezcan voluntariamente"
+   }
+  ],
+  "ratio": 2.95
+ },
+ {
+  "id": "CDL-D3-044",
+  "subtopic": "Arquitecturas Resilientes: Diseño Multi-Zona y Multi-Región",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto diseña una aplicación de misión crítica que debe sobrevivir a: (1) La falla de un centro de datos individual dentro de una ciudad, y (2) Una catástrofe climática mayor que inhabilite una región geográfica entera. ¿Cómo debe distribuirse la infraestructura?",
+  "correct": "B",
+  "clave_len": 242,
+  "explanation": "Las zonas de Google Cloud son dominios de fallo independientes con energía y redes aisladas dentro de una región; las regiones son áreas geográficas independientes separadas por cientos o miles de kilómetros. Una arquitectura multi-zona protege contra fallas locales de hardware, mientras que multi-región garantiza continuidad total ante desastres mayores.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "Apagar los servidores durante la temporada de lluvias para evitar que se mojen"
+   },
+   {
+    "letter": "B",
+    "len": 242,
+    "text": "Desplegar instancias en múltiples zonas (Multi-Zone) dentro de una región para tolerar fallas de centros de datos individuales, y replicar la arquitectura en múltiples regiones (Multi-Region) para sobrevivir a fallas regionales catastróficas."
+   },
+   {
+    "letter": "C",
+    "len": 71,
+    "text": "No desplegar servidores y esperar que los usuarios no visiten la página"
+   },
+   {
+    "letter": "D",
+    "len": 97,
+    "text": "Colocar todos los servidores en una sola máquina virtual en una sola zona sin copias de seguridad"
+   }
+  ],
+  "ratio": 2.95
+ },
+ {
+  "id": "CDL-D4-051",
+  "subtopic": "Contactos Esenciales (Essential Contacts): Notificaciones de Seguridad y Facturación",
+  "caseStudy": "none",
+  "scenario": "Google Cloud necesita enviar notificaciones directas sobre incidentes de seguridad críticos, avisos de privacidad legal, cortes de servicio por mantenimiento y avisos de suspensión de facturación a las personas y equipos correspondientes en la empresa (ej. equipo de seguridad para incidentes, equipo legal para privacidad y equipo financiero para facturación). ¿Dónde se configuran estos destinatarios oficiales?",
+  "correct": "D",
+  "clave_len": 71,
+  "explanation": "Essential Contacts permite a las organizaciones designar qué personas o listas de distribución de correo deben recibir notificaciones de Google Cloud categorizadas por temas (Seguridad, Privacidad, Facturación, Operaciones, Legal), garantizando que las alertas lleguen al equipo adecuado.",
+  "doc": "https://cloud.google.com/resource-manager/docs/managing-essential-contacts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "En foros públicos de discusión en Internet"
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "Contactos Esenciales (Essential Contacts en la consola de Google Cloud)"
+   }
+  ],
+  "ratio": 2.92
+ },
+ {
+  "id": "CDL-D2-043",
+  "subtopic": "Principios de IA Responsable en Google Cloud",
+  "caseStudy": "none",
+  "scenario": "Una institución educativa pública está evaluando la adopción de herramientas de IA generativa de Google Cloud. La junta directiva exige garantías de que los sistemas de IA se desarrollen considerando la equidad, la seguridad, la privacidad y la responsabilidad social. ¿Cómo formaliza Google Cloud este compromiso ético?",
+  "correct": "B",
+  "clave_len": 231,
+  "explanation": "Google se rige formalmente por sus Principios de IA publicados en 2018, los cuales establecen que la IA debe ser socialmente beneficiosa, evitar sesgos injustos, construirse y probarse para ser segura, rendir cuentas a las personas y respetar la privacidad de los datos.",
+  "doc": "https://ai.google/responsibility/principles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 80,
+    "text": "Afirmando que la ética no tiene relevancia en el desarrollo de software moderno."
+   },
+   {
+    "letter": "B",
+    "len": 231,
+    "text": "A través de los 7 Principios de IA de Google (Google AI Principles) y prácticas de IA Responsable, que guían el desarrollo de tecnologías de IA socialmente beneficiosas, seguras, que eviten sesgos injustos y protejan la privacidad."
+   },
+   {
+    "letter": "C",
+    "len": 88,
+    "text": "Garantizando que la IA tome todas las decisiones gubernamentales sin supervisión humana."
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "Prohibiendo el uso de computadoras en todas las universidades públicas."
+   }
+  ],
+  "ratio": 2.9
+ },
+ {
+  "id": "CDL-D3-065",
+  "subtopic": "Resumen de Infraestructura: Escalabilidad, Agilidad y Costo",
+  "caseStudy": "none",
+  "scenario": "En una presentación ante la junta directiva, el Chief Technology Officer (CTO) sintetiza los tres pilares de valor que la modernización de infraestructura y aplicaciones en Google Cloud aporta a la organización: (1) Escalabilidad elástica global, (2) Agilidad de innovación y reducción de tiempo al mercado, y (3) Eficiencia financiera en costos operativos. ¿Qué resumen valida este impacto estratégico?",
+  "correct": "C",
+  "clave_len": 259,
+  "explanation": "La modernización en Google Cloud transforma la tecnología de un centro de costos lento y rígido en un motor ágil de innovación que escala bajo demanda globalmente, reduce el tiempo de desarrollo e impulsa la competitividad del negocio con resiliencia y eficiencia de costos.",
+  "doc": "https://cloud.google.com/solutions",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Google Cloud solo sirve para comprar monitores de computadora más brillantes."
+   },
+   {
+    "letter": "B",
+    "len": 107,
+    "text": "La modernización de infraestructura obliga a las empresas a duplicar sus costos de TI sin ningún beneficio."
+   },
+   {
+    "letter": "C",
+    "len": 259,
+    "text": "Google Cloud permite reemplazar la rigidez de los centros de datos locales por servicios elásticos, automatizados y serverless, permitiendo lanzar productos en minutos en lugar de meses y pagando solo por el consumo real con máxima seguridad y sostenibilidad."
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "La nube no ofrece ninguna ventaja sobre un servidor de archivos en una oficina local."
+   }
+  ],
+  "ratio": 2.89
+ },
+ {
+  "id": "CDL-D2-090",
+  "subtopic": "Estrategia Global de Innovación con Datos en Google Cloud",
+  "caseStudy": "none",
+  "scenario": "El Director General (CEO) de una corporación global solicita un resumen estratégico de cómo las soluciones de datos de Google Cloud permiten a la empresa pasar de una operación reactiva basada en hojas de cálculo a una organización predictiva impulsada por datos e inteligencia artificial. ¿Cuál es la síntesis de mayor valor empresarial?",
+  "correct": "B",
+  "clave_len": 318,
+  "explanation": "El ecosistema integral de datos e inteligencia artificial de Google Cloud permite a las organizaciones consolidar silos, democratizar el acceso a la analítica, automatizar procesos con modelos de Machine Learning y GenAI, y generar ventajas competitivas sostenibles mediante decisiones predictivas en tiempo real.",
+  "doc": "https://cloud.google.com/solutions/smart-analytics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 128,
+    "text": "Google Cloud exige que las empresas dejen de tomar decisiones y deleguen toda la gestión corporativa a software sin supervisión."
+   },
+   {
+    "letter": "B",
+    "len": 318,
+    "text": "Google Cloud integra ingesta masiva (Pub/Sub), lagos y almacenes de datos gobernados (Cloud Storage, BigQuery, Dataplex), procesamiento en tiempo real (Dataflow) y plataformas de IA/ML (Vertex AI y Gemini), permitiendo transformar datos crudos en decisiones automatizadas, predictivas y en tiempo real a escala global."
+   },
+   {
+    "letter": "C",
+    "len": 87,
+    "text": "La nube solo sirve para reducir el costo de comprar papel de impresora en las oficinas."
+   },
+   {
+    "letter": "D",
+    "len": 115,
+    "text": "Google Cloud simplemente vende computadoras físicas para que los empleados jueguen videojuegos en horas de trabajo."
+   }
+  ],
+  "ratio": 2.89
+ }
+]

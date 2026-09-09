@@ -1,0 +1,41 @@
+[
+ {
+  "id": "ACE-D5-039",
+  "options": {
+   "A": "Grant roles/cloudbuild.builds.viewer at the project level.",
+   "B": "Grant roles/cloudbuild.builds.approver at the project level.",
+   "D": "Create a custom role holding only cloudbuild.builds.create."
+  },
+  "distractors": {
+   "A": "Viewer grants only get and list on builds. The developer could read build history but could not create a trigger or start a build from the CLI, which is the whole requirement.",
+   "B": "Approver only allows approving or rejecting builds that are already waiting at an approval gate. It carries no cloudbuild.triggers.create and no build invocation permission.",
+   "D": "That permission covers manually invoking a build, but the trigger permissions cloudbuild.triggers.create and cloudbuild.triggers.update are absent, so automated triggers still cannot be managed."
+  }
+ },
+ {
+  "id": "ACE-D3-008",
+  "options": {
+   "A": "gcloud compute instances create api-server-template --zone=us-central1-a --machine-type=e2-standard-4 --boot-disk-type=pd-balanced --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com",
+   "B": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --boot-disk-type=pd-ssd --boot-disk-size=50GB --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com",
+   "C": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --boot-disk-type=pd-balanced --boot-disk-size=50GB --tags=api-server --scopes=https://www.googleapis.com/auth/cloud-platform"
+  },
+  "distractors": {
+   "A": "This provisions one running VM pinned to us-central1-a. A managed instance group consumes a template, and a live instance cannot be passed to --template, so the autoscaling blueprint still does not exist.",
+   "B": "Everything matches except the boot disk type: pd-ssd is provisioned where pd-balanced was specified, and a template's disk properties are immutable, so the template would have to be deleted and rebuilt.",
+   "C": "Access scopes are not an identity. With no --service-account the template attaches the default Compute Engine service account, so every VM in the group runs as the wrong principal, merely with a broad scope."
+  }
+ },
+ {
+  "id": "ACE-D1-033",
+  "options": {
+   "A": "Delete the old key with gcloud iam service-accounts keys delete, then create and deploy a new key.",
+   "B": "Create a second service account with a new key, repoint the application, and delete the original account.",
+   "C": "Disable the old key with gcloud iam service-accounts keys disable, then issue a new key and roll it out."
+  },
+  "distractors": {
+   "A": "Key deletion takes effect immediately and cannot be undone, so every nightly upload attempted between the deletion and the new key reaching the application fails authentication: exactly the downtime the policy forbids.",
+   "B": "This replaces the identity instead of rotating the key. The new service account holds none of the bucket IAM bindings until they are granted again, and deleting the old account breaks anything else still relying on it.",
+   "C": "A disabled key stops authenticating at once, so the batch job breaks in the same window as deleting it. Disabling belongs after the new key is verified, as a reversible step before the final delete."
+  }
+ }
+]

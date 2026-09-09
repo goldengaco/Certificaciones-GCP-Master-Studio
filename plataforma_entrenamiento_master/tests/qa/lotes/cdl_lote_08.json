@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D1-012",
+  "subtopic": "Estrategias Híbridas y Multi-Cloud",
+  "caseStudy": "none",
+  "scenario": "Una corporación global opera en múltiples países con regulaciones estrictas de soberanía de datos y busca evitar depender de un único proveedor de infraestructura. ¿Cuál es la principal justificación estratégica para adoptar una arquitectura multinube?",
+  "correct": "C",
+  "clave_len": 164,
+  "explanation": "Una estrategia multinube permite a las empresas mitigar riesgos de disponibilidad y concentración, cumplir con leyes locales de residencia de datos y seleccionar las mejores capacidades tecnológicas de cada plataforma según sus necesidades específicas.",
+  "doc": "https://cloud.google.com/anthos",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 85,
+    "text": "Eliminar por completo la necesidad de contar con políticas de seguridad y gobernanza."
+   },
+   {
+    "letter": "B",
+    "len": 107,
+    "text": "Duplicar exactamente cada servidor físico en todas las nubes posibles para triplicar los costos operativos."
+   },
+   {
+    "letter": "C",
+    "len": 164,
+    "text": "Mitigar el riesgo de dependencia tecnológica, cumplir con regulaciones locales de datos y aprovechar los mejores servicios especializados de cada proveedor de nube."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "text": "Evitar el uso de contenedores e interfaces de programación de aplicaciones (APIs)."
+   }
+  ],
+  "ratio": 1.8
+ },
+ {
+  "id": "CDL-D1-028",
+  "subtopic": "Centro de Excelencia en la Nube (CCoE - Cloud Center of Excellence)",
+  "caseStudy": "none",
+  "scenario": "Un conglomerado empresarial con múltiples divisiones de negocio autónomas está experimentando adopción desordenada de la nube, con políticas de seguridad dispares y gastos descontrolados. ¿Qué estructura organizativa debe establecer para liderar las mejores prácticas?",
+  "correct": "D",
+  "clave_len": 191,
+  "explanation": "El CCoE (Cloud Center of Excellence) es un equipo multifuncional (seguridad, operaciones, finanzas, arquitectura) responsable de guiar y habilitar la adopción segura, eficiente y estandarizada de la nube en toda la empresa mediante mejores prácticas y gobernanza.",
+  "doc": "https://cloud.google.com/adoption-framework",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 118,
+    "text": "Obligar a que un único administrador apruebe manualmente cada comando ejecutado en la terminal por cualquier empleado."
+   },
+   {
+    "letter": "B",
+    "len": 117,
+    "text": "Dejar que cada equipo compre cuentas de nube individuales con tarjetas de crédito personales sin ninguna supervisión."
+   },
+   {
+    "letter": "C",
+    "len": 85,
+    "text": "Un comité que prohíba a cualquier unidad de negocio utilizar computadoras o internet."
+   },
+   {
+    "letter": "D",
+    "len": 191,
+    "text": "Un Centro de Excelencia en la Nube (CCoE) multidisciplinario que defina estándares arquitectónicos, guardarraíles de seguridad, políticas de FinOps y capacite a las demás unidades de negocio."
+   }
+  ],
+  "ratio": 1.79
+ },
+ {
+  "id": "CDL-D4-054",
+  "subtopic": "Justificaciones de Acceso a Claves (Key Access Justifications - KAJ)",
+  "caseStudy": "none",
+  "scenario": "Un banco central exige el máximo nivel de soberanía de datos: cada vez que se solicita el descifrado de datos protegidos por una clave en Cloud KMS, el sistema debe proporcionar una justificación detallada y auditable del motivo del acceso, permitiendo a la empresa denegar automáticamente el descifrado si la justificación no cumple con sus políticas. ¿Qué servicio ofrece esta capacidad pionera?",
+  "correct": "C",
+  "clave_len": 67,
+  "explanation": "Key Access Justifications (KAJ) proporciona una justificación explícita cada vez que los datos del cliente se solicitan para descifrado, otorgando a las organizaciones la capacidad de evaluar la razón de cada solicitud y bloquearla si no cumple con sus requisitos de soberanía y privacidad.",
+  "doc": "https://cloud.google.com/assured-workloads/key-access-justifications/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Desactivar el cifrado en toda la empresa"
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Key Access Justifications (KAJ) integrado con Cloud KMS / Cloud EKM"
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Publicar las claves de descifrado en redes sociales"
+   }
+  ],
+  "ratio": 1.78
+ },
+ {
+  "id": "CDL-D2-076",
+  "subtopic": "Ingesta y Calidad de Datos con Cloud Dataflow: Ventanas de Tiempo (Windowing)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de juegos multijugador recibe millones de eventos de puntuación continuos por streaming. Necesitan calcular las puntuaciones promedio de los jugadores en bloques de 5 minutos que se deslizan cada 1 minuto (Sliding Windows), manejando datos que llegan con retraso por mala conexión móvil. ¿Qué tecnología y concepto resuelven este requerimiento?",
+  "correct": "D",
+  "clave_len": 118,
+  "explanation": "Apache Beam y Cloud Dataflow proporcionan capacidades avanzadas de manejo de flujos de datos (streaming), permitiendo segmentar flujos continuos en ventanas de tiempo fijas, deslizantes o de sesión (Windowing) y gestionar eventos que llegan con retraso mediante marcas de agua (Watermarks) y acumuladores.",
+  "doc": "https://cloud.google.com/dataflow/docs/concepts/streaming-pipelines",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Cloud Storage Archive con scripts ejecutados anualmente."
+   },
+   {
+    "letter": "B",
+    "len": 69,
+    "text": "Guardar las puntuaciones en un archivo de texto en una memoria flash."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Descartar todos los datos que no lleguen en menos de 1 microsegundo exacto."
+   },
+   {
+    "letter": "D",
+    "len": 118,
+    "text": "Cloud Dataflow con estrategias de ventanas de tiempo (Windowing) y marcas de agua (Watermarks) basadas en Apache Beam."
+   }
+  ],
+  "ratio": 1.77
+ },
+ {
+  "id": "CDL-D1-008",
+  "subtopic": "Cultura DevOps / SRE: Autopsias Sin Culpa (Blameless Post-mortems)",
+  "caseStudy": "none",
+  "scenario": "Tras una interrupción mayor del servicio causada por una configuración errónea durante un despliegue de emergencia, el equipo de liderazgo de TI desea evitar que vuelva a ocurrir sin penalizar al ingeniero responsable. Siguiendo las prácticas de Site Reliability Engineering (SRE) de Google, ¿qué práctica cultural se debe adoptar?",
+  "correct": "D",
+  "clave_len": 171,
+  "explanation": "Una autopsia sin culpa (Blameless Post-mortem) se centra en entender cómo el sistema permitió que ocurriera el error humano y cómo reforzar los procesos, salvaguardas y automatizaciones para evitar su recurrencia, construyendo una cultura de aprendizaje y alta confianza.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/why-you-should-practice-blameless-postmortems",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 114,
+    "text": "Prohibir todos los despliegues de emergencia e imponer aprobaciones manuales de cinco directores para cada cambio."
+   },
+   {
+    "letter": "B",
+    "len": 86,
+    "text": "Ocultar el incidente a la organización para proteger la reputación del equipo técnico."
+   },
+   {
+    "letter": "C",
+    "len": 92,
+    "text": "Suspender los permisos del ingeniero que realizó el cambio para prevenir incidentes futuros."
+   },
+   {
+    "letter": "D",
+    "len": 171,
+    "text": "Realizar una autopsia sin culpa (Blameless Post-mortem) que examine las fallas sistémicas del proceso y las herramientas, asumiendo que los empleados actuaron de buena fe."
+   }
+  ],
+  "ratio": 1.76
+ },
+ {
+  "id": "CDL-D2-014",
+  "subtopic": "Bare Metal Solution para Cargas Legadas de Oracle",
+  "caseStudy": "none",
+  "scenario": "Una empresa posee una base de datos central Oracle RAC crítica con requisitos estrictos de licencias por núcleo físico y hardware dedicado de baja latencia con el resto de sus sistemas en Google Cloud. ¿Qué solución ofrece Google Cloud para hospedar esta carga sin virtualización?",
+  "correct": "C",
+  "clave_len": 35,
+  "explanation": "Bare Metal Solution proporciona infraestructura de hardware dedicado (servidores físicos no virtualizados) adyacente a los centros de datos de Google Cloud con conexión de red de latencia sub-milisegundo, ideal para cargas empresariales especializadas como Oracle RAC que requieren licenciamiento físico específico.",
+  "doc": "https://cloud.google.com/bare-metal",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 26,
+    "text": "Firebase Realtime Database"
+   },
+   {
+    "letter": "B",
+    "len": 26,
+    "text": "Google App Engine Standard"
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Bare Metal Solution de Google Cloud"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud Run"
+   }
+  ],
+  "ratio": 1.72
+ },
+ {
+  "id": "CDL-D1-020",
+  "subtopic": "Economía de APIs y Creación de Ecosistemas Digitales",
+  "caseStudy": "none",
+  "scenario": "Un banco tradicional posee una valiosa base de datos de historial crediticio y busca crear nuevas fuentes de ingresos permitiendo a empresas Fintech consultar calificaciones de crédito en tiempo real de forma segura. ¿Qué modelo y tecnología habilitan esta oportunidad de negocio?",
+  "correct": "A",
+  "clave_len": 181,
+  "explanation": "La economía de APIs permite transformar los activos de datos y lógica de negocio existentes en productos digitales consumibles por terceros. Mediante plataformas como Apigee, las organizaciones gestionan la seguridad, cuotas, analítica y monetización de sus APIs.",
+  "doc": "https://cloud.google.com/apigee",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 181,
+    "text": "Adoptar una estrategia de Economía de APIs utilizando una plataforma de gestión de APIs (como Apigee) para empaquetar, asegurar y monetizar servicios de datos hacia socios externos."
+   },
+   {
+    "letter": "B",
+    "len": 108,
+    "text": "Permitir a las Fintech conectarse directamente como administradores 'root' a la base de datos de producción."
+   },
+   {
+    "letter": "C",
+    "len": 116,
+    "text": "Enviar archivos de texto plano con los datos de clientes por correo electrónico a cualquier empresa que lo solicite."
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Cobrar a los clientes por imprimir sus estados de cuenta en papel en ventanillas bancarias."
+   }
+  ],
+  "ratio": 1.72
+ },
+ {
+  "id": "CDL-D4-070",
+  "subtopic": "Cloud Customer Care: Nivel Enhanced Support",
+  "caseStudy": "none",
+  "scenario": "Una empresa en crecimiento necesita soporte técnico 24/7 para incidentes de alta prioridad (P1) con un tiempo de respuesta garantizado de 1 hora, además de soporte para tecnologías de terceros comunes en la nube, pero no requiere un TAM dedicado de tiempo completo. ¿Qué nivel de soporte es el más adecuado y costo-eficiente?",
+  "correct": "C",
+  "clave_len": 65,
+  "explanation": "Enhanced Support está diseñado para empresas con cargas de producción que requieren soporte 24/7 con respuesta en 1 hora para incidentes P1, soporte de terceros y herramientas de diagnóstico avanzadas sin incurrir en el costo del nivel Premium con TAM dedicado.",
+  "doc": "https://cloud.google.com/support",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Soporte Básico (Basic Support sin atención telefónica)"
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "Contratar un hacker anónimo en Internet"
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Soporte Mejorado (Enhanced Support de Google Cloud Customer Care)"
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 1.71
+ },
+ {
+  "id": "CDL-D2-018",
+  "subtopic": "Cloud Memorystore: Caché en Memoria (Redis y Memcached)",
+  "caseStudy": "none",
+  "scenario": "Un juego móvil multijugador experimenta lentitud al cargar las tablas de clasificación (leaderboards) y las sesiones de usuario desde la base de datos central. Necesitan una capa de almacenamiento en memoria RAM de latencia sub-milisegundo totalmente compatible con Redis. ¿Qué servicio administrado deben desplegar?",
+  "correct": "A",
+  "clave_len": 27,
+  "explanation": "Cloud Memorystore ofrece un servicio de almacenamiento en memoria totalmente administrado para Redis y Memcached, proporcionando latencias de respuesta de sub-milisegundos para sesiones de usuario, tablas de líderes y cachés de alto rendimiento.",
+  "doc": "https://cloud.google.com/memorystore/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 27,
+    "text": "Cloud Memorystore for Redis"
+   },
+   {
+    "letter": "B",
+    "len": 14,
+    "text": "Cloud Bigtable"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 13,
+    "text": "Cloud Logging"
+   }
+  ],
+  "ratio": 1.69
+ },
+ {
+  "id": "CDL-D1-025",
+  "subtopic": "Optimización de Cadena de Suministro con Visibilidad en la Nube",
+  "caseStudy": "none",
+  "scenario": "Una empresa de manufactura global sufre retrasos constantes en sus líneas de ensamblaje porque no tiene visibilidad en tiempo real sobre la ubicación de componentes transportados por marítimo y terrestre. ¿Cómo ayuda Google Cloud a resolver este desafío?",
+  "correct": "A",
+  "clave_len": 168,
+  "explanation": "Google Cloud permite conectar datos de sensores de flotas, inventarios de almacenes y condiciones climáticas en una plataforma de streaming y analítica, proporcionando visibilidad integral de la cadena de suministro y mantenimiento predictivo.",
+  "doc": "https://cloud.google.com/solutions/supply-chain",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 168,
+    "text": "Ingiriendo datos de sensores IoT y telemetría de transporte en tiempo real a través de Pub/Sub y BigQuery para predecir cuellos de botella y optimizar rutas de entrega."
+   },
+   {
+    "letter": "B",
+    "len": 97,
+    "text": "Enviando faxes diarios a todos los puertos del mundo para registrar llegadas en libros contables."
+   },
+   {
+    "letter": "C",
+    "len": 98,
+    "text": "Eliminando la necesidad de fabricar componentes físicos mediante simulaciones virtuales estáticas."
+   },
+   {
+    "letter": "D",
+    "len": 104,
+    "text": "Reemplazando los barcos de carga por servidores de cómputo en la nube para transportar mercancía física."
+   }
+  ],
+  "ratio": 1.69
+ },
+ {
+  "id": "CDL-D3-032",
+  "subtopic": "Descuentos por Uso Sostenido (Sustained Use Discounts - SUDs)",
+  "caseStudy": "none",
+  "scenario": "Un cliente ejecuta varias máquinas virtuales Compute Engine durante la mayor parte del mes de facturación. No firmó ningún contrato de compromiso a largo plazo previo. Al revisar la factura, notan un descuento automático por haber mantenido las VMs encendidas de forma constante. ¿Cómo se denomina este descuento automático de Google Cloud?",
+  "correct": "B",
+  "clave_len": 61,
+  "explanation": "Los Sustained Use Discounts (SUDs) son descuentos automáticos aplicados por Compute Engine cuando una instancia de VM (de familias compatibles como N1/N2) se ejecuta durante más del 25% de un mes de facturación, incrementando el descuento conforme mayor porcentaje del mes esté activa la máquina, sin requerir ningún compromiso previo por parte del cliente.",
+  "doc": "https://cloud.google.com/compute/docs/sustained-use-discounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 35,
+    "text": "Intereses moratorios de facturación"
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Descuentos por Uso Sostenido (Sustained Use Discounts - SUDs)"
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Créditos promocionales de prueba gratuita caducados"
+   },
+   {
+    "letter": "D",
+    "len": 23,
+    "text": "Committed Use Discounts"
+   }
+  ],
+  "ratio": 1.68
+ },
+ {
+  "id": "CDL-D2-061",
+  "subtopic": "Vertex AI Search and Conversation: Búsqueda y Asistentes Conversacionales",
+  "caseStudy": "none",
+  "scenario": "Una cadena de tiendas departamentales desea agregar a su sitio web un motor de búsqueda semántica similar a Google y un asistente de chat impulsado por IA generativa que responda preguntas sobre su catálogo de 100,000 productos y políticas de devolución. Quieren desplegarlo en pocos días sin entrenar modelos de lenguaje complejos desde cero. ¿Qué solución deben utilizar?",
+  "correct": "D",
+  "clave_len": 75,
+  "explanation": "Vertex AI Search and Conversation permite a las empresas crear rápidamente aplicaciones de búsqueda multimodal de nivel Google y agentes conversacionales de IA generativa conectados a sus propios datos empresariales de forma segura y con mínimo código.",
+  "doc": "https://cloud.google.com/generative-ai-app-builder",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 76,
+    "text": "Contratar a 100 operadores para responder cada búsqueda en una hoja de Excel"
+   },
+   {
+    "letter": "B",
+    "len": 26,
+    "text": "Cloud Interconnect Partner"
+   },
+   {
+    "letter": "C",
+    "len": 32,
+    "text": "Compute Engine Sole-Tenant Nodes"
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Vertex AI Search and Conversation (anteriormente Generative AI App Builder)"
+   }
+  ],
+  "ratio": 1.68
+ },
+ {
+  "id": "CDL-D1-030",
+  "subtopic": "Evolución de la IA Generativa en Procesos de Negocio",
+  "caseStudy": "none",
+  "scenario": "El equipo de atención al cliente de una aerolínea maneja millones de consultas sobre políticas de equipaje y cancelaciones de vuelos. Desean automatizar la generación de respuestas precisas y empáticas basadas estrictamente en sus manuales operativos internos. ¿Qué tecnología de Google Cloud es la más idónea?",
+  "correct": "C",
+  "clave_len": 167,
+  "explanation": "Vertex AI Search and Conversation permite desplegar agentes de IA generativa conectados de forma segura (grounded) a los repositorios de datos corporativos de la empresa, garantizando respuestas precisas, veraces y basadas en la documentación oficial de la aerolínea.",
+  "doc": "https://cloud.google.com/generative-ai-app-builder",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 101,
+    "text": "Un servidor Compute Engine sin conexión a internet que devuelva respuestas aleatorias no verificadas."
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "Un script en bash local que envíe correos electrónicos vacíos a todos los clientes."
+   },
+   {
+    "letter": "C",
+    "len": 167,
+    "text": "Vertex AI Search and Conversation respaldado por modelos fundacionales con anclaje (grounding) directo en la base de conocimiento y manuales oficiales de la aerolínea."
+   },
+   {
+    "letter": "D",
+    "len": 115,
+    "text": "Un sistema de fax automatizado que imprima los manuales completos de 500 páginas y los envíe por paquetería postal."
+   }
+  ],
+  "ratio": 1.68
+ },
+ {
+  "id": "CDL-D1-013",
+  "subtopic": "Cultura de Innovación de Google (10x Thinking)",
+  "caseStudy": "none",
+  "scenario": "Como parte de un taller de liderazgo para la transformación digital, un consultor de Google Cloud presenta el principio de 'Pensamiento 10x' (10x Thinking). ¿Qué significa este principio en el contexto de la innovación empresarial?",
+  "correct": "C",
+  "clave_len": 164,
+  "explanation": "El '10x Thinking' promueve abordar los desafíos empresariales buscando mejoras de un orden de magnitud (1000%) en lugar de pequeños avances incrementales (10%), lo que obliga a cuestionar supuestos tradicionales y aprovechar tecnologías transformadoras.",
+  "doc": "https://cloud.google.com/transform",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 98,
+    "text": "Incrementar diez veces el número de horas de trabajo semanales de los desarrolladores de software."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Comprar diez centros de datos físicos en diferentes ciudades para hospedar servidores legados."
+   },
+   {
+    "letter": "C",
+    "len": 164,
+    "text": "Buscar una mejora radical de diez veces (10x) en lugar de una mejora incremental del 10%, repensando los problemas desde sus fundamentos con ayuda de la tecnología."
+   },
+   {
+    "letter": "D",
+    "len": 103,
+    "text": "Multiplicar por diez el presupuesto anual del departamento de TI sin modificar los procesos existentes."
+   }
+  ],
+  "ratio": 1.67
+ },
+ {
+  "id": "CDL-D2-052",
+  "subtopic": "Consultas Federadas en BigQuery (BigQuery Federated Queries)",
+  "caseStudy": "none",
+  "scenario": "Un analista de negocios necesita cruzar datos de facturas históricas almacenadas en BigQuery con información de clientes en tiempo real alojada en una base de datos operativa Cloud SQL for PostgreSQL. No desea construir una canalización ETL compleja para copiar la base de datos completa a BigQuery. ¿Qué funcionalidad permite ejecutar una consulta SQL que una ambas fuentes directamente?",
+  "correct": "A",
+  "clave_len": 129,
+  "explanation": "Las consultas federadas de BigQuery permiten enviar sentencias de consulta a fuentes de datos externas (como Cloud SQL, Spanner o Cloud Storage) y recibir los resultados directamente en BigQuery para unirlos con tablas internas sin mover ni duplicar los datos.",
+  "doc": "https://cloud.google.com/bigquery/docs/cloud-sql-federated-queries",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 129,
+    "text": "Consultas federadas de BigQuery (utilizando funciones como `EXTERNAL_QUERY` para consultar directamente Cloud SQL desde BigQuery)"
+   },
+   {
+    "letter": "B",
+    "len": 84,
+    "text": "Exportar toda la base de datos a archivos de texto e imprimirlos en hojas de cálculo"
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Apagar la base de datos Cloud SQL durante las horas laborales"
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "Migrar manualmente cada registro escribiéndolo con el teclado en la consola de BigQuery"
+   }
+  ],
+  "ratio": 1.67
+ },
+ {
+  "id": "CDL-D3-005",
+  "subtopic": "Compute Engine: Nodos de Inquilino Único (Sole-Tenant Nodes)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de defensa militar debe cumplir con estrictas regulaciones gubernamentales que prohíben compartir el hardware físico del servidor con máquinas virtuales de otros clientes (requisito de aislamiento físico total) y requiere traer sus propias licencias de software por núcleo físico (BYOL). ¿Qué configuración de Compute Engine satisface este requisito?",
+  "correct": "C",
+  "clave_len": 62,
+  "explanation": "Sole-Tenant Nodes proporcionan servidores físicos dedicados exclusivamente para alojar las máquinas virtuales de un solo cliente en Compute Engine, permitiendo aislamiento físico total para requisitos de cumplimiento y optimización de licencias por zócalo/núcleo físico (BYOL).",
+  "doc": "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 19,
+    "text": "App Engine Standard"
+   },
+   {
+    "letter": "B",
+    "len": 33,
+    "text": "Cloud Run compartido públicamente"
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Nodos de Inquilino Único (Sole-Tenant Nodes en Compute Engine)"
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "Instalar las VMs en computadoras portátiles de los empleados"
+   }
+  ],
+  "ratio": 1.66
+ },
+ {
+  "id": "CDL-D1-017",
+  "subtopic": "Transición de Entrega por Lotes a Entrega Continua (CI/CD)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de software bancario realizaba despliegues de software cada seis meses en fines de semana, lo que generaba fallos masivos e interrupciones prolongadas. ¿Qué beneficio central aporta la adopción de prácticas modernas de integración y entrega continua (CI/CD) en la nube?",
+  "correct": "C",
+  "clave_len": 154,
+  "explanation": "La entrega continua (CI/CD) fragmenta las actualizaciones en cambios pequeños y frecuentes verificados mediante pruebas automáticas. Esto minimiza el radio de impacto de cualquier error y permite iterar con rapidez y alta confiabilidad.",
+  "doc": "https://cloud.google.com/devops",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "Elimina la necesidad de utilizar control de versiones como Git."
+   },
+   {
+    "letter": "B",
+    "len": 98,
+    "text": "Garantiza que el software nunca necesite actualizaciones ni parches una vez desplegado en la nube."
+   },
+   {
+    "letter": "C",
+    "len": 154,
+    "text": "Permite realizar cambios pequeños, continuos y automatizados en producción, reduciendo el riesgo de fallos mayores y acelerando la resolución de defectos."
+   },
+   {
+    "letter": "D",
+    "len": 118,
+    "text": "Obliga a que todos los despliegues se realicen exclusivamente a la medianoche con un equipo de 50 personas conectadas."
+   }
+  ],
+  "ratio": 1.66
+ },
+ {
+  "id": "CDL-D1-016",
+  "subtopic": "Sostenibilidad y Nube Limpia (Carbon-Free Energy)",
+  "caseStudy": "none",
+  "scenario": "Una empresa multinacional tiene metas corporativas de sostenibilidad de cero emisiones netas de carbono. Al evaluar proveedores de nube, el Director de Sostenibilidad solicita información sobre el impacto ambiental de migrar sus cargas a Google Cloud. ¿Qué ventaja ofrece Google Cloud en este ámbito?",
+  "correct": "A",
+  "clave_len": 202,
+  "explanation": "Google Cloud es líder mundial en sostenibilidad, operando con energía 100% renovable coincidente y con la meta de funcionar con energía libre de carbono (CFE) 24/7 para 2030, además de proporcionar la herramienta Google Cloud Carbon Footprint a sus clientes.",
+  "doc": "https://cloud.google.com/sustainability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 202,
+    "text": "Google opera centros de datos altamente eficientes con un PUE líder en la industria y ofrece herramientas como Carbon Footprint para medir y reducir las emisiones de carbono asociadas al uso de la nube."
+   },
+   {
+    "letter": "B",
+    "len": 108,
+    "text": "Google transfiere las emisiones contaminantes a los clientes para que ellos asuman la responsabilidad legal."
+   },
+   {
+    "letter": "C",
+    "len": 131,
+    "text": "La computación en la nube incrementa inevitablemente la huella de carbono en comparación con los centros de datos locales pequeños."
+   },
+   {
+    "letter": "D",
+    "len": 129,
+    "text": "Google Cloud utiliza únicamente generadores diésel tradicionales en todos sus centros de datos para garantizar la disponibilidad."
+   }
+  ],
+  "ratio": 1.65
+ },
+ {
+  "id": "CDL-D2-049",
+  "subtopic": "Cloud Storage: Control de Versiones de Objetos (Object Versioning)",
+  "caseStudy": "none",
+  "scenario": "Un equipo de diseño gráfico guarda archivos de arte y logos corporativos en Cloud Storage. Con frecuencia, los colaboradores sobrescriben accidentalmente versiones previas o eliminan archivos por error. ¿Qué funcionalidad de Cloud Storage debe activarse en el bucket para conservar el historial completo y restaurar versiones anteriores?",
+  "correct": "D",
+  "clave_len": 51,
+  "explanation": "Object Versioning en Cloud Storage mantiene un historial de todas las versiones pasadas de un objeto cada vez que se sobrescribe o elimina, permitiendo listar, descargar o restaurar cualquier versión anterior en caso de error humano.",
+  "doc": "https://cloud.google.com/storage/docs/object-versioning",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 27,
+    "text": "Cloud Armor DDoS Protection"
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "Desactivar el acceso a todos los diseñadores"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Bucket Lock permanente"
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Control de versiones de objetos (Object Versioning)"
+   }
+  ],
+  "ratio": 1.65
+ },
+ {
+  "id": "CDL-D3-031",
+  "subtopic": "Descuentos por Compromiso de Uso (Committed Use Discounts - CUDs)",
+  "caseStudy": "none",
+  "scenario": "Una empresa opera una base de datos central en Compute Engine que funciona las 24 horas del día, los 365 días del año, y se proyecta que continuará operando de forma continua durante los próximos 3 años. ¿Qué opción de facturación ofrece los mayores descuentos (hasta un 57-70%) a cambio de un compromiso contractual de uso continuo?",
+  "correct": "A",
+  "clave_len": 80,
+  "explanation": "Los Committed Use Discounts (CUDs) proporcionan descuentos sustanciales (hasta 57% o 70%) para cargas de trabajo predecibles y de estado constante a cambio de comprometerse a pagar por un nivel mínimo de recursos de cómputo (vCPUs/RAM o gasto financiero) durante un plazo de 1 o 3 años.",
+  "doc": "https://cloud.google.com/compute/docs/sustained-use-discounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 80,
+    "text": "Descuentos por Compromiso de Uso (Committed Use Discounts - CUDs por 1 o 3 años)"
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Precios bajo demanda regulares sin ningún compromiso"
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Pagar con monedas de oro físicas enviadas al banco central"
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "Spot VMs (instancias interrumpibles)"
+   }
+  ],
+  "ratio": 1.64
+ },
+ {
+  "id": "CDL-D4-013",
+  "subtopic": "Security Command Center (SCC): Gestión de Postura de Seguridad y Detección de Amenazas",
+  "caseStudy": "none",
+  "scenario": "El Director de Seguridad de la Información (CISO) necesita un panel centralizado a nivel de toda la organización que: (1) Descubra automáticamente activos de infraestructura y malas configuraciones de seguridad (como buckets públicos accidentales o puertos abiertos al mundo), (2) Detecte amenazas en tiempo real (como minería de criptomonedas o credenciales filtradas), y (3) Mida el cumplimiento con estándares como CIS, PCI-DSS e ISO 27001. ¿Qué servicio de Google Cloud proporciona esta visibilidad?",
+  "correct": "A",
+  "clave_len": 29,
+  "explanation": "Security Command Center (SCC) es la plataforma integral de gestión de la postura de seguridad en la nube (CSPM) y protección de cargas de trabajo (CWPP) de Google Cloud, que monitorea activos, detecta vulnerabilidades, identifica amenazas activas y evalúa el cumplimiento normativo en toda la organización.",
+  "doc": "https://cloud.google.com/security-command-center/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Security Command Center (SCC)"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Billing Budgets"
+   },
+   {
+    "letter": "D",
+    "len": 11,
+    "text": "Cloud Trace"
+   }
+  ],
+  "ratio": 1.61
+ },
+ {
+  "id": "CDL-D2-069",
+  "subtopic": "Almacenamiento de Bloques vs Almacenamiento de Objetos vs Almacenamiento de Archivos",
+  "caseStudy": "none",
+  "scenario": "Un ingeniero de infraestructura debe seleccionar el tipo de almacenamiento en Google Cloud para tres casos: (1) El disco de arranque de una máquina virtual, (2) Un repositorio global para almacenar millones de imágenes y PDFs accesibles vía HTTP, y (3) Un sistema de archivos compartido NFS accesible simultáneamente por múltiples servidores Linux. ¿Cuál es la asignación correcta?",
+  "correct": "B",
+  "clave_len": 88,
+  "explanation": "Persistent Disk proporciona almacenamiento de bloques de alto rendimiento para máquinas virtuales; Cloud Storage es almacenamiento de objetos altamente escalable y económico accesible mediante APIs web; y Filestore ofrece sistemas de archivos NFS totalmente administrados para aplicaciones compartidas tradicionales.",
+  "doc": "https://cloud.google.com/products/storage",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "(1) Cloud Storage, (2) Filestore, (3) Persistent Disk"
+   },
+   {
+    "letter": "B",
+    "len": 88,
+    "text": "(1) Persistent Disk (bloques), (2) Cloud Storage (objetos), (3) Filestore (archivos NFS)"
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "(1) Filestore, (2) Persistent Disk, (3) Cloud Storage"
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Usar memorias RAM temporales volátiles para los tres casos"
+   }
+  ],
+  "ratio": 1.61
+ },
+ {
+  "id": "CDL-D3-027",
+  "subtopic": "Estrategias de Migración: El Marco de las 6 R (Rehost, Replatform, Refactor, etc.)",
+  "caseStudy": "none",
+  "scenario": "Una empresa define dos proyectos de migración a la nube: (1) Mover 200 servidores virtuales existentes tal como están a Compute Engine sin cambiar el código para cerrar rápidamente un centro de datos, y (2) Rediseñar completamente una aplicación monolítica central para transformarla en microservicios serverless en Cloud Run. ¿Cuáles son las dos estrategias de las 6 R correspondientes?",
+  "correct": "B",
+  "clave_len": 82,
+  "explanation": "Rehost (Lift-and-Shift) traslada aplicaciones y máquinas virtuales existentes a la nube con modificaciones mínimas para acelerar la migración. Refactor (Re-architect) rediseña la arquitectura del software para adoptar capacidades nativas de la nube (como microservicios y serverless), maximizando la agilidad y escalabilidad.",
+  "doc": "https://cloud.google.com/solutions/migration-center",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "(1) Repurchase (Recompra SaaS); (2) Rehost (Lift-and-Shift)"
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "text": "(1) Rehost (Lift-and-Shift); (2) Refactor / Re-architect (Rediseño nativo de nube)"
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "Ambas son la estrategia 'Retire' (apagar y borrar todo)"
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "(1) Retire (Retirar); (2) Retain (Retener)"
+   }
+  ],
+  "ratio": 1.58
+ },
+ {
+  "id": "CDL-D3-034",
+  "subtopic": "Infraestructura como Código (IaC) con Terraform y Google Cloud",
+  "caseStudy": "none",
+  "scenario": "Una empresa requiere aprovisionar 50 entornos idénticos de prueba para sus desarrolladores (incluyendo redes VPC, clústeres de GKE, bases de datos y cuentas de servicio). En lugar de crearlos manualmente haciendo clics en la consola web, desean definir toda la infraestructura en archivos de texto declarativos versionados en Git para aprovisionar y destruir entornos en minutos de forma repetible. ¿Qué práctica y herramienta representan el estándar de la industria en Google Cloud?",
+  "correct": "B",
+  "clave_len": 95,
+  "explanation": "Terraform (de HashiCorp) es la herramienta de Infraestructura como Código (IaC) líder y ampliamente recomendada en Google Cloud. Permite definir la infraestructura mediante código declarativo (HCL), asegurando reproducibilidad, consistencia, control de versiones y auditoría en la creación de recursos.",
+  "doc": "https://cloud.google.com/docs/terraform",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 90,
+    "text": "Crear cada entorno haciendo clics manuales en la consola de Google Cloud durante 3 semanas"
+   },
+   {
+    "letter": "B",
+    "len": 95,
+    "text": "Infraestructura como Código (IaC) utilizando Terraform con el proveedor oficial de Google Cloud"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Escribir la configuración en un cuaderno físico con lápiz de grafito"
+   }
+  ],
+  "ratio": 1.58
+ },
+ {
+  "id": "CDL-D3-020",
+  "subtopic": "Cloud Interconnect: Conectividad Dedicada y Partner para Empresas",
+  "caseStudy": "none",
+  "scenario": "Una corporación bancaria necesita conectar su centro de datos local principal con su red VPC en Google Cloud para transferir cientos de terabytes diarios de datos transaccionales con un ancho de banda masivo garantizado (10 Gbps a 100 Gbps), latencia ultra baja y sin transitar por la Internet pública. ¿Qué solución de conectividad física empresarial deben contratar?",
+  "correct": "D",
+  "clave_len": 66,
+  "explanation": "Cloud Interconnect proporciona conexiones directas de nivel empresarial entre las redes locales y la red de Google Cloud a través de circuitos de fibra dedicados (Dedicated Interconnect: 10/100G) o mediante un proveedor de servicios de telecomunicaciones certificado (Partner Interconnect), garantizando alta disponibilidad (hasta 99.99%) y sin tocar la Internet pública.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/interconnect",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "Enviar discos duros por correo postal todas las horas"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Una conexión de módem telefónico dial-up de 56 kbps"
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Cloud Interconnect (Dedicated Interconnect o Partner Interconnect)"
+   }
+  ],
+  "ratio": 1.57
+ }
+]

@@ -1,0 +1,171 @@
+[
+  {
+    "id": "PCA-D6-001",
+    "options": {
+      "A": "Configure Cloud Spanner as a single-region instance in us-central1-a with a synchronous external replica in us-east1; when the entire us-central1 region fails, an operator runs gcloud spanner instances update us-east1 --nodes=3 to promote it as the new leader, restoring 99.999% availability within minutes but dropping any write that had not reached RPO = 0, so RTO = 0 during the outage is never truly maintained.",
+      "B": "Run two independent Cloud Spanner database instances, one in us-central1 and one in us-east1, kept aligned by a Dataflow job (--num-workers=10) that reads the us-central1 change-stream and applies mutations to us-east1; after the entire region fails, the application is repointed to us-east1, but RTO = 0 and RPO = 0 during the outage slip while the pipeline replays its last checkpoint.",
+      "C": "Configure a regional Cloud Spanner instance in us-central1 with three read-write replicas across us-central1-a, us-central1-b and us-central1-c, plus a read-only replica in us-east1 promoted when the entire us-central1 region fails; this maintains 99.999% availability for reads, but the promoted replica reaches RPO = 0 only after it catches up, so RTO = 0 during the outage is not maintained."
+    },
+    "distractors": {
+      "A": "Esto es un failover manual con un solo standby: el operador tiene que intervenir, la promocion tarda minutos y las escrituras que aun no habian llegado al standby se pierden, asi que ni RPO=0 ni RTO=0 se cumplen durante el corte regional.",
+      "B": "Dos instancias independientes sincronizadas por Dataflow son replicacion asincrona: el pipeline tiene que alcanzar al ultimo watermark tras el corte, asi que hay ventana de perdida de datos y de downtime, incumpliendo RPO=0 y RTO=0.",
+      "C": "Una instancia regional en us-central1 mantiene las tres replicas read-write en la MISMA region: si esa region cae completa, las tres se pierden a la vez y solo queda la replica de solo lectura en us-east1, que necesita ponerse al dia antes de aceptar escrituras, rompiendo RTO=0."
+    }
+  },
+  {
+    "id": "PCA-D3-057",
+    "options": {
+      "A": "Create a Cloud KMS MAC key (HMAC_SHA256) in a key-ring at projects/hrl/locations/us-central1, have the timing service call macSign on the race-result payloads before publishing them, and publish the tag next to lap times so officials call macVerify to confirm the payloads were not altered.",
+      "B": "Encrypt each race-result payload with a Cloud HSM-backed CryptoKey via projects/hrl/locations/us-central1/keyRings/race and store it in a Cloud Storage bucket with Bucket Lock, so leaderboard records cannot be rewritten, rather than providing officials an asymmetric digital signature.",
+      "D": "Create an asymmetric CryptoKey with purpose ASYMMETRIC_DECRYPT (RSA_DECRYPT_OAEP_4096_SHA256), publish its public key via roles/cloudkms.publicKeyViewer to racing teams and officials, and have the timing service pass each race-result payload through the private key inside Cloud KMS before leaderboard."
+    },
+    "distractors": {
+      "A": "HMAC es una clave simetrica: la misma clave firma y verifica, asi que cualquiera con acceso a ella podria falsificar un resultado y no hay forma de demostrar quien lo genero. No cumple con la firma digital asimetrica que pide el caso.",
+      "B": "Esto cifra el payload, no lo firma: cifrar protege confidencialidad, no autenticidad. Nada impide que alguien con el rol de descifrado modifique el archivo antes de descifrarlo, y no hay verificacion publica de que el contenido salio del sistema de timing.",
+      "D": "El proposito ASYMMETRIC_DECRYPT sirve para cifrar/descifrar, no para firmar: la clave privada de un CryptoKey de descifrado no genera una firma verificable con la clave publica, asi que equipos y oficiales no pueden confirmar la integridad del resultado."
+    }
+  },
+  {
+    "id": "PCA-D4-003",
+    "options": {
+      "B": "Purchase a single 3-year Flexible Spend-Based CUD sized to the blended hourly spend of the 200-VM N2 us-central1 fleet plus the C2/N2D-to-GKE-Autopilot-to-Cloud-Run migration path, letting one commitment cover Compute Engine, GKE Autopilot, and Cloud Run without per-workload forecasting.",
+      "C": "Purchase 3-year Resource-Based CUDs in us-central1-a for the N2 fleet (57-70% discount), plus additional 1-year Resource-Based CUDs sized to the C2/N2D footprint of the modernizing microservices across GKE Autopilot and Cloud Run, re-forecasting the commitment every time the machine-family mix shifts.",
+      "D": "Rely on the automatic Sustained-Use Discounts that Compute Engine applies pro-rata to the 200 N2 us-central1-a instances, pair them with Recommender-API rightsizing hints for the C2/N2D-to-GKE-Autopilot migration, and cover any burst above baseline with Spot VMs instead of signing a multi-year commitment."
+    },
+    "distractors": {
+      "B": "Un solo CUD flexible para las 200 VMs N2 fijas renuncia al descuento de hasta 70% de un Resource-Based CUD: el ahorro de la carga estable y predecible se sacrifica por la flexibilidad que solo necesitan las cargas en modernizacion.",
+      "C": "Comprar Resource-Based CUDs tambien para los microservicios en modernizacion los ata a una familia de maquina y una region fijas: cada vez que el servicio salta entre Compute Engine, GKE Autopilot y Cloud Run hay que re-planificar y re-comprar el compromiso, perdiendo el ahorro cuando no calza.",
+      "D": "Sustained Use Discounts son automaticos pero topan alrededor de 30%, muy por debajo del 57-70% de un CUD de 3 anos: para una flota estable de 3 anos sin cambios de arquitectura, no comprometer un CUD deja ahorro sobre la mesa."
+    }
+  },
+  {
+    "id": "PCA-D2-017",
+    "options": {
+      "A": "Use Migrate to Containers to extract each application layer from the 500 on-premises virtual machines, replicating application data, not the full disk, then validate functionality in non-disruptive test clones before the final cutover, whose maintenance downtime passes 10 minutes per machine.",
+      "B": "Export each of the 500 VMware virtual machines to VMDK/OVA images in Cloud Storage, import every machine as one bulk copy, not continuous background replication; validating functionality means re-importing the machine, and final cutover pushes maintenance downtime past 10 minutes per VM.",
+      "C": "Use Database Migration Service to continuously replicate 500 on-premises virtual machines in background, run non-disruptive clones, and schedule the final cutover in a maintenance window with near-zero downtime; replicates database engines, not machine disks, so functionality never migrates."
+    },
+    "distractors": {
+      "A": "Migrate to Containers modifica la aplicacion, no migra la VM: hay que extraer cada capa, generar manifiestos de Kubernetes y validar el resultado antes de cortar, un proceso que toma mucho mas que los 10 minutos de downtime por VM que pide el caso.",
+      "B": "Exportar a VMDK/OVA y luego importar es una copia puntual, no replicacion continua: cualquier cambio en el origen despues de la exportacion no se refleja, y validar significa re-importar la maquina completa, con un corte final de mas de 10 minutos.",
+      "C": "Database Migration Service solo replica motores de base de datos, no el disco completo de una VM VMware: el sistema operativo y la capa de aplicacion de las 500 maquinas nunca se migran con esta herramienta."
+    }
+  },
+  {
+    "id": "PCA-D6-032",
+    "options": {
+      "B": "Buffer sensor readings from the onboard unit in an in-memory ring buffer sized to the vehicle's RAM, and publish to Pub/Sub using exponential-backoff retry so the buffer drains once cellular connectivity or farm Wi-Fi returns; 12-18 hours of 100+ parameters overflows the RAM-backed buffer before coverage is restored, dropping records.",
+      "C": "Publish every sensor reading from the onboard vehicle unit to Pub/Sub (pubsub.googleapis.com) as produced, relying on seven-day retention and a subscription seek to replay what was missed during the 12-18 hour zero-connectivity window; without a live link the publish call fails outright, so fine-grained parameters are never produced or buffered.",
+      "D": "Mount the destination bucket gs://farm-telemetry/raw on the onboard computer with Cloud Storage FUSE and let the logger write sensor files straight into the mount, so the OS syncs once farm Wi-Fi or cellular coverage returns; FUSE needs an active link to flush writes, so during the 12-18 hour outage writes simply fail."
+    },
+    "distractors": {
+      "B": "Un ring buffer en RAM esta limitado por la memoria disponible del vehiculo: con 100+ parametros durante 12 a 18 horas sin cobertura, el buffer se llena antes de que vuelva la conectividad y empieza a sobrescribir (perder) los datos mas antiguos.",
+      "C": "Sin conectividad celular la llamada de publish nunca sale del tractor: la retencion de siete dias del topico no sirve de nada porque los mensajes jamas llegaron a Pub/Sub, asi que no hay nada que reproducir cuando vuelve la cobertura.",
+      "D": "Cloud Storage FUSE necesita una conexion activa para poder escribir (flush) en el bucket remoto: durante las 12 a 18 horas sin cobertura las escrituras simplemente fallan, no quedan guardadas localmente para sincronizarse despues."
+    }
+  },
+  {
+    "id": "PCA-D5-004",
+    "options": {
+      "B": "Publish each label request to a Pub/Sub topic and set the subscription to exactly-once delivery with flow-control --max-outstanding-messages=20; exactly-once dedupes only inside the ack window, so a retry after that window still charges a duplicate label.",
+      "C": "Run the shipping call from Cloud Run with --max-instances=20 and --concurrency=1, recording each order-id in Firestore (orders/{id}) before the call fires so a repeat is skipped; two instances can both read a missing id first, so the race still double-charges a label.",
+      "D": "Wrap the shipping call in a token-bucket limiter backed by a Memorystore-for-Redis counter (--rate=20/sec) per replica, and attach a UUID idempotency-key to every request; the partner has no idempotency support, so a duplicate still gets charged twice, and independent per-replica buckets can still burst past the limit."
+    },
+    "distractors": {
+      "B": "La entrega exactly-once de Pub/Sub solo deduplica dentro de la ventana de ack de la suscripcion: si el reintento de publicacion llega despues de que esa ventana expiro, se trata como un mensaje nuevo y la etiqueta de franqueo se cobra dos veces.",
+      "C": "Verificar en Firestore antes de llamar es un patron check-then-call sin atomicidad: dos instancias de Cloud Run pueden leer el mismo order-id como inexistente al mismo tiempo, asi que ambas llaman a la API del socio y la etiqueta se cobra dos veces.",
+      "D": "La API legacy del socio no soporta idempotency keys, asi que el UUID no evita el cobro duplicado del lado del proveedor; ademas cada replica mantiene su propio token bucket, y la suma de los buckets independientes puede superar igual los 20 req/s combinados."
+    }
+  },
+  {
+    "id": "PCA-D4-024",
+    "options": {
+      "A": "Configure aggressive autoscaling (target-cpu=0.4, cool-down=30s) on the backend fleet, and raise Cloud SQL max_connections and pool size, so checkout, recommendations and banners are all absorbed by extra replicas instead of shed; the database never scales past its tier, so CPU saturation and revenue-transaction failures continue.",
+      "B": "Enable client and sidecar retries with exponential-backoff and jitter, raise the --request-timeout flag from 5s to 60s, and deepen the connection-pool queue so requests wait for a database connection instead of being rejected; this adds no priority between checkout and non-critical traffic, so recommendations still saturate the connections revenue needs.",
+      "C": "Put Memorystore for Redis in front of every endpoint with a long TTL and write-through caching, serving reads -- cart, inventory and checkout confirmations -- from cache during the spike; checkout still writes to the database on every revenue transaction, so caching reads does nothing to relieve the CPU saturation the write path causes."
+    },
+    "distractors": {
+      "A": "Autoescalar mas replicas de aplicacion no reduce carga en la base de datos: todo el trafico, incluidas recomendaciones y banners, sigue llegando a Cloud SQL sin ninguna priorizacion, asi que la base de datos sigue saturada y el checkout sigue fallando.",
+      "B": "Reintentos y timeouts mas largos no priorizan nada: solo hacen que las peticiones esperen en cola por una conexion libre, y las reconsultas de recomendaciones y banners siguen compitiendo por las mismas conexiones que necesita el checkout.",
+      "C": "Cachear las lecturas no alivia la saturacion: el checkout sigue escribiendo en la base de datos en cada transaccion de ingreso, que es justamente la ruta de escritura que esta saturando la CPU, y el cache no toca escrituras."
+    }
+  },
+  {
+    "id": "PCA-D3-038",
+    "options": {
+      "B": "Attach a Cloud Armor edge-security policy to the backend service with origin.region_code != 'US' && origin.region_code != 'CA' plus the anon-threat-intel list; edge-security policies only support IP allow/deny and preconfigured WAF rules, not region_code expressions, so the restriction never evaluates.",
+      "C": "Create an org-level firewall policy denying ingress from every IP/CIDR range except US/CA allocations, plus a deny rule with Tor exit-node ranges refreshed nightly by a Cloud Function (--memory=256Mi); firewall rules match source IP/CIDR ranges, not the curated threat-intel list, so rotated Tor nodes get through.",
+      "D": "Check the client address from X-Forwarded-For against a GeoIP database and an hourly Tor exit-node feed inside a --geoip-refresh-interval=1h job, returning 403 to anything outside the United States and Canada; every request still reaches the backend VM's network interface before middleware can reject it."
+    },
+    "distractors": {
+      "B": "Las edge security policies de Cloud Armor (pensadas para Cloud CDN) solo soportan reglas preconfiguradas de WAF y listas de IP, no expresiones CEL como origin.region_code: la restriccion geografica nunca llega a evaluarse en esa capa.",
+      "C": "Una politica de firewall jerarquica solo hace match por rango de IP, no por la lista curada anon-threat-intel de Cloud Armor: los nodos de salida de Tor rotan constantemente y hasta que el job nocturno actualice la lista, el trafico malicioso sigue entrando.",
+      "D": "El chequeo en middleware corre DENTRO de la VM de backend: la peticion ya llego a la interfaz de red y consumio computo del backend antes de que el middleware decida rechazarla, incumpliendo el requisito de bloquear antes de llegar al backend."
+    }
+  },
+  {
+    "id": "PCA-D1-057",
+    "options": {
+      "A": "Upload each race recording to Cloud Storage after the race ends, run a Video Intelligence API batch job for shot-change and object-tracking, and cut 15-second highlight clips with Transcoder API; batch annotation starts only after upload, so no event is caught within a 5-second window.",
+      "C": "Ingest the live video with the Live Stream API (--input-type=rtmp) and let an operator press a marker button in a Cloud Run panel on spotting an overtaking maneuver or crash, triggering Transcoder API to cut the 15-second clip, so it can't guarantee automatic computer-vision detection.",
+      "D": "Stream the aircraft's accelerometer telemetry into Cloud Monitoring as metrics and alert via a Cloud Function when G-force crosses a threshold, cutting the 15-second clip; a near-miss or aggressive overtaking maneuver produces no G-force spike, so computer vision's events go missing."
+    },
+    "distractors": {
+      "A": "La anotacion por lotes solo arranca despues de subir la carrera completa: ningun evento se puede detectar dentro de los 5 segundos que pide el caso porque el video ni siquiera existe en Cloud Storage mientras la carrera esta en vivo.",
+      "C": "Depender de un operador humano que presione un boton no es deteccion automatica por computer vision: la garantia de deteccion dentro de la ventana de 5 segundos depende de que una persona note el evento, lo cual no es automatizable ni consistente.",
+      "D": "Un adelantamiento agresivo muchas veces no genera ningun pico de fuerza-G: el pipeline basado en telemetria de aceleracion se pierde justo los eventos visuales (casi-choques, maniobras) que el computer vision sobre el video si detectaria."
+    }
+  },
+  {
+    "id": "PCA-D4-007",
+    "options": {
+      "A": "Configure one fast-burn alert: burn_rate=14.4 over a 1h/5m window pair (gcloud alpha monitoring policies create --policy-from-file=fast-burn.yaml), route it via pubsub.googleapis.com to PagerDuty for the on-call engineer, and disable every other notification channel to silence the noise entirely.",
+      "B": "Alert on raw signals: page when the 5-minute 5xx ratio exceeds error_ratio=0.01, ticket when p99_latency_ms > 800 for 30 minutes via --notification-channel=ops-pager, and retune each static threshold by hand every quarter as volume grows, repeating the review each release.",
+      "C": "Alert only at the end of the 30-day compliance window: define slo_window=2592000s through Cloud Monitoring's SLO API, chart the burndown on a Looker Studio dashboard refreshed via --schedule='0 9 * * MON', and fire a PagerDuty page only once error_budget_remaining=0, missing every slow multi-day drain until the window closes."
+    },
+    "distractors": {
+      "A": "Una sola alerta fast-burn (14.4x) detecta picos rapidos, pero silenciar todo lo demas elimina tambien la ventana lenta (6x/6h) que hace falta para detectar un drenaje de presupuesto de error que se agota en 3 dias: exactamente el problema que el caso describe.",
+      "B": "Umbrales estaticos sobre la tasa cruda de error no miden consumo de presupuesto de error: hay que re-calibrarlos a mano cada trimestre segun crece el trafico, y no distinguen un pico corto de un drenaje lento sostenido durante dias.",
+      "C": "Alertar solo al cerrar la ventana de 30 dias es demasiado tarde: para cuando la alerta dispara, el presupuesto ya se agoto por completo durante 3 dias sin que nadie se enterara antes, justo el fallo de deteccion tardia que el caso quiere evitar."
+    }
+  },
+  {
+    "id": "PCA-D5-003",
+    "options": {
+      "A": "Create a Pub/Sub Cloud Storage subscription that batches messages into Avro files in a bucket, and define a BigQuery external table so analysts query it without Dataflow or Cloud Run pipeline; the table rescans files each query, so latency stays nowhere near minimal.",
+      "B": "Create a Pub/Sub topic with a pull subscription and a BigQuery scheduled query that runs periodically to load sensor messages into the table, avoiding Dataflow or Cloud Run; scheduled queries only run SQL and cannot pull from a subscription, so nothing reaches it.",
+      "D": "Configure a push subscription that POSTs each sensor message from the topic to the BigQuery tabledata.insertAll endpoint, so Pub/Sub writes rows without a Dataflow pipeline; tabledata.insertAll is a streaming API with quotas well below 100,000 messages per second."
+    },
+    "distractors": {
+      "A": "Una tabla externa de BigQuery vuelve a escanear los archivos Avro del bucket en cada consulta en vez de tener las filas ya cargadas: la latencia de lectura queda lejos de minima, y ademas hay que mantener la suscripcion de Cloud Storage como paso intermedio.",
+      "B": "Las scheduled queries de BigQuery solo ejecutan SQL sobre tablas que ya existen en un horario fijo: no pueden extraer mensajes de una suscripcion pull de Pub/Sub, asi que los datos de los sensores nunca llegan a la tabla por esta via.",
+      "D": "tabledata.insertAll es la API de streaming insert legacy con cuotas por tabla muy por debajo de 100.000 mensajes por segundo: el endpoint de push se queda atras y empieza a devolver errores de cuota bajo esa carga."
+    }
+  },
+  {
+    "id": "PCA-D3-051",
+    "options": {
+      "A": "Leave the bucket publicly readable, and attach a Cloud Armor policy with rate limiting to the backend; the bucket stays public, so attackers who discover its name send direct requests straight to storage, bypassing the load balancer.",
+      "C": "Keep the bucket private and have Cloud Run issue signed URLs to fetch objects from storage instead of accepting public internet requests; every download still bypasses the load balancer, so Cloud Armor's edge security policies never inspect it.",
+      "D": "Place the bucket inside a VPC Service Controls perimeter, with an ingress rule for it; public internet requests from inside the perimeter reach the bucket's storage directly, bypassing the load balancer and Cloud Armor's edge security policies."
+    },
+    "distractors": {
+      "A": "Si el bucket sigue siendo publico, un atacante que descubra su nombre puede pedirlo directamente al endpoint de storage sin pasar nunca por el load balancer: dejarlo publico para acelerar el cache anula por completo la proteccion de Cloud Armor.",
+      "C": "Las URLs firmadas siguen apuntando directo al servicio de storage, no al load balancer: cada descarga evita por diseno el Global External Application Load Balancer, asi que Cloud Armor nunca ve ni puede filtrar ese trafico.",
+      "D": "VPC Service Controls protege por identidad de red del perimetro, no obliga a pasar por el load balancer: una peticion que ya esta dentro del perimetro permitido llega directo al bucket, sin que las politicas de Cloud Armor lleguen a inspeccionarla."
+    }
+  },
+  {
+    "id": "PCA-D6-036",
+    "options": {
+      "B": "Leave min-instances=0 and have Scheduler call /warmup every 60s while raising --concurrency=250, letting the autoscaler add instances as backlog grows during the final lap; a periodic ping doesn't reserve capacity, so instances still scale to zero and the surge still hits cold-start latency.",
+      "C": "Keep min-instances=0 and front Cloud Run with a Load Balancer plus Cloud CDN, setting cache-control: max-age=60 so the surge is served from the edge; most requests carry a per-user session token, so CDN treats each as a miss and the burst still lands on a cold, zero-instance backend.",
+      "D": "Migrate the API to GKE Autopilot with a Horizontal-Pod-Autoscaler at 60%-CPU and cluster-autoscaler re-provisioning, so Kubernetes adds replicas as load arrives; a new node still takes minutes, far longer than the 10-second window during which the surge would breach the sub-50ms response target."
+    },
+    "distractors": {
+      "B": "Un ping cada 60 segundos no reserva capacidad entre llamadas: el autoscaler de Cloud Run puede seguir bajando a cero instancias entre pings, asi que el salto de 5.000 a 500.000 req/s en 10 segundos igual golpea contra un cold start.",
+      "C": "La mayoria de las peticiones durante la vuelta final llevan un token de sesion por usuario en la URL: Cloud CDN trata cada una como un cache miss, asi que el burst completo sigue cayendo sobre una flota de Cloud Run en cero instancias.",
+      "D": "Aprovisionar un nodo nuevo en GKE Autopilot toma minutos: muchisimo mas que la ventana de 10 segundos en la que el trafico salta de 5.000 a 500.000 req/s, asi que el Horizontal Pod Autoscaler no llega a tiempo y se pierde el objetivo de sub-50ms."
+    }
+  }
+]

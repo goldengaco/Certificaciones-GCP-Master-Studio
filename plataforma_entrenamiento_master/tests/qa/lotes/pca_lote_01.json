@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D4-033",
+  "subtopic": "FinOps: BigQuery Materialized Views for Query Acceleration",
+  "caseStudy": "none",
+  "scenario": "Thousands of users execute the same aggregation query on a 50TB table (SELECT region, product_category, SUM(revenue) FROM sales GROUP BY 1, 2) throughout the day. Under on-demand pricing, scanning 50TB repeatedly is cost-prohibitive. Standard views recompute the query from scratch on every call. What BigQuery feature precomputes and incrementally updates query results?",
+  "correct": "C",
+  "clave_len": 278,
+  "explanation": "BigQuery Materialized Views precompute and persist aggregated query results. When the base table updates, BigQuery incrementally refreshes only the delta. Its smart tuning engine transparently routes user queries to the materialized view, reducing scanned bytes by 99%.",
+  "doc": "https://cloud.google.com/bigquery/docs/materialized-views-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Ask users not to run queries."
+   },
+   {
+    "letter": "B",
+    "len": 27,
+    "text": "Create a standard SQL view."
+   },
+   {
+    "letter": "C",
+    "len": 278,
+    "text": "Create a BigQuery Materialized View (CREATE MATERIALIZED VIEW), which precomputes aggregation results, automatically incrementally refreshes when underlying base tables change, and leverages Smart Query Tuning to transparently rewrite user queries to query the precomputed view."
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "Export the table to SQLite on a single VM."
+   }
+  ],
+  "ratio": 8.51
+ },
+ {
+  "id": "PCA-D4-014",
+  "subtopic": "FinOps: BigQuery Storage Optimization & Physical Billing",
+  "caseStudy": "none",
+  "scenario": "An enterprise stores 5 Petabytes of highly compressible time-series telemetry data in BigQuery. Under standard Logical Storage billing ($0.02/GB active, $0.01/GB long-term), storage costs exceed $75,000/month. The telemetry dataset achieves a 10:1 compression ratio (5PB logical compresses to 500TB physical). How should you configure BigQuery dataset billing model to slash storage costs?",
+  "correct": "B",
+  "clave_len": 300,
+  "explanation": "BigQuery supports Physical Storage Billing (billing based on compressed disk bytes). For highly compressible datasets (compression > 2:1), switching to Physical storage billing dramatically lowers total storage costs compared to uncompressed Logical billing.",
+  "doc": "https://cloud.google.com/bigquery/docs/storage-billing-models",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 36,
+    "text": "Stop writing new data into BigQuery."
+   },
+   {
+    "letter": "B",
+    "len": 300,
+    "text": "Switch the BigQuery dataset storage_billing_model from 'LOGICAL' to 'PHYSICAL' (compressed storage pricing: $0.04/GB physical active / $0.02/GB physical long-term), taking advantage of the 10:1 compression ratio to reduce billable storage from 5PB to 500TB (saving over 70% in monthly storage spend)."
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Export data to floppy disks."
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "Delete 90% of the company's historical data."
+   }
+  ],
+  "ratio": 8.33
+ },
+ {
+  "id": "PCA-D6-020",
+  "subtopic": "Regional MIG Autohealing Health Check Tuning",
+  "caseStudy": "none",
+  "scenario": "A complex enterprise Java application running inside a Compute Engine Regional Managed Instance Group takes 4 minutes to warm up its JVM caches, load machine learning models, and initialize database connections during startup. The MIG Autohealing policy has an HTTP health check with initial_delay_sec = 60. As a result, the MIG marks instances unhealthy before startup finishes and restarts them in an infinite loop. How should you fix the configuration?",
+  "correct": "A",
+  "clave_len": 241,
+  "explanation": "The initial_delay_sec parameter specifies how long the MIG must wait after an instance boots before initiating autohealing health checks. Setting it higher than application startup time (e.g. 300s for a 4-minute boot) prevents premature reboot loops.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs#initial_delay",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 241,
+    "text": "Increase initial_delay_sec on the MIG autohealing policy to 300-360 seconds (5-6 minutes), giving the Java application sufficient time to complete initialization and become healthy before health check probing and auto-healing restarts begin."
+   },
+   {
+    "letter": "B",
+    "len": 26,
+    "text": "Set initial_delay_sec = 0."
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "Switch to unmanaged instance groups."
+   },
+   {
+    "letter": "D",
+    "len": 35,
+    "text": "Delete the health check completely."
+   }
+  ],
+  "ratio": 7.45
+ },
+ {
+  "id": "PCA-D6-026",
+  "subtopic": "Cloud Spanner Stale Reads for Read Scalability",
+  "caseStudy": "none",
+  "scenario": "A global retail catalog database in Cloud Spanner experiences 1,000,000 read queries per second from around the world. Because the product catalog only updates once a day, queries do not require sub-second real-time consistency. Strong reads currently make round-trips to the Paxos leader in us-east4, adding latency. How can the application read from local read-only replicas in Europe and Asia with sub-10ms latency?",
+  "correct": "B",
+  "clave_len": 295,
+  "explanation": "In Cloud Spanner, Stale Reads (reading data that is e.g. 15 seconds old) allow local read-only replicas in any region to serve queries directly from local storage splits without coordinating with the Paxos leader, delivering ultra-low read latency and infinite read scalability.",
+  "doc": "https://cloud.google.com/spanner/docs/reads#read_historical_data_perform_a_stale_read",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 26,
+    "text": "Disable all read replicas."
+   },
+   {
+    "letter": "B",
+    "len": 295,
+    "text": "Execute Stale Reads using Read-Only Transactions or Single-Use Read options with TimestampBound.ofExactStaleness(15, TimeUnit.SECONDS) (or max staleness), allowing local read-only and witness replicas in Europe and Asia to serve queries locally without coordinating with the remote Paxos leader."
+   },
+   {
+    "letter": "C",
+    "len": 39,
+    "text": "Perform strong reads for every request."
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Store the entire database in an unmanaged VM RAM disk."
+   }
+  ],
+  "ratio": 7.44
+ },
+ {
+  "id": "PCA-D3-009",
+  "subtopic": "VPC Service Controls: Regular Perimeter",
+  "caseStudy": "none",
+  "scenario": "An enterprise stores sensitive intellectual property in BigQuery and Cloud Storage in Project A. To satisfy national defense data protection standards, data inside Project A must be accessible only from authorized private VPC networks, and data exfiltration to any storage bucket or BigQuery dataset outside Project A must be cryptographically blocked at the API layer. What should you configure?",
+  "correct": "A",
+  "clave_len": 210,
+  "explanation": "VPC Service Controls establishes a secure perimeter around Google Cloud managed services (BigQuery, GCS). Requests to restricted services from outside the perimeter or attempts to copy data to external unapproved resources are blocked, preventing data exfiltration.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 210,
+    "text": "Create a VPC Service Controls (VPC-SC) Service Perimeter enclosing Project A, restricting services 'bigquery.googleapis.com' and 'storage.googleapis.com', and adding the authorized VPC network to the perimeter."
+   },
+   {
+    "letter": "B",
+    "len": 28,
+    "text": "Standard VPC firewall rules."
+   },
+   {
+    "letter": "C",
+    "len": 25,
+    "text": "Disable the BigQuery API."
+   },
+   {
+    "letter": "D",
+    "len": 32,
+    "text": "Make the storage buckets public."
+   }
+  ],
+  "ratio": 7.41
+ },
+ {
+  "id": "PCA-D3-055",
+  "subtopic": "Altostrat Media: Cloud Armor DDoS Adaptive Protection",
+  "caseStudy": "altostrat_media",
+  "scenario": "During a major game tournament, Altostrat Media encounters a sophisticated Layer 7 HTTP flood attack that constantly changes URL paths, user-agents, and source IP addresses. The operations team does not have time to analyze traffic logs and write manual WAF regex rules. What Cloud Armor feature automatically learns application traffic baselines, identifies anomalous attack patterns, and generates one-click mitigation rules?",
+  "correct": "D",
+  "clave_len": 272,
+  "explanation": "Cloud Armor Adaptive Protection uses machine learning to establish baseline traffic patterns for web services, detect Layer 7 attacks in real-time, generate specific mitigation rules, and automatically block malicious traffic at Google's edge.",
+  "doc": "https://cloud.google.com/armor/docs/adaptive-protection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 30,
+    "text": "Increase VM CPU sizes by 100x."
+   },
+   {
+    "letter": "B",
+    "len": 45,
+    "text": "Manual iptables scripting on each backend VM."
+   },
+   {
+    "letter": "C",
+    "len": 38,
+    "text": "Shut down the tournament game servers."
+   },
+   {
+    "letter": "D",
+    "len": 272,
+    "text": "Enable Cloud Armor Adaptive Protection on the security policy, which uses machine learning models to detect Layer 7 volumetric anomalies, alerts the team with an attack signature, and provides an automatically generated mitigation rule that can be deployed with one click."
+   }
+  ],
+  "ratio": 7.22
+ },
+ {
+  "id": "PCA-D6-013",
+  "subtopic": "Cloud Armor DDoS Mitigation & IP Reputation",
+  "caseStudy": "none",
+  "scenario": "An enterprise web application is targeted by a 500 Gbps volumetric Layer 3/4 SYN flood and UDP amplification attack. The enterprise wants to ensure that malicious traffic is absorbed and filtered entirely at Google's edge infrastructure before reaching their VPC or consuming application compute resources. What Google Cloud component absorbs volumetric DDoS?",
+  "correct": "A",
+  "clave_len": 258,
+  "explanation": "Google Cloud's Global External Load Balancer and Cloud Armor sit at Google's global Anycast edge. Google's global infrastructure absorbs massive volumetric Layer 3/4 DDoS attacks automatically, preventing attack traffic from ever entering customer VPCs.",
+  "doc": "https://cloud.google.com/armor/docs/ddos-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 258,
+    "text": "Deploy the Global External Application Load Balancer with Cloud Armor; Google's global Anycast edge network and software-defined load balancers automatically absorb multi-gigabit Layer 3/4 volumetric attacks across Google's massive global bandwidth capacity."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Pay the ransom requested by the attackers."
+   },
+   {
+    "letter": "C",
+    "len": 33,
+    "text": "Unplug the servers from the wall."
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "Install iptables on each backend VM."
+   }
+  ],
+  "ratio": 6.97
+ },
+ {
+  "id": "PCA-D4-006",
+  "subtopic": "SRE: SLI / SLO / Error Budget Calculation",
+  "caseStudy": "none",
+  "scenario": "A critical customer-facing payment API processes 100,000,000 requests per month. The product team targets a 99.9% availability SLO over a rolling 30-day window. In the past 10 days, an outage resulted in 150,000 failed requests (HTTP 500). How should the SRE team and engineering leads respond according to Google SRE Error Budget policy?",
+  "correct": "A",
+  "clave_len": 343,
+  "explanation": "At 99.9% SLO on 100M requests, allowable errors = 100,000. Experiencing 150,000 errors exhausts 150% of the budget. Google SRE best practice dictates pausing feature releases and redirecting engineering capacity to reliability improvements.",
+  "doc": "https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 343,
+    "text": "Calculate that the 30-day error budget is 100,000 failures (0.1% of 100M); since 150,000 failures occurred, the error budget is 150% exhausted. Enforce the Error Budget Policy: freeze non-critical feature deployments and redirect engineering effort entirely toward reliability, testing, and infrastructure resilience until the budget recovers."
+   },
+   {
+    "letter": "B",
+    "len": 66,
+    "text": "Lower the SLO target to 95% so the team is no longer in violation."
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "Ignore the failures and accelerate new feature releases."
+   },
+   {
+    "letter": "D",
+    "len": 26,
+    "text": "Fire the on-call engineer."
+   }
+  ],
+  "ratio": 6.95
+ },
+ {
+  "id": "PCA-D3-037",
+  "subtopic": "Security Command Center: Container Threat Detection",
+  "caseStudy": "none",
+  "scenario": "In a production GKE cluster, an attacker exploits an application vulnerability inside a pod container and attempts to execute a reverse shell, load an unauthorized binary, or escape the container namespace into the host node. What native security service detects runtime container behavior anomalies in real-time?",
+  "correct": "D",
+  "clave_len": 226,
+  "explanation": "Container Threat Detection (CTD) in Security Command Center Premium inspects runtime container behavior (e.g. Added Binary Executed, Reverse Shell Detected, Malicious Script Executed) by monitoring low-level kernel system calls on GKE nodes.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-container-threat-detection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "Disable all Kubernetes namespaces."
+   },
+   {
+    "letter": "B",
+    "len": 37,
+    "text": "Standard Cloud Monitoring CPU charts."
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Delete container logs daily."
+   },
+   {
+    "letter": "D",
+    "len": 226,
+    "text": "Enable Container Threat Detection (CTD) in Security Command Center Premium, which monitors low-level kernel events on GKE nodes to detect reverse shells, malicious binary executions, and suspicious container breakout attempts."
+   }
+  ],
+  "ratio": 6.85
+ },
+ {
+  "id": "PCA-D4-031",
+  "subtopic": "FinOps: Looker Studio Caching & BI Engine Optimization",
+  "caseStudy": "none",
+  "scenario": "500 executives and sales managers load Looker Studio dashboards every morning. Each dashboard load executes 20 heavy SQL aggregation queries directly on BigQuery under on-demand pricing, causing high query bills ($10,000/month) and 10-second dashboard loading latency. How can the data architect achieve sub-second dashboard loading while drastically cutting query scan costs?",
+  "correct": "C",
+  "clave_len": 277,
+  "explanation": "BigQuery BI Engine is a built-in in-memory analysis service. Provisioning BI Engine capacity automatically caches frequently queried datasets in RAM, delivering sub-second dashboard render speeds in Looker Studio while eliminating on-demand per-query scan charges for cached data.",
+  "doc": "https://cloud.google.com/bigquery/docs/bi-engine-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "Ask executives to only check dashboards once a year."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Export tables to static PDF files emailed daily."
+   },
+   {
+    "letter": "C",
+    "len": 277,
+    "text": "Provision BigQuery BI Engine reservation capacity (in-memory acceleration) in the analytical project, which caches frequently queried dashboard tables in fast in-memory memory, delivering sub-second query responses and eliminating on-demand query scan costs for cached queries."
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Disable Looker Studio."
+   }
+  ],
+  "ratio": 6.81
+ },
+ {
+  "id": "PCA-D4-040",
+  "subtopic": "FinOps: BigQuery BI Engine Reservation Sizing",
+  "caseStudy": "none",
+  "scenario": "A data engineering team allocates 100GB of BigQuery BI Engine memory. Cloud Monitoring shows that 'bi_engine/ram_used_bytes' peaks at only 12GB during the busiest morning reporting hours, while BI Engine reservation spend is $3,000/month. What FinOps action should you execute?",
+  "correct": "C",
+  "clave_len": 207,
+  "explanation": "BigQuery BI Engine reservation is billed per GB-hour provisioned. Sizing reservation capacity based on actual peak memory utilization metrics (right-sizing from 100GB to 20GB) preserves full in-memory performance while eliminating excess idle capacity spend.",
+  "doc": "https://cloud.google.com/bigquery/docs/bi-engine-monitor",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 30,
+    "text": "Turn off BigQuery permanently."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Increase BI Engine reservation to 500GB."
+   },
+   {
+    "letter": "C",
+    "len": 207,
+    "text": "Right-size the BigQuery BI Engine reservation by reducing capacity from 100GB to 15-20GB, perfectly covering peak 12GB working set memory while immediately saving ~80% in monthly BI Engine reservation costs."
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Delete all dashboards."
+   }
+  ],
+  "ratio": 6.75
+ },
+ {
+  "id": "PCA-D4-022",
+  "subtopic": "FinOps: BigQuery Table Partitioning vs Sharding",
+  "caseStudy": "none",
+  "scenario": "An enterprise has 3,650 legacy date-sharded tables (e.g. log_table_20160101 ... log_table_20251231) in BigQuery. Queries across multiple years generate slow wildcard table scans (TABLE_DATE_RANGE / _TABLE_SUFFIX), exceed metadata limits, and make schema updates painful. What architectural refactoring should be performed?",
+  "correct": "B",
+  "clave_len": 258,
+  "explanation": "Date-sharded tables (e.g. table_YYYYMMDD) are a legacy BigQuery antipattern. Modern BigQuery uses native Ingestion-time or Column-based Time Partitioning, which prunes scanned partitions efficiently, simplifies queries, and eliminates table metadata limits.",
+  "doc": "https://cloud.google.com/bigquery/docs/partitioned-tables",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "Export tables to Microsoft Access."
+   },
+   {
+    "letter": "B",
+    "len": 258,
+    "text": "Consolidate all date-sharded tables into a single Time-Partitioned BigQuery Table (partitioned by event_timestamp or ingestion time, and clustered by high-cardinality search columns), improving query pruning performance and eliminating table metadata limits."
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "Delete the dataset and stop logging."
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "Keep adding new daily sharded tables forever."
+   }
+  ],
+  "ratio": 6.73
+ },
+ {
+  "id": "PCA-D2-041",
+  "subtopic": "Cross-Region Persistent Disk Replication",
+  "caseStudy": "none",
+  "scenario": "A stateful database running on a Compute Engine instance in us-central1-a requires automatic data replication to us-central1-b. If zone us-central1-a suffers an outage, the secondary VM in us-central1-b must be able to force-attach the disk and resume operations within 60 seconds with zero data loss (RPO = 0). What storage type should be provisioned?",
+  "correct": "D",
+  "clave_len": 192,
+  "explanation": "Regional Persistent Disks (repd) provide synchronous data replication across two zones in the same region. If a zone fails, the disk can be attached to a standby VM in the secondary zone without data loss (RPO=0).",
+  "doc": "https://cloud.google.com/compute/docs/disks/regional-persistent-disk",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 31,
+    "text": "Zonal Standard Persistent Disk."
+   },
+   {
+    "letter": "B",
+    "len": 31,
+    "text": "Nightly backup to tape storage."
+   },
+   {
+    "letter": "C",
+    "len": 25,
+    "text": "Local SSD with no backup."
+   },
+   {
+    "letter": "D",
+    "len": 192,
+    "text": "Regional Persistent Disk (repd) provisioned across replica zones us-central1-a and us-central1-b, providing synchronous block-level replication with automated failover attachment capabilities."
+   }
+  ],
+  "ratio": 6.62
+ },
+ {
+  "id": "PCA-D3-048",
+  "subtopic": "EHR Healthcare: Cloud DLP PHI Redaction in Free-Text Clinical Notes",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare extracts millions of unstructured free-text clinical notes dictated by physicians (e.g., 'Patient John Doe, born 05/12/1975, presented with acute bronchitis'). Before these notes can be used to train clinical NLP models, all embedded patient names, dates, phone numbers, and addresses must be masked (replaced with '[REDACTED_NAME]', '[REDACTED_DATE]'). What service performs this automated inspection and transformation?",
+  "correct": "D",
+  "clave_len": 283,
+  "explanation": "Sensitive Data Protection (Cloud DLP) utilizes machine learning and pattern matching to detect unstructured PHI infoTypes in free-text clinical notes, replacing sensitive entities with infoType placeholders or surrogate tokens.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/transforming-sensitive-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "Custom string replace for the word 'Patient'."
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "Delete all doctor notes completely."
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Ask medical interns to review text files manually."
+   },
+   {
+    "letter": "D",
+    "len": 283,
+    "text": "Use Sensitive Data Protection (Cloud DLP) InspectTemplates and DeidentifyTemplates configured with healthcare infoTypes (PERSON_NAME, DATE_OF_BIRTH, PHONE_NUMBER, US_STREET_ADDRESS) and CharacterMaskConfig / ReplaceWithInfoTypeConfig primitive transformations in a Dataflow pipeline."
+   }
+  ],
+  "ratio": 6.53
+ },
+ {
+  "id": "PCA-D6-014",
+  "subtopic": "AlloyDB Cross-Region Secondary Clusters for DR",
+  "caseStudy": "none",
+  "scenario": "An enterprise deploys AlloyDB for PostgreSQL in us-central1 as its primary transactional database. To achieve cross-region disaster recovery, they provision an AlloyDB Secondary Cluster in europe-west1 with continuous asynchronous storage replication. During a major US outage, how is the secondary cluster promoted?",
+  "correct": "C",
+  "clave_len": 230,
+  "explanation": "AlloyDB supports Cross-Region Secondary Clusters with continuous storage-level replication. In a disaster, the secondary cluster can be promoted to a standalone primary cluster in seconds, enabling seamless cross-region failover.",
+  "doc": "https://cloud.google.com/alloydb/docs/secondary-clusters",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "AlloyDB cannot replicate across regions."
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "Re-import all data from a CSV file."
+   },
+   {
+    "letter": "C",
+    "len": 230,
+    "text": "Promote the AlloyDB Secondary Cluster in europe-west1 to become an independent Primary Cluster using the Google Cloud Console, gcloud alloydb clusters promote, or Terraform, allowing it to accept immediate read-write transactions."
+   },
+   {
+    "letter": "D",
+    "len": 31,
+    "text": "Shut down the European cluster."
+   }
+  ],
+  "ratio": 6.51
+ },
+ {
+  "id": "PCA-D6-006",
+  "subtopic": "Bigtable Multi-Cluster Routing & Eventual Consistency",
+  "caseStudy": "none",
+  "scenario": "An enterprise uses Cloud Bigtable replicated across 2 clusters (us-central1-b and us-east1-c) with Multi-Cluster Any-Routing enabled for 99.999% SLA. A developer writes a record to Bigtable and immediately reads it back from a different client, but occasionally receives the old value. What distributed database principle explains this behavior, and how can strong read-your-writes consistency be enforced when needed?",
+  "correct": "C",
+  "clave_len": 276,
+  "explanation": "Cloud Bigtable multi-cluster replication uses asynchronous eventual consistency. When using Multi-Cluster Any-Routing, sequential requests may hit different clusters before replication catches up. Using Single-Cluster Routing guarantees strong read-your-writes consistency.",
+  "doc": "https://cloud.google.com/bigtable/docs/replication-overview#consistency-model",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "Bigtable has a bug that corrupts data randomly."
+   },
+   {
+    "letter": "B",
+    "len": 31,
+    "text": "Disable replication completely."
+   },
+   {
+    "letter": "C",
+    "len": 276,
+    "text": "Bigtable multi-cluster replication is asynchronously eventually consistent across clusters; to achieve strict Read-Your-Writes consistency for critical operations, configure a dedicated Application Profile using Single-Cluster Routing pointing to a designated primary cluster."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Migrate all data to Cloud Datastore in legacy mode."
+   }
+  ],
+  "ratio": 6.42
+ },
+ {
+  "id": "PCA-D6-016",
+  "subtopic": "GKE Overprovisioning with Pause Pods",
+  "caseStudy": "none",
+  "scenario": "A flash-sale ticketing platform on GKE experiences sudden bursts of 10,000 users in 5 seconds. GKE Cluster Autoscaler takes 90 seconds to provision new Compute Engine VM nodes, during which user pods remain in 'Pending' state and users experience latency timeouts. How can you architect GKE to guarantee that compute nodes are pre-warmed and ready to schedule user pods instantly?",
+  "correct": "B",
+  "clave_len": 334,
+  "explanation": "GKE Overprovisioning uses low-priority 'Pause Pods' (which sleep and consume minimal CPU) to hold extra node capacity. When actual workload pods arrive, Kubernetes PriorityClass preemption instantly evicts pause pods, allowing production pods to schedule in milliseconds.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/scaling-apps#overprovisioning",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "Disable autoscaling and run 500 empty nodes permanently at full price."
+   },
+   {
+    "letter": "B",
+    "len": 334,
+    "text": "Deploy GKE Overprovisioning using low-priority 'Pause Pods' (using a PriorityClass with low priority value); when sudden production traffic surges arrive, high-priority user pods immediately preempt the pause pods and schedule in milliseconds, while Cluster Autoscaler provisions new nodes in the background to re-host the pause pods."
+   },
+   {
+    "letter": "C",
+    "len": 34,
+    "text": "Disable pod CPU limits completely."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Ask users to wait 90 seconds before purchasing tickets."
+   }
+  ],
+  "ratio": 6.3
+ },
+ {
+  "id": "PCA-D3-040",
+  "subtopic": "Cloud DLP: Date-Shifting for Clinical & Financial Privacy",
+  "caseStudy": "none",
+  "scenario": "A pharmaceutical data science team is analyzing patient clinical trial records. To comply with HIPAA de-identification while maintaining longitudinal statistical utility, all patient visit timestamps must be shifted by a randomized number of days (-365 to +365 days). Crucially, the time difference between subsequent medical visits for the same patient must remain 100% mathematically exact (preserving interval duration). What Cloud DLP transformation achieves this?",
+  "correct": "B",
+  "clave_len": 262,
+  "explanation": "DateShiftConfig in Sensitive Data Protection (Cloud DLP) shifts dates by a pseudorandom amount derived from a cryptographic key and a contextual identifier (e.g. patient_id). This shifts all dates for a given patient by the exact same delta, perfectly preserving time intervals between events.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/transformations-reference#date_shift",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Randomly shuffle dates across different patients."
+   },
+   {
+    "letter": "B",
+    "len": 262,
+    "text": "Configure Cloud DLP DateShiftConfig using a customer-provided Cloud KMS cryptographic key and specify the patient_id column as the contextual crypto_key context_id, ensuring the exact same random offset is applied consistently to all records for a given patient."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "Delete all dates and replace them with NULL."
+   },
+   {
+    "letter": "D",
+    "len": 33,
+    "text": "Set all dates to January 1, 1970."
+   }
+  ],
+  "ratio": 6.24
+ },
+ {
+  "id": "PCA-D3-030",
+  "subtopic": "GDPR Right to Be Forgotten & Crypto-Shredding",
+  "caseStudy": "none",
+  "scenario": "An enterprise stores 100 Petabytes of historical immutable backups in Cloud Storage Archive tier across 10 years. Under GDPR Article 17 ('Right to be Forgotten'), when a European customer requests account erasure, all their personal data must be permanently unreadable within 30 days. Re-writing multi-petabyte backup archives to delete a single user's rows is computationally impossible and breaks WORM compliance. How should you architect the data storage for instant crypto-erasure?",
+  "correct": "B",
+  "clave_len": 390,
+  "explanation": "Crypto-Shredding uses envelope encryption with per-user cryptographic keys. Destroying the individual user's Key Encryption Key (KEK) in Cloud KMS instantly and permanently renders all ciphertext associated with that user un-decryptable across all historical and immutable backup archives.",
+  "doc": "https://cloud.google.com/architecture/crypto-shredding",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 30,
+    "text": "Refuse to honor GDPR requests."
+   },
+   {
+    "letter": "B",
+    "len": 390,
+    "text": "Implement Crypto-Shredding: Encrypt each individual customer's PII using a unique per-user Data Encryption Key (DEK) wrapped by a customer-specific Key Encryption Key (KEK) in Cloud KMS; when a deletion request arrives, destroy the user's specific KMS key version, rendering all historical backup data mathematically unrecoverable instantly without modifying the immutable storage archives."
+   },
+   {
+    "letter": "C",
+    "len": 86,
+    "text": "Download the 100PB backup archive, manually edit rows in a text editor, and re-upload."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Delete the entire 100PB backup bucket whenever one user requests deletion."
+   }
+  ],
+  "ratio": 6.16
+ },
+ {
+  "id": "PCA-D4-052",
+  "subtopic": "Altostrat Media: Real-Time Telemetry SRE SLO Tracking",
+  "caseStudy": "altostrat_media",
+  "scenario": "For live TV broadcast overlays, HRL defines an SRE Service Level Objective (SLO): 99.9% of aircraft telemetry messages must be processed, enriched, and queryable in Bigtable within 50 milliseconds of generation (event time to queryable time). How should the SRE team instrument this Service Level Indicator (SLI)?",
+  "correct": "C",
+  "clave_len": 263,
+  "explanation": "Emitting end-to-end processing latency distribution metrics (pipeline ingestion time minus GPS event timestamp) allows Cloud Monitoring to calculate the exact percentage of messages meeting the <= 50ms latency threshold, providing a precise SLI for the 99.9% SLO.",
+  "doc": "https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "Ask race commentators if the broadcast looks smooth."
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "Check the database once every 24 hours."
+   },
+   {
+    "letter": "C",
+    "len": 263,
+    "text": "Emit custom OpenTelemetry / Cloud Monitoring distribution metrics in Cloud Dataflow calculating (currentTimeMillis - message.gpsTimestamp), define an SLI as the percentage of messages with latency <= 50ms, and configure a Cloud Monitoring SLO with a 99.9% target."
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "Set the latency target to 60 minutes."
+   }
+  ],
+  "ratio": 6.16
+ },
+ {
+  "id": "PCA-D5-001",
+  "subtopic": "Pub/Sub: Message Ordering Keys & Partition Sharding",
+  "caseStudy": "none",
+  "scenario": "A retail order processing pipeline receives status updates for customer orders (e.g., 'OrderCreated', 'PaymentProcessed', 'OrderShipped'). Events for the same order_id must be delivered to subscribers in strict chronological order. However, messages for different order_ids can be processed concurrently in parallel. How should you configure Cloud Pub/Sub?",
+  "correct": "C",
+  "clave_len": 325,
+  "explanation": "Cloud Pub/Sub Ordering Keys guarantee strict in-order delivery of messages sharing the same key to subscribers. Different ordering keys are partitioned and processed in parallel across multiple subscribers, combining strict per-entity ordering with horizontal scalability.",
+  "doc": "https://cloud.google.com/pubsub/docs/ordering",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 76,
+    "text": "Sort messages in a JavaScript array on the client side after receiving them."
+   },
+   {
+    "letter": "B",
+    "len": 28,
+    "text": "Disable all Pub/Sub retries."
+   },
+   {
+    "letter": "C",
+    "len": 325,
+    "text": "Publish messages with an 'ordering_key' set to the 'order_id' and enable 'Message Ordering' (enable_message_ordering = true) on the Pub/Sub subscription; Pub/Sub delivers messages with the same ordering key in exact publish sequence while distributing different ordering keys across concurrent subscriber threads in parallel."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Process all messages on a single thread in a single VM."
+   }
+  ],
+  "ratio": 6.13
+ },
+ {
+  "id": "PCA-D5-010",
+  "subtopic": "Apigee X: SpikeArrest vs Quota Policies",
+  "caseStudy": "none",
+  "scenario": "An enterprise uses Apigee X to secure its product catalog API. The backend database can handle at most 100 requests per second before suffering CPU spikes. Additionally, business rules dictate that free-tier API developers are limited to 10,000 total requests per month. What two Apigee policies should be attached to the API proxy flow?",
+  "correct": "B",
+  "clave_len": 249,
+  "explanation": "In Apigee, SpikeArrest protects backend infrastructure from sudden short-term traffic spikes and DDoS surges by smoothing request arrival rates (e.g. 100 req/s). Quota enforces long-term business or monetization limits (e.g. 10,000 req/month).",
+  "doc": "https://cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Reboot the Apigee gateway whenever traffic spikes occur."
+   },
+   {
+    "letter": "B",
+    "len": 249,
+    "text": "Attach a SpikeArrest policy (rate = 100ps) to smooth out micro-bursts and protect backend databases from sudden traffic spikes, and attach a Quota policy (count = 10000, interval = 1, timeUnit = month) to enforce business billing consumption limits."
+   },
+   {
+    "letter": "C",
+    "len": 39,
+    "text": "Two Quota policies with no SpikeArrest."
+   },
+   {
+    "letter": "D",
+    "len": 27,
+    "text": "Disable all API throttling."
+   }
+  ],
+  "ratio": 6.12
+ },
+ {
+  "id": "PCA-D4-051",
+  "subtopic": "Altostrat Media: Video CDN Origin Shielding & Egress Reduction",
+  "caseStudy": "altostrat_media",
+  "scenario": "During live aircraft races, 30 million global viewers request identical video segments (.ts chunks). Without origin shielding, edge POP cache misses across 100 global edge locations hit the origin Cloud Storage bucket simultaneously, causing high origin egress charges and storage throttling. How should the video delivery CDN be optimized?",
+  "correct": "B",
+  "clave_len": 259,
+  "explanation": "Origin Shielding acts as an intermediate centralized cache tier between edge POPs and the origin storage bucket. It collapses redundant edge cache misses into a single origin fetch, protecting origin buckets from overload and reducing origin egress charges by up to 95%.",
+  "doc": "https://cloud.google.com/cdn/docs/origin-shielding",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "Lower video resolution to 144p black-and-white."
+   },
+   {
+    "letter": "B",
+    "len": 259,
+    "text": "Enable Cloud CDN Origin Shielding / Media CDN Request Collapsing, designating an intermediate centralized caching tier that collapses concurrent regional edge cache misses into a single request to the Cloud Storage origin, reducing origin egress by up to 95%."
+   },
+   {
+    "letter": "C",
+    "len": 33,
+    "text": "Email video files as attachments."
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "Disable CDN caching and stream directly from VMs."
+   }
+  ],
+  "ratio": 6.02
+ },
+ {
+  "id": "PCA-D6-015",
+  "subtopic": "Cloud Storage Object Versioning & Accidental Overwrite Recovery",
+  "caseStudy": "none",
+  "scenario": "A rogue script accidentally overwrote 10,000 production configuration files in a Cloud Storage bucket with empty 0-byte files. How can the operations team recover the previous valid versions of all 10,000 files without restoring from offline backups?",
+  "correct": "B",
+  "clave_len": 218,
+  "explanation": "Cloud Storage Object Versioning preserves historical versions of objects under unique generation numbers when overwritten or deleted, allowing instant recovery to previous object states.",
+  "doc": "https://cloud.google.com/storage/docs/object-versioning",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Files are permanently lost and cannot be recovered."
+   },
+   {
+    "letter": "B",
+    "len": 218,
+    "text": "Because Object Versioning was enabled on the bucket, the overwritten files are preserved as noncurrent object generations; restore the files by copying the previous generation numbers back to the live object namespace."
+   },
+   {
+    "letter": "C",
+    "len": 33,
+    "text": "Rewrite all 10,000 files by hand."
+   },
+   {
+    "letter": "D",
+    "len": 25,
+    "text": "Delete the entire bucket."
+   }
+  ],
+  "ratio": 6.0
+ },
+ {
+  "id": "PCA-D4-032",
+  "subtopic": "SRE: Health Checks & Flapping Mitigation",
+  "caseStudy": "none",
+  "scenario": "A backend service running behind an External Application Load Balancer is under heavy CPU load. The health check is configured with check_interval = 1s, timeout = 1s, unhealthy_threshold = 1. Due to brief 1.2-second CPU garbage collection pauses, the load balancer prematurely marks backends unhealthy, removing them and cascading the overload to remaining instances (thundering herd). How should the health check be tuned?",
+  "correct": "D",
+  "clave_len": 237,
+  "explanation": "Health check flapping occurs when thresholds are overly aggressive. Setting unhealthy_threshold to 3 consecutive failures with appropriate timeouts absorbs transient JVM garbage collection pauses and prevents catastrophic cascading load balancer ejections.",
+  "doc": "https://cloud.google.com/load-balancing/docs/health-check-concepts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Set unhealthy_threshold to 0."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Reboot the load balancer every 30 seconds."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Delete all health checks from the load balancer."
+   },
+   {
+    "letter": "D",
+    "len": 237,
+    "text": "Tune health check parameters: Increase timeout_sec to 5s, check_interval_sec to 5-10s, unhealthy_threshold to 3 consecutive failures (preventing false ejections from transient GC pauses), and healthy_threshold to 2 consecutive successes."
+   }
+  ],
+  "ratio": 5.97
+ }
+]

@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D3-030",
+  "options": {
+   "B": "gcloud sql users set-password app_user --instance=app-db --password='SuperSecurePassword987!'",
+   "C": "gcloud sql users create app_user --instance=app-db --type=CLOUD_IAM_SERVICE_ACCOUNT",
+   "D": "gcloud sql databases create app_user --instance=app-db --charset=UTF8 --collation=en_US.UTF8"
+  },
+  "distractors": {
+   "B": "set-password only rotates the credential of a user that already exists on the instance; app_user has never been created, so the call fails with an unknown-user error instead of provisioning the account.",
+   "C": "Creates an IAM database user instead of a built-in one: the username must be an existing service account email, the instance needs the cloudsql.iam_authentication flag, and no password is stored, so password login from the VMs still fails.",
+   "D": "sql databases create provisions an empty database schema named app_user, not a login role: it accepts no password and creates no account the application can authenticate with over Private IP."
+  }
+ },
+ {
+  "id": "ACE-D4-041",
+  "options": {
+   "A": "gcloud monitoring dashboards update 7418503927 --config-from-file=microservices-dashboard.json",
+   "C": "gcloud alpha monitoring policies create --policy-from-file=microservices-dashboard.json",
+   "D": "gcloud logging metrics create mql-charts --config-from-file=microservices-dashboard.json"
+  },
+  "distractors": {
+   "A": "update patches a dashboard identified by its existing numeric ID; the dashboard has never been created in corp-monitoring-prod, so the API answers NOT_FOUND and the template is never imported.",
+   "C": "Creates an alerting policy, not a dashboard: the AlertPolicy API rejects the file because a dashboard document carries mosaicLayout widgets instead of the required conditions and notification channels.",
+   "D": "logging metrics create does take --config-from-file, but it registers a log-based metric; the dashboard JSON has no filter or valueExtractor field and no chart is ever rendered in Cloud Monitoring."
+  }
+ },
+ {
+  "id": "ACE-D4-020",
+  "options": {
+   "B": "Set block-project-ssh-keys=TRUE in the metadata of every instance in the project.",
+   "C": "Set enable-oslogin-2fa=TRUE in project metadata to force two-factor SSH logins.",
+   "D": "Grant developers roles/compute.osAdminLogin and rotate their SSH keys quarterly."
+  },
+  "distractors": {
+   "B": "This only blocks project-wide keys: SSH keys added to each instance's own metadata still grant access, and logins remain local Linux accounts with no Cloud Identity binding and no 2FA.",
+   "C": "The 2FA metadata key is inert unless enable-oslogin=TRUE is set as well; with OS Login off, static metadata SSH keys keep working and no second factor is ever requested.",
+   "D": "The OS Login IAM roles are evaluated only once OS Login is enabled in project or instance metadata; without that key the grant authorizes nothing and existing static keys stay valid."
+  }
+ },
+ {
+  "id": "ACE-D4-053",
+  "options": {
+   "A": "bq cp warehouse.customer_master warehouse.customer_master_snapshot_20260820",
+   "C": "bq extract warehouse.customer_master gs://backups/customer_master_20260820-*.avro",
+   "D": "bq update --time_travel_hours=168 --description='pre-transform state' warehouse"
+  },
+  "distractors": {
+   "A": "Without --snapshot this is an ordinary table copy: it duplicates all 50 million rows into separately billed storage and takes a copy job to run, instead of an instant zero-byte snapshot.",
+   "C": "Exports the rows to Cloud Storage files: the job reads the whole table, is neither instant nor zero-copy, and leaves no BigQuery table that can be queried or restored from in place.",
+   "D": "Widens the dataset time travel window to its 7-day maximum, which only enables FOR SYSTEM_TIME AS OF queries for a week; it creates no named snapshot preserving the pre-transformation state."
+  }
+ },
+ {
+  "id": "ACE-D3-069",
+  "options": {
+   "A": "Deploy with --min-instances=1 to keep one warm instance running.",
+   "C": "Deploy with --session-affinity to pin WebSocket clients to instances.",
+   "D": "Deploy with --timeout=3600 to allow one-hour long-lived requests."
+  },
+  "distractors": {
+   "A": "A minimum instance stays resident, but its CPU is still throttled to near zero between requests, so the background listener and WebSocket keepalive threads stop executing while idle.",
+   "C": "Session affinity only makes the load balancer route a returning client to the same instance; it does not change when CPU is allocated, so background threads are still throttled.",
+   "D": "Raising the request timeout keeps a connection open longer, but CPU remains allocated only while a request is in flight, so the background message listener stays frozen between requests."
+  }
+ },
+ {
+  "id": "ACE-D3-071",
+  "options": {
+   "A": "gcloud sql instances create prod-pg-1 --database-flags=max_connections=500,shared_buffers=1048576",
+   "B": "gcloud sql instances patch prod-pg-1 --database-flags=shared_buffers=1048576 --activation-policy=ALWAYS",
+   "C": "gcloud sql instances patch prod-pg-1 --tier=db-custom-4-16384 --availability-type=REGIONAL"
+  },
+  "distractors": {
+   "A": "create provisions a new instance; prod-pg-1 already exists, so the command aborts with ALREADY_EXISTS and neither flag reaches the running database.",
+   "B": "--database-flags replaces the complete flag set on every patch, so sending only shared_buffers silently resets max_connections to the instance default instead of raising it to 500.",
+   "C": "Resizing the machine only raises the memory-derived defaults; neither max_connections=500 nor shared_buffers=1048576 is actually set, and the concurrency requirement stays unmet."
+  }
+ },
+ {
+  "id": "ACE-D3-057",
+  "options": {
+   "A": "Enable the cluster autoscaler with gcloud container clusters update --enable-autoscaling --node-pool=default-pool --max-nodes=100.",
+   "C": "Deploy a Horizontal Pod Autoscaler per tenant with kubectl autoscale deployment --min=1 --max=50 --cpu-percent=70.",
+   "D": "Set the autoscaling profile with gcloud container clusters update --autoscaling-profile=optimize-utilization."
+  },
+  "distractors": {
+   "A": "The autoscaler only adds or removes nodes inside node pools that already exist; it cannot create a pool with a different machine type or with GPUs, so Pods requesting those shapes stay Pending.",
+   "C": "HPA adjusts the replica count of a Deployment; it provisions no capacity, so the extra replicas that need high-memory or accelerator nodes remain Unschedulable in the same cluster.",
+   "D": "The profile only tunes how aggressively the existing autoscaler removes underused nodes; it grants no ability to create node pools with machine types that were never defined."
+  }
+ },
+ {
+  "id": "ACE-D3-039",
+  "options": {
+   "A": "gcloud dns record-sets update api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80",
+   "B": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=CNAME --ttl=300 --rrdatas=34.120.50.80",
+   "D": "gcloud dns record-sets transaction add 34.120.50.80 --name=api.corp.com. --ttl=300 --type=A --zone=corp-public-zone"
+  },
+  "distractors": {
+   "A": "update is executed as a delete-then-add change on an existing record set; no A record for api.corp.com. exists yet, so the change is rejected because the deletion targets a nonexistent resource.",
+   "B": "A CNAME rrdata must be a domain name, not an IPv4 literal, and the requirement is an A record; resolvers would be sent to a host named 34.120.50.80. instead of to the address.",
+   "D": "transaction add only appends the record to a local transaction.yaml: it errors without a preceding transaction start, and nothing reaches the zone until transaction execute is run."
+  }
+ },
+ {
+  "id": "ACE-D3-053",
+  "options": {
+   "A": "gcloud storage objects update gs://user-avatars-vault/** --custom-metadata=allow-origin=*",
+   "C": "gcloud storage buckets update gs://user-avatars-vault --uniform-bucket-level-access",
+   "D": "gcloud storage sign-url gs://user-avatars-vault/avatar.png --http-verb=PUT --duration=1h"
+  },
+  "distractors": {
+   "A": "Custom metadata is served back as x-goog-meta-* headers on the object; the browser needs Access-Control-Allow-Origin on the preflight OPTIONS response, which comes from the bucket CORS config.",
+   "C": "Uniform bucket-level access only replaces per-object ACLs with IAM; the preflight OPTIONS request still gets no CORS headers, so the browser keeps blocking the upload before it is sent.",
+   "D": "Re-signing the URL fixes authorization, not the browser origin policy: the PUT is blocked by CORS before the signature is ever presented to Cloud Storage for evaluation."
+  }
+ },
+ {
+  "id": "ACE-D5-009",
+  "options": {
+   "B": "Grant roles/compute.instanceAdmin.v1 with the IAM Condition resource.type == \"compute.googleapis.com/Instance\" for the contractor.",
+   "C": "Add the contractor to a group that already holds roles/compute.instanceAdmin.v1 and remove that membership once the patch is finished.",
+   "D": "Grant roles/compute.instanceAdmin.v1 with the IAM Condition request.time.getFullYear(\"UTC\") < 2027 to bound the access."
+  },
+  "distractors": {
+   "B": "That condition restricts which resource types the role covers, not how long it lasts; the binding carries no time attribute, so the contractor keeps instance admin rights indefinitely.",
+   "C": "Access ends only when an administrator deletes the group membership, which is exactly the manual revocation the requirement forbids; nothing lapses on 25 August by itself.",
+   "D": "Right mechanism, wrong value: this binding stays valid until 31 December 2026, more than four months past the required expiry at 18:00 UTC on 25 August 2026."
+  }
+ },
+ {
+  "id": "ACE-D4-009",
+  "options": {
+   "A": "gcloud app services set-traffic default --splits=v1=0.5,v2=0.5",
+   "B": "gcloud app versions stop v2 --service=default --project=corp-app",
+   "D": "gcloud app deploy app.yaml --version=v1 --promote --quiet"
+  },
+  "distractors": {
+   "A": "Right command, wrong split: half of the live requests keep reaching the broken v2, so the unhandled exceptions continue for 50% of users instead of stopping.",
+   "B": "Standard versions with automatic scaling cannot be stopped, and even so the traffic allocation would still point at v2 rather than moving requests back to v1.",
+   "D": "Rebuilds and redeploys the app as version v1, which takes minutes and overwrites the known-good artifact, instead of instantly shifting the existing traffic split."
+  }
+ },
+ {
+  "id": "ACE-D4-042",
+  "options": {
+   "A": "kubectl logs [POD_NAME] --namespace=prod --previous",
+   "B": "kubectl top pod [POD_NAME] --namespace=prod",
+   "D": "kubectl get events -n prod --sort-by=.lastTimestamp"
+  },
+  "distractors": {
+   "A": "Prints the stdout of the killed container, but the cgroup OOM kill is performed by the kernel and writes nothing to the application log, so exit code 137 and the memory limit never appear.",
+   "B": "Reports live memory usage from the metrics server for the container that already restarted; it shows neither the configured limit nor the termination reason of the previous instance.",
+   "D": "Events are retained about one hour by default, so a periodic OOM kill that happened earlier is gone, and the event text carries no exit code or resources.limits.memory value."
+  }
+ },
+ {
+  "id": "ACE-D3-064",
+  "options": {
+   "A": "gcloud storage buckets update gs://compliance-vault-2026 --soft-delete-duration=90d",
+   "B": "gcloud storage buckets update gs://compliance-vault-2026 --lifecycle-file=delete-365d.json",
+   "D": "gcloud storage buckets update gs://compliance-vault-2026 --default-storage-class=ARCHIVE"
+  },
+  "distractors": {
+   "A": "Soft delete only keeps already-deleted objects restorable, and its window tops out at 90 days: objects can still be deleted at will, so a one-year retention is never enforced.",
+   "B": "A lifecycle rule schedules deletion once the age condition is met; it forbids nothing beforehand, so a transaction record can still be deleted or overwritten on its first day.",
+   "D": "The Archive class carries a 365-day minimum storage duration for billing only: objects may still be deleted immediately, incurring an early-deletion charge rather than being retained."
+  }
+ },
+ {
+  "id": "ACE-D4-016",
+  "options": {
+   "B": "A snapshot of each of the three persistent disks (gcloud compute disks snapshot).",
+   "C": "A custom boot image built with gcloud compute images create --source-disk.",
+   "D": "An instance template of the VM (gcloud compute instance-templates create)."
+  },
+  "distractors": {
+   "B": "Disk snapshots capture block data only: instance metadata, network tags and the attached service account are lost, and three separate snapshots are not one immutable resource.",
+   "C": "A custom image captures the boot disk alone; the two attached data disks, the instance metadata and the network tags are absent from the resulting image.",
+   "D": "A template stores configuration such as machine type, tags and metadata, but it references source images instead of capturing the data currently written on the persistent disks."
+  }
+ },
+ {
+  "id": "ACE-D3-027",
+  "options": {
+   "A": "gcloud deploy releases create r1 --source=. --region=us-central1",
+   "B": "gcloud builds submit --config=clouddeploy.yaml --region=us-central1",
+   "D": "kubectl apply -f clouddeploy.yaml --namespace=cloud-deploy"
+  },
+  "distractors": {
+   "A": "A release can only be cut against an already registered pipeline, and --delivery-pipeline is required: the pipeline and targets defined in clouddeploy.yaml do not exist yet.",
+   "B": "Cloud Build expects a build config whose top level is a steps: list; the DeliveryPipeline and Target manifest has no steps, so the build fails to parse and Cloud Deploy registers nothing.",
+   "D": "Delivery pipelines are Cloud Deploy API resources, not Kubernetes objects: the cluster has no DeliveryPipeline kind registered, so the apply is rejected with a no-matches-for-kind error."
+  }
+ },
+ {
+  "id": "ACE-D3-028",
+  "options": {
+   "A": "gcloud storage objects update gs://corp-archive-vault/** --storage-class=NEARLINE",
+   "B": "gcloud storage buckets update gs://corp-archive-vault --default-storage-class=NEARLINE",
+   "D": "gcloud storage buckets update gs://corp-archive-vault --soft-delete-duration=30d"
+  },
+  "distractors": {
+   "A": "Rewrites the objects that exist right now into Nearline but installs no rule: later uploads stay Standard, nothing waits for the 30-day age, and nothing is deleted at 365 days.",
+   "B": "Sets only the class given to newly written objects; there is no age condition, so objects never transition after 30 days and are never purged at 365 days.",
+   "D": "Soft delete governs how long already-deleted objects stay restorable; it performs no storage-class transition and never deletes an object on its own schedule."
+  }
+ },
+ {
+  "id": "ACE-D5-016",
+  "options": {
+   "A": "Cloud Asset Inventory (CAI).",
+   "B": "Cloud Armor security policies.",
+   "C": "Cloud Audit Logs in Logging."
+  },
+  "distractors": {
+   "A": "CAI inventories resource metadata and IAM policies over time, but it emits no vulnerability, misconfiguration or threat findings and evaluates no compliance posture.",
+   "B": "Cloud Armor is an edge WAF and DDoS filter in front of load-balanced applications; it neither discovers assets nor reports organization-wide misconfigurations.",
+   "C": "Audit logs record who did what and when; they must be queried by hand and never classify a finding such as a public bucket or an open firewall port."
+  }
+ }
+]

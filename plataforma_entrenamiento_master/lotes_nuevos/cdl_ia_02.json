@@ -1,0 +1,590 @@
+[
+  {
+    "id": "CDL-IA-013",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "AutoML frente a entrenamiento personalizado",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "Clasificar defectos propios de una línea de producción",
+    "scenario": "Una fábrica necesita detectar en imágenes cinco defectos muy específicos de sus piezas, que ninguna API genérica reconoce. Dispone de veinte mil fotografías ya etiquetadas por sus inspectores, pero su equipo de TI no sabe de aprendizaje automático. ¿Qué opción encaja mejor?",
+    "keywords": [
+      "defectos específicos",
+      "fotografías etiquetadas",
+      "equipo sin experiencia",
+      "línea de producción"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "AutoML en Vertex AI, que entrena un modelo propio a partir de las imágenes etiquetadas sin escribir código."
+      },
+      {
+        "letter": "B",
+        "text": "Entrenamiento personalizado en Vertex AI, escribiendo el código del modelo y ajustando manualmente sus hiperparámetros con un equipo experto."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Vision API en su configuración estándar, que ya detecta etiquetas generales sobre cualquier tipo de imagen."
+      },
+      {
+        "letter": "D",
+        "text": "Un panel de Looker sobre el histórico de incidencias, para deducir visualmente qué piezas tienden a salir defectuosas."
+      }
+    ],
+    "correct": "A",
+    "explanation": "AutoML cubre el punto intermedio: la tarea es específica del negocio, así que una API genérica no sirve, pero el equipo no necesita programar el modelo. Basta con aportar los datos etiquetados y AutoML se encarga del entrenamiento y la evaluación.",
+    "distractors": {
+      "B": "El entrenamiento personalizado ofrece el máximo control, pero exige experiencia en aprendizaje automático que este equipo declara no tener.",
+      "C": "Vision API reconoce categorías generales del mundo; no conoce los cinco defectos concretos de estas piezas industriales.",
+      "D": "Un panel resume incidencias pasadas, pero no analiza las imágenes ni detecta el defecto en una pieza nueva."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/docs/training-overview",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-IA-014",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Sobreajuste y su lectura de negocio",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Cien por cien de acierto en pruebas y fallos en producción",
+    "scenario": "Un modelo de previsión de demanda acierta casi el cien por cien sobre los datos con los que se entrenó, pero se equivoca mucho con los pedidos reales de las semanas siguientes. ¿Qué está ocurriendo?",
+    "keywords": [
+      "previsión de demanda",
+      "acierto casi total",
+      "errores con pedidos reales",
+      "semanas siguientes"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "El modelo está sobreajustado: memorizó el detalle de los datos de entrenamiento en lugar de aprender el patrón general."
+      },
+      {
+        "letter": "B",
+        "text": "El modelo se quedó corto de capacidad y hay que reducir todavía más el número de variables que recibe como entrada."
+      },
+      {
+        "letter": "C",
+        "text": "El servicio de predicción está aplicando un límite de cuota que recorta la exactitud cuando aumenta el número de peticiones."
+      },
+      {
+        "letter": "D",
+        "text": "Un acierto muy alto en el conjunto de entrenamiento es siempre la señal definitiva de que el modelo está listo para producción."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El sobreajuste aparece cuando el modelo se pega demasiado a los datos vistos y pierde capacidad de generalizar. Por eso el rendimiento sobre el conjunto de entrenamiento nunca es la métrica de decisión: hay que medir con datos que el modelo no haya visto.",
+    "distractors": {
+      "B": "El síntoma descrito indica exceso de ajuste, no falta de capacidad; recortar más variables no corrige la memorización del detalle.",
+      "C": "Las cuotas limitan el volumen de peticiones que se pueden atender, pero no alteran la exactitud de cada predicción devuelta.",
+      "D": "Es justo el error de lectura que provoca este problema: el acierto en entrenamiento no anticipa el comportamiento real."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/docs/beginner/beginners-guide",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-IA-015",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Sesgo en los datos y equidad del modelo",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Un filtro de currículos que reproduce el pasado",
+    "scenario": "Una empresa entrena un modelo de preselección de candidatos con diez años de decisiones de contratación propias. Al revisarlo, descubre que descarta sistemáticamente perfiles de determinados orígenes académicos. ¿Qué principio de IA responsable se está incumpliendo?",
+    "keywords": [
+      "preselección de candidatos",
+      "diez años de decisiones",
+      "descarta perfiles",
+      "revisión interna"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La equidad: el modelo heredó los sesgos presentes en las decisiones históricas y los aplica de forma sistemática."
+      },
+      {
+        "letter": "B",
+        "text": "La seguridad, porque el conjunto de currículos debería haberse almacenado cifrado con claves gestionadas por el propio cliente."
+      },
+      {
+        "letter": "C",
+        "text": "La disponibilidad, ya que el punto de conexión del modelo debería replicarse en varias regiones para tolerar caídas."
+      },
+      {
+        "letter": "D",
+        "text": "La eficiencia de costes, dado que preseleccionar candidatos con un modelo resulta más caro que hacerlo manualmente."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Un modelo aprende de lo que se le da. Si el histórico refleja decisiones sesgadas, el modelo las reproduce y además las escala. La equidad es uno de los principios de IA responsable de Google, y exige revisar los datos de entrenamiento antes de confiar en el resultado.",
+    "distractors": {
+      "B": "El cifrado protege los datos frente a accesos indebidos, pero no corrige que las decisiones aprendidas sean discriminatorias.",
+      "C": "La replicación mejora la tolerancia a fallos del servicio; no tiene ninguna relación con el contenido de las decisiones.",
+      "D": "El problema descrito no es de coste sino de trato desigual sistemático hacia determinados candidatos."
+    },
+    "officialDocUrl": "https://cloud.google.com/responsible-ai",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-IA-016",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Elegir entre Speech-to-Text y Text-to-Speech",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 80,
+    "caseStudy": "none",
+    "title": "Analizar el contenido de las llamadas grabadas",
+    "scenario": "Un centro de atención telefónica guarda las grabaciones de sus llamadas y quiere buscar en ellas por palabras concretas para detectar motivos de queja recurrentes. ¿Qué servicio necesita como primer paso?",
+    "keywords": [
+      "grabaciones de llamadas",
+      "búsqueda por palabras",
+      "motivos de queja",
+      "centro telefónico"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cloud Speech-to-Text, que convierte el audio de las grabaciones en texto sobre el que ya se puede buscar."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Text-to-Speech, que genera locuciones de voz natural a partir de textos escritos previamente por el equipo de calidad."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Translation API, que traduce contenido entre idiomas para que los supervisores puedan revisarlo con comodidad."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Vision API, que analiza imágenes y documentos escaneados para extraer las etiquetas que contienen."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Speech-to-Text transcribe voz a texto, que es el paso previo imprescindible para poder buscar, clasificar o analizar el contenido de las llamadas. Text-to-Speech hace justo lo contrario: convierte texto en audio.",
+    "distractors": {
+      "B": "Text-to-Speech genera voz a partir de texto; aquí ya existe el audio y lo que falta es convertirlo en texto.",
+      "C": "La traducción es útil si las llamadas están en varios idiomas, pero no resuelve el problema de partir de audio.",
+      "D": "Vision API trabaja con imágenes; una grabación telefónica no es contenido visual."
+    },
+    "officialDocUrl": "https://cloud.google.com/speech-to-text/docs",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-IA-017",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Conjuntos de entrenamiento, validación y prueba",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Por qué se reservan datos que el modelo nunca ve",
+    "scenario": "Un responsable de proyecto pregunta por qué el equipo de datos aparta una porción del conjunto y no la usa para entrenar, si eso significa aprovechar menos información disponible. ¿Cuál es la justificación correcta?",
+    "keywords": [
+      "responsable de proyecto",
+      "porción apartada",
+      "menos información",
+      "equipo de datos"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Para medir el rendimiento con datos que el modelo nunca vio y saber si de verdad generaliza."
+      },
+      {
+        "letter": "B",
+        "text": "Para reducir el coste del entrenamiento, ya que procesar menos filas abarata de forma directa la factura de cómputo."
+      },
+      {
+        "letter": "C",
+        "text": "Para cumplir un requisito contractual de Google Cloud, que exige reservar una parte de los datos antes de entrenar."
+      },
+      {
+        "letter": "D",
+        "text": "Para acelerar el servicio de predicción, porque un modelo entrenado con menos datos responde más rápido a cada consulta."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Evaluar un modelo con los mismos datos con los que aprendió no dice nada: podría haberlos memorizado. Reservar un conjunto de prueba que el modelo nunca ve es la única forma honesta de estimar cómo se comportará con casos reales.",
+    "distractors": {
+      "B": "El ahorro de cómputo es marginal y nunca es el motivo: se sacrifica algo de datos precisamente para ganar una medición fiable.",
+      "C": "No existe tal exigencia contractual; es una práctica metodológica del aprendizaje automático, no una condición del proveedor.",
+      "D": "La velocidad de respuesta depende del tamaño del modelo y de la infraestructura, no del volumen de datos usados al entrenar."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/docs/general/ml-use",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-IA-018",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Personalización en comercio electrónico con IA",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Recomendar productos en una tienda en línea",
+    "scenario": "Una tienda en línea quiere mostrar a cada visitante productos afines a su navegación y a lo que compraron clientes parecidos, sin construir el motor desde cero. ¿Qué familia de soluciones de Google Cloud aborda directamente este caso?",
+    "keywords": [
+      "tienda en línea",
+      "cada visitante",
+      "clientes parecidos",
+      "sin construir desde cero"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Las soluciones de recomendación de Google Cloud para comercio, que personalizan la oferta según el comportamiento observado."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud CDN, que acerca el contenido estático del catálogo a los usuarios finales para que las páginas de la tienda carguen más rápido."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud SQL, que aporta una base de datos relacional gestionada donde guardar el catálogo y el histórico de pedidos."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Scheduler, que dispara trabajos en horarios definidos para refrescar periódicamente los listados de la tienda."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Las soluciones de recomendación para comercio aplican modelos ya entrenados por Google al catálogo y al comportamiento de los usuarios, evitando construir y mantener un motor propio. Es un ejemplo claro de valor de negocio de la IA aplicada.",
+    "distractors": {
+      "B": "Cloud CDN mejora el tiempo de carga, lo que ayuda a la conversión, pero no decide qué producto mostrar a cada persona.",
+      "C": "Cloud SQL almacena los datos de catálogo y pedidos; no genera recomendaciones personalizadas por sí mismo.",
+      "D": "Cloud Scheduler programa tareas en el tiempo, sin ninguna capacidad de personalización por usuario."
+    },
+    "officialDocUrl": "https://cloud.google.com/solutions/retail",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-IA-019",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Gemini como asistente para equipos técnicos",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Acelerar al equipo que trabaja dentro de la consola",
+    "scenario": "Un responsable de plataforma quiere que sus ingenieros reciban ayuda contextual mientras escriben configuraciones y consultas dentro de Google Cloud, sin salir a buscar documentación en otra pestaña. ¿Qué capacidad cubre esa necesidad?",
+    "keywords": [
+      "responsable de plataforma",
+      "ayuda contextual",
+      "sin salir a buscar",
+      "configuraciones y consultas"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Gemini para Google Cloud, que asiste dentro de los propios productos al escribir código, consultas y configuraciones."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Shell, que ofrece una terminal en el navegador con las herramientas de línea de comandos ya instaladas y actualizadas."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Source Repositories, que aloja repositorios privados de código fuente integrados con el resto de la plataforma."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Build, que automatiza la compilación y las pruebas del código cada vez que se registra un cambio nuevo."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Gemini para Google Cloud integra asistencia generativa dentro de los productos de la plataforma, ayudando a redactar código, consultas y configuraciones en el propio contexto de trabajo. Es asistencia, no sustitución del criterio del ingeniero.",
+    "distractors": {
+      "B": "Cloud Shell da acceso a herramientas de línea de comandos, pero no sugiere ni redacta contenido por el usuario.",
+      "C": "Los repositorios guardan y versionan el código; no aportan asistencia mientras se escribe.",
+      "D": "Cloud Build ejecuta la integración continua después del cambio, no acompaña al ingeniero mientras lo redacta."
+    },
+    "officialDocUrl": "https://cloud.google.com/products/gemini",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-IA-020",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Traducción con terminología propia de la empresa",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Traducir manuales sin perder los nombres técnicos",
+    "scenario": "Un fabricante traduce manuales a doce idiomas y necesita que los nombres de sus componentes se traduzcan siempre igual, respetando el vocabulario aprobado por su departamento técnico. ¿Qué capacidad de Cloud Translation responde a esto?",
+    "keywords": [
+      "doce idiomas",
+      "nombres de componentes",
+      "vocabulario aprobado",
+      "manuales técnicos"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Los glosarios, que fijan cómo debe traducirse cada término propio para mantener la coherencia en todos los idiomas."
+      },
+      {
+        "letter": "B",
+        "text": "El almacenamiento en caché de las respuestas, que evita volver a pagar por traducir un mismo fragmento de texto repetido."
+      },
+      {
+        "letter": "C",
+        "text": "La detección automática del idioma de origen, que identifica en qué lengua está escrito cada documento recibido."
+      },
+      {
+        "letter": "D",
+        "text": "El cifrado en tránsito, que protege el contenido de los manuales mientras viaja hacia el servicio de traducción."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Un glosario en Cloud Translation define traducciones obligatorias para términos concretos, de modo que los nombres de producto y el vocabulario técnico se mantengan estables en todos los idiomas. Es el mecanismo pensado para coherencia terminológica.",
+    "distractors": {
+      "B": "La caché ahorra coste en textos repetidos, pero no garantiza que un término se traduzca siempre de la forma aprobada.",
+      "C": "Detectar el idioma de origen es útil, aunque no interviene en cómo se traduce un término concreto del catálogo.",
+      "D": "El cifrado protege la confidencialidad del contenido; no influye en la elección de palabras de la traducción."
+    },
+    "officialDocUrl": "https://cloud.google.com/translate/docs/advanced/glossary",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-IA-021",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Búsqueda semántica y representaciones vectoriales",
+    "difficulty": "advanced",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 105,
+    "caseStudy": "none",
+    "title": "Encontrar contenido por significado y no por palabra exacta",
+    "scenario": "Una editorial quiere que su buscador interno devuelva artículos relacionados aunque el usuario no escriba las mismas palabras que aparecen en el texto. Hoy su buscador solo encuentra coincidencias literales. ¿Qué enfoque resuelve esto?",
+    "keywords": [
+      "buscador interno",
+      "coincidencias literales",
+      "artículos relacionados",
+      "editorial"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Representar textos y consultas como vectores para poder comparar significados en lugar de comparar palabras."
+      },
+      {
+        "letter": "B",
+        "text": "Añadir más índices a la base de datos relacional para que las búsquedas por palabra clave se resuelvan mucho más rápido."
+      },
+      {
+        "letter": "C",
+        "text": "Guardar los artículos en una clase de almacenamiento más caliente para reducir la latencia de acceso a cada archivo."
+      },
+      {
+        "letter": "D",
+        "text": "Traducir todos los artículos a un idioma común y así aumentar la probabilidad de coincidencia exacta de términos."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Las representaciones vectoriales, o embeddings, sitúan textos con significado parecido en posiciones cercanas del espacio. Comparando vectores, el buscador encuentra contenido relacionado aunque no comparta ni una sola palabra con la consulta.",
+    "distractors": {
+      "B": "Más índices aceleran la búsqueda literal, pero siguen sin entender que dos frases distintas signifiquen lo mismo.",
+      "C": "La clase de almacenamiento afecta al coste y a la latencia de lectura, no a la capacidad de relacionar contenidos.",
+      "D": "Unificar el idioma ayuda algo, pero el problema es semántico: dos textos pueden decir lo mismo con palabras distintas."
+    },
+    "officialDocUrl": "https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-text-embeddings",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-IA-022",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "IA aplicada a la atención al cliente",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Atender consultas sencillas sin saturar a los agentes",
+    "scenario": "Una empresa de servicios recibe miles de consultas repetitivas sobre horarios y estado de pedidos. Quiere resolverlas de forma automática por voz y por chat, y derivar a un agente humano solo los casos complejos. ¿Qué solución está diseñada para esto?",
+    "keywords": [
+      "consultas repetitivas",
+      "voz y chat",
+      "derivar a un agente",
+      "empresa de servicios"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Contact Center AI, que automatiza la conversación con el cliente y escala al agente humano cuando hace falta."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Pub/Sub, que desacopla los sistemas mediante mensajería asíncrona para que ninguno espere por la respuesta del otro."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Functions, que ejecuta fragmentos de código en respuesta a eventos sin necesidad de administrar ningún servidor."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Monitoring, que vigila el estado de los sistemas y avisa mediante alertas cuando alguna métrica se sale de rango."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Contact Center AI aplica comprensión del lenguaje a la atención al cliente por voz y chat, resolviendo lo repetitivo y transfiriendo al agente los casos que lo requieren, con contexto. El valor de negocio es liberar tiempo humano para lo que de verdad lo necesita.",
+    "distractors": {
+      "B": "Pub/Sub transporta mensajes entre sistemas; no interpreta lo que pregunta un cliente ni le responde.",
+      "C": "Cloud Functions ejecuta código ante eventos, pero por sí solo no aporta comprensión del lenguaje natural.",
+      "D": "Cloud Monitoring vigila la salud técnica de la plataforma, no las conversaciones con los clientes."
+    },
+    "officialDocUrl": "https://cloud.google.com/solutions/contact-center",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-IA-023",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Supervisión humana en decisiones asistidas por IA",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 105,
+    "caseStudy": "none",
+    "title": "Hasta dónde puede decidir el modelo por sí solo",
+    "scenario": "Un hospital quiere usar un modelo para priorizar la revisión de pruebas diagnósticas. El comité clínico debate qué papel debe tener el sistema en la decisión final sobre cada paciente. ¿Qué planteamiento se alinea con la IA responsable?",
+    "keywords": [
+      "comité clínico",
+      "priorizar revisiones",
+      "decisión final",
+      "hospital"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "El modelo ordena la carga de trabajo y un profesional mantiene la decisión clínica sobre cada paciente."
+      },
+      {
+        "letter": "B",
+        "text": "El modelo decide de forma autónoma qué pruebas se descartan, ya que su exactitud medida supera a la del personal disponible."
+      },
+      {
+        "letter": "C",
+        "text": "El modelo se despliega sin informar al personal clínico, para no condicionar su juicio profesional durante la revisión diaria."
+      },
+      {
+        "letter": "D",
+        "text": "El modelo se limita a registrar estadísticas agregadas y no llega a influir en el orden de revisión de ninguna prueba."
+      }
+    ],
+    "correct": "A",
+    "explanation": "En decisiones de alto impacto sobre personas, la IA responsable mantiene a un humano en el circuito: el sistema apoya y prioriza, pero la responsabilidad de la decisión sigue siendo profesional. Es el equilibrio entre aprovechar el modelo y no delegarle lo que no le corresponde.",
+    "distractors": {
+      "B": "Delegar por completo una decisión clínica en un modelo elimina la supervisión humana justo donde el riesgo para la persona es mayor.",
+      "C": "Ocultar al personal que hay un sistema interviniendo va en contra del principio de transparencia.",
+      "D": "Si el modelo no influye en nada, no aporta el valor que motivó el proyecto: el objetivo era priorizar mejor."
+    },
+    "officialDocUrl": "https://cloud.google.com/responsible-ai",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-IA-024",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Infraestructura especializada para cargas de IA",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Por qué el entrenamiento pide hardware distinto",
+    "scenario": "Un equipo consulta por qué entrenar modelos grandes en máquinas de propósito general resulta lento y caro, y qué ofrece Google Cloud para ese tipo de carga. ¿Cuál es la explicación correcta?",
+    "keywords": [
+      "máquinas de propósito general",
+      "entrenamiento lento",
+      "modelos grandes",
+      "consulta del equipo"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Google Cloud ofrece aceleradores como GPU y TPU, diseñados para el cálculo masivo en paralelo que exige entrenar."
+      },
+      {
+        "letter": "B",
+        "text": "Basta con aumentar el disco persistente de la máquina virtual, porque el entrenamiento está limitado por la lectura de los datos."
+      },
+      {
+        "letter": "C",
+        "text": "Conviene distribuir el entrenamiento entre varias regiones lejanas, para sumar la capacidad de cómputo disponible en cada una."
+      },
+      {
+        "letter": "D",
+        "text": "El entrenamiento debe ejecutarse en Cloud Functions, que escala de forma automática y elimina la gestión de servidores."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El entrenamiento de modelos consiste en operaciones matriciales masivas, que los aceleradores GPU y TPU ejecutan en paralelo mucho más rápido y con mejor relación coste-rendimiento que una CPU de propósito general.",
+    "distractors": {
+      "B": "El cuello de botella típico del entrenamiento es el cálculo, no la capacidad del disco donde residen los datos.",
+      "C": "Repartir el entrenamiento entre regiones lejanas añade latencia de red y complejidad, sin resolver la falta de aceleradores.",
+      "D": "Cloud Functions está pensado para tareas cortas guiadas por eventos, no para trabajos de entrenamiento largos e intensivos."
+    },
+    "officialDocUrl": "https://cloud.google.com/tpu/docs/intro-to-tpu",
+    "blockId": "BLOCK-1"
+  }
+]

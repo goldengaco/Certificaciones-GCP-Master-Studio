@@ -49,76 +49,109 @@
           }
         },
         domains: {
-          'CDL-D1': {
-            id: 'CDL-D1',
-            name: 'Digital Transformation with Google Cloud',
-            shortName: 'Transformación Digital',
-            weight: 10,
-            targetQuestions: 30,
-            questionsPerBlock: 5,
-            description: 'Comprender los conceptos fundamentales de la nube, la transformación digital empresarial, la innovación impulsada por datos y los modelos de adopción de la nube (IaaS, PaaS, SaaS, multinube e híbrida).',
-            subtopics: [
-              'Fundamentos y terminología de computación en la nube',
-              'Modelos de servicio en la nube (IaaS vs PaaS vs SaaS)',
-              'Estrategias de despliegue: nube pública, privada, híbrida y multinube',
-              'Diferenciadores clave y propuesta de valor de Google Cloud',
-              'Patrones de transformación digital y cultura de innovación impulsada por datos',
-              'FinOps y gestión del costo total de propiedad (TCO) vs CapEx y OpEx'
-            ]
-          },
-          'CDL-D2': {
-            id: 'CDL-D2',
-            name: 'Innovating with Data and Google Cloud',
-            shortName: 'Innovación con Datos & IA',
-            weight: 30,
-            targetQuestions: 90,
-            questionsPerBlock: 15,
-            description: 'Aprovechar el valor de los datos mediante soluciones de almacenamiento, bases de datos (relacionales vs NoSQL vs globales), analítica moderna (BigQuery, Looker) e Inteligencia Artificial / Machine Learning (Vertex AI, APIs preentrenadas).',
-            subtopics: [
-              'Almacenamiento de objetos: Cloud Storage (Standard, Nearline, Coldline, Archive)',
-              'Bases de datos relacionales: Cloud SQL y Cloud Spanner (ACID global)',
-              'Bases de datos NoSQL: Firestore (documental móvil/web) y Cloud Bigtable (alta escala/series temporales)',
-              'Almacén de datos analítico moderno (Data Warehousing) con BigQuery',
-              'Pipelines de datos e ingeniería de datos: Pub/Sub y Dataflow',
-              'Visualización y Business Intelligence moderno con Looker y Looker Studio',
-              'Soluciones de IA/ML en Google Cloud: Vertex AI, AutoML y APIs de IA preentrenadas (Vision, Natural Language, Translation, Speech-to-Text)'
-            ]
-          },
-          'CDL-D3': {
-            id: 'CDL-D3',
-            name: 'Infrastructure and Application Modernization',
-            shortName: 'Modernización de Infraestructura & Apps',
-            weight: 30,
-            targetQuestions: 90,
-            questionsPerBlock: 15,
-            description: 'Estrategias de modernización de infraestructura y aplicaciones heredadas: opciones de cómputo (Compute Engine, GKE, Cloud Run, Cloud Functions), gestión de APIs (Apigee), y migración a la nube.',
-            subtopics: [
-              'Opciones de cómputo en Google Cloud: Compute Engine (IaaS), Google Kubernetes Engine (GKE), Cloud Run y Cloud Functions (Serverless)',
-              'Contenedores y orquestación de microservicios con Kubernetes y GKE',
-              'Arquitecturas sin servidor (Serverless) y basadas en eventos con Cloud Run y Eventarc',
-              'Estrategias de modernización de aplicaciones y migración (Rehost, Replatform, Refactor, Repurchase, Retire)',
-              'Gestión del ciclo de vida de APIs empresariales con Apigee',
-              'Infraestructura híbrida y multinube con Google Cloud Anthos / GKE Enterprise'
-            ]
-          },
-          'CDL-D4': {
-            id: 'CDL-D4',
-            name: 'Google Cloud Security and Operations',
-            shortName: 'Seguridad, Gobernanza & Operaciones',
-            weight: 30,
-            targetQuestions: 90,
-            questionsPerBlock: 15,
-            description: 'Modelo de responsabilidad compartida, gestión de identidades y accesos (IAM), cifrado de datos (en reposo, en tránsito, en uso), cumplimiento normativo, Cloud Monitoring, Cloud Logging y gestión financiera de la nube (FinOps).',
-            subtopics: [
-              'Modelo de responsabilidad compartida de seguridad en la nube',
-              'Gestión de Identidades y Accesos (IAM): Principio de privilegio mínimo, roles y Service Accounts',
-              'Cifrado y protección de datos: Google-managed keys, CMEK (Cloud KMS) y Cloud HSM',
-              'Gobernanza de recursos: Organización, Carpetas, Proyectos y Políticas de Organización',
-              'Observabilidad y operaciones con Google Cloud Operations Suite (Cloud Monitoring, Cloud Logging)',
-              'Gestión de costos, presupuestos, alertas y optimización de facturación en Google Cloud'
-            ]
-          }
+        "CDL-D1": {
+          "id": "CDL-D1",
+          "name": "Digital Transformation with Google Cloud",
+          "shortName": "Transformación Digital",
+          "weight": 18,
+          "targetQuestions": 54,
+          "questionsPerBlock": 9,
+          "description": "Por qué y cómo la nube está transformando los negocios: conceptos y arquitecturas fundamentales de nube, y la infraestructura de red global de Google.",
+          "subtopics": [
+            "Fundamentos y terminología de computación en la nube",
+            "Modelos de servicio: IaaS, PaaS, SaaS y sin servidor",
+            "Nube pública, privada, híbrida y multinube",
+            "Infraestructura y red global de Google: regiones, zonas y borde",
+            "Cloud Adoption Framework y fases de madurez de adopción",
+            "Caso de negocio: CapEx frente a OpEx, TCO y retorno de inversión"
+          ]
+        },
+        "CDL-D2": {
+          "id": "CDL-D2",
+          "name": "Exploring Data Transformation with Google Cloud",
+          "shortName": "Transformación de Datos",
+          "weight": 18,
+          "targetQuestions": 54,
+          "questionsPerBlock": 9,
+          "description": "El papel del dato en la transformación digital, los productos de gestión de datos de Google Cloud y la analítica inteligente, la inteligencia de negocio y el procesamiento en streaming.",
+          "subtopics": [
+            "Valor del dato y ciclo de vida de la información",
+            "Bases de datos gestionadas: Cloud SQL, Spanner, Firestore y Bigtable",
+            "Almacenamiento de objetos y clases de Cloud Storage",
+            "Analítica a escala con BigQuery",
+            "Ingesta y procesamiento: Pub/Sub, Dataflow y Dataproc",
+            "Inteligencia de negocio y visualización con Looker"
+          ]
+        },
+        "CDL-D3": {
+          "id": "CDL-D3",
+          "name": "Innovating with Google Cloud Artificial Intelligence",
+          "shortName": "Innovación con IA",
+          "weight": 18,
+          "targetQuestions": 54,
+          "questionsPerBlock": 9,
+          "description": "Conceptos fundamentales de IA y aprendizaje automático, su valor de negocio, la oferta de IA de Google Cloud, los modelos personalizados y las capacidades de BigQuery ML.",
+          "subtopics": [
+            "Conceptos de IA y aprendizaje automático, y su valor de negocio",
+            "APIs preentrenadas: Vision, Speech, Translation y Natural Language",
+            "Vertex AI: AutoML frente a entrenamiento personalizado",
+            "BigQuery ML: modelos sobre datos con SQL",
+            "IA generativa, modelos fundacionales y Gemini",
+            "IA responsable, explicabilidad y gobernanza de modelos"
+          ]
+        },
+        "CDL-D4": {
+          "id": "CDL-D4",
+          "name": "Modernize Infrastructure and Applications with Google Cloud",
+          "shortName": "Infraestructura y Apps",
+          "weight": 18,
+          "targetQuestions": 54,
+          "questionsPerBlock": 9,
+          "description": "Terminología de migración y fundamentos de cómputo, la oferta de infraestructura de Google Cloud y su valor de negocio, y el valor de las interfaces de programación de aplicaciones.",
+          "subtopics": [
+            "Fundamentos de cómputo: Compute Engine, GKE, Cloud Run y Cloud Functions",
+            "Contenedores, microservicios y modernización de aplicaciones",
+            "Estrategias de migración y las seis R",
+            "Redes: VPC, balanceo de carga, Cloud CDN y conectividad híbrida",
+            "Entornos híbridos y multinube con Google Distributed Cloud",
+            "Valor de negocio de las APIs y gestión con Apigee"
+          ]
+        },
+        "CDL-D5": {
+          "id": "CDL-D5",
+          "name": "Trust and Security with Google Cloud",
+          "shortName": "Confianza y Seguridad",
+          "weight": 18,
+          "targetQuestions": 54,
+          "questionsPerBlock": 9,
+          "description": "Conceptos fundamentales de seguridad en la nube, el enfoque de defensa en profundidad y el papel de Google en el equipo de seguridad de la organización, más operaciones de seguridad y cumplimiento.",
+          "subtopics": [
+            "Modelo de responsabilidad compartida por tipo de servicio",
+            "Gestión de identidades y accesos, y principio de menor privilegio",
+            "Cifrado en reposo, en tránsito y en uso; Cloud KMS y Cloud HSM",
+            "Defensa en profundidad, confianza cero y Cloud Armor",
+            "Protección de datos sensibles y prevención de pérdida de datos",
+            "Cumplimiento normativo, auditoría y Security Command Center"
+          ]
+        },
+        "CDL-D6": {
+          "id": "CDL-D6",
+          "name": "Scaling with Google Cloud Operations",
+          "shortName": "Escalar con Operaciones",
+          "weight": 10,
+          "targetQuestions": 30,
+          "questionsPerBlock": 5,
+          "description": "Prácticas de control de costos y gobernanza financiera, y conceptos fundamentales de operaciones modernas, fiabilidad y resiliencia, incluidos DevOps e ingeniería de fiabilidad de sitios.",
+          "subtopics": [
+            "Gobernanza financiera: cuentas de facturación, presupuestos y alertas",
+            "Optimización de costos: descuentos por uso comprometido y sostenido",
+            "Cultura FinOps y responsabilidad financiera compartida",
+            "Fiabilidad: SLI, SLO, SLA y presupuesto de error",
+            "Observabilidad con Cloud Monitoring, Logging y Trace",
+            "DevOps, entrega continua y prácticas de ingeniería de fiabilidad"
+          ]
         }
+      }
       },
 
       ace: {

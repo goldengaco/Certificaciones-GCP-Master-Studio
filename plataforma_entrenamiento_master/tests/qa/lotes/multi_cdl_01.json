@@ -1,0 +1,374 @@
+[
+ {
+  "id": "CDL-D1-011",
+  "domainId": "CDL-D1",
+  "subtopic": "Estrategia de Código Abierto y Prevención de Vendor Lock-in",
+  "scenario": "El Director de Tecnología (CTO) de una startup desea migrar a la nube pero le preocupa quedar atrapado con tecnologías propietarias que impidan mover sus cargas de trabajo en el futuro. ¿Cómo aborda Google Cloud esta preocupación en su estrategia de plataforma?",
+  "correct": "D",
+  "explanation": "Google Cloud tiene un compromiso profundo con el código abierto y la interoperabilidad, habiendo creado y donado tecnologías fundamentales como Kubernetes y TensorFlow. Esto permite a los clientes ejecutar sus aplicaciones en cualquier entorno compatible sin bloqueo de proveedor.",
+  "doc": "https://cloud.google.com/open-cloud",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 193,
+    "text": "Google Cloud ofrece condiciones contractuales de salida sin penalización y descuentos por compromiso, de modo que el cliente puede rescindir el acuerdo comercial en cualquier momento sin coste."
+   },
+   {
+    "letter": "B",
+    "len": 196,
+    "text": "Google Cloud replica automáticamente todas las cargas de trabajo del cliente en AWS y Azure, de modo que la misma aplicación puede ejecutarse indistintamente en cualquiera de los tres proveedores."
+   },
+   {
+    "letter": "C",
+    "len": 191,
+    "text": "Google Cloud recomienda desarrollar exclusivamente sobre servicios propietarios como BigQuery y Spanner, y exportar los datos a ficheros CSV el día que se decida cambiar de proveedor de nube."
+   },
+   {
+    "letter": "D",
+    "len": 193,
+    "text": "Google Cloud construye sus servicios sobre estándares abiertos y tecnologías de código abierto líderes (como Kubernetes, TensorFlow y Apache Beam), garantizando la portabilidad de aplicaciones."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-020",
+  "domainId": "CDL-D2",
+  "subtopic": "Datos Estructurados vs No Estructurados vs Semi-estructurados",
+  "scenario": "Una compañía maneja tres tipos de información: (1) Tablas SQL con esquemas rígidos de clientes, (2) Documentos de registro en formato JSON con esquemas dinámicos, y (3) Archivos de audio y video de llamadas de soporte. ¿Cómo se clasifican respectivamente?",
+  "correct": "D",
+  "explanation": "Los datos estructurados tienen esquemas formales y tabulares (tablas relacionales SQL); los semi-estructurados tienen etiquetas y jerarquías sin esquema fijo rígido (JSON, XML); y los no estructurados no poseen un modelo de datos predefinido (audio, video, PDFs, imágenes).",
+  "doc": "https://cloud.google.com/learn/what-is-unstructured-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "(1) Semi-estructurados, (2) No estructurados, (3) Estructurados"
+   },
+   {
+    "letter": "B",
+    "len": 63,
+    "text": "(1) No estructurados, (2) Estructurados, (3) Semi-estructurados"
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "Todos son considerados datos idénticos sin ninguna distinción en la nube"
+   },
+   {
+    "letter": "D",
+    "len": 63,
+    "text": "(1) Estructurados, (2) Semi-estructurados, (3) No estructurados"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-051",
+  "domainId": "CDL-D3",
+  "subtopic": "Certificados SSL Administrados por Google (Google-Managed SSL Certificates)",
+  "scenario": "Un equipo web despliega un portal de comercio electrónico detrás de Cloud Load Balancing. En el pasado, los certificados SSL expiraban por descuido humano, haciendo que los navegadores mostraran advertencias de seguridad a los clientes. Desean que Google Cloud aprovisione, configure y renueve automáticamente los certificados SSL/TLS para sus dominios de forma gratuita. ¿Qué característica deben activar?",
+  "correct": "D",
+  "explanation": "Los Google-Managed SSL Certificates son aprovisionados, vinculados al balanceador de carga y renovados automáticamente por Google Cloud de forma gratuita antes de su vencimiento, eliminando el riesgo operativo de expiración de certificados HTTPS.",
+  "doc": "https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 81,
+    "text": "Certificados SSL autoadministrados (self-managed) subidos al balanceador de carga"
+   },
+   {
+    "letter": "B",
+    "len": 68,
+    "text": "Certificate Authority Service (CAS) con una CA privada de la empresa"
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Política SSL (SSL Policy) con perfil MODERN y TLS 1.2 como versión mínima"
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Certificados SSL administrados por Google (Google-Managed SSL Certificates)"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-084",
+  "domainId": "CDL-D4",
+  "subtopic": "Security Health Analytics en Security Command Center",
+  "scenario": "Un oficial de seguridad busca un servicio que escanee continuamente la infraestructura de Google Cloud para detectar automáticamente errores de configuración comunes como: buckets de Cloud Storage públicos abiertos a todo el mundo, puertos de administración SSH (puerto 22) o RDP (puerto 3389) abiertos a Internet en reglas de firewall, o llaves de Service Account con más de 90 días sin rotación. ¿Qué módulo de Security Command Center realiza este escaneo continuo?",
+  "correct": "C",
+  "explanation": "Security Health Analytics (SHA) es el motor nativo de gestión de la postura de seguridad (CSPM) dentro de Security Command Center que escanea automáticamente recursos en busca de malas configuraciones, vulnerabilidades de red y violaciones de las mejores prácticas de seguridad de Google.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-security-health-analytics-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "Event Threat Detection (en Security Command Center Premium)"
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Web Security Scanner (en Security Command Center Standard)"
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Security Health Analytics (SHA en Security Command Center)"
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Cloud Asset Inventory (con feeds de cambios y exportación)"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D1-002",
+  "domainId": "CDL-D1",
+  "subtopic": "Total Cost of Ownership (TCO) y Retorno de Inversión (ROI)",
+  "scenario": "Un minorista multinacional está evaluando el Costo Total de Propiedad (TCO) de migrar su plataforma de comercio electrónico a Google Cloud en comparación con renovar su centro de datos local. ¿Qué factores integrales deben incluirse en el análisis del TCO para reflejar con precisión el valor económico de la nube?",
+  "correct": "B",
+  "explanation": "El Costo Total de Propiedad (TCO) abarca todos los costos directos e indirectos asociados a la infraestructura durante su ciclo de vida, incluyendo adquisición de hardware, energía, refrigeración, espacio físico, mantenimiento y costos de personal operativo.",
+  "doc": "https://cloud.google.com/solutions/cost-optimization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 175,
+    "text": "Únicamente los costos de capital del ciclo de renovación: compra de servidores, cabinas de almacenamiento, equipamiento de red y licencias perpetuas, amortizados a cinco años."
+   },
+   {
+    "letter": "B",
+    "len": 194,
+    "text": "Costos directos (hardware, almacenamiento, redes) y costos indirectos (energía eléctrica, refrigeración, mantenimiento de instalaciones, personal de administración de TI y costo de inactividad)."
+   },
+   {
+    "letter": "C",
+    "len": 173,
+    "text": "Exclusivamente la factura mensual de Google Cloud proyectada a tres años con la Calculadora de Precios, comparada con el precio de lista de la renovación del hardware local."
+   },
+   {
+    "letter": "D",
+    "len": 183,
+    "text": "Solamente los costos indirectos de operación: electricidad, refrigeración, espacio en rack y salarios del equipo de administración de sistemas, sin contabilizar hardware ni licencias."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-010",
+  "domainId": "CDL-D2",
+  "subtopic": "Cloud SQL: Alta Disponibilidad (HA) y Conmutación por Error (Failover)",
+  "scenario": "Una aplicación de facturación empresarial en Cloud SQL no puede permitirse tiempos de inactividad si una zona del centro de datos sufre un corte de energía. ¿Qué configuración nativa garantiza que la base de datos conmute por error automáticamente a una zona secundaria sin pérdida de datos?",
+  "correct": "C",
+  "explanation": "La configuración de Alta Disponibilidad (HA) en Cloud SQL aprovisiona automáticamente una instancia principal en una zona y una instancia en espera (standby) en otra zona dentro de la misma región. La replicación síncrona a nivel de disco asegura una conmutación por error (failover) transparente en segundos si la zona primaria falla.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/high-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 197,
+    "text": "Crear una réplica de lectura de Cloud SQL en una zona distinta de la misma región y promoverla manualmente a instancia principal en cuanto el equipo detecte el corte de energía en la zona primaria."
+   },
+   {
+    "letter": "B",
+    "len": 188,
+    "text": "Programar copias de seguridad automáticas cada hora con recuperación a un momento dado (PITR) y restaurar manualmente la instancia en otra zona si la zona primaria queda fuera de servicio."
+   },
+   {
+    "letter": "C",
+    "len": 206,
+    "text": "Habilitar la configuración de Alta Disponibilidad (High Availability - HA) en Cloud SQL, que aprovisiona una instancia en espera (standby) en una zona diferente con replicación sincrónica de almacenamiento."
+   },
+   {
+    "letter": "D",
+    "len": 182,
+    "text": "Configurar una réplica en cascada en otra región y una entrada de Cloud DNS con comprobación de estado que redirija la aplicación hacia el servidor secundario en caso de fallo zonal."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-070",
+  "domainId": "CDL-D3",
+  "subtopic": "Eventarc: Enrutamiento de Eventos Estandarizado para Arquitecturas Serverless",
+  "scenario": "Una empresa construye una arquitectura basada en eventos donde más de 90 fuentes de eventos de Google Cloud (creación de objetos en Cloud Storage, registros en Cloud Audit Logs, eventos de Pub/Sub y eventos personalizados) deben entregarse de forma estandarizada (CloudEvents) a microservicios en Cloud Run y Cloud Functions sin código intermedio complejo. ¿Qué servicio gestiona este enrutamiento de eventos?",
+  "correct": "D",
+  "explanation": "Eventarc es un servicio totalmente administrado que permite enrutar eventos desde múltiples fuentes de Google Cloud y aplicaciones personalizadas hacia destinos serverless (Cloud Run, Cloud Functions, GKE y Workflows) utilizando el estándar abierto CloudEvents.",
+  "doc": "https://cloud.google.com/eventarc/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 32,
+    "text": "Compute Engine Sole-Tenant Nodes"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Cloud Interconnect Dedicated"
+   },
+   {
+    "letter": "D",
+    "len": 8,
+    "text": "Eventarc"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-013",
+  "domainId": "CDL-D4",
+  "subtopic": "Security Command Center (SCC): Gestión de Postura de Seguridad y Detección de Amenazas",
+  "scenario": "El Director de Seguridad de la Información (CISO) necesita un panel centralizado a nivel de toda la organización que: (1) Descubra automáticamente activos de infraestructura y malas configuraciones de seguridad (como buckets públicos accidentales o puertos abiertos al mundo), (2) Detecte amenazas en tiempo real (como minería de criptomonedas o credenciales filtradas), y (3) Mida el cumplimiento con estándares como CIS, PCI-DSS e ISO 27001. ¿Qué servicio de Google Cloud proporciona esta visibilidad?",
+  "correct": "A",
+  "explanation": "Security Command Center (SCC) es la plataforma integral de gestión de la postura de seguridad en la nube (CSPM) y protección de cargas de trabajo (CWPP) de Google Cloud, que monitorea activos, detecta vulnerabilidades, identifica amenazas activas y evalúa el cumplimiento normativo en toda la organización.",
+  "doc": "https://cloud.google.com/security-command-center/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Security Command Center (SCC)"
+   },
+   {
+    "letter": "B",
+    "len": 25,
+    "text": "Cloud Logging con alertas"
+   },
+   {
+    "letter": "C",
+    "len": 27,
+    "text": "Cloud Asset Inventory (CAI)"
+   },
+   {
+    "letter": "D",
+    "len": 26,
+    "text": "Google Security Operations"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D1-014",
+  "domainId": "CDL-D1",
+  "subtopic": "Agilidad Empresarial y Reducción del Time-to-Market",
+  "scenario": "Una empresa de retail compite con nuevos actores nativos digitales que lanzan funcionalidades comerciales en días. En su infraestructura local, aprovisionar un nuevo entorno de pruebas toma 8 semanas. ¿Cómo resuelve Google Cloud este cuello de botella?",
+  "correct": "B",
+  "explanation": "La infraestructura programable y bajo demanda de Google Cloud permite a los equipos de desarrollo crear y destruir entornos en cuestión de minutos, reduciendo drásticamente el tiempo de comercialización (time-to-market) y acelerando los ciclos de retroalimentación con los clientes.",
+  "doc": "https://cloud.google.com/solutions/devops",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 130,
+    "text": "Traslada la gestión del hardware a Google, aunque cada entorno de pruebas sigue requiriendo el mismo ciclo de aprobación y compra."
+   },
+   {
+    "letter": "B",
+    "len": 144,
+    "text": "Permite aprovisionar recursos de cómputo, bases de datos y entornos completos de desarrollo en minutos mediante APIs y plantillas automatizadas."
+   },
+   {
+    "letter": "C",
+    "len": 132,
+    "text": "Permite reservar capacidad con descuentos por uso comprometido (CUD) para que el equipo siempre tenga servidores libres disponibles."
+   },
+   {
+    "letter": "D",
+    "len": 129,
+    "text": "Ofrece un catálogo de imágenes preconfiguradas que el equipo de infraestructura clona manualmente ante cada solicitud de entorno."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-077",
+  "domainId": "CDL-D2",
+  "subtopic": "Generative AI: Ingeniería de Prompts (Prompt Engineering) y Anclaje (Grounding)",
+  "scenario": "Una empresa de seguros utiliza un modelo de lenguaje en Vertex AI para responder dudas de pólizas a los asegurados. En las pruebas iniciales, el modelo a veces 'inventa' coberturas que no existen en el contrato (alucinación). ¿Qué técnica y capacidad de Google Cloud debe aplicarse para fundamentar las respuestas únicamente en los documentos contractuales reales de la empresa?",
+  "correct": "C",
+  "explanation": "El anclaje (Grounding) vincula la salida de los modelos fundacionales de IA generativa a fuentes de información verificadas y específicas de la empresa (como repositorios en Vertex AI Search). Esto minimiza las alucinaciones y garantiza que las respuestas se basen en datos fácticos y auditables.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/generative-ai/grounding/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 171,
+    "text": "Realizar un ajuste fino (Fine-Tuning) del modelo de Vertex AI con el histórico de pólizas y documentos de la empresa, como técnica para que aprenda el estilo de redacción."
+   },
+   {
+    "letter": "B",
+    "len": 194,
+    "text": "Como técnica de Vertex AI, reducir a cero la temperatura y el top-p del modelo para que las respuestas de la empresa sean deterministas y repitan la misma redacción, sin mirar documentos reales."
+   },
+   {
+    "letter": "C",
+    "len": 181,
+    "text": "Anclar el modelo (Grounding) conectándolo a la base de conocimiento y documentos oficiales de la empresa a través de Vertex AI Search (técnica RAG - Retrieval-Augmented Generation)."
+   },
+   {
+    "letter": "D",
+    "len": 172,
+    "text": "Como técnica de la empresa, activar el umbral más estricto de los filtros de seguridad de IA de Vertex AI para que el modelo bloquee respuestas con coberturas inexistentes."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-008",
+  "domainId": "CDL-D3",
+  "subtopic": "Cloud Run: Contenedores Serverless con Escalado a Cero",
+  "scenario": "Una startup ha empaquetado su API web en un contenedor Docker en cualquier lenguaje (Node.js, Go o Python). Quieren un servicio que reciba peticiones HTTPS, escale automáticamente de 0 a cientos de instancias durante el día, y vuelva a escalar a 0 instancias en la noche sin cobrar nada cuando no haya tráfico web. ¿Qué servicio de Google Cloud cumple estos requisitos?",
+  "correct": "C",
+  "explanation": "Cloud Run es una plataforma de cómputo serverless totalmente administrada que permite ejecutar contenedores directamente invocables vía peticiones web o eventos, escalando automáticamente hacia arriba ante picos de demanda y reduciendo a cero instancias cuando no hay tráfico, eliminando costos de infraestructura ociosa.",
+  "doc": "https://cloud.google.com/run/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "B",
+    "len": 28,
+    "text": "Cloud Interconnect Dedicated"
+   },
+   {
+    "letter": "C",
+    "len": 9,
+    "text": "Cloud Run"
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Compute Engine con VMs de tamaño fijo encendidas 24/7"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-066",
+  "domainId": "CDL-D4",
+  "subtopic": "Cloud Monitoring: Paneles Personalizados y Visualización de Métricas",
+  "scenario": "Un equipo de operaciones de TI necesita una pantalla de monitoreo en su sala de control (NOC) que muestre en tiempo real el tráfico de red, el uso de CPU de las máquinas virtuales, los errores HTTP por segundo y la latencia de las consultas de BigQuery. ¿Qué herramienta nativa de Google Cloud permite construir estos paneles visuales?",
+  "correct": "A",
+  "explanation": "Cloud Monitoring permite crear cuadros de mando (Dashboards) personalizados con gráficos de líneas, barras, mapas de calor y medidores numéricos para visualizar la telemetría operativa de la infraestructura y aplicaciones en tiempo real.",
+  "doc": "https://cloud.google.com/monitoring/dashboards",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Paneles de Control Personalizados (Custom Dashboards) en Cloud Monitoring"
+   },
+   {
+    "letter": "B",
+    "len": 80,
+    "text": "Explorador de registros (Logs Explorer) con consultas guardadas en Cloud Logging"
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Informes de Looker Studio conectados al conjunto de facturación en BigQuery"
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Cloud Trace y Cloud Profiler para el análisis de latencia de la aplicación"
+   }
+  ]
+ }
+]

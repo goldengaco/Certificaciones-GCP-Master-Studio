@@ -1,0 +1,1349 @@
+[
+  {
+    "id": "ACE-D1-001",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "IAM Organization Hierarchy & Security Reviewer",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Auditing Organization IAM Policies Across All Projects",
+    "scenario": "Your organization manages over 80 GCP projects structured under departmental folders. The central compliance and security audit team requires read-only visibility into IAM policies, asset metadata, and audit configurations across all existing and future projects. You must grant access following the principle of least privilege and minimizing operational maintenance overhead.",
+    "keywords": [
+      "IAM Hierarchy",
+      "Least Privilege",
+      "Google Groups",
+      "Organization Level",
+      "Security Reviewer"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Assign the roles/viewer role to each auditor's corporate email address on every project individually."
+      },
+      {
+        "letter": "B",
+        "text": "Create a service account with roles/owner at the Organization level and distribute its downloaded private JSON key to the auditors."
+      },
+      {
+        "letter": "C",
+        "text": "Create a Google Group containing all security auditors and grant the group the roles/iam.securityReviewer role at the Organization node."
+      },
+      {
+        "letter": "D",
+        "text": "Assign the roles/iam.securityAdmin role to individual auditor accounts at the root Organization level."
+      }
+    ],
+    "correct": "C",
+    "explanation": "Granting roles/iam.securityReviewer to a Google Group at the Organization node allows inherited read-only security auditing across all existing and future child folders and projects. Using Google Groups eliminates manual per-user permission management.",
+    "distractors": {
+      "A": "Primitive roles/viewer grants excessive data inspection permissions and project-by-project assignment fails to cover newly created projects automatically.",
+      "B": "Service accounts are designed for workloads, not human users. Sharing JSON keys creates severe credential leak risks, and roles/owner violates least privilege.",
+      "D": "roles/iam.securityAdmin grants write/mutation permissions to modify IAM policies, violating least privilege for read-only auditors."
+    },
+    "gcloudCommand": "gcloud organizations add-iam-policy-binding 123456789012 --member='group:sec-auditors@example.com' --role='roles/iam.securityReviewer'",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Resource Manager",
+      "Google Cloud Organization"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/understanding-roles#security-roles"
+  },
+  {
+    "id": "ACE-D1-002",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Service Account Security & Impersonation",
+    "difficulty": "advanced",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Enforcing Keyless Service Account Impersonation for Developers",
+    "scenario": "A software engineering team needs to run automated database migration scripts from their local machines against Cloud SQL in the staging project. Corporate security policy strictly forbids the generation and download of static Service Account JSON keys to engineer laptops. You need to enable developers to execute the scripts securely.",
+    "keywords": [
+      "Service Account Impersonation",
+      "No JSON Keys",
+      "Service Account Token Creator",
+      "gcloud auth"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Assign developers the roles/iam.serviceAccountUser role at the project level and instruct them to export GOOGLE_APPLICATION_CREDENTIALS."
+      },
+      {
+        "letter": "B",
+        "text": "Create a service account with Cloud SQL Client role, grant developers roles/iam.serviceAccountTokenCreator on that service account, and instruct them to use gcloud with --impersonate-service-account."
+      },
+      {
+        "letter": "C",
+        "text": "Grant developers the roles/cloudsql.admin role directly on their user accounts in the staging project."
+      },
+      {
+        "letter": "D",
+        "text": "Generate short-lived JSON keys using gcloud iam service-accounts keys create and configure a cron script to delete them every 24 hours."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Binding roles/iam.serviceAccountTokenCreator to the developer user/group on the target service account allows them to generate short-lived OAuth 2.0 access tokens and impersonate the service account via gcloud CLI without ever creating or exporting static JSON private keys.",
+    "distractors": {
+      "A": "roles/iam.serviceAccountUser allows attaching the service account to compute resources (e.g., VMs), not generating direct short-lived tokens for local execution.",
+      "D": "Downloading JSON keys to developer laptops violates the security prohibition, even if scripted deletion is attempted.",
+      "C": "Granting direct admin permissions to developers violates least privilege and bypasses workload-specific identity isolation."
+    },
+    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding migration-sa@proj-staging.iam.gserviceaccount.com --member='group:developers@example.com' --role='roles/iam.serviceAccountTokenCreator'",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Cloud SQL",
+      "Cloud SDK"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-overview#impersonation"
+  },
+  {
+    "id": "ACE-D1-003",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud Billing Budgets & Programmatic Notifications",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Automating Billing Budget Notifications via Pub/Sub",
+    "scenario": "The finance department wants real-time programmatic notifications when cloud spend across the enterprise reaches 50%, 90%, and 100% of the $50,000 monthly budget. When the 100% threshold is exceeded, an automated Cloud Function must disable non-essential compute instances. How should you configure the billing alert pipeline?",
+    "keywords": [
+      "Cloud Billing",
+      "Budget Alerts",
+      "Cloud Pub/Sub",
+      "Cloud Functions",
+      "Cost Control"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Write a custom Python script running on a Compute Engine VM that polls gcloud billing budgets list every hour and publishes to Pub/Sub."
+      },
+      {
+        "letter": "B",
+        "text": "Create a billing budget in the Cloud Console, define threshold rules at 50%, 90%, and 100%, and configure the budget to publish messages to a Cloud Pub/Sub topic connected to your Cloud Function."
+      },
+      {
+        "letter": "C",
+        "text": "Configure standard email notifications to billing administrators and configure an email parser to trigger Cloud Functions."
+      },
+      {
+        "letter": "D",
+        "text": "Set up a Cloud Monitoring uptime check that queries the Billing API every 5 minutes and triggers a webhook notification."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Google Cloud Billing allows linking a budget directly to a Cloud Pub/Sub topic. Whenever a threshold is reached or spend updates occur, Cloud Billing publishes JSON budget status messages to the topic, which can trigger Cloud Functions for automated remediation.",
+    "distractors": {
+      "A": "Polling the Billing API via a continuous VM introduces infrastructure cost, maintenance overhead, and delayed alerting compared to native budget Pub/Sub pushes.",
+      "C": "Parsing emails is fragile, unstandardized, and introduces unacceptable operational latency compared to direct Pub/Sub topic integration.",
+      "D": "Cloud Monitoring uptime checks verify web endpoint availability, not billing account spend metrics."
+    },
+    "gcloudCommand": "gcloud billing budgets create --billing-account=012345-6789AB-CDEF01 --display-name='Enterprise-Monthly-Budget' --budget-amount=50000USD --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0 --notifications-rule-pubsub-topic='projects/corp-billing/topics/billing-alerts'",
+    "architectureComponents": [
+      "Cloud Billing",
+      "Cloud Pub/Sub",
+      "Cloud Functions"
+    ],
+    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/notify"
+  },
+  {
+    "id": "ACE-D1-004",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud Billing Export to BigQuery",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Configuring Daily Cloud Billing Export to BigQuery for FinOps Analysis",
+    "scenario": "Your FinOps team needs to perform granular, SQL-based cost analysis, resource-level SKU breakdown, and pricing attribution across 20 distinct projects. You must establish an automated, continuous export of detailed usage billing data into BigQuery with minimal latency and zero custom ETL scripting.",
+    "keywords": [
+      "Billing Export",
+      "BigQuery",
+      "Standard Usage",
+      "Detailed Usage",
+      "FinOps"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Write a daily Cloud Scheduler job that exports CSV billing reports to Cloud Storage and runs a bq load command into BigQuery."
+      },
+      {
+        "letter": "B",
+        "text": "Configure a Cloud Logging sink that filters for billing log entries and routes them to a BigQuery dataset."
+      },
+      {
+        "letter": "C",
+        "text": "Use the Google Sheets Data Connector to pull billing records daily and stream them into BigQuery tables."
+      },
+      {
+        "letter": "D",
+        "text": "Create a BigQuery dataset in a dedicated billing analysis project, navigate to Billing > Billing Export in the Cloud Console, and enable Detailed usage cost export to that dataset."
+      }
+    ],
+    "correct": "D",
+    "explanation": "Google Cloud Billing provides native BigQuery Export. Enabling 'Detailed usage cost export' (and standard usage cost export) automatically streams itemized daily and real-time cost, resource tags, project hierarchy, and SKU metrics into partitioned BigQuery tables natively.",
+    "distractors": {
+      "A": "Building custom Cloud Scheduler CSV export pipelines creates unnecessary maintenance and lacks the real-time continuous streaming of native billing export.",
+      "B": "Cloud Logging does not capture granular monetary SKU cost metrics or itemized pricing calculation details.",
+      "C": "Google Sheets connectors have strict row limits, lack automated schema evolution, and are not suitable for enterprise billing ingestion."
+    },
+    "gcloudCommand": "bq mk --dataset --location=US corp-billing-analytics:gcp_billing_export",
+    "architectureComponents": [
+      "Cloud Billing",
+      "BigQuery",
+      "Resource Manager"
+    ],
+    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/export-data-bigquery"
+  },
+  {
+    "id": "ACE-D1-005",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "gcloud CLI Named Configurations",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Managing Multiple GCP Environments with gcloud Named Configurations",
+    "scenario": "As a Cloud Engineer, you frequently switch between three different client GCP environments: 'dev-corp', 'staging-corp', and 'prod-corp'. Each environment uses different default project IDs, target compute regions, and distinct corporate IAM service accounts. You want to switch between these environments quickly and reliably in your CLI without re-entering parameters.",
+    "keywords": [
+      "gcloud config configurations",
+      "CLI Contexts",
+      "Named Configurations",
+      "Cloud SDK"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create distinct named configurations using gcloud config configurations create for each environment, set their properties, and switch between them using gcloud config configurations activate."
+      },
+      {
+        "letter": "B",
+        "text": "Create three different user profiles on your operating system and log in with different OS accounts."
+      },
+      {
+        "letter": "C",
+        "text": "Pass --project, --zone, and --account flags explicitly in every single gcloud command you run."
+      },
+      {
+        "letter": "D",
+        "text": "Maintain separate shell script files that run gcloud auth login and gcloud config set project every time you switch context."
+      }
+    ],
+    "correct": "A",
+    "explanation": "gcloud CLI configurations (named configurations) allow defining groups of properties (account, project, compute region/zone). You can create them with `gcloud config configurations create <name>` and switch instantly using `gcloud config configurations activate <name>`.",
+    "distractors": {
+      "C": "Manually typing explicit flags for every command is slow, tedious, and highly prone to human error.",
+      "D": "Writing custom shell scripts for re-authentication is slow, requires constant browser interaction, and is error-prone.",
+      "B": "Creating separate OS user accounts is excessive, slow, and adds unnecessary operating system overhead."
+    },
+    "gcloudCommand": "gcloud config configurations create prod-corp && gcloud config set project prod-corp-10293 && gcloud config set compute/region us-central1 && gcloud config configurations activate prod-corp",
+    "architectureComponents": [
+      "Cloud SDK",
+      "Compute Engine",
+      "Cloud IAM"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/config/configurations"
+  },
+  {
+    "id": "ACE-D1-006",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "gcloud CLI Properties & Defaults",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Setting Default Region and Zone Properties in gcloud SDK",
+    "scenario": "You are setting up a newly provisioned developer workstation. The developer will exclusively deploy Compute Engine resources into the us-east4 region and us-east4-c zone for project ecommerce-web-prod. You need to configure the developer's gcloud environment so they do not have to specify the region and zone on every command.",
+    "keywords": [
+      "gcloud config set",
+      "compute/region",
+      "compute/zone",
+      "CLI Properties"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run gcloud compute instances set-defaults --region=us-east4 --zone=us-east4-c."
+      },
+      {
+        "letter": "B",
+        "text": "Edit the /etc/hosts file on the local machine and add DNS entries for us-east4 and us-east4-c."
+      },
+      {
+        "letter": "C",
+        "text": "Run gcloud config set compute/region us-east4 and gcloud config set compute/zone us-east4-c."
+      },
+      {
+        "letter": "D",
+        "text": "Create an instance template in Compute Engine with us-east4-c hardcoded in the metadata."
+      }
+    ],
+    "correct": "C",
+    "explanation": "The standard command to set default properties in gcloud is `gcloud config set <section>/<property> <value>`. Setting `compute/region` and `compute/zone` configures the defaults for all subsequent Compute Engine CLI operations in the active configuration.",
+    "distractors": {
+      "D": "Instance templates do not set client-side gcloud CLI default parameter settings.",
+      "A": "The command `gcloud compute instances set-defaults` is invalid syntax; properties are configured via `gcloud config set`.",
+      "B": "Editing /etc/hosts has no effect on gcloud CLI API target parameter resolution."
+    },
+    "gcloudCommand": "gcloud config set compute/region us-east4 && gcloud config set compute/zone us-east4-c",
+    "architectureComponents": [
+      "Cloud SDK",
+      "Compute Engine"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/config/set"
+  },
+  {
+    "id": "ACE-D1-007",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud Storage Uniform Bucket-Level Access",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Enforcing Uniform Bucket-Level Access for Simplified Object Permissions",
+    "scenario": "A financial application stores customer statement PDFs in a Google Cloud Storage bucket. Compliance standards require that access permissions must be managed strictly and uniformly via Cloud IAM policies across all objects in the bucket, completely disabling legacy per-object Access Control Lists (ACLs) to prevent accidental data exposure. What should you do?",
+    "keywords": [
+      "Cloud Storage",
+      "Uniform Bucket-Level Access",
+      "IAM",
+      "ACLs Disabled",
+      "Compliance"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run a daily cron job with gsutil acl ch -d AllUsers gs://bucket/*."
+      },
+      {
+        "letter": "B",
+        "text": "Enable Uniform Bucket-Level Access on the Cloud Storage bucket using gcloud storage buckets update --uniform-bucket-level-access."
+      },
+      {
+        "letter": "C",
+        "text": "Apply a Retention Policy with Bucket Lock to the storage bucket."
+      },
+      {
+        "letter": "D",
+        "text": "Change the default storage class of the bucket to Archive."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Uniform Bucket-Level Access (UBLA) disables per-object ACLs on the bucket and forces all access decisions to be evaluated solely through Cloud IAM roles. This simplifies permission auditing and prevents object-level ACL overrides.",
+    "distractors": {
+      "A": "Running periodic ACL alteration scripts is error-prone, does not prevent newly uploaded objects from having ACLs, and is an operational anti-pattern.",
+      "C": "Bucket Lock prevents object deletion or modification for a retention duration, but does not control ACL versus IAM access evaluation.",
+      "D": "Storage class defines durability/cost tier, not access control mechanisms."
+    },
+    "gcloudCommand": "gcloud storage buckets update gs://customer-statements-corp-101 --uniform-bucket-level-access",
+    "architectureComponents": [
+      "Cloud Storage",
+      "Cloud IAM"
+    ],
+    "officialDocUrl": "https://cloud.google.com/storage/docs/uniform-bucket-level-access"
+  },
+  {
+    "id": "ACE-D1-008",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "VPC Subnet IP Planning & CIDR Expansion",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Expanding Subnet CIDR Range in a Custom Mode VPC Network",
+    "scenario": "Your production VPC network was created in custom mode with a subnet 10.0.0.0/24 in us-central1. Due to rapid growth in Compute Engine workloads, the subnet has run out of available private IP addresses. You need to expand the subnet capacity to at least 1,000 IP addresses with zero downtime and without disrupting existing instances. What should you do?",
+    "keywords": [
+      "VPC",
+      "Custom Subnet",
+      "CIDR Expansion",
+      "Zero Downtime",
+      "Subnet Expansion"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Use gcloud compute networks subnets expand-ip-range to expand the subnet prefix from /24 to /22 (e.g., 10.0.0.0/22)."
+      },
+      {
+        "letter": "B",
+        "text": "Delete the existing subnet and recreate it with 10.0.0.0/20."
+      },
+      {
+        "letter": "C",
+        "text": "Convert the VPC from custom mode to auto mode so Google automatically handles subnet sizing."
+      },
+      {
+        "letter": "D",
+        "text": "Create a secondary IP range on the subnet and migrate all existing VMs to the secondary range."
+      }
+    ],
+    "correct": "A",
+    "explanation": "In Google Cloud VPCs, you can expand the primary CIDR range of any custom mode subnet dynamically without downtime by reducing the subnet mask prefix (e.g., /24 to /22). The new IP range must encompass the original range and must not overlap with other subnets in the VPC.",
+    "distractors": {
+      "C": "You cannot convert a custom mode VPC network back to auto mode, and auto mode uses fixed /20 subnets without flexibility.",
+      "B": "A subnet cannot be deleted while active instances or network interfaces are attached to it.",
+      "D": "Secondary IP ranges in Google Cloud VPC are used for GKE Pods and Services or Alias IPs, not primary VM network interfaces."
+    },
+    "gcloudCommand": "gcloud compute networks subnets expand-ip-range prod-sub-uscentral1 --region=us-central1 --prefix-length=22",
+    "architectureComponents": [
+      "Virtual Private Cloud (VPC)",
+      "Compute Engine"
+    ],
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/use-subnets#expand-subnet"
+  },
+  {
+    "id": "ACE-D1-009",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "VPC Subnets & GKE Secondary Ranges",
+    "difficulty": "advanced",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Configuring Secondary IP Ranges for GKE Pods and Services",
+    "scenario": "You are preparing a dedicated custom VPC subnet in europe-west1 to host a high-density VPC-native Google Kubernetes Engine (GKE) cluster. The cluster will host up to 200 nodes and thousands of Pods. How must you configure the subnet before deploying the GKE cluster?",
+    "keywords": [
+      "VPC Subnet",
+      "Secondary IP Ranges",
+      "GKE VPC-Native",
+      "Alias IPs",
+      "Pod CIDR"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy a Cloud Router with BGP in the subnet to dynamically allocate IP ranges to Pods on demand."
+      },
+      {
+        "letter": "B",
+        "text": "Create a subnet with a primary IPv4 CIDR range for node VMs, and define two secondary IPv4 ranges: one dedicated for Pods and one for Services."
+      },
+      {
+        "letter": "C",
+        "text": "Configure a single /16 primary CIDR and enable Cloud NAT on the subnet without secondary ranges."
+      },
+      {
+        "letter": "D",
+        "text": "Create three separate VPC networks and connect them via VPC Peering to isolate Nodes, Pods, and Services."
+      }
+    ],
+    "correct": "B",
+    "explanation": "VPC-native GKE clusters use Alias IPs which require secondary IP ranges defined on the subnet: the primary range assigns internal IPs to Node VMs, while secondary ranges are allocated for Pod IP addresses and Service ClusterIP addresses.",
+    "distractors": {
+      "C": "Without secondary IP ranges, a VPC-native GKE cluster cannot be instantiated in the subnet.",
+      "A": "Cloud Router and BGP are for hybrid WAN/VPN routing, not internal Kubernetes Pod IP allocation.",
+      "D": "GKE VPC-native clusters operate within a single subnet utilizing secondary ranges, not across three peered VPCs."
+    },
+    "gcloudCommand": "gcloud compute networks subnets create gke-subnet-eu1 --network=prod-vpc --region=europe-west1 --range=10.100.0.0/24 --secondary-range=pods=10.101.0.0/16,services=10.102.0.0/20",
+    "architectureComponents": [
+      "Virtual Private Cloud (VPC)",
+      "Google Kubernetes Engine (GKE)"
+    ],
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips"
+  },
+  {
+    "id": "ACE-D1-010",
+    "certId": "ace",
+    "blockId": "BLOCK-1",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Resource Manager Folder Hierarchy & Policy Inheritance",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Structuring Resource Manager Folder Hierarchy for Multi-Environment Governance",
+    "scenario": "A retail enterprise is onboarding to Google Cloud. They have two independent business units: 'Retail Operations' and 'Online E-Commerce'. Each business unit requires strict isolation between Development, Staging, and Production environments, with distinct billing tracking and environment-specific IAM policies. How should you design the resource hierarchy?",
+    "keywords": [
+      "Resource Hierarchy",
+      "Organization",
+      "Folders",
+      "Projects",
+      "IAM Inheritance"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Under the Organization node, create top-level Folders for each Business Unit, create subfolders for Dev, Staging, and Prod under each Business Unit folder, and place individual Projects inside these subfolders."
+      },
+      {
+        "letter": "B",
+        "text": "Create a separate Google Cloud Organization for each environment (Dev Org, Staging Org, Prod Org)."
+      },
+      {
+        "letter": "C",
+        "text": "Create a single Project for Retail and a single Project for Online, and use IAM tags inside the project to separate environments."
+      },
+      {
+        "letter": "D",
+        "text": "Place all Projects directly under the root Organization node and use project naming conventions to manage permissions."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Google Cloud best practices recommend a single root Organization with a nested Folder structure reflecting Business Units and Lifecycle Environments (Dev/Staging/Prod). Projects reside within these leaf folders, allowing seamless IAM policy and Organization Policy inheritance.",
+    "distractors": {
+      "B": "An enterprise should use a single Organization node tied to their primary Cloud Identity/Google Workspace domain to maintain unified governance.",
+      "D": "Flat project layouts under the root node eliminate the power of folder-level policy inheritance and create unmanageable operational overhead.",
+      "C": "Single projects mixing Dev and Prod breach critical security blast-radius isolation, quota separation, and billing boundaries."
+    },
+    "gcloudCommand": "gcloud resource-manager folders create --display-name='E-Commerce' --organization=123456789012 && gcloud resource-manager folders create --display-name='Production' --folder=987654321098",
+    "architectureComponents": [
+      "Resource Manager",
+      "Cloud IAM",
+      "Cloud Billing"
+    ],
+    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/creating-managing-folders"
+  },
+  {
+    "id": "ACE-D1-011",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Predefined vs Primitive IAM Roles",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Transitioning from Primitive Roles to Predefined IAM Roles",
+    "scenario": "A junior engineer was granted the primitive Editor role on a production project. During an audit, security discovered that the engineer has permission to delete critical Cloud Storage buckets and modify firewall rules. You must restrict their permissions so they can only manage Compute Engine virtual machines without having access to network security or storage assets.",
+    "keywords": [
+      "Cloud IAM",
+      "Primitive Roles",
+      "Predefined Roles",
+      "Least Privilege",
+      "Compute Instance Admin"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Remove the Editor role and grant the predefined roles/compute.instanceAdmin.v1 role on the project."
+      },
+      {
+        "letter": "B",
+        "text": "Change the role to primitive Viewer and assign Compute Network Admin."
+      },
+      {
+        "letter": "C",
+        "text": "Create a custom role from scratch by manually selecting all 4,000 Compute Engine permissions."
+      },
+      {
+        "letter": "D",
+        "text": "Keep the Editor role and add an IAM Deny policy on storage.buckets.*."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Primitive roles (Owner, Editor, Viewer) grant coarse, overly broad access across all services. Predefined roles such as roles/compute.instanceAdmin.v1 grant full control over Compute Engine instances while preventing modification of networking firewalls or Cloud Storage buckets, adhering to least privilege.",
+    "distractors": {
+      "C": "Predefined roles are maintained and updated by Google; creating custom roles with thousands of permissions creates severe maintenance overhead.",
+      "D": "Relying on primitive Editor plus complex Deny policies is difficult to audit and maintains overly broad permissions across un-denied services.",
+      "B": "Viewer role provides read-only access and Compute Network Admin grants network modification rather than VM lifecycle control."
+    },
+    "gcloudCommand": "gcloud projects add-iam-policy-binding prod-app-992 --member='user:dev@example.com' --role='roles/compute.instanceAdmin.v1' && gcloud projects remove-iam-policy-binding prod-app-992 --member='user:dev@example.com' --role='roles/editor'",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Compute Engine"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/understanding-roles#compute-engine-roles"
+  },
+  {
+    "id": "ACE-D1-012",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Service Account User Role Scoping",
+    "difficulty": "advanced",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Granting Service Account User Role on Specific Service Accounts",
+    "scenario": "A CI/CD automated pipeline needs to launch Compute Engine VMs configured to run with a highly privileged database proxy service account db-proxy-sa@prod.iam.gserviceaccount.com. You need to allow the CI/CD service account cicd-runner@prod.iam.gserviceaccount.com to attach this proxy identity to new VMs without allowing it to attach or misuse any other service account in the project.",
+    "keywords": [
+      "roles/iam.serviceAccountUser",
+      "Least Privilege",
+      "Service Account Level Binding",
+      "Compute Engine"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Grant roles/iam.serviceAccountAdmin to cicd-runner at the project level."
+      },
+      {
+        "letter": "B",
+        "text": "Download the JSON private key of db-proxy-sa and pass it to cicd-runner in the VM startup script."
+      },
+      {
+        "letter": "C",
+        "text": "Grant roles/iam.serviceAccountUser to cicd-runner at the project level."
+      },
+      {
+        "letter": "D",
+        "text": "Grant roles/iam.serviceAccountUser to cicd-runner@prod.iam.gserviceaccount.com specifically on the resource db-proxy-sa@prod.iam.gserviceaccount.com."
+      }
+    ],
+    "correct": "D",
+    "explanation": "Granting roles/iam.serviceAccountUser at the resource level (on the specific target service account) allows the user/caller to attach only that specific identity to Compute Engine instances or services, preventing privilege escalation to other service accounts in the project.",
+    "distractors": {
+      "A": "roles/iam.serviceAccountAdmin allows creating, deleting, and altering service accounts, which is unnecessary and overprivileged.",
+      "B": "Storing and embedding static JSON keys inside startup scripts exposes private credentials in metadata.",
+      "C": "Granting serviceAccountUser at the project level allows the runner to attach any service account in the project, including high-privilege project owner accounts."
+    },
+    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding db-proxy-sa@prod.iam.gserviceaccount.com --member='serviceAccount:cicd-runner@prod.iam.gserviceaccount.com' --role='roles/iam.serviceAccountUser'",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Compute Engine"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-permissions#user-role"
+  },
+  {
+    "id": "ACE-D1-013",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Organization Policy Constraints & VM Security",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Restricting VM External IP Addresses via Organization Policies",
+    "scenario": "To prevent accidental internet exposure of backend infrastructure, your Chief Information Security Officer (CISO) mandates that no Compute Engine instance in the development folder may be assigned an external public IP address. How should you enforce this guardrail centrally?",
+    "keywords": [
+      "Organization Policy",
+      "compute.vmExternalIpAccess",
+      "Constraints",
+      "Security Guardrail"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Apply the Organization Policy constraint constraints/compute.vmExternalIpAccess with a deny-all policy at the Development folder level."
+      },
+      {
+        "letter": "B",
+        "text": "Create an egress firewall rule with priority 1000 denying all traffic to 0.0.0.0/0."
+      },
+      {
+        "letter": "C",
+        "text": "Remove the roles/compute.networkAdmin role from all developers in the project."
+      },
+      {
+        "letter": "D",
+        "text": "Write a weekly Cloud Function to scan all VMs and delete public IP addresses."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Organization Policy constraints provide declarative governance. The constraints/compute.vmExternalIpAccess constraint applied with 'Deny all' on a folder or organization completely blocks the creation or attachment of external IP addresses on any VM instance in that scope.",
+    "distractors": {
+      "B": "Egress firewall rules do not prevent public IPs from being assigned or receiving inbound traffic.",
+      "D": "Reactive scanning scripts allow a window of vulnerability and incur ongoing operational maintenance.",
+      "C": "Even without networkAdmin, instance admins can attach ephemeral external IPs during VM creation unless blocked by org policy."
+    },
+    "gcloudCommand": "gcloud resource-manager org-policies set-policy --folder=456789123012 policy-deny-external-ips.yaml",
+    "architectureComponents": [
+      "Resource Manager",
+      "Organization Policies",
+      "Compute Engine"
+    ],
+    "officialDocUrl": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#org-policy"
+  },
+  {
+    "id": "ACE-D1-014",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Organization Policy Resource Locations",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Enforcing Data Sovereignty with Resource Location Constraint",
+    "scenario": "Due to European Union GDPR compliance requirements, all cloud resources (Compute Engine disks, Cloud Storage buckets, Cloud SQL instances) created under the 'EU-Operations' folder must strictly reside in European Google Cloud regions (europe-west1, europe-west3, europe-west4). How should you enforce this?",
+    "keywords": [
+      "Organization Policy",
+      "constraints/gcp.resourceLocations",
+      "GDPR",
+      "Data Sovereignty"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create VPC subnets only in europe-west1 and delete all global VPC routes."
+      },
+      {
+        "letter": "B",
+        "text": "Instruct all developers to only select European regions in the console UI."
+      },
+      {
+        "letter": "C",
+        "text": "Set the Organization Policy constraint constraints/gcp.resourceLocations on the EU-Operations folder with an allowlist restricted to in:europe-locations."
+      },
+      {
+        "letter": "D",
+        "text": "Configure DNS routing policies in Cloud DNS to drop traffic routed to US IP addresses."
+      }
+    ],
+    "correct": "C",
+    "explanation": "The Organization Policy constraint constraints/gcp.resourceLocations enforces data residency and sovereignty by restricting the physical geographic locations where GCP resources can be provisioned. Setting the value to European locations blocks creation of resources in US/Asia.",
+    "distractors": {
+      "A": "VPC subnets do not restrict Cloud Storage multi-region or global service provisioning.",
+      "D": "Cloud DNS cannot restrict where developers spin up VMs or create storage buckets.",
+      "B": "Manual verbal instructions lack automated enforcement and fail compliance audit standards."
+    },
+    "gcloudCommand": "gcloud resource-manager org-policies set-policy --folder=789012345678 policy-resource-locations.yaml",
+    "architectureComponents": [
+      "Resource Manager",
+      "Organization Policies",
+      "Cloud Storage"
+    ],
+    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/organization-policy/defining-locations"
+  },
+  {
+    "id": "ACE-D1-015",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud Billing Roles & Permissions",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Assigning Billing Account User Role to Project Creators",
+    "scenario": "Your organization wants project leads to be able to create new GCP projects and link them to the corporate Cloud Billing account, without giving them permission to view financial invoices, alter payment credit cards, or modify billing account settings. What role should you assign them on the Cloud Billing account?",
+    "keywords": [
+      "Cloud Billing",
+      "roles/billing.user",
+      "Project Creator",
+      "Least Privilege"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "roles/billing.admin"
+      },
+      {
+        "letter": "B",
+        "text": "roles/resourcemanager.organizationAdmin"
+      },
+      {
+        "letter": "C",
+        "text": "roles/billing.viewer"
+      },
+      {
+        "letter": "D",
+        "text": "roles/billing.user"
+      }
+    ],
+    "correct": "D",
+    "explanation": "roles/billing.user (Billing Account User) allows principals to associate (link) projects to the billing account and view basic account metadata, without granting permissions to view payment instruments, modify billing admins, or cancel the billing account.",
+    "distractors": {
+      "C": "roles/billing.viewer allows viewing invoices and spend data but does not grant permission to link new projects to the billing account.",
+      "B": "Organization Admin grants full control over the entire resource hierarchy, massively violating least privilege.",
+      "A": "roles/billing.admin grants full control over the billing account, including modifying payment methods and managing billing roles."
+    },
+    "gcloudCommand": "gcloud billing accounts add-iam-policy-binding 012345-6789AB-CDEF01 --member='group:project-creators@example.com' --role='roles/billing.user'",
+    "architectureComponents": [
+      "Cloud Billing",
+      "Cloud IAM"
+    ],
+    "officialDocUrl": "https://cloud.google.com/billing/docs/how-to/billing-access"
+  },
+  {
+    "id": "ACE-D1-016",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Application Default Credentials (ADC)",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Authenticating Local Development Workstation for Google Cloud Client Libraries",
+    "scenario": "A developer is writing a local Python script that uses the official @google-cloud/storage client library to read objects from a Cloud Storage bucket. When running the script locally, it throws an AuthMetadataPluginError: Application Default Credentials not found. How should the developer authenticate their local workstation?",
+    "keywords": [
+      "gcloud auth application-default login",
+      "ADC",
+      "Client Libraries",
+      "Cloud Storage SDK"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run gcloud auth login and copy the OAuth token into the Python source code."
+      },
+      {
+        "letter": "B",
+        "text": "Change the bucket permissions to public (allUsers:objectViewer) so authentication is not needed."
+      },
+      {
+        "letter": "C",
+        "text": "Run gcloud auth application-default login in the terminal to obtain user credentials for Application Default Credentials (ADC)."
+      },
+      {
+        "letter": "D",
+        "text": "Download the project owner's service account JSON key to ~/.gcp/credentials.json."
+      }
+    ],
+    "correct": "C",
+    "explanation": "gcloud auth application-default login acquires user credentials and writes them to the standard Application Default Credentials (ADC) well-known file path, allowing Google Cloud client libraries to automatically authenticate local API calls.",
+    "distractors": {
+      "A": "gcloud auth login sets credentials for the gcloud CLI itself, but does not configure ADC for code SDKs/libraries.",
+      "D": "Downloading service account keys to local machines violates credential security guidelines.",
+      "B": "Making the bucket public exposes sensitive data and causes severe security compliance violations."
+    },
+    "gcloudCommand": "gcloud auth application-default login",
+    "architectureComponents": [
+      "Cloud SDK",
+      "Cloud Storage",
+      "Cloud IAM"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login"
+  },
+  {
+    "id": "ACE-D1-017",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud Storage Classes & Resiliency",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Creating a Cloud Storage Bucket with Archive Class and Dual-Region Redundancy",
+    "scenario": "A healthcare compliance system requires creating a Cloud Storage bucket for long-term medical image archival. The images will be retained for 10 years, accessed less than once a year, and must be geo-redundantly protected across two specific US regions (us-central1 and us-east1). What gcloud command should you execute?",
+    "keywords": [
+      "Cloud Storage",
+      "Archive Class",
+      "Dual-Region",
+      "gcloud storage",
+      "Compliance"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud storage buckets create gs://medical-archive-10yr --location=us-central1,us-east1 --default-storage-class=ARCHIVE"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud storage buckets create gs://medical-archive-10yr --location=US --default-storage-class=COLDLINE"
+      },
+      {
+        "letter": "C",
+        "text": "gsutil mb -c STANDARD -l us-central1 gs://medical-archive-10yr"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud storage buckets create gs://medical-archive-10yr --location=global --default-storage-class=NEARLINE"
+      }
+    ],
+    "correct": "A",
+    "explanation": "The gcloud storage buckets create command supports specifying dual-region locations (--location=us-central1,us-east1) and setting --default-storage-class=ARCHIVE for optimal multi-year cold archive storage costs.",
+    "distractors": {
+      "D": "There is no 'global' location for Cloud Storage buckets; buckets are regional, dual-region, or multi-region.",
+      "B": "US multi-region is broader than the two requested regions and COLDLINE is more expensive for 10-year archival than ARCHIVE.",
+      "C": "STANDARD class is designed for active data and single region us-central1 lacks cross-region disaster recovery."
+    },
+    "gcloudCommand": "gcloud storage buckets create gs://medical-archive-10yr --location=us-central1,us-east1 --default-storage-class=ARCHIVE",
+    "architectureComponents": [
+      "Cloud Storage"
+    ],
+    "officialDocUrl": "https://cloud.google.com/storage/docs/creating-buckets"
+  },
+  {
+    "id": "ACE-D1-018",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "VPC Network Modes & Architecture",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Converting Auto Mode VPC Network to Custom Mode for Production Best Practices",
+    "scenario": "A development project was initially launched using an Auto Mode VPC network (default). The network architecture team mandates that all VPC networks connected to enterprise on-premises networks must be in Custom Mode to prevent IP address overlaps with on-prem subnets. What should you do?",
+    "keywords": [
+      "VPC Auto Mode",
+      "Custom Mode",
+      "Subnet Overlap",
+      "gcloud compute networks switch-mode"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Delete all subnets in the auto VPC and recreate the auto VPC."
+      },
+      {
+        "letter": "B",
+        "text": "Switch the VPC network from auto mode to custom mode using gcloud compute networks switch-mode default --mode=custom."
+      },
+      {
+        "letter": "C",
+        "text": "Auto mode VPCs cannot be converted; you must delete the entire project and start over."
+      },
+      {
+        "letter": "D",
+        "text": "Create a new custom VPC and use VPC Peering to route between Auto and Custom VPCs."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Google Cloud allows a one-way conversion of an Auto Mode VPC to a Custom Mode VPC using `gcloud compute networks switch-mode <network_name> --mode=custom`. Existing subnets and IP ranges remain intact, but no new automatic subnets will be created in future regions.",
+    "distractors": {
+      "D": "Converting the existing VPC is a single non-disruptive command; setting up new VPCs and peerings adds unnecessary complexity.",
+      "C": "Auto mode networks can be converted to custom mode (though the reverse conversion from custom to auto is not supported).",
+      "A": "Deleting subnets does not convert the network mode property of the VPC network."
+    },
+    "gcloudCommand": "gcloud compute networks switch-mode default --mode=custom",
+    "architectureComponents": [
+      "Virtual Private Cloud (VPC)"
+    ],
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/use-vpc#switch-mode"
+  },
+  {
+    "id": "ACE-D1-019",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Shared VPC Architecture & Service Projects",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Configuring Shared VPC Host and Service Projects",
+    "scenario": "You are setting up a Shared VPC architecture where the centralized networking team manages the VPC network in project net-host-prod, and the application team deploys Compute Engine instances in project app-service-prod. How should you configure this relationship?",
+    "keywords": [
+      "Shared VPC",
+      "Host Project",
+      "Service Project",
+      "Network Admin",
+      "Centralized Networking"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Enable Shared VPC host in net-host-prod, and associate app-service-prod as a service project to net-host-prod."
+      },
+      {
+        "letter": "B",
+        "text": "Create an IPsec Cloud VPN tunnel between net-host-prod and app-service-prod."
+      },
+      {
+        "letter": "C",
+        "text": "Grant the application team roles/owner on the net-host-prod project."
+      },
+      {
+        "letter": "D",
+        "text": "Configure VPC Network Peering between net-host-prod and app-service-prod."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Shared VPC allows an organization to connect resources from multiple service projects to a common VPC network in a host project. The Shared VPC Admin enables the host project (shared-vpc enable) and attaches the service project (shared-vpc service-projects associate).",
+    "distractors": {
+      "D": "VPC Peering connects two separate VPCs with distinct administrative domains, whereas Shared VPC allows instances in service projects to share subnets directly.",
+      "B": "Cloud VPN is designed for hybrid or inter-cloud IPsec connectivity, not intra-organization multi-project network sharing.",
+      "C": "Granting Owner on the host project violates separation of duties between central network engineers and application developers."
+    },
+    "gcloudCommand": "gcloud compute shared-vpc enable net-host-prod && gcloud compute shared-vpc service-projects associate app-service-prod --host-project=net-host-prod",
+    "architectureComponents": [
+      "Virtual Private Cloud (VPC)",
+      "Compute Engine",
+      "Resource Manager"
+    ],
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/shared-vpc"
+  },
+  {
+    "id": "ACE-D1-020",
+    "certId": "ace",
+    "blockId": "BLOCK-2",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Custom IAM Roles & YAML Definitions",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Creating a Custom IAM Role from Predefined Role Definition",
+    "scenario": "Your security team requires a specialized IAM role for tier-1 helpdesk support that allows starting, stopping, and resetting Compute Engine instances, but prevents creating instances, deleting instances, or modifying instance metadata. How should you create this role efficiently?",
+    "keywords": [
+      "Custom IAM Role",
+      "Least Privilege",
+      "gcloud iam roles create",
+      "YAML Definition"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create a custom IAM role at the project or organization level using gcloud iam roles create with specific permissions (compute.instances.start, compute.instances.stop, compute.instances.reset, compute.instances.get, compute.instances.list)."
+      },
+      {
+        "letter": "B",
+        "text": "Assign roles/compute.instanceAdmin.v1 and write a Cloud Armor rule to block deletion API calls."
+      },
+      {
+        "letter": "C",
+        "text": "Create a Service Account with Owner permissions and share the password with helpdesk staff."
+      },
+      {
+        "letter": "D",
+        "text": "Assign the primitive Viewer role and instruct users never to click the delete button in the console."
+      }
+    ],
+    "correct": "A",
+    "explanation": "When predefined roles grant excessive permissions, creating a Custom IAM Role with specific granular permissions (e.g. compute.instances.start, compute.instances.stop, compute.instances.reset) enforces precise least-privilege access.",
+    "distractors": {
+      "C": "Sharing service accounts with Owner permissions violates basic security identity and auditing requirements.",
+      "D": "Viewer role does not permit starting, stopping, or resetting instances, and verbal policies are unenforceable.",
+      "B": "Cloud Armor is an HTTP/WAF security tool for load balancers, not an IAM API policy gate."
+    },
+    "gcloudCommand": "gcloud iam roles create helpdeskVMOperator --project=prod-app-992 --title='Helpdesk VM Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.get,compute.instances.list --stage=GA",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Compute Engine"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/creating-custom-roles"
+  },
+  {
+    "id": "ACE-D1-021",
+    "certId": "ace",
+    "blockId": "BLOCK-3",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Service Account Token Generation & Impersonation",
+    "difficulty": "advanced",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Delegating Short-Lived Token Generation with Service Account Token Creator",
+    "scenario": "A deployment script running in Cloud Build needs to call an external API that requires a signed JWT assertion signed by a specific service account jwt-signer@corp.iam.gserviceaccount.com. How should you authorize Cloud Build without exporting private keys?",
+    "keywords": [
+      "Cloud Build",
+      "Service Account Token Creator",
+      "JWT Signing",
+      "Keyless Auth"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Generate a JSON key for jwt-signer and store it in Secret Manager, then download it during build."
+      },
+      {
+        "letter": "B",
+        "text": "Assign roles/owner to the Cloud Build service account at the project level."
+      },
+      {
+        "letter": "C",
+        "text": "Grant roles/iam.serviceAccountTokenCreator to the Cloud Build service account on jwt-signer@corp.iam.gserviceaccount.com."
+      },
+      {
+        "letter": "D",
+        "text": "Enable Google Workspace Domain-Wide Delegation on the Cloud Build service account."
+      }
+    ],
+    "correct": "C",
+    "explanation": "The roles/iam.serviceAccountTokenCreator role allows a principal (such as the Cloud Build service account) to create short-lived OAuth 2.0 access tokens, OpenID Connect (OIDC) ID tokens, and sign JWT payloads on behalf of the target service account directly via the IAM Credentials API without private keys.",
+    "distractors": {
+      "B": "roles/owner does not automatically grant IAM Credentials API signing permissions and severely violates least privilege.",
+      "D": "Domain-Wide Delegation is for Google Workspace OAuth scopes, not GCP internal IAM token creation.",
+      "A": "Storing static JSON keys in Secret Manager still relies on static credentials that require rotation."
+    },
+    "gcloudCommand": "gcloud iam service-accounts add-iam-policy-binding jwt-signer@corp.iam.gserviceaccount.com --member='serviceAccount:1234567890@cloudbuild.gserviceaccount.com' --role='roles/iam.serviceAccountTokenCreator'",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Cloud Build"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/service-account-overview#token-creator-role"
+  },
+  {
+    "id": "ACE-D1-022",
+    "certId": "ace",
+    "blockId": "BLOCK-3",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud Identity & Directory Sync (GCDS)",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Synchronizing On-Premises Active Directory Users with Google Cloud Directory Sync",
+    "scenario": "An enterprise maintains 5,000 corporate identities in an on-premises Microsoft Active Directory. They are adopting Google Cloud and want all employee accounts, groups, and membership changes in Active Directory to automatically synchronize to Cloud Identity in one direction without exposing user passwords to the cloud. Which tool should they deploy?",
+    "keywords": [
+      "Cloud Identity",
+      "GCDS",
+      "Active Directory",
+      "User Provisioning",
+      "SAML SSO"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Install and configure Google Cloud Directory Sync (GCDS) in the on-premises environment."
+      },
+      {
+        "letter": "B",
+        "text": "Grant all on-prem users individual personal Gmail accounts and add them to IAM policies."
+      },
+      {
+        "letter": "C",
+        "text": "Write a PowerShell script that exports AD users to CSV and runs gcloud iam service-accounts create."
+      },
+      {
+        "letter": "D",
+        "text": "Configure Anthos Config Management to mirror Active Directory LDAP trees."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Google Cloud Directory Sync (GCDS) is Google's authoritative tool for one-way synchronization of users, groups, and organizational units from Microsoft Active Directory / LDAP to Google Cloud Identity / Google Workspace.",
+    "distractors": {
+      "C": "Employees are human users in Cloud Identity, not GCP service accounts, and custom scripts lack delta sync and conflict resolution.",
+      "D": "Anthos Config Management manages Kubernetes cluster configurations from Git, not Active Directory identity synchronization.",
+      "B": "Using personal consumer Gmail accounts for enterprise infrastructure access violates corporate governance and security auditing."
+    },
+    "gcloudCommand": "gcloud identity groups memberships search --group-email='all-engineers@corp.com'",
+    "architectureComponents": [
+      "Cloud Identity",
+      "Cloud IAM",
+      "Resource Manager"
+    ],
+    "officialDocUrl": "https://cloud.google.com/architecture/identity/syncing-active-directory-to-cloud-identity"
+  },
+  {
+    "id": "ACE-D1-023",
+    "certId": "ace",
+    "blockId": "BLOCK-3",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "gcloud CLI Project & Billing Operations",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Creating a Project and Linking to Billing Account via CLI",
+    "scenario": "You are writing an automated onboarding script. The script must create a new project named 'mobile-analytics-prod', place it under folder ID 9876543210, and link it to the corporate billing account '01A2B3-45C6D7-89E0F1'. Which sequence of gcloud commands accomplishes this?",
+    "keywords": [
+      "gcloud projects create",
+      "gcloud beta billing projects link",
+      "CLI Automation"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run gcloud organizations create mobile-analytics-prod and attach the billing card."
+      },
+      {
+        "letter": "B",
+        "text": "Run gcloud compute projects create mobile-analytics-prod --billing=01A2B3-45C6D7-89E0F1."
+      },
+      {
+        "letter": "C",
+        "text": "Run gcloud projects create mobile-analytics-prod --folder=9876543210 followed by gcloud billing projects link mobile-analytics-prod --billing-account=01A2B3-45C6D7-89E0F1."
+      },
+      {
+        "letter": "D",
+        "text": "Run gcloud resource-manager folders add-project mobile-analytics-prod --billing-account=01A2B3-45C6D7-89E0F1."
+      }
+    ],
+    "correct": "C",
+    "explanation": "Creating a project under a folder uses `gcloud projects create <PROJECT_ID> --folder=<FOLDER_ID>`, and associating a billing account uses `gcloud billing projects link <PROJECT_ID> --billing-account=<ACCOUNT_ID>`.",
+    "distractors": {
+      "D": "`gcloud resource-manager folders add-project` is invalid CLI syntax.",
+      "B": "`gcloud compute projects create` is invalid syntax; project creation belongs to the `projects` command group.",
+      "A": "`gcloud organizations create` is invalid; organizations are provisioned via Cloud Identity/Workspace, not CLI commands."
+    },
+    "gcloudCommand": "gcloud projects create mobile-analytics-prod --folder=9876543210 && gcloud billing projects link mobile-analytics-prod --billing-account=01A2B3-45C6D7-89E0F1",
+    "architectureComponents": [
+      "Resource Manager",
+      "Cloud Billing",
+      "Cloud SDK"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/billing/projects/link"
+  },
+  {
+    "id": "ACE-D1-024",
+    "certId": "ace",
+    "blockId": "BLOCK-3",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "Cloud IAM Conditions & Temporary Access",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Applying IAM Conditions for Time-Bound Temporary Contractor Access",
+    "scenario": "An external database consultant is hired to assist with performance tuning for a 48-hour maintenance window ending on September 30, 2026 at 23:59 UTC. You must grant them roles/cloudsql.admin on project finance-prod that automatically expires precisely at the deadline without requiring manual admin intervention.",
+    "keywords": [
+      "IAM Conditions",
+      "Time-Bound Access",
+      "request.time",
+      "Least Privilege",
+      "Cloud SQL"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Issue a Service Account key with an expiration date embedded in the JSON file header."
+      },
+      {
+        "letter": "B",
+        "text": "Grant roles/cloudsql.admin with an IAM Condition expression checking request.time < timestamp('2026-09-30T23:59:59Z')."
+      },
+      {
+        "letter": "C",
+        "text": "Assign the role on a VM instance metadata tag rather than IAM."
+      },
+      {
+        "letter": "D",
+        "text": "Create a calendar reminder for the administrator to manually revoke the role on September 30."
+      }
+    ],
+    "correct": "B",
+    "explanation": "IAM Conditions allow attaching conditional logic to IAM role bindings. Using the built-in attribute `request.time < timestamp('...')` guarantees that the permission is automatically denied once the timestamp passes, with zero administrative overhead.",
+    "distractors": {
+      "A": "Standard Service Account JSON private keys do not have built-in client-side expiration headers enforced by GCP IAM.",
+      "C": "IAM permissions are evaluated on IAM policy bindings, not arbitrary VM metadata tags.",
+      "D": "Manual reminders introduce severe risk of orphaned privileges if an administrator forgets or is delayed."
+    },
+    "gcloudCommand": "gcloud projects add-iam-policy-binding finance-prod --member='user:consultant@partner.com' --role='roles/cloudsql.admin' --condition='expression=request.time < timestamp(\"2026-09-30T23:59:59Z\"),title=Temporary_Tuning_Access'",
+    "architectureComponents": [
+      "Cloud IAM",
+      "Cloud SQL",
+      "Resource Manager"
+    ],
+    "officialDocUrl": "https://cloud.google.com/iam/docs/conditions-overview"
+  },
+  {
+    "id": "ACE-D1-025",
+    "certId": "ace",
+    "blockId": "BLOCK-3",
+    "domainId": "ACE-D1",
+    "domainName": "Setting up a cloud solution environment",
+    "subtopic": "gcloud Components Management",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "title": "Updating and Installing gcloud CLI Additional Components",
+    "scenario": "You installed the Google Cloud SDK on your Linux workstation. You now need to deploy and manage a Google Kubernetes Engine (GKE) cluster, which requires the kubectl CLI and the GKE authentication plugin (gke-gcloud-auth-plugin). How should you install these components?",
+    "keywords": [
+      "gcloud components install",
+      "kubectl",
+      "gke-gcloud-auth-plugin",
+      "Cloud SDK"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Download kubectl from Docker Hub and copy it into the /tmp directory."
+      },
+      {
+        "letter": "B",
+        "text": "Run gcloud config set components/enable kubectl."
+      },
+      {
+        "letter": "C",
+        "text": "Reinstall the entire Google Cloud SDK from scratch choosing the Kubernetes bundle."
+      },
+      {
+        "letter": "D",
+        "text": "Run gcloud components install kubectl gke-gcloud-auth-plugin."
+      }
+    ],
+    "correct": "D",
+    "explanation": "`gcloud components install <component_id>` is the standard command to install additional tools and utilities bundled with the Google Cloud SDK, including `kubectl`, `gke-gcloud-auth-plugin`, `cbt`, and `bq`.",
+    "distractors": {
+      "A": "Downloading random binaries from third-party hubs bypasses package management and official version compatibility.",
+      "C": "Reinstalling the entire SDK is unnecessary when `gcloud components install` adds packages dynamically.",
+      "B": "`gcloud config set components/enable` is invalid syntax."
+    },
+    "gcloudCommand": "gcloud components install kubectl gke-gcloud-auth-plugin",
+    "architectureComponents": [
+      "Cloud SDK",
+      "Google Kubernetes Engine (GKE)"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sdk/docs/components"
+  }
+]

@@ -21,6 +21,8 @@
     currentIndex: 0,
     selectedOption: null,
     isAnswerRevealed: false,
+    /** Letras marcadas hasta ahora en una pregunta de selección múltiple. */
+    pendingSelection: [],
     selectedDomainFilter: 'ALL',
     sessionStats: {
       totalAttempted: 0,
@@ -135,10 +137,23 @@
 
       let candidatePool = pool;
       if (domainFilter && domainFilter !== 'ALL') {
-        candidatePool = pool.filter(q => (q.domainId === domainFilter || q.domain === domainFilter));
+        // "SUB:ACE-2.3" viene del diagnóstico: practicar una subsección oficial
+        // concreta. Sin el prefijo, se filtra por dominio como siempre.
+        if (String(domainFilter).startsWith('SUB:')) {
+          const sub = String(domainFilter).slice(4);
+          candidatePool = pool.filter(q => q.subsectionId === sub);
+        } else {
+          candidatePool = pool.filter(q => (q.domainId === domainFilter || q.domain === domainFilter));
+        }
       }
 
       if (candidatePool.length === 0) {
+        // Si se pidió una subsección concreta y está vacía, no se cae al banco
+        // entero en silencio: se dice, porque el usuario pidió OTRA cosa.
+        if (String(domainFilter).startsWith('SUB:') && global.GCP_APP && global.GCP_APP.showToast) {
+          global.GCP_APP.showToast(
+            'Todavía no hay preguntas verificadas de ' + String(domainFilter).slice(4) + '.', 'warning', 4500);
+        }
         candidatePool = pool;
       }
 
@@ -162,6 +177,7 @@
       this.failedInThisBatch = [];
       this.selectedOption = null;
       this.isAnswerRevealed = false;
+      this.pendingSelection = [];
 
       const queueNum = document.getElementById('drill-queue-number');
       if (queueNum) queueNum.textContent = this.queue.length;
@@ -208,6 +224,7 @@
 
       this.selectedOption = null;
       this.isAnswerRevealed = false;
+      this.pendingSelection = [];
       this.questionStartTime = Date.now();
 
       const app = global.GCP_APP;
@@ -242,6 +259,8 @@
       const grid = document.getElementById('drill-options-grid');
       if (grid) {
         grid.innerHTML = '';
+        grid.setAttribute('role', 'radiogroup');
+        grid.setAttribute('aria-label', 'Opciones de refuerzo');
         const fragment = document.createDocumentFragment();
         const options = q.options || [];
 
@@ -249,10 +268,14 @@
           const card = document.createElement('div');
           card.className = 'drill-option-card';
           card.setAttribute('data-letter', opt.letter);
+          // Las tarjetas eran divs sin rol ni foco: invisibles para teclado y lector.
+          card.setAttribute('role', 'radio');
+          card.setAttribute('aria-checked', 'false');
+          card.setAttribute('tabindex', optIdx === 0 ? '0' : '-1');
 
           const hotkeyNumber = optIdx + 1;
           card.innerHTML = `
-            <div class="drill-hotkey-badge">${hotkeyNumber} / ${opt.letter}</div>
+            <div class="drill-opt-badge"><span class="drill-opt-letra">${opt.letter}</span><span class="drill-opt-num">${hotkeyNumber}</span></div>
             <div class="drill-option-text">${opt.text}</div>
           `;
 
@@ -260,10 +283,38 @@
             this.selectAndSubmitOption(opt.letter);
           });
 
+          card.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              this.selectAndSubmitOption(opt.letter);
+            }
+          });
+
           fragment.appendChild(card);
         });
 
         grid.appendChild(fragment);
+
+        // La leyenda refleja las opciones reales de esta pregunta (4 o 5).
+        const leyenda = document.getElementById('drill-hotkey-opciones');
+        if (leyenda && options.length) {
+          const ult = options[options.length - 1].letter;
+          leyenda.innerHTML = '<kbd>A</kbd> - <kbd>' + ult + '</kbd> o <kbd>1</kbd> - <kbd>' +
+                              options.length + '</kbd> Elegir Opción';
+        }
+      }
+
+      // Aviso de selección múltiple
+      const aviso = document.getElementById('drill-multi-aviso');
+      if (aviso) {
+        if (q.isMultiSelect) {
+          const n = q.expectedSelectCount ||
+                    (Array.isArray(q.correct) ? q.correct.length : 2);
+          aviso.textContent = `Selecciona ${n} opciones — te faltan ${n}`;
+          aviso.style.display = 'block';
+        } else {
+          aviso.style.display = 'none';
+        }
       }
 
       // Hide feedback drawer
@@ -306,6 +357,30 @@
      * Selects and validates an option immediately.
      * @param {string} letter 
      */
+    /**
+     * Marca visualmente lo que se lleva elegido en una pregunta de varias
+     * respuestas y dice cuántas faltan. Sin esto el usuario no sabe que el
+     * primer clic no envía nada.
+     * @param {number} requeridas
+     */
+    pintarSeleccionParcial(requeridas) {
+      const grid = document.getElementById('drill-options-grid');
+      if (grid) {
+        grid.querySelectorAll('.drill-option-card').forEach(card => {
+          const l = card.getAttribute('data-letter');
+          card.classList.toggle('option-selected', this.pendingSelection.includes(l));
+        });
+      }
+      const aviso = document.getElementById('drill-multi-aviso');
+      if (aviso) {
+        const faltan = requeridas - this.pendingSelection.length;
+        aviso.textContent = faltan > 0
+          ? `Selecciona ${requeridas} opciones — te ${faltan === 1 ? 'falta 1' : 'faltan ' + faltan}`
+          : `Selecciona ${requeridas} opciones`;
+        aviso.style.display = 'block';
+      }
+    },
+
     selectAndSubmitOption(letter) {
       if (this.isAnswerRevealed) return;
 
@@ -313,14 +388,39 @@
       if (!q) return;
 
       const upper = letter.toUpperCase();
-      this.selectedOption = upper;
-      this.isAnswerRevealed = true;
 
       const correctAnswers = Array.isArray(q.correct)
         ? q.correct.map(c => String(c).trim().toUpperCase())
         : [String(q.correct || '').trim().toUpperCase()];
 
-      const isCorrect = correctAnswers.includes(upper);
+      // Una pregunta de "elige 2" no se corrige al primer clic: se van marcando
+      // opciones y solo se evalúa cuando hay tantas como pide el enunciado.
+      // Acertar significa el conjunto EXACTO, ni una de más ni una de menos.
+      const requeridas = q.isMultiSelect
+        ? (q.expectedSelectCount || correctAnswers.length || 2)
+        : 1;
+
+      if (requeridas > 1) {
+        const yaEstaba = this.pendingSelection.indexOf(upper);
+        if (yaEstaba >= 0) {
+          this.pendingSelection.splice(yaEstaba, 1);
+        } else {
+          if (this.pendingSelection.length >= requeridas) return;
+          this.pendingSelection.push(upper);
+        }
+        this.pintarSeleccionParcial(requeridas);
+        if (this.pendingSelection.length < requeridas) return;
+      } else {
+        this.pendingSelection = [upper];
+      }
+
+      this.selectedOption = upper;
+      this.isAnswerRevealed = true;
+
+      const elegidas = this.pendingSelection.slice().sort();
+      const esperadas = correctAnswers.slice().sort();
+      const isCorrect = elegidas.length === esperadas.length &&
+                        elegidas.every((l, i) => l === esperadas[i]);
       const responseTimeMs = Date.now() - this.questionStartTime;
 
       // Update session statistics
@@ -384,9 +484,10 @@
         const cards = grid.querySelectorAll('.drill-option-card');
         cards.forEach(card => {
           const l = card.getAttribute('data-letter');
+          card.classList.remove('option-selected');
           if (correctAnswers.includes(l)) {
             card.classList.add('option-correct');
-          } else if (l === upper && !isCorrect) {
+          } else if (this.pendingSelection.includes(l)) {
             card.classList.add('option-incorrect');
           } else {
             card.classList.add('option-neutral-distractor');
@@ -548,13 +649,18 @@
         return;
       }
 
-      // Option selection keys: 1-4 or A-D
+      // Selección: A-E o 1-5, limitado a las opciones que existen de verdad.
+      // Antes solo llegaba hasta la D y en las preguntas de 5 opciones la E
+      // no se podia elegir con el teclado.
       if (!this.isAnswerRevealed) {
+        const qActual = this.queue && this.queue[this.currentIndex];
+        const disponibles = (qActual && qActual.options ? qActual.options : []).map(o => o.letter);
+        const LETRAS = 'ABCDEF';
         let optionLetter = null;
-        if (key === '1' || key === 'a' || key === 'A') optionLetter = 'A';
-        else if (key === '2' || key === 'b' || key === 'B') optionLetter = 'B';
-        else if (key === '3' || key === 'c' || key === 'C') optionLetter = 'C';
-        else if (key === '4' || key === 'd' || key === 'D') optionLetter = 'D';
+        const may = String(key || '').toUpperCase();
+        if (may.length === 1 && LETRAS.indexOf(may) > -1) optionLetter = may;
+        else if (/^[1-6]$/.test(key)) optionLetter = LETRAS[parseInt(key, 10) - 1];
+        if (optionLetter && disponibles.indexOf(optionLetter) === -1) optionLetter = null;
 
         if (optionLetter) {
           e.preventDefault();

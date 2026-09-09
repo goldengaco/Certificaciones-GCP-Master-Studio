@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D4-017",
+  "subtopic": "Cloud Error Reporting Diagnostics",
+  "scenario": "Your microservices application running on GKE and Cloud Run is encountering unhandled runtime exceptions in production. The operations team needs a centralized dashboard that automatically groups identical stack traces, tracks exception frequency, and integrates with alerting channels without requiring external logging agents. Which Google Cloud service provides this?",
+  "correct": "C",
+  "clave_len": 29,
+  "explanation": "Google Cloud Error Reporting automatically aggregates, counts, and groups unhandled runtime exceptions and stack traces from Cloud Logging (Java, Python, Node.js, Go, PHP, Ruby, .NET) into a centralized dashboard with notification integrations.",
+  "doc": "https://cloud.google.com/error-reporting/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 20,
+    "text": "Cloud DNS Analytics."
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Google Cloud Bigtable."
+   },
+   {
+    "letter": "C",
+    "len": 29,
+    "text": "Google Cloud Error Reporting."
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Billing Reports."
+   }
+  ],
+  "ratio": 1.36
+ },
+ {
+  "id": "ACE-D4-038",
+  "subtopic": "App Engine Version Lifecycle & Cost Operations",
+  "scenario": "In a development project, multiple historical versions of an App Engine Flexible service `staging-api` are currently in the `SERVING` state, continuously consuming Compute Engine VM resources and incurring costs. You need to stop version `v1-beta` so it stops consuming compute resources while keeping its code available for future start. Which command stops the version?",
+  "correct": "A",
+  "clave_len": 54,
+  "explanation": "`gcloud app versions stop <VERSION> --service=<SERVICE>` stops an App Engine version from serving requests and releases underlying Compute Engine VM instances (for Flexible environment), stopping compute charges while preserving the version configuration.",
+  "doc": "https://cloud.google.com/appengine/docs/standard/nodejs/managing-versions-and-services",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "gcloud app versions stop v1-beta --service=staging-api"
+   },
+   {
+    "letter": "B",
+    "len": 36,
+    "text": "kubectl delete pod --version=v1-beta"
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "bq update --stop-service staging-api"
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "gcloud compute instances stop appengine-v1-beta"
+   }
+  ],
+  "ratio": 1.36
+ },
+ {
+  "id": "ACE-D4-033",
+  "subtopic": "GKE Kubeconfig Authentication & Context",
+  "scenario": "You were newly granted `roles/container.developer` permissions on GKE cluster `prod-cluster` in region `us-central1`. When you run `kubectl get pods`, the CLI errors with `The connection to the server localhost:8080 was refused`. How should you initialize your local kubeconfig to target the GKE cluster?",
+  "correct": "C",
+  "clave_len": 80,
+  "explanation": "`gcloud container clusters get-credentials <CLUSTER_NAME> --region=<REGION>` retrieves cluster control plane endpoint information and generates an authentication token in `~/.kube/config`, configuring `kubectl` to communicate with the GKE cluster.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "Edit ~/.kube/config manually and paste your Google Cloud password."
+   },
+   {
+    "letter": "B",
+    "len": 38,
+    "text": "SSH into the GKE master node directly."
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "Run gcloud container clusters get-credentials prod-cluster --region=us-central1."
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Run kubectl config set-cluster prod-cluster --server=http://localhost:8080."
+   }
+  ],
+  "ratio": 1.34
+ },
+ {
+  "id": "ACE-D3-033",
+  "subtopic": "Kubernetes StatefulSet & PVC Deployment",
+  "scenario": "You are deploying a 3-node clustered Apache Cassandra database on Google Kubernetes Engine (GKE). Each replica requires a unique, stable network hostname (`cassandra-0`, `cassandra-1`, `cassandra-2`) and a dedicated persistent disk that reattaches automatically to the same pod identity if the pod restarts on another node. Which Kubernetes workload controller should you deploy?",
+  "correct": "C",
+  "clave_len": 81,
+  "explanation": "Kubernetes StatefulSets provide stable, ordered network identifiers (`pod-0`, `pod-1`) and dedicated persistent storage via `volumeClaimTemplates`. When pods restart or migrate to other nodes, the storage volume automatically reattaches to the exact same pod ordinal identity.",
+  "doc": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 91,
+    "text": "A Kubernetes Deployment with 3 replicas and a single shared ReadWriteMany PersistentVolume."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "A Kubernetes Job with a restartPolicy of Always."
+   },
+   {
+    "letter": "C",
+    "len": 81,
+    "text": "A Kubernetes StatefulSet paired with a Headless Service and volumeClaimTemplates."
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "A Kubernetes DaemonSet with hostPath volumes."
+   }
+  ],
+  "ratio": 1.32
+ },
+ {
+  "id": "ACE-D3-042",
+  "subtopic": "Cloud SQL Cross-Region Read Replica Deployment",
+  "scenario": "You have a primary Cloud SQL PostgreSQL instance `db-master-uscentral1` in `us-central1`. To support disaster recovery and provide low-latency read performance for European users, you need to deploy a cross-region Read Replica named `db-replica-europewest1` in region `europe-west1`. Which command deploys this replica?",
+  "correct": "A",
+  "clave_len": 116,
+  "explanation": "Cloud SQL Read Replicas are created with `gcloud sql instances create <REPLICA_NAME> --master-instance-name=<PRIMARY_NAME> --region=<TARGET_REGION>`. When the target region differs from the master, Cloud SQL provisions a Cross-Region Read Replica.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/replication/create-replica",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 116,
+    "text": "gcloud sql instances create db-replica-europewest1 --master-instance-name=db-master-uscentral1 --region=europe-west1"
+   },
+   {
+    "letter": "B",
+    "len": 84,
+    "text": "gcloud spanner instances create db-replica-europewest1 --source=db-master-uscentral1"
+   },
+   {
+    "letter": "C",
+    "len": 92,
+    "text": "gcloud sql instances clone db-master-uscentral1 db-replica-europewest1 --region=europe-west1"
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "gcloud compute instances create db-replica-europewest1 --replica-of=db-master-uscentral1"
+   }
+  ],
+  "ratio": 1.32
+ },
+ {
+  "id": "ACE-D4-044",
+  "subtopic": "Cloud Storage Storage Class Update Operations",
+  "scenario": "You have an existing Cloud Storage bucket `gs://corp-legal-archives` containing 5 TB of historical contracts currently stored in the `STANDARD` storage class. To reduce ongoing monthly storage costs, you need to transition all existing objects in this bucket to the `ARCHIVE` storage class immediately. Which command performs this bulk storage class update?",
+  "correct": "C",
+  "clave_len": 81,
+  "explanation": "`gcloud storage objects update gs://<BUCKET>/** --storage-class=<CLASS>` updates the storage class of existing objects in-place without re-uploading or rewriting data over the network.",
+  "doc": "https://cloud.google.com/storage/docs/changing-storage-classes#objects",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "bq update --storage_class=ARCHIVE corp-legal-archives"
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "gcloud compute disks update gs://corp-legal-archives --type=ARCHIVE"
+   },
+   {
+    "letter": "C",
+    "len": 81,
+    "text": "gcloud storage objects update gs://corp-legal-archives/** --storage-class=ARCHIVE"
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "gsutil delete-storage-class STANDARD gs://corp-legal-archives/**"
+   }
+  ],
+  "ratio": 1.32
+ },
+ {
+  "id": "ACE-D3-015",
+  "subtopic": "App Engine Standard Deployment",
+  "scenario": "You have written a Node.js web application with an `app.yaml` file configured for the standard environment in your root source directory. You need to deploy this application to project `retail-app-prod` and ensure it immediately receives 100% of live production traffic. What command should you run?",
+  "correct": "D",
+  "clave_len": 62,
+  "explanation": "`gcloud app deploy <app.yaml>` deploys the application source code to Google App Engine. Passing `--promote` (which is default true) routes 100% of all incoming application traffic to the newly deployed version immediately.",
+  "doc": "https://cloud.google.com/appengine/docs/standard/nodejs/deploying-web-app",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "gcloud compute instances create-app app.yaml"
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "gcloud run deploy retail-app --app-yaml=app.yaml"
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "gsutil cp app.yaml gs://retail-app-prod-appengine/"
+   },
+   {
+    "letter": "D",
+    "len": 62,
+    "text": "gcloud app deploy app.yaml --project=retail-app-prod --promote"
+   }
+  ],
+  "ratio": 1.31
+ },
+ {
+  "id": "ACE-D4-007",
+  "subtopic": "Cloud SQL Automated Backup Restoration",
+  "scenario": "A developer corrupted a database table in Cloud SQL instance `prod-db`. You listed backups using `gcloud sql backups list --instance=prod-db` and identified the backup ID `1692540000000` created before the corruption occurred. Which command restores this backup to the instance?",
+  "correct": "C",
+  "clave_len": 67,
+  "explanation": "Restoring a specific Cloud SQL backup to an instance uses `gcloud sql backups restore <BACKUP_ID> --restore-instance=<TARGET_INSTANCE>`.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/backup-recovery/restoring",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 62,
+    "text": "gcloud sql instances restore prod-db --backup-id=1692540000000"
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "gcloud compute disks restore prod-db --snapshot=1692540000000"
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "gcloud sql backups restore 1692540000000 --restore-instance=prod-db"
+   },
+   {
+    "letter": "D",
+    "len": 32,
+    "text": "bq restore prod-db:1692540000000"
+   }
+  ],
+  "ratio": 1.3
+ },
+ {
+  "id": "ACE-D3-014",
+  "subtopic": "Cloud SQL Data Import & IAM Roles",
+  "scenario": "You have an automated database migration pipeline. A 20 GB gzipped MySQL dump file `db-backup.sql.gz` is stored in Cloud Storage bucket `gs://corp-db-dumps/`. You need to import this SQL dump into an active Cloud SQL MySQL instance `prod-mysql-1`. Which gcloud command performs the import?",
+  "correct": "B",
+  "clave_len": 88,
+  "explanation": "`gcloud sql import sql <INSTANCE_NAME> <GCS_URI> --database=<DB_NAME>` initiates an asynchronous server-side database import from Cloud Storage directly into the Cloud SQL instance engine.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/import-export/importing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "gcloud sql instances restore prod-mysql-1 --source=gs://corp-db-dumps/db-backup.sql.gz"
+   },
+   {
+    "letter": "B",
+    "len": 88,
+    "text": "gcloud sql import sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db"
+   },
+   {
+    "letter": "C",
+    "len": 54,
+    "text": "cat db-backup.sql.gz | gcloud sql connect prod-mysql-1"
+   },
+   {
+    "letter": "D",
+    "len": 70,
+    "text": "bq load --source_format=SQL app_db gs://corp-db-dumps/db-backup.sql.gz"
+   }
+  ],
+  "ratio": 1.26
+ },
+ {
+  "id": "ACE-D4-029",
+  "subtopic": "Cloud Profiler Continuous Performance Profiling",
+  "scenario": "Your Go microservice running on GKE is experiencing unexpected CPU spikes in production. You want to continuously profile CPU consumption, memory allocation, and lock contention at the code function and line level in production with under 5% CPU overhead and zero code instrumentation changes. Which Google Cloud tool should you enable?",
+  "correct": "C",
+  "clave_len": 22,
+  "explanation": "Google Cloud Profiler is a continuous statistical code profiling tool that captures CPU and heap memory allocations across production services, rendering interactive Flame Graphs that highlight exact code functions consuming resources.",
+  "doc": "https://cloud.google.com/profiler/docs/about-profiler",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 20,
+    "text": "Cloud DNS Analytics."
+   },
+   {
+    "letter": "B",
+    "len": 19,
+    "text": "Google Cloud Armor."
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Google Cloud Profiler."
+   },
+   {
+    "letter": "D",
+    "len": 14,
+    "text": "VPC Flow Logs."
+   }
+  ],
+  "ratio": 1.25
+ },
+ {
+  "id": "ACE-D5-031",
+  "subtopic": "Secret Manager Version Management & Security",
+  "scenario": "A database password stored in Secret Manager secret `db-password` was compromised. You immediately generated a new strong password and added it as version 2. You now need to permanently destroy version 1 so that it can never be retrieved or decrypted again by any service account. Which command destroys version 1?",
+  "correct": "B",
+  "clave_len": 54,
+  "explanation": "`gcloud secrets versions destroy <VERSION_NUMBER> --secret=<SECRET_NAME>` permanently destroys the cryptographic payload of that specific secret version, making it irrecoverable while keeping other versions (and the secret metadata) active.",
+  "doc": "https://cloud.google.com/secret-manager/docs/destroying-secret-version",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "bq query 'DELETE FROM secrets WHERE version=1'"
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "gcloud secrets versions destroy 1 --secret=db-password"
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "gcloud secrets delete db-password --force"
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "gcloud compute instances delete db-password"
+   }
+  ],
+  "ratio": 1.25
+ },
+ {
+  "id": "ACE-D1-024",
+  "subtopic": null,
+  "scenario": "An external consultant is hired to perform database maintenance on project finance-prod. The maintenance window starts immediately and ends on September 30, 2026 at 23:59:59 UTC. You must grant them roles/cloudsql.admin such that access expires automatically at the deadline without requiring manual administrator intervention. What should you do?",
+  "correct": "D",
+  "clave_len": 107,
+  "explanation": "IAM Conditions allow attaching attribute-based conditional expressions to role bindings. Using request.time < timestamp(\"2026-09-30T23:59:59Z\") grants temporary access that automatically and immediately expires at the specified timestamp without administrative action.",
+  "doc": "https://cloud.google.com/iam/docs/conditions-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 88,
+    "text": "Generate a service account JSON key file configured with an expiration header timestamp."
+   },
+   {
+    "letter": "B",
+    "len": 89,
+    "text": "Assign the role on the project and configure a Cloud Scheduler job to revoke permissions."
+   },
+   {
+    "letter": "C",
+    "len": 85,
+    "text": "Grant roles/cloudsql.client on the project combined with a Cloud Armor access filter."
+   },
+   {
+    "letter": "D",
+    "len": 107,
+    "text": "Grant roles/cloudsql.admin with an IAM Condition checking request.time < timestamp('2026-09-30T23:59:59Z')."
+   }
+  ],
+  "ratio": 1.23
+ },
+ {
+  "id": "ACE-D4-018",
+  "subtopic": "Cloud SQL Storage Monitoring & Operations",
+  "scenario": "You are monitoring a mission-critical Cloud SQL MySQL database. The database storage usage is at 88% of provisioned capacity. While 'Automatic Storage Increase' is enabled, you want to manually increase the allocated SSD storage from 100 GB to 500 GB immediately to accommodate an upcoming weekend data migration. Which gcloud command applies this capacity upgrade?",
+  "correct": "A",
+  "clave_len": 61,
+  "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --storage-size=<SIZE_IN_GB>` increases the persistent disk capacity of a Cloud SQL instance online without downtime. Note that Cloud SQL storage can only be scaled up, never down.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/edit-instance#storage-size",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "gcloud sql instances patch prod-mysql-db --storage-size=500GB"
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "gcloud compute disks resize prod-mysql-db --size=500GB"
+   },
+   {
+    "letter": "C",
+    "len": 40,
+    "text": "bq update --storage_gb=500 prod-mysql-db"
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "gcloud sql instances restart prod-mysql-db --expand-disk=500"
+   }
+  ],
+  "ratio": 1.19
+ },
+ {
+  "id": "ACE-D4-046",
+  "subtopic": "Cloud Run Concurrency & Max Scale Operations",
+  "scenario": "Your microservice deployed on Cloud Run experiences latency spikes under heavy concurrent traffic because each container instance is only handling 1 request at a time. The application is stateless and tested to handle up to 80 concurrent HTTP requests per instance without performance degradation. Which command updates the concurrency setting on the Cloud Run service?",
+  "correct": "D",
+  "clave_len": 78,
+  "explanation": "`gcloud run services update <SERVICE> --concurrency=<COUNT>` configures container concurrency (number of maximum simultaneous requests routed to a single container instance). Increasing concurrency from 1 to 80 optimizes container utilization, reduces cold starts, and lowers cloud spend.",
+  "doc": "https://cloud.google.com/run/docs/configuring/concurrency",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "gcloud compute instances update order-service --threads=80"
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "kubectl autoscale deployment order-service --concurrency=80"
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "gcloud run services update order-service --region=us-central1 --max-instances=80"
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "gcloud run services update order-service --region=us-central1 --concurrency=80"
+   }
+  ],
+  "ratio": 1.19
+ },
+ {
+  "id": "ACE-D3-044",
+  "subtopic": "Cloud Run Min Instances & Concurrency Optimization",
+  "scenario": "A mission-critical payment verification API hosted on Cloud Run requires sub-50ms response times for all incoming requests. To prevent container cold start latencies during idle periods, you need to ensure that at least 2 container instances are always pre-warmed and running 24/7. Which command configures this?",
+  "correct": "C",
+  "clave_len": 77,
+  "explanation": "Cloud Run supports `--min-instances=<COUNT>`. Setting minimum instances keeps the specified number of container instances initialized and warm in memory, eliminating cold starts for subsequent incoming requests.",
+  "doc": "https://cloud.google.com/run/docs/configuring/min-instances",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "gcloud run services update payment-api --region=us-central1 --max-instances=2"
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Deploy an e2-micro VM running a loop curl command."
+   },
+   {
+    "letter": "C",
+    "len": 77,
+    "text": "gcloud run services update payment-api --region=us-central1 --min-instances=2"
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Create a Cloud Scheduler job that sends an HTTP ping every 5 minutes."
+   }
+  ],
+  "ratio": 1.18
+ },
+ {
+  "id": "ACE-D4-024",
+  "subtopic": "Cloud SQL Monitoring & Metrics Explorer",
+  "scenario": "A database administrator is investigating performance degradation on a production Cloud SQL PostgreSQL database. Which Cloud Monitoring metric should be queried to monitor CPU saturation and determine if the instance requires a higher compute tier?",
+  "correct": "C",
+  "clave_len": 48,
+  "explanation": "The official Cloud Monitoring metric for Cloud SQL instance CPU load is `cloudsql.googleapis.com/database/cpu/utilization` (fraction between 0.0 and 1.0).",
+  "doc": "https://cloud.google.com/sql/docs/postgres/monitoring",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "storage.googleapis.com/storage/object_count"
+   },
+   {
+    "letter": "B",
+    "len": 33,
+    "text": "logging.googleapis.com/byte_count"
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "cloudsql.googleapis.com/database/cpu/utilization"
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "compute.googleapis.com/instance/cpu/usage_time"
+   }
+  ],
+  "ratio": 1.18
+ },
+ {
+  "id": "ACE-D4-057",
+  "subtopic": "GKE PersistentVolumeClaim Diagnostics",
+  "scenario": "A stateful database Pod in GKE namespace `prod` is stuck in the `Pending` state. The Pod events report `0/3 nodes are available: persistentvolumeclaim 'db-data-pvc' not found (or waiting for first consumer)`. You need to inspect the status, requested storage class, and binding events of `db-data-pvc`. Which command provides this information?",
+  "correct": "A",
+  "clave_len": 49,
+  "explanation": "`kubectl describe pvc <PVC_NAME>` reveals the detailed lifecycle status of a PersistentVolumeClaim, including dynamic provisioner error messages (e.g., quota exceeded, unsupported zone, volumeBindingMode: WaitForFirstConsumer).",
+  "doc": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "kubectl describe pvc db-data-pvc --namespace=prod"
+   },
+   {
+    "letter": "B",
+    "len": 38,
+    "text": "kubectl delete pvc db-data-pvc --force"
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "gcloud compute disks describe db-data-pvc"
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "gcloud container clusters restart prod-cluster"
+   }
+  ],
+  "ratio": 1.18
+ }
+]

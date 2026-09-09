@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D1-012",
+  "options": {
+   "A": "Reducir el coste total de propiedad negociando el mismo servicio con varios proveedores a la vez y consolidando todo el gasto de infraestructura en una única factura mensual centralizada.",
+   "B": "Repartir cada transacción de una misma aplicación entre los tres grandes proveedores de nube de forma simultánea para multiplicar por tres el rendimiento disponible en hora punta.",
+   "D": "Delegar en los proveedores de nube la responsabilidad del cumplimiento normativo y de la residencia de los datos, de modo que ellos asuman las sanciones regulatorias del sector."
+  },
+  "distractors": {
+   "A": "La multinube suele aumentar el coste operativo (equipos, herramientas y transferencia de datos entre proveedores) y no existe una factura conjunta: cada proveedor factura por separado.",
+   "B": "Describe un reparto por transacción que ninguna arquitectura multinube realiza: la multinube coloca cada carga completa en el proveedor adecuado, no fragmenta una petición entre nubes.",
+   "D": "El modelo de responsabilidad compartida deja siempre en el cliente la rendición de cuentas regulatoria: el proveedor certifica su infraestructura, pero no asume las multas del cliente."
+  }
+ },
+ {
+  "id": "CDL-D1-028",
+  "options": {
+   "A": "Un equipo central de operaciones que asuma en exclusiva el aprovisionamiento de todos los recursos de nube, de modo que cada división abra un ticket y espere a que ese equipo despliegue por ella.",
+   "B": "Una oficina de FinOps dedicada a revisar las facturas mensuales de cada división y a repartir los costes compartidos entre los centros de coste del conglomerado empresarial.",
+   "C": "Un comité de arquitectura que publique un catálogo de servicios aprobados y revise manualmente cada diseño antes de su despliegue, sin participación de los equipos de seguridad ni de finanzas."
+  },
+  "distractors": {
+   "A": "Centralizar la ejecución convierte al equipo en un cuello de botella y frena la adopción: el CCoE define guardarraíles y habilita el autoservicio de las divisiones, no despliega en su lugar.",
+   "B": "Aborda únicamente la dimensión del gasto descontrolado y deja sin resolver la disparidad de políticas de seguridad y la falta de estándares arquitectónicos que describe el escenario.",
+   "C": "Un comité de revisión sin seguridad ni finanzas cubre sólo una parte del problema, y la aprobación manual de cada diseño no escala en un conglomerado con divisiones autónomas."
+  }
+ },
+ {
+  "id": "CDL-D4-054",
+  "options": {
+   "A": "Cloud EKM con el material de clave alojado fuera de Google",
+   "B": "Claves gestionadas por el cliente (CMEK) alojadas en Cloud HSM",
+   "D": "Access Transparency con registros de accesos del personal de Google"
+  },
+  "distractors": {
+   "A": "Cloud EKM saca la clave fuera de Google y es el requisito técnico previo, pero por sí solo no adjunta a cada petición de descifrado una justificación que el banco pueda evaluar.",
+   "B": "CMEK con Cloud HSM da al cliente el control del material de la clave y su ciclo de vida, pero no informa del motivo de cada solicitud de descifrado ni permite denegarla por ese motivo.",
+   "D": "Access Transparency registra a posteriori las acciones del personal de Google sobre los datos: es auditoría retrospectiva y no puede bloquear la operación de descifrado en el momento."
+  }
+ },
+ {
+  "id": "CDL-D2-076",
+  "options": {
+   "A": "BigQuery con consultas programadas cada 5 minutos que agregan las puntuaciones con funciones de ventana `OVER`",
+   "B": "Pub/Sub con suscripciones de extracción y reintentos para reordenar los eventos que llegan con retraso",
+   "C": "Cloud Memorystore for Redis acumulando las puntuaciones en claves con un TTL de 5 minutos que la aplicación renueva cada minuto"
+  },
+  "distractors": {
+   "A": "Las funciones de ventana de SQL operan sobre filas ya almacenadas y la consulta programada es un lote periódico: no existe tiempo de evento ni marca de agua, así que los datos con retraso quedan fuera del bloque al que pertenecen.",
+   "B": "Pub/Sub transporta y almacena los eventos de forma duradera, pero no agrega nada: la segmentación en ventanas deslizantes y el cálculo del promedio ocurren en el motor de procesamiento, no en la mensajería.",
+   "C": "El TTL de Redis caduca por hora de llegada, no por hora del evento: un evento retrasado se contabiliza en la ventana equivocada o se pierde, y no hay semántica de marcas de agua."
+  }
+ },
+ {
+  "id": "CDL-D1-008",
+  "options": {
+   "A": "Realizar una revisión del incidente que identifique al responsable del cambio y registre su nombre en el informe final para reforzar la rendición de cuentas individual dentro del equipo.",
+   "B": "Redactar un informe que documente la cronología técnica del fallo y la corrección aplicada, sin analizar por qué el proceso permitió que la configuración errónea llegara a producción.",
+   "C": "Trasladar la ejecución de los despliegues de emergencia a un equipo de operaciones separado del de desarrollo, de modo que quien escribe el código nunca lo publique en producción."
+  },
+  "distractors": {
+   "A": "Nombrar al responsable es precisamente lo que la autopsia sin culpa elimina: desincentiva reportar errores y desplaza el análisis desde el sistema hacia la persona.",
+   "B": "Tiene la forma de una autopsia pero no su función: sin examinar las causas sistémicas ni las salvaguardas ausentes, no genera acciones que impidan la recurrencia del fallo.",
+   "C": "Reintroduce el silo entre desarrollo y operaciones que SRE busca eliminar, y no aporta ningún mecanismo de aprendizaje sobre por qué el sistema permitió el error."
+  }
+ },
+ {
+  "id": "CDL-D2-014",
+  "options": {
+   "A": "Nodos de inquilino único (sole-tenant)",
+   "B": "Cloud SQL for MySQL Enterprise Plus",
+   "D": "Google Distributed Cloud conectado"
+  },
+  "distractors": {
+   "A": "El host físico es exclusivo del cliente, pero las cargas siguen ejecutándose como VMs sobre el hipervisor de Google: el escenario exige hardware sin virtualización.",
+   "B": "Cloud SQL es un servicio administrado para MySQL, PostgreSQL y SQL Server: no ejecuta el motor Oracle ni admite una configuración Oracle RAC.",
+   "D": "Coloca hardware de Google en las instalaciones del propio cliente, por lo que no ofrece la adyacencia de latencia sub-milisegundo con los servicios de Google Cloud que pide el caso."
+  }
+ },
+ {
+  "id": "CDL-D1-020",
+  "options": {
+   "B": "Publicar cada mes un extracto del historial crediticio en un bucket de Cloud Storage con URLs firmadas para que cada Fintech descargue el fichero y lo cargue en su propio sistema.",
+   "C": "Conceder a cada Fintech una réplica de lectura de la base de datos crediticia en Cloud SQL con credenciales de sólo lectura para que consulten las calificaciones directamente con SQL.",
+   "D": "Crear un portal web con Vertex AI Search donde los analistas de cada Fintech busquen manualmente la calificación crediticia de cada solicitante antes de aprobarle un préstamo."
+  },
+  "distractors": {
+   "B": "Un fichero mensual no es una consulta en tiempo real, y al entregar el extracto completo se pierde el control de cuotas, la medición del consumo y cualquier posibilidad de monetizar por uso.",
+   "C": "Expone el esquema y el conjunto entero de datos a terceros: sin capa de abstracción no hay control de cuotas, analítica de consumo ni un producto facturable, sólo acceso directo a la base.",
+   "D": "Una consulta manual persona a persona no habilita la integración programática que las Fintech necesitan en sus procesos, y no genera un modelo de ingresos basado en el consumo de la API."
+  }
+ },
+ {
+  "id": "CDL-D4-070",
+  "options": {
+   "A": "Soporte Estándar (Standard Support de Cloud Customer Care)",
+   "B": "Soporte Premium de Customer Care con TAM dedicado a la cuenta",
+   "D": "Foros de la comunidad y la etiqueta google-cloud de Stack Overflow"
+  },
+  "distractors": {
+   "A": "Standard no ofrece atención a incidentes P1 ni cobertura 24/7: su compromiso más alto es de 4 horas en horario laboral y no incluye soporte de tecnologías de terceros.",
+   "B": "Premium cumple de sobra el requisito, pero incorpora el TAM dedicado que la empresa dice no necesitar y su cuota mínima es muy superior: no es la opción costo-eficiente.",
+   "D": "Los foros no llevan asociado ningún acuerdo de nivel de servicio: no garantizan respuesta en una hora ni disponibilidad 24/7 para un incidente crítico de producción."
+  }
+ },
+ {
+  "id": "CDL-D2-018",
+  "options": {
+   "B": "Cloud Memorystore for Memcached",
+   "C": "Cloud Bigtable con filas anchas",
+   "D": "Cloud Spanner multirregional"
+  },
+  "distractors": {
+   "B": "Memcached es una caché de pares clave-valor sin estructuras de datos: carece de los conjuntos ordenados de Redis con los que se construye una tabla de clasificación.",
+   "C": "Bigtable almacena en disco SSD con latencias de milisegundos de un dígito: es NoSQL de alto rendimiento, pero no una caché en memoria compatible con Redis.",
+   "D": "Spanner es una base relacional distribuida con consistencia global: resuelve la persistencia transaccional, no la caché en memoria de sub-milisegundo que pide el escenario."
+  }
+ },
+ {
+  "id": "CDL-D1-025",
+  "options": {
+   "B": "Consolidando en Looker Studio los informes mensuales en PDF que cada transportista envía al cierre de mes para construir un cuadro de mando histórico de puntualidad por ruta.",
+   "C": "Sustituyendo el sistema de planificación por hojas de cálculo compartidas en Google Workspace donde cada almacén anota manualmente la posición estimada de cada contenedor recibido.",
+   "D": "Aplicando Cloud CDN y balanceo de carga global al portal de proveedores para que las consultas sobre el estado de cada envío se resuelvan con menor latencia en cada país."
+  },
+  "distractors": {
+   "B": "Un informe mensual llega demasiado tarde para la línea de ensamblaje: aporta análisis retrospectivo, no la visibilidad en tiempo real sobre la posición actual de los componentes.",
+   "C": "La anotación manual introduce el retraso y el error humano que el escenario quiere eliminar: no hay telemetría automática ni datos de sensores que actualicen la posición al instante.",
+   "D": "Acelera la consulta del portal, un beneficio real, pero no añade ningún dato nuevo: si el sistema no conoce la ubicación de los componentes, servirlo más rápido no resuelve nada."
+  }
+ },
+ {
+  "id": "CDL-D3-032",
+  "options": {
+   "A": "Descuentos por Compromiso de Uso (Committed Use Discounts)",
+   "C": "Descuentos por volumen negociados en contrato empresarial",
+   "D": "Créditos por incumplimiento del SLA de Compute Engine"
+  },
+  "distractors": {
+   "A": "Los CUDs exigen firmar un compromiso previo de 1 o 3 años, y el escenario dice expresamente que el cliente no firmó ningún contrato de compromiso a largo plazo.",
+   "C": "Un descuento por volumen es una condición comercial negociada caso por caso, no un descuento automático que Compute Engine aplique en la factura por mantener las VMs encendidas.",
+   "D": "Los créditos de SLA compensan periodos de indisponibilidad del servicio: se abonan por incumplimientos de Google, no por el uso continuo que hace el cliente de sus VMs."
+  }
+ },
+ {
+  "id": "CDL-D2-061",
+  "options": {
+   "A": "Dialogflow ES definiendo manualmente las intenciones y entidades del catálogo",
+   "B": "Vertex AI Model Garden ajustando un modelo Gemini con datos propios",
+   "C": "Búsqueda por palabras clave con el índice de texto completo de Cloud SQL"
+  },
+  "distractors": {
+   "A": "Dialogflow ES exige redactar a mano intenciones y frases de entrenamiento: cubrir 100.000 productos y sus políticas de esa forma tardaría meses, no los pocos días del escenario.",
+   "B": "Ajustar un modelo base requiere preparar datos y experiencia en aprendizaje automático: es justo el trabajo que la cadena quiere evitar al pedir un despliegue en pocos días.",
+   "C": "La búsqueda por palabras clave localiza coincidencias literales de términos: no entiende la intención semántica de la consulta ni genera respuestas conversacionales."
+  }
+ },
+ {
+  "id": "CDL-D1-030",
+  "options": {
+   "A": "Un modelo Gemini consultado directamente por API sin conectarlo a los manuales operativos, confiando en el conocimiento general del modelo para redactar cada respuesta al pasajero.",
+   "B": "Un flujo de Dialogflow CX con respuestas estáticas redactadas a mano para cada política de equipaje y cada motivo de cancelación previsto en el manual operativo de la aerolínea.",
+   "D": "Document AI extrayendo las entidades de los manuales operativos hacia BigQuery para que los agentes humanos del centro de contacto consulten la política aplicable a cada pasajero."
+  },
+  "distractors": {
+   "A": "Sin anclaje (grounding) en la documentación de la aerolínea, el modelo puede inventar políticas de equipaje o de cancelación que no existen: falla el requisito de respuestas estrictamente basadas en los manuales.",
+   "B": "Un árbol de respuestas escritas a mano no cubre la variedad de millones de consultas y hay que reescribirlo cada vez que cambia una política: no hay generación de lenguaje a partir del manual.",
+   "D": "Estructura el contenido de los manuales, pero deja la redacción de la respuesta en manos de agentes humanos: no automatiza la generación de respuestas que pide el escenario."
+  }
+ },
+ {
+  "id": "CDL-D1-013",
+  "options": {
+   "A": "Aplicar mejoras incrementales del 10% en cada iteración trimestral del producto hasta acumular con el tiempo una mejora total de diez veces sobre la situación de partida.",
+   "B": "Reservar el 10% de la jornada de cada ingeniero para proyectos personales de innovación, al margen de los objetivos del producto principal de la unidad de negocio.",
+   "D": "Lanzar diez productos mínimos viables en paralelo y conservar únicamente aquel que consiga la mayor tracción de usuarios durante su primer trimestre en el mercado."
+  },
+  "distractors": {
+   "A": "Es exactamente la mejora incremental que el principio 10x contrapone: acumular pasos del 10% mantiene los supuestos del problema original en lugar de replantearlo desde sus fundamentos.",
+   "B": "Describe la práctica del tiempo dedicado a proyectos propios, otra idea de la cultura de innovación de Google, pero no dice nada sobre la magnitud del objetivo que se persigue.",
+   "D": "Es una táctica de experimentación en cartera: multiplica el número de apuestas, no la ambición de cada una, que es lo que plantea el pensamiento 10x."
+  }
+ },
+ {
+  "id": "CDL-D2-052",
+  "options": {
+   "B": "BigQuery Omni consultando en su ubicación los datos de clientes alojados en la instancia de Cloud SQL for PostgreSQL",
+   "C": "Datastream replicando de forma continua la base de datos Cloud SQL completa hacia un conjunto de datos de BigQuery",
+   "D": "Tablas externas de BigQuery definidas sobre los ficheros que Cloud SQL exporta periódicamente a un bucket de Cloud Storage"
+  },
+  "distractors": {
+   "B": "BigQuery Omni consulta datos que residen en otras nubes públicas (Amazon S3 o Azure Blob Storage); no es el mecanismo para leer una instancia de Cloud SQL.",
+   "C": "Copia la base de datos entera al almacén de forma continua, que es exactamente la canalización de replicación que el analista quiere evitar.",
+   "D": "Requiere exportar antes los datos a ficheros: la consulta lee una instantánea en Cloud Storage, no la información en tiempo real de la base operativa."
+  }
+ },
+ {
+  "id": "CDL-D3-005",
+  "options": {
+   "A": "VM blindada (Shielded VM) con arranque seguro y vTPM virtual",
+   "B": "VM confidencial (Confidential VM) con la memoria cifrada en uso",
+   "D": "Reserva de capacidad zonal específica en Compute Engine"
+  },
+  "distractors": {
+   "A": "Shielded VM protege la integridad del arranque y del firmware de la instancia, pero el servidor físico que la ejecuta se sigue compartiendo con VMs de otros clientes.",
+   "B": "Confidential VM cifra la memoria en uso frente al hipervisor, pero no proporciona el aislamiento del hardware físico ni el licenciamiento por núcleo físico que exige el caso.",
+   "D": "Una reserva garantiza que haya capacidad disponible en la zona cuando se cree la VM; no reserva un servidor físico dedicado ni impide compartir el host."
+  }
+ },
+ {
+  "id": "CDL-D1-017",
+  "options": {
+   "A": "Permite agrupar seis meses de cambios en un único paquete validado exhaustivamente por el equipo de calidad antes de publicarlo en la ventana programada del fin de semana.",
+   "B": "Elimina la necesidad de mantener entornos de preproducción, porque las pruebas automatizadas se ejecutan directamente sobre la base de datos de producción del banco.",
+   "D": "Transfiere al proveedor de nube la responsabilidad sobre los despliegues, de modo que sea Google quien decida cuándo publicar cada versión del software bancario en producción."
+  },
+  "distractors": {
+   "A": "Describe el modelo por lotes que causaba los fallos masivos: agrupar seis meses de cambios amplía el radio de impacto de cada error, que es justo lo contrario de la entrega continua.",
+   "B": "La entrega continua se apoya en entornos previos y en pruebas automatizadas antes de producción; probar contra la base de datos productiva de un banco no es una práctica de CI/CD.",
+   "D": "El calendario de despliegue sigue siendo del cliente: el modelo de responsabilidad compartida deja la publicación de la aplicación en manos del equipo, no del proveedor."
+  }
+ },
+ {
+  "id": "CDL-D1-016",
+  "options": {
+   "B": "Google Cloud compra créditos de carbono en nombre del cliente, de modo que las cargas migradas dejan de contabilizarse en el inventario de emisiones de alcance 3 de la empresa multinacional.",
+   "C": "Google Cloud garantiza por contrato que cada una de sus regiones funciona con energía libre de carbono las 24 horas desde 2020, por lo que ninguna carga migrada genera ya emisión alguna.",
+   "D": "Google Cloud entrega un certificado ambiental de su cadena de suministro que sustituye la obligación del cliente de medir y reportar el consumo energético de sus cargas en la nube."
+  },
+  "distractors": {
+   "B": "El consumo de nube sigue siendo alcance 3 para el cliente y debe reportarlo: Google reduce y compensa sus propias emisiones, no retira créditos a nombre de cada cliente.",
+   "C": "La energía libre de carbono 24/7 es un objetivo declarado para 2030, no una garantía contractual vigente: el porcentaje de CFE varía hoy de una región a otra.",
+   "D": "Una certificación acredita el sistema de gestión ambiental del proveedor, pero no exime al cliente de medir sus propias emisiones ni le da la herramienta para hacerlo."
+  }
+ },
+ {
+  "id": "CDL-D2-049",
+  "options": {
+   "A": "Reglas de ciclo de vida del bucket (Object Lifecycle)",
+   "B": "Política de retención con bloqueo del bucket (Bucket Lock)",
+   "C": "Réplica entre regiones con Storage Transfer Service"
+  },
+  "distractors": {
+   "A": "Las reglas de ciclo de vida cambian la clase de los objetos o los eliminan al cumplir una condición: gestionan el coste, no conservan las versiones anteriores de un fichero.",
+   "B": "La política de retención impide borrar o sobrescribir el objeto hasta que expire el plazo: bloquea también las actualizaciones legítimas y no guarda un historial recuperable.",
+   "C": "La réplica copia el estado actual del bucket, incluida la sobrescritura: el error se propaga al destino y no queda ninguna versión previa que restaurar."
+  }
+ },
+ {
+  "id": "CDL-D3-031",
+  "options": {
+   "B": "Descuentos por Uso Sostenido (SUDs) aplicados de forma automática y sin compromiso",
+   "C": "Instancias Spot (Spot VMs) con descuentos de hasta el 91% sobre el precio",
+   "D": "Reservas de capacidad de Compute Engine adquiridas en una zona determinada"
+  },
+  "distractors": {
+   "B": "Los SUDs se aplican solos y sin compromiso, pero su descuento máximo ronda el 20-30%: no alcanzan el 57-70% que el escenario pide a cambio de un compromiso contractual.",
+   "C": "Las Spot VMs pueden ser interrumpidas por Compute Engine en cualquier momento con 30 segundos de aviso: son inviables para una base de datos central que opera 24/7.",
+   "D": "Una reserva garantiza la disponibilidad de capacidad en la zona y se factura a precio bajo demanda: no aporta descuento por sí misma salvo que se combine con un CUD."
+  }
+ },
+ {
+  "id": "CDL-D4-013",
+  "options": {
+   "B": "Cloud Logging con alertas",
+   "C": "Cloud Asset Inventory (CAI)",
+   "D": "Google Security Operations"
+  },
+  "distractors": {
+   "B": "Cloud Logging almacena y consulta registros, pero no descubre malas configuraciones ni evalúa el cumplimiento de CIS, PCI-DSS o ISO 27001.",
+   "C": "Cloud Asset Inventory inventaria y versiona los activos de la organización, pero no detecta amenazas activas ni puntúa la postura de seguridad.",
+   "D": "Es el SIEM para analizar telemetría de seguridad de toda la empresa; no realiza el análisis de postura ni el inventario de recursos de Google Cloud."
+  }
+ },
+ {
+  "id": "CDL-D2-069",
+  "options": {
+   "A": "(1) Persistent Disk (bloques), (2) Filestore (archivos NFS), (3) Cloud Storage (objetos)",
+   "C": "(1) Cloud Storage (objetos), (2) Persistent Disk (bloques), (3) Filestore (archivos NFS)",
+   "D": "(1) Filestore (archivos NFS), (2) Cloud Storage (objetos), (3) Persistent Disk (bloques)"
+  },
+  "distractors": {
+   "A": "Acierta el disco de arranque, pero intercambia los otros dos: Filestore es un NFS para servidores, no un repositorio global accesible por HTTP para millones de imágenes.",
+   "C": "Un bucket de Cloud Storage no puede actuar como disco de arranque de una VM, y Persistent Disk no sirve objetos por HTTP a escala global.",
+   "D": "Un Persistent Disk sólo admite un escritor: no puede montarse en lectura-escritura simultánea desde varios servidores Linux, que es el requisito del tercer caso."
+  }
+ },
+ {
+  "id": "CDL-D3-027",
+  "options": {
+   "A": "(1) Replatform (Lift-and-Optimize); (2) Refactor / Re-architect (rediseño nativo)",
+   "C": "(1) Rehost (Lift-and-Shift); (2) Replatform (traslado a servicios gestionados sin rediseñar)",
+   "D": "(1) Repurchase (sustitución por SaaS); (2) Refactor / Re-architect (rediseño nativo)"
+  },
+  "distractors": {
+   "A": "Replatform implica ajustar la aplicación para aprovechar servicios gestionados; el escenario dice que las 200 VMs se mueven tal como están y sin cambiar el código, que es Rehost.",
+   "C": "Replatform conserva la arquitectura del monolito y sólo cambia la plataforma que lo ejecuta: convertirlo en microservicios serverless es un rediseño, es decir, Refactor.",
+   "D": "Repurchase significa abandonar la aplicación propia y comprar un producto SaaS equivalente; aquí las VMs existentes se trasladan tal cual a Compute Engine."
+  }
+ },
+ {
+  "id": "CDL-D3-034",
+  "options": {
+   "A": "Cloud Deployment Manager con plantillas de Jinja y Python, hoy en modo de mantenimiento",
+   "C": "Scripts de `gcloud` ejecutados en Cloud Build que crean los recursos de cada entorno",
+   "D": "Config Connector sobre un clúster de GKE que reconcilia manifiestos de Kubernetes"
+  },
+  "distractors": {
+   "A": "Deployment Manager es declarativo, pero está en mantenimiento y no incorpora los recursos nuevos de Google Cloud: dejó de ser la herramienta recomendada para infraestructura.",
+   "C": "Un guion de `gcloud` es imperativo: no mantiene un estado declarativo del entorno, no detecta desviaciones ni permite destruir los 50 entornos de forma reproducible.",
+   "D": "Config Connector necesita un clúster de GKE previo que actúe de reconciliador, por lo que no puede aprovisionar desde cero los propios clústeres de cada entorno de prueba."
+  }
+ },
+ {
+  "id": "CDL-D3-020",
+  "options": {
+   "A": "Cloud VPN de alta disponibilidad con túneles IPsec sobre Internet",
+   "B": "Emparejamiento directo (Direct Peering) con la red perimetral de Google",
+   "C": "Network Connectivity Center con Cloud Router y sesiones BGP"
+  },
+  "distractors": {
+   "A": "El tráfico de los túneles IPsec viaja por la Internet pública, que el escenario descarta, y el ancho de banda por túnel se queda muy lejos de los 10 a 100 Gbps solicitados.",
+   "B": "Direct Peering da acceso a las APIs públicas de Google y a Workspace, no a las direcciones privadas de la VPC del banco, y no lleva asociado ningún SLA de disponibilidad.",
+   "C": "Network Connectivity Center organiza y enruta sobre conexiones ya existentes mediante BGP: no es el circuito físico de fibra que hay que contratar para conseguir ese ancho de banda."
+  }
+ }
+]

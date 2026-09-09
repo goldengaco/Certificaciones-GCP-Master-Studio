@@ -140,13 +140,34 @@
       // Keyboard Shortcut 'F' for flag
       if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
         window.addEventListener('keydown', (e) => {
-          if (this.examActive && !this.isForensicReviewActive) {
-            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-            if (e.key === 'f' || e.key === 'F') {
-              e.preventDefault();
-              this.toggleFlag();
-            }
+          if (!this.examActive || this.isForensicReviewActive) return;
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          const t = e.target;
+          if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' ||
+                    t.tagName === 'SELECT' || t.isContentEditable)) return;
+          if (document.querySelector('.modal.active, .modal[style*="flex"]')) return;
+
+          const q = this.currentBlockQuestions[this.currentIndex];
+          const nOpciones = (q && q.options) ? q.options.length : 0;
+          const k = String(e.key || '').toUpperCase();
+
+          // Responder por letra o por numero, igual que en Drill y Estudio.
+          if (nOpciones && k.length === 1 && 'ABCDE'.indexOf(k) > -1 && 'ABCDE'.indexOf(k) < nOpciones) {
+            e.preventDefault(); this.selectOption(k); return;
           }
+          if (nOpciones && k.length === 1 && '12345'.indexOf(k) > -1 && parseInt(k, 10) <= nOpciones) {
+            e.preventDefault(); this.selectOption('ABCDE'[parseInt(k, 10) - 1]); return;
+          }
+          if (k === 'F') { e.preventDefault(); this.toggleFlag(); return; }
+          // Limpiar va en Retroceso/Supr, no en una letra: con cinco opciones
+          // "C" ya es una respuesta valida y borraria en vez de responder.
+          if (e.key === 'Backspace' || e.key === 'Delete') {
+            e.preventDefault(); this.clearCurrentChoice(); return;
+          }
+          if (e.key === 'ArrowRight') { e.preventDefault(); this.goToNextQuestion(); return; }
+          if (e.key === 'ArrowLeft')  { e.preventDefault(); this.goToPrevQuestion(); return; }
+          if (e.key === 'ArrowDown')  { e.preventDefault(); this.moverFocoOpcion(1); return; }
+          if (e.key === 'ArrowUp')    { e.preventDefault(); this.moverFocoOpcion(-1); return; }
         });
       }
 
@@ -178,7 +199,7 @@
       }
 
       if (!this.examActive) {
-        this.startNewExam(params.blockIndex);
+        this.startNewExam(params.blockIndex, { ciego: !!params.ciego });
       } else {
         this.renderHUD();
         this.renderQuestion(this.currentIndex);
@@ -205,10 +226,15 @@
      * Starts a new official exam session.
      * @param {number} [customBlockIndex] 
      */
-    startNewExam(customBlockIndex) {
+    startNewExam(customBlockIndex, opciones) {
       const app = global.GCP_APP;
       const certId = (app && app.activeCertId) || 'ace';
-      const pool = (app && typeof app.getQuestionPool === 'function') ? app.getQuestionPool() : [];
+      const opts = opciones || {};
+      // Simulacro ciego: solo preguntas de la reserva, nunca practicadas.
+      const pool = (app && typeof app.getQuestionPool === 'function')
+        ? app.getQuestionPool(opts.ciego ? { soloReserva: true } : undefined)
+        : [];
+      this.esSimulacroCiego = !!opts.ciego;
 
       if (!pool || pool.length === 0) {
         if (app && app.showToast) {
@@ -231,7 +257,15 @@
       // Extract rotation state
       const certState = (app && app.state && app.state.certifications && app.state.certifications[certId]) || {};
       const rotation = certState.rotation || { epochSeed: 1337, currentBlockIndex: 0 };
-      const blockIdx = customBlockIndex !== undefined ? customBlockIndex : ((rotation.currentBlockIndex || 0) % 6);
+      // Cuantos bloques caben de verdad en el banco disponible. Mientras se
+      // reescribe el banco puede ser 1 o 2, no siempre 6.
+      const tamBloque = (manifest && manifest.questionCount) || 50;
+      const E = global.GCP_ENGINE && global.GCP_ENGINE.BlockRotationEngine;
+      const totalBloques = E ? E.contarBloques(pool.length, tamBloque) : 1;
+      this.totalBloques = totalBloques;
+      const blockIdx = customBlockIndex !== undefined
+        ? (((customBlockIndex % totalBloques) + totalBloques) % totalBloques)
+        : ((rotation.currentBlockIndex || 0) % totalBloques);
 
       // Stratified Block Partitioning
       const domainWeights = {};
@@ -241,25 +275,64 @@
         });
       }
 
-      let blocks = [[], [], [], [], [], []];
-      if (global.GCP_ENGINE && global.GCP_ENGINE.BlockRotationEngine) {
-        blocks = global.GCP_ENGINE.BlockRotationEngine.generateEpochBlocks(
+      let blocks;
+      if (E) {
+        blocks = E.generateEpochBlocks(
           certId,
           domainWeights,
           pool,
-          rotation.epochSeed || 1337
+          rotation.epochSeed || 1337,
+          tamBloque
         );
       } else {
-        // Fallback: chunk pool into 6 blocks of 50
-        for (let b = 0; b < 6; b++) {
-          blocks[b] = pool.slice(b * 50, (b + 1) * 50);
+        // Sin motor: reparto plano del mismo tamano.
+        const porBloque = Math.ceil(pool.length / totalBloques);
+        blocks = [];
+        for (let b = 0; b < totalBloques; b++) {
+          blocks[b] = pool.slice(b * porBloque, (b + 1) * porBloque);
         }
       }
 
-      this.currentBlockQuestions = blocks[blockIdx] || pool.slice(0, 50);
+      this.currentBlockQuestions = blocks[blockIdx] || blocks[0] || pool.slice(0, tamBloque);
       if (this.currentBlockQuestions.length === 0) {
-        this.currentBlockQuestions = pool.slice(0, 50);
+        this.currentBlockQuestions = pool.slice(0, tamBloque);
       }
+      // En simulacro ciego no hay rotación: se usa la reserva tal cual.
+      if (opts.ciego) {
+        this.currentBlockQuestions = pool.slice(0, 60);
+      }
+
+      // El examen real tiene 50-60 preguntas. Si el banco disponible no da para
+      // llenar un bloque decente -- pasa con el filtro de "solo verificadas"
+      // mientras se reescribe el banco -- un "simulacro" de 21 preguntas con el
+      // cronometro de 120 minutos no se parece a nada, y su porcentaje engaña.
+      // Antes de arrancar se dice claramente y se deja decidir.
+      const MINIMO_SIMULACRO = 40;
+      if (this.currentBlockQuestions.length < MINIMO_SIMULACRO) {
+        const n = this.currentBlockQuestions.length;
+        const app = global.GCP_APP;
+        const soloVerif = app && app.state && app.state.settings &&
+                          app.state.settings.soloVerificadas !== false;
+        const motivo = soloVerif
+          ? `Con el filtro de preguntas verificadas activo solo hay ${pool.length} disponibles, así que este bloque tendría ${n} preguntas.`
+          : `Este bloque solo tiene ${n} preguntas.`;
+        const mensaje = `${motivo}\n\nEl examen real tiene entre 50 y 60. Un simulacro de ${n} no mide lo mismo y su porcentaje no es comparable.\n\nTe recomiendo modo Estudio hasta que el banco crezca. ¿Aun así quieres hacerlo?`;
+        if (app && typeof app.confirm === 'function') {
+          app.confirm('Este simulacro sería demasiado corto', mensaje,
+            () => this.arrancarBloque(blockIdx, durationMin),
+            () => { if (app.navigateTo) app.navigateTo('study'); });
+          return;
+        }
+      }
+      this.arrancarBloque(blockIdx, durationMin);
+    },
+
+    /**
+     * Segunda mitad del arranque, separada para poder confirmar antes.
+     * Recibe blockIdx y durationMin porque se definen en la primera mitad.
+     */
+    arrancarBloque(blockIdx, durationMin) {
+      const app = global.GCP_APP;
 
       // Initialize answers map for all 50 questions
       this.userAnswers = {};
@@ -286,7 +359,9 @@
       this.renderPalette();
 
       if (app && app.showToast) {
-        app.showToast(`Simulacro oficial iniciado — Bloque ${blockIdx + 1} de 6 (${durationMin} min)`, 'info');
+        const nBloques = this.totalBloques || 1;
+        const etiqueta = nBloques > 1 ? `Bloque ${blockIdx + 1} de ${nBloques}` : 'Simulacro';
+        app.showToast(`Simulacro oficial iniciado — ${etiqueta}, ${this.currentBlockQuestions.length} preguntas (${durationMin} min)`, 'info');
       }
     },
 
@@ -359,7 +434,9 @@
       const app = global.GCP_APP;
       const certId = (app && app.activeCertId) || 'ace';
       const certState = (app && app.state && app.state.certifications && app.state.certifications[certId]) || {};
-      const blockIdx = ((certState.rotation && certState.rotation.currentBlockIndex) || 0) % 6;
+      const totalBloques = this.totalBloques ||
+        (app && typeof app.numeroDeBloques === 'function' ? app.numeroDeBloques(certId) : 1);
+      const blockIdx = ((certState.rotation && certState.rotation.currentBlockIndex) || 0) % totalBloques;
 
       const badgeCert = document.getElementById('exam-badge-cert');
       const blockTitle = document.getElementById('exam-block-title');
@@ -370,7 +447,10 @@
 
       if (badgeCert) badgeCert.textContent = (manifest && manifest.code) || certId.toUpperCase();
       if (blockTitle) {
-        blockTitle.textContent = `${(manifest && manifest.name) || certId.toUpperCase()} — Bloque ${blockIdx + 1} de 6`;
+        const nombre = (manifest && manifest.name) || certId.toUpperCase();
+        blockTitle.textContent = totalBloques > 1
+          ? `${nombre} — Bloque ${blockIdx + 1} de ${totalBloques}`
+          : `${nombre} — Simulacro`;
       }
     },
 
@@ -404,6 +484,13 @@
         posIndicator.textContent = `Pregunta ${safeIndex + 1} de ${this.currentBlockQuestions.length}`;
       }
 
+      // Numero de pregunta grande (tema Bloque). Es decorativo: el lector de
+      // pantalla ya recibe la posicion por #exam-position-indicator.
+      const idxNum = document.getElementById('exam-q-index-num');
+      const idxTotal = document.getElementById('exam-q-index-total');
+      if (idxNum) idxNum.textContent = String(safeIndex + 1);
+      if (idxTotal) idxTotal.textContent = `/ ${this.currentBlockQuestions.length}`;
+
       const trackFill = document.getElementById('exam-track-fill');
       if (trackFill) {
         trackFill.style.width = `${((safeIndex + 1) / this.currentBlockQuestions.length) * 100}%`;
@@ -428,15 +515,8 @@
       }
 
       // Multi-select badge
-      const multiselectBadge = document.getElementById('exam-multiselect-badge');
-      if (multiselectBadge) {
-        if (q.isMultiSelect) {
-          multiselectBadge.style.display = 'inline-block';
-          multiselectBadge.textContent = `Seleccione ${q.expectedSelectCount || 2} opciones`;
-        } else {
-          multiselectBadge.style.display = 'none';
-        }
-      }
+      // El aviso de seleccion multiple lo pinta actualizarAvisoSeleccion(),
+      // que ademas cuenta cuantas faltan.
 
       // Scenario text
       const scenarioEl = document.getElementById('exam-scenario-text');
@@ -575,7 +655,13 @@
       const fragment = document.createDocumentFragment();
       const options = question.options || [];
 
-      options.forEach(opt => {
+      // Un grupo de radios y un grupo de casillas no se anuncian igual.
+      container.setAttribute('role', question.isMultiSelect ? 'group' : 'radiogroup');
+      container.setAttribute('aria-label', question.isMultiSelect
+        ? 'Opciones de examen, seleccion multiple'
+        : 'Opciones de examen');
+
+      options.forEach((opt, optIdx) => {
         const optionCard = document.createElement('div');
         optionCard.className = 'option-card';
         const isChosen = userAns.chosen.includes(opt.letter);
@@ -587,8 +673,17 @@
         optionCard.setAttribute('aria-checked', isChosen ? 'true' : 'false');
         optionCard.setAttribute('data-letter', opt.letter);
 
+        // Sin tabindex la tarjeta era invisible para el teclado: se podia oir
+        // con el lector de pantalla pero no alcanzar ni pulsar. El foco viaja
+        // (roving tabindex): entra en la opcion elegida, o en la primera.
+        const esFoco = isChosen || (!userAns.chosen.length && optIdx === 0);
+        optionCard.setAttribute('tabindex', esFoco ? '0' : '-1');
+
         optionCard.innerHTML = `
-          <div class="option-letter-badge">${opt.letter}</div>
+          <div class="option-letter-badge">
+            <span class="option-letra">${opt.letter}</span>
+            <span class="option-num">${optIdx + 1}</span>
+          </div>
           <div class="option-content-text">${opt.text}</div>
         `;
 
@@ -596,10 +691,116 @@
           this.selectOption(opt.letter);
         });
 
+        optionCard.addEventListener('keydown', (e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this.selectOption(opt.letter);
+          }
+        });
+
         fragment.appendChild(optionCard);
       });
 
       container.appendChild(fragment);
+
+      this.actualizarAvisoSeleccion(question, userAns);
+
+      // La leyenda dice las teclas reales de ESTA pregunta (4 o 5 opciones).
+      const leyenda = document.getElementById('exam-kbd-hint');
+      if (leyenda && options.length) {
+        const ult = options[options.length - 1].letter;
+        leyenda.innerHTML =
+          '<kbd>A</kbd>–<kbd>' + ult + '</kbd> o <kbd>1</kbd>–<kbd>' + options.length + '</kbd> responder' +
+          ' · <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegar · <kbd>F</kbd> marcar · <kbd>Retroceso</kbd> limpiar';
+      }
+    },
+
+    /**
+     * Repinta seleccion sin reconstruir el DOM: si se recrean las tarjetas en
+     * cada clic el foco del teclado salta al principio y el lector de pantalla
+     * vuelve a leer las cinco opciones.
+     * @param {object} question
+     * @param {object} userAns
+     */
+    actualizarSeleccionVisual(question, userAns) {
+      const container = document.getElementById('exam-options-container');
+      if (!container) return;
+
+      container.querySelectorAll('.option-card').forEach(card => {
+        const letra = card.getAttribute('data-letter');
+        const elegida = userAns.chosen.includes(letra);
+        card.classList.toggle('selected', elegida);
+        card.setAttribute('aria-checked', elegida ? 'true' : 'false');
+        card.setAttribute('tabindex', elegida ? '0' : '-1');
+      });
+
+      if (!userAns.chosen.length) {
+        const primera = container.querySelector('.option-card');
+        if (primera) primera.setAttribute('tabindex', '0');
+      }
+
+      this.actualizarAvisoSeleccion(question, userAns);
+    },
+
+    /**
+     * Dice cuantas opciones faltan en las preguntas de varias respuestas y
+     * anuncia el cambio por region viva. Antes el badge decia "Seleccione 2"
+     * y no se movia nunca, asi que no se sabia si ya llevabas una.
+     * @param {object} question
+     * @param {object} userAns
+     */
+    actualizarAvisoSeleccion(question, userAns) {
+      const badge = document.getElementById('exam-multiselect-badge');
+      const live = document.getElementById('exam-answer-live');
+      const elegidas = (userAns && userAns.chosen) ? userAns.chosen.length : 0;
+
+      if (!question.isMultiSelect) {
+        if (badge) badge.style.display = 'none';
+        if (live) {
+          live.textContent = elegidas
+            ? `Opcion ${userAns.chosen[0]} seleccionada`
+            : 'Sin responder';
+        }
+        return;
+      }
+
+      const requeridas = question.expectedSelectCount ||
+        (Array.isArray(question.correct) ? question.correct.length : 2);
+      const faltan = requeridas - elegidas;
+
+      if (badge) {
+        badge.style.display = 'inline-block';
+        badge.classList.toggle('multi-completo', faltan <= 0);
+        badge.textContent = faltan > 0
+          ? `Selecciona ${requeridas} — te ${faltan === 1 ? 'falta 1' : 'faltan ' + faltan}`
+          : `${requeridas} de ${requeridas} seleccionadas`;
+      }
+      if (live) {
+        live.textContent = faltan > 0
+          ? `${elegidas} de ${requeridas} seleccionadas, faltan ${faltan}`
+          : `${requeridas} de ${requeridas} seleccionadas`;
+      }
+    },
+
+    /**
+     * Mueve el foco entre tarjetas con las flechas verticales, como pide el
+     * patron de radiogroup de ARIA.
+     * @param {number} paso
+     */
+    moverFocoOpcion(paso) {
+      const container = document.getElementById('exam-options-container');
+      if (!container) return;
+      const cards = Array.prototype.slice.call(container.querySelectorAll('.option-card'));
+      if (!cards.length) return;
+
+      const actual = cards.indexOf(document.activeElement);
+      const siguiente = actual < 0
+        ? 0
+        : (actual + paso + cards.length) % cards.length;
+
+      cards.forEach(c => c.setAttribute('tabindex', '-1'));
+      cards[siguiente].setAttribute('tabindex', '0');
+      cards[siguiente].focus();
     },
 
     /**
@@ -613,6 +814,11 @@
       if (!q) return;
 
       const upper = letter.toUpperCase();
+      // Una letra que la pregunta no ofrece no debe registrarse: con cuatro
+      // opciones, pulsar "E" no puede dejar una respuesta fantasma.
+      const existe = (q.options || []).some(o => String(o.letter).toUpperCase() === upper);
+      if (!existe) return;
+
       const userAns = this.userAnswers[q.id] || { chosen: [], isFlagged: false, timeSpentMs: 0 };
 
       if (!q.isMultiSelect) {
@@ -622,6 +828,15 @@
         if (idx >= 0) {
           userAns.chosen.splice(idx, 1);
         } else {
+          const requeridas = q.expectedSelectCount ||
+            (Array.isArray(q.correct) ? q.correct.length : 2);
+          // Tope duro: si el examen pide 2 no se pueden dejar 3 marcadas.
+          if (userAns.chosen.length >= requeridas) {
+            if (global.GCP_APP && global.GCP_APP.showToast) {
+              global.GCP_APP.showToast(`Esta pregunta admite ${requeridas} opciones. Desmarca una para cambiar.`, 'info');
+            }
+            return;
+          }
           userAns.chosen.push(upper);
           userAns.chosen.sort();
         }
@@ -633,7 +848,7 @@
         global.GCP_APP.playSound('click');
       }
 
-      this.renderOptions(q, userAns);
+      this.actualizarSeleccionVisual(q, userAns);
       this.renderPalette();
     },
 
@@ -644,10 +859,11 @@
       const q = this.currentBlockQuestions[this.currentIndex];
       if (!q) return;
 
-      if (this.userAnswers[q.id]) {
-        this.userAnswers[q.id].chosen = [];
+      if (!this.userAnswers[q.id]) {
+        this.userAnswers[q.id] = { chosen: [], isFlagged: false, timeSpentMs: 0 };
       }
-      this.renderOptions(q, this.userAnswers[q.id]);
+      this.userAnswers[q.id].chosen = [];
+      this.actualizarSeleccionVisual(q, this.userAnswers[q.id]);
       this.renderPalette();
     },
 
@@ -909,7 +1125,7 @@
         timestamp: now,
         certId: certId,
         mode: 'simulation',
-        blockId: `BLOCK-${(((app && app.state && app.state.certifications[certId] && app.state.certifications[certId].rotation && app.state.certifications[certId].rotation.currentBlockIndex) || 0) % 6) + 1}`,
+        blockId: `BLOCK-${(((app && app.state && app.state.certifications[certId] && app.state.certifications[certId].rotation && app.state.certifications[certId].rotation.currentBlockIndex) || 0) % (this.totalBloques || 1)) + 1}`,
         scorePercent: scorePercent,
         passed: passed,
         totalQuestions: totalQs,
@@ -934,7 +1150,7 @@
 
         // Advance block rotation index
         cState.rotation = cState.rotation || { currentBlockIndex: 0 };
-        cState.rotation.currentBlockIndex = ((cState.rotation.currentBlockIndex || 0) + 1) % 6;
+        cState.rotation.currentBlockIndex = ((cState.rotation.currentBlockIndex || 0) + 1) % (this.totalBloques || 1);
         cState.currentBlockIndex = cState.rotation.currentBlockIndex;
 
         // Apply Leitner updates
@@ -1082,7 +1298,7 @@
       const qArea = document.getElementById('exam-question-area');
       if (!qArea) return;
 
-      const pool = (app && typeof app.getQuestionPool === 'function') ? app.getQuestionPool() : [];
+      const pool = (app && typeof app.getQuestionPool === 'function') ? app.getQuestionPool({ incluirReserva: true }) : [];
       const qIndex = (app && app.questionIndex) || {};
 
       let questionsToReview = [];

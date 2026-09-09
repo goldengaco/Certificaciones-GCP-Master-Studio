@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D4-005",
+  "subtopic": "Cuentas de Servicio (Service Accounts): Identidades para Aplicaciones y Cargas",
+  "caseStudy": "none",
+  "scenario": "Una aplicación backend en Compute Engine necesita autenticarse automáticamente con Cloud Storage para descargar archivos sin que intervenga un usuario humano ingresando un usuario y contraseña. ¿Qué tipo de identidad de IAM debe asignarse a la máquina virtual?",
+  "correct": "B",
+  "clave_len": 113,
+  "explanation": "Una Service Account (Cuenta de Servicio) es una identidad especial utilizada por aplicaciones y cargas de trabajo de cómputo (en lugar de personas humanas) para autenticarse y realizar llamadas autorizadas a las APIs de Google Cloud de forma segura mediante tokens de corta duración.",
+  "doc": "https://cloud.google.com/iam/docs/service-account-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "La cuenta de correo personal de Gmail del desarrollador más joven del equipo."
+   },
+   {
+    "letter": "B",
+    "len": 113,
+    "text": "Una Cuenta de Servicio (Service Account) con los roles de IAM específicos otorgados para acceder a Cloud Storage."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Crear una cuenta de Facebook para el servidor de Compute Engine."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "Desactivar la autenticación en Cloud Storage haciéndolo público a todo Internet."
+   }
+  ],
+  "ratio": 1.53
+ },
+ {
+  "id": "CDL-D4-010",
+  "subtopic": "Arquitectura Zero Trust y BeyondCorp Enterprise",
+  "caseStudy": "none",
+  "scenario": "Una empresa desea eliminar su compleja y costosa VPN corporativa tradicional. Quieren que los empleados remotos accedan a las aplicaciones web internas desde cualquier lugar del mundo de forma segura, evaluando dinámicamente en cada solicitud: la identidad del usuario, el estado de seguridad de su dispositivo (antivirus activo, disco cifrado) y su contexto de ubicación (Context-Aware Access), bajo el principio de 'nunca confiar, siempre verificar'. ¿Cómo se denomina esta solución de Google Cloud?",
+  "correct": "D",
+  "clave_len": 78,
+  "explanation": "BeyondCorp Enterprise es la solución Zero Trust de Google Cloud que reemplaza los perímetros de VPN tradicionales por un modelo de seguridad centrado en la identidad y el contexto del dispositivo (Context-Aware Access), permitiendo a los empleados acceder de forma segura a aplicaciones web e infraestructura desde cualquier red.",
+  "doc": "https://cloud.google.com/beyondcorp-enterprise",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Una red Wi-Fi pública abierta en un centro comercial sin contraseña"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Obligar a los empleados a vivir dentro del centro de datos físico"
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "BeyondCorp Enterprise (la implementación de arquitectura Zero Trust de Google)"
+   }
+  ],
+  "ratio": 1.53
+ },
+ {
+  "id": "CDL-D1-007",
+  "subtopic": "Fases de Madurez de Adopción de Nube: Táctica, Estratégica, Transformacional",
+  "caseStudy": "none",
+  "scenario": "Una organización ha rediseñado completamente su modelo de negocio: utiliza inteligencia artificial integrada en tiempo real en todos sus productos, sus equipos entregan código a producción múltiples veces al día mediante microservicios serverless, y la innovación impulsa nuevos flujos de ingresos. Según el CAF, ¿en qué etapa de madurez se encuentra esta empresa?",
+  "correct": "C",
+  "clave_len": 41,
+  "explanation": "La etapa Transformacional representa el nivel más alto de madurez del Cloud Adoption Framework, donde la nube no solo optimiza costos u operaciones, sino que redefine activamente el modelo de negocio, impulsa la innovación con IA y crea ventajas competitivas sostenibles.",
+  "doc": "https://cloud.google.com/adoption-framework",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 24,
+    "text": "Etapa Táctica (Tactical)"
+   },
+   {
+    "letter": "B",
+    "len": 29,
+    "text": "Etapa Estratégica (Strategic)"
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "Etapa Transformacional (Transformational)"
+   },
+   {
+    "letter": "D",
+    "len": 28,
+    "text": "Etapa Inicial de Exploración"
+   }
+  ],
+  "ratio": 1.52
+ },
+ {
+  "id": "CDL-D4-034",
+  "subtopic": "Cumplimiento Regulatorio Internacional (ISO, SOC, HIPAA, FedRAMP, PCI-DSS)",
+  "caseStudy": "none",
+  "scenario": "El equipo legal y de cumplimiento de un banco requiere acceder a los reportes de auditoría independientes SOC 1, SOC 2, ISO/IEC 27001, PCI-DSS y acuerdos HIPAA BAA para certificar que la infraestructura de Google Cloud cumple con las normativas financieras de los reguladores. ¿Dónde pueden los clientes descargar estos reportes oficiales de auditoría?",
+  "correct": "B",
+  "clave_len": 95,
+  "explanation": "Google Cloud ofrece a sus clientes acceso directo y bajo demanda a sus informes de auditoría independientes (SOC, ISO, PCI, FedRAMP, etc.) y certificados de cumplimiento a través del portal oficial Compliance Reports Manager.",
+  "doc": "https://cloud.google.com/security/compliance/compliance-reports-manager",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "Enviar una carta física por barco a la sede central de las Naciones Unidas"
+   },
+   {
+    "letter": "B",
+    "len": 95,
+    "text": "Compliance Reports Manager en el Centro de Recursos de Seguridad y Cumplimiento de Google Cloud"
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Google Cloud no cuenta con ninguna certificación de seguridad internacional"
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Buscar en foros no oficiales de Internet"
+   }
+  ],
+  "ratio": 1.51
+ },
+ {
+  "id": "CDL-D1-009",
+  "subtopic": "Eliminación de Silos de Datos y Datos Compartidos",
+  "caseStudy": "none",
+  "scenario": "En una empresa de comercio minorista, los datos de ventas en tiendas físicas, inventarios y ventas en línea están almacenados en sistemas independientes que no se comunican entre sí, impidiendo una visión unificada del cliente. ¿Cuál es el principal beneficio de unificar estos datos en Google Cloud?",
+  "correct": "C",
+  "clave_len": 147,
+  "explanation": "Consolidar datos dispersos en una plataforma unificada en Google Cloud rompe los silos organizacionales, democratiza la información y permite generar analítica predictiva y reportes en tiempo real accesibles para todos los tomadores de decisiones.",
+  "doc": "https://cloud.google.com/solutions/data-warehouse",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 98,
+    "text": "Reemplazar los sistemas digitales por registros manuales en papel para reducir el consumo de nube."
+   },
+   {
+    "letter": "B",
+    "len": 105,
+    "text": "Restringir el acceso a los datos únicamente al departamento de finanzas mediante contraseñas compartidas."
+   },
+   {
+    "letter": "C",
+    "len": 147,
+    "text": "Eliminar los silos de datos para democratizar el acceso a la información y habilitar analítica omnicanal en tiempo real para la toma de decisiones."
+   },
+   {
+    "letter": "D",
+    "len": 94,
+    "text": "Aislar aún más los sistemas para evitar que los departamentos compartan información comercial."
+   }
+  ],
+  "ratio": 1.48
+ },
+ {
+  "id": "CDL-D1-014",
+  "subtopic": "Agilidad Empresarial y Reducción del Time-to-Market",
+  "caseStudy": "none",
+  "scenario": "Una empresa de retail compite con nuevos actores nativos digitales que lanzan funcionalidades comerciales en días. En su infraestructura local, aprovisionar un nuevo entorno de pruebas toma 8 semanas. ¿Cómo resuelve Google Cloud este cuello de botella?",
+  "correct": "B",
+  "clave_len": 144,
+  "explanation": "La infraestructura programable y bajo demanda de Google Cloud permite a los equipos de desarrollo crear y destruir entornos en cuestión de minutos, reduciendo drásticamente el tiempo de comercialización (time-to-market) y acelerando los ciclos de retroalimentación con los clientes.",
+  "doc": "https://cloud.google.com/solutions/devops",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 106,
+    "text": "Exige que los proveedores de hardware entreguen servidores físicos en 24 horas a las oficinas del cliente."
+   },
+   {
+    "letter": "B",
+    "len": 144,
+    "text": "Permite aprovisionar recursos de cómputo, bases de datos y entornos completos de desarrollo en minutos mediante APIs y plantillas automatizadas."
+   },
+   {
+    "letter": "C",
+    "len": 96,
+    "text": "Elimina la fase de pruebas de software para desplegar directamente en producción sin validación."
+   },
+   {
+    "letter": "D",
+    "len": 89,
+    "text": "Restringe la creación de nuevos servicios a un único día al mes para mantener el control."
+   }
+  ],
+  "ratio": 1.48
+ },
+ {
+  "id": "CDL-D2-060",
+  "subtopic": "Data Catalog: Búsqueda y Clasificación de Metadatos",
+  "caseStudy": "none",
+  "scenario": "El equipo de gobernanza de datos de una corporación necesita una herramienta centralizada para que los analistas puedan buscar tablas, esquemas y conjuntos de datos en BigQuery y Cloud Storage utilizando palabras clave, y que permita adjuntar etiquetas personalizadas de negocio (como 'Clasificación de Seguridad: Confidencial' o 'Dueño del Dato'). ¿Qué componente de Dataplex / Data Catalog cumple esta función?",
+  "correct": "A",
+  "clave_len": 36,
+  "explanation": "Data Catalog (ahora integrado en la suite de Dataplex) es un servicio de administración de metadatos totalmente administrado y escalable que permite a las organizaciones descubrir, clasificar y gobernar rápidamente sus activos de datos en Google Cloud mediante plantillas de etiquetas (Tag Templates).",
+  "doc": "https://cloud.google.com/dataplex/docs/data-catalog-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 36,
+    "text": "Data Catalog (integrado en Dataplex)"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Google Workspace Gmail"
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "Google Compute Engine Custom Machine Types"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud Run"
+   }
+  ],
+  "ratio": 1.48
+ },
+ {
+  "id": "CDL-D2-008",
+  "subtopic": "Cloud Storage: Inmutabilidad y Bloqueo de Retención (Bucket Lock)",
+  "caseStudy": "none",
+  "scenario": "Una casa de bolsa necesita almacenar registros financieros con el requerimiento estricto de que nadie, ni siquiera un administrador con permisos 'Owner', pueda modificar o borrar los archivos durante 5 años (modelo WORM - Write Once, Read Many). ¿Qué funcionalidad de Google Cloud garantiza este cumplimiento?",
+  "correct": "D",
+  "clave_len": 112,
+  "explanation": "Bucket Lock permite fijar y bloquear de forma irrevocable una política de retención en Cloud Storage, haciendo que los objetos sean inmutables (WORM) y no puedan ser sobrescritos ni eliminados hasta que venza el periodo de retención especificado, cumpliendo con normas como SEC 17a-4.",
+  "doc": "https://cloud.google.com/storage/docs/bucket-lock",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 94,
+    "text": "Guardar los archivos en una máquina virtual de Compute Engine y cambiar la contraseña de root."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Subir los archivos a Google Drive personal sin respaldo."
+   },
+   {
+    "letter": "C",
+    "len": 79,
+    "text": "Pedir a los administradores por correo electrónico que prometan no borrar nada."
+   },
+   {
+    "letter": "D",
+    "len": 112,
+    "text": "Configurar una política de retención en el bucket de Cloud Storage y bloquearla permanentemente con Bucket Lock."
+   }
+  ],
+  "ratio": 1.47
+ },
+ {
+  "id": "CDL-D2-048",
+  "subtopic": "Cloud Storage: URLs Firmadas (Signed URLs) para Carga y Descarga Segura",
+  "caseStudy": "none",
+  "scenario": "Una aplicación web de compras en línea permite a los usuarios subir una foto de su identificación personal durante el registro. La empresa no desea que los usuarios tengan cuentas de Google ni permisos de IAM directos sobre el bucket de Cloud Storage, pero requiere que suban su archivo directamente a una ruta específica con un enlace temporal que expire en 15 minutos. ¿Qué mecanismo proporciona este acceso?",
+  "correct": "B",
+  "clave_len": 134,
+  "explanation": "Las URLs firmadas (Signed URLs) otorgan acceso temporal y limitado (lectura o escritura) a un objeto específico de Cloud Storage a usuarios que no tienen credenciales de Google Cloud, expirando automáticamente tras el tiempo especificado.",
+  "doc": "https://cloud.google.com/storage/docs/access-control/signed-urls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 92,
+    "text": "Crear una cuenta de administrador de Google Cloud para cada cliente que visite el sitio web."
+   },
+   {
+    "letter": "B",
+    "len": 134,
+    "text": "Generar una URL firmada (Signed URL) con un límite de tiempo de expiración de 15 minutos que otorgue permisos temporales de escritura."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Pedir al usuario que envíe la foto por correo postal en un sobre sellado."
+   },
+   {
+    "letter": "D",
+    "len": 111,
+    "text": "Hacer público el bucket completo para que cualquier persona en Internet pueda leer y borrar todos los archivos."
+   }
+  ],
+  "ratio": 1.46
+ },
+ {
+  "id": "CDL-D4-046",
+  "subtopic": "Google Cloud Pricing Calculator: Estimación de Costos de Proyectos",
+  "caseStudy": "none",
+  "scenario": "Un equipo de arquitectura está diseñando una nueva aplicación y el Director Financiero (CFO) exige una estimación detallada del costo mensual antes de encender cualquier recurso en la nube. ¿Qué herramienta oficial gratuita y accesible en la web permite simular configuraciones de servicios y calcular presupuestos previstos?",
+  "correct": "C",
+  "clave_len": 72,
+  "explanation": "Google Cloud Pricing Calculator es la herramienta interactiva oficial que permite a los arquitectos y líderes financieros modelar arquitecturas, configurar parámetros de servicios (cómputo, almacenamiento, redes) y obtener estimaciones precisas de costos mensuales previstos.",
+  "doc": "https://cloud.google.com/products/calculator",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "Encender 500 máquinas virtuales durante un mes para ver cuánto cobran en la factura"
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "Google Cloud Pricing Calculator (Calculadora de precios de Google Cloud)"
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "Adivinar una cifra al azar en una servilleta"
+   }
+  ],
+  "ratio": 1.46
+ },
+ {
+  "id": "CDL-D4-050",
+  "subtopic": "Policy Troubleshooter: Diagnóstico y Resolución de Problemas de Acceso",
+  "caseStudy": "none",
+  "scenario": "Un desarrollador recibe un error 'Permission Denied' (Permiso Denegado) al intentar publicar un mensaje en un tema de Pub/Sub. El administrador de seguridad necesita averiguar rápidamente qué política de IAM, permiso específico o condición está bloqueando el acceso o por qué el rol asignado no se está aplicando. ¿Qué herramienta de diagnóstico de IAM resuelve esto?",
+  "correct": "C",
+  "clave_len": 69,
+  "explanation": "Policy Troubleshooter permite a los administradores de seguridad evaluar y depurar de forma instantánea por qué un usuario o cuenta de servicio tiene o no tiene un permiso específico sobre un recurso, analizando todas las vinculaciones de roles heredadas y condiciones aplicadas.",
+  "doc": "https://cloud.google.com/iam/docs/troubleshooting-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 93,
+    "text": "Darle permisos de Administrador de Organización (Owner) al desarrollador para que no se queje"
+   },
+   {
+    "letter": "B",
+    "len": 28,
+    "text": "Apagar el clúster de Pub/Sub"
+   },
+   {
+    "letter": "C",
+    "len": 69,
+    "text": "Policy Troubleshooter (Solucionador de problemas de políticas de IAM)"
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 1.46
+ },
+ {
+  "id": "CDL-D2-056",
+  "subtopic": "BigQuery GIS: Analítica Geoespacial",
+  "caseStudy": "none",
+  "scenario": "Una empresa de logística de envíos necesita analizar millones de trayectorias de camiones de entrega, calcular distancias entre clientes y depósitos utilizando polígonos geográficos y detectar zonas de alta densidad de entregas mediante funciones espaciales SQL. ¿Qué funcionalidad de BigQuery permite realizar análisis geoespacial?",
+  "correct": "A",
+  "clave_len": 45,
+  "explanation": "BigQuery GIS combina la arquitectura serverless de BigQuery con soporte nativo para tipos de datos y funciones geoespaciales (como `ST_GEOGPOINT`, `ST_CONTAINS`, `ST_DISTANCE`), permitiendo analizar petabytes de datos espaciales y visualizarlos en herramientas como Looker Studio o BigQuery Geo Viz.",
+  "doc": "https://cloud.google.com/bigquery/docs/gis-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "BigQuery GIS (Geographic Information Systems)"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Billing Reports"
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Google Maps impreso en un mapa mural en la oficina"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   }
+  ],
+  "ratio": 1.45
+ },
+ {
+  "id": "CDL-D2-081",
+  "subtopic": "Vertex AI Pipelines: Automatización y Reproducibilidad de MLOps",
+  "caseStudy": "none",
+  "scenario": "Un equipo de MLOps necesita automatizar el reentrenamiento semanal de sus modelos de recomendación: extraer datos nuevos de BigQuery, validar que no haya datos corruptos, reentrenar el modelo, evaluarlo contra el modelo en producción y desplegarlo solo si su precisión supera un umbral definido. ¿Qué herramienta de Vertex AI orquesta este flujo de forma serverless?",
+  "correct": "A",
+  "clave_len": 56,
+  "explanation": "Vertex AI Pipelines permite orquestar y automatizar flujos de trabajo de Machine Learning de extremo a extremo sin servidor utilizando marcos estándar como Kubeflow Pipelines (KFP) o TensorFlow Extended (TFX), rastreando artefactos y linaje de datos de forma automática.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/pipelines/introduction",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Vertex AI Pipelines (basado en Kubeflow Pipelines y TFX)"
+   },
+   {
+    "letter": "B",
+    "len": 73,
+    "text": "Ejecutar un script manualmente en una laptop personal con la tapa cerrada"
+   },
+   {
+    "letter": "C",
+    "len": 16,
+    "text": "Google Cloud CDN"
+   },
+   {
+    "letter": "D",
+    "len": 28,
+    "text": "Cloud Interconnect Dedicated"
+   }
+  ],
+  "ratio": 1.44
+ },
+ {
+  "id": "CDL-D3-066",
+  "subtopic": "Compute Engine: Familias de Máquinas (General-purpose, Compute-optimized, Memory-optimized, Accelerator-optimized)",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto debe seleccionar la familia de máquinas de Compute Engine adecuada para: (1) Cargas de trabajo de uso general con equilibrio costo/rendimiento (E2/N2), (2) Cargas intensivas en CPU como codificación de video y videojuegos (C2/C3), y (3) Bases de datos masivas en memoria como SAP HANA que requieren terabytes de RAM (M2/M3). ¿Cuál es la asignación correcta?",
+  "correct": "D",
+  "clave_len": 88,
+  "explanation": "Compute Engine ofrece familias de máquinas optimizadas: General-purpose (E2, N2) para balance general; Compute-optimized (C2, C3) para máximo rendimiento por núcleo de CPU; y Memory-optimized (M2, M3) con hasta 12 TB de RAM certificadas para SAP HANA.",
+  "doc": "https://cloud.google.com/compute/docs/machine-types",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Usar la máquina más pequeña posible de $3 al mes para SAP HANA de 4 Terabytes"
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Cloud Storage Archive para todas las cargas"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "(1) Memory-optimized, (2) General-purpose, (3) Compute-optimized"
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "(1) General-purpose (E2/N2), (2) Compute-optimized (C2/C3), (3) Memory-optimized (M2/M3)"
+   }
+  ],
+  "ratio": 1.43
+ },
+ {
+  "id": "CDL-D4-040",
+  "subtopic": "Uptime Checks y Pruebas de Disponibilidad en Cloud Monitoring",
+  "caseStudy": "none",
+  "scenario": "Un equipo web necesita verificar que su portal público de clientes responde con código HTTP 200 desde múltiples ubicaciones geográficas alrededor del mundo (Europa, Asia, América) cada 1 minuto, alertando si el sitio web deja de ser accesible desde alguna región. ¿Qué funcionalidad de Cloud Monitoring proporciona estas pruebas?",
+  "correct": "A",
+  "clave_len": 73,
+  "explanation": "Los Uptime Checks en Cloud Monitoring envían solicitudes periódicas desde servidores distribuidos globalmente hacia la URL pública de la aplicación para medir la disponibilidad, latencia y códigos de respuesta, disparando alertas de inmediato si el sitio se vuelve inalcanzable.",
+  "doc": "https://cloud.google.com/monitoring/uptime-checks",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Comprobaciones de tiempo de actividad (Uptime Checks en Cloud Monitoring)"
+   },
+   {
+    "letter": "B",
+    "len": 78,
+    "text": "Pedir a amigos que vivan en el extranjero que visiten la página una vez al año"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Desactivar el sitio web para no tener que monitorearlo"
+   }
+  ],
+  "ratio": 1.42
+ },
+ {
+  "id": "CDL-D4-068",
+  "subtopic": "Tipos de Soporte Técnico en Google Cloud: Basic, Standard, Enhanced y Premium",
+  "caseStudy": "none",
+  "scenario": "Una empresa multinacional opera aplicaciones críticas de misión crítica (P1) las 24 horas del día. Requieren un nivel de soporte de Google Cloud que ofrezca un tiempo de respuesta de 15 minutos para incidentes críticos (P1), soporte telefónico 24/7/365 y un Technical Account Manager (TAM) dedicado para asesoría proactiva. ¿Qué nivel de soporte técnico de Customer Care satisface estos requisitos?",
+  "correct": "C",
+  "clave_len": 63,
+  "explanation": "Google Cloud Premium Support ofrece la máxima cobertura para empresas con cargas de misión crítica: respuesta en 15 minutos para incidentes P1 (24/7), un Technical Account Manager (TAM) dedicado, revisiones operativas y soporte multicanal prioritario.",
+  "doc": "https://cloud.google.com/support",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 16,
+    "text": "Soporte Standard"
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "text": "Soporte Básico gratuito (Basic Support con acceso solo a documentación pública)"
+   },
+   {
+    "letter": "C",
+    "len": 63,
+    "text": "Soporte Premium (Premium Support de Google Cloud Customer Care)"
+   },
+   {
+    "letter": "D",
+    "len": 39,
+    "text": "Buscar ayuda en redes sociales públicas"
+   }
+  ],
+  "ratio": 1.41
+ },
+ {
+  "id": "CDL-D3-018",
+  "subtopic": "Google Distributed Cloud (Anthos / GKE Enterprise): Híbrido y Multinube",
+  "caseStudy": "none",
+  "scenario": "Una corporación financiera opera clústeres de Kubernetes en sus propios centros de datos locales, en Google Cloud y en otras nubes públicas. El equipo de seguridad y operaciones sufre para mantener configuraciones y políticas de seguridad consistentes en todos los entornos dispersos. ¿Qué plataforma unificada de Google Cloud les permite gobernar flotas de clústeres híbridos y multinube desde una única consola?",
+  "correct": "C",
+  "clave_len": 64,
+  "explanation": "Google Distributed Cloud (que integra las capacidades de Anthos y GKE Enterprise) es la plataforma de nube híbrida y multinube de Google que permite crear, operar y gobernar clústeres de Kubernetes de manera unificada en centros de datos locales, en el borde y en múltiples nubes públicas con políticas consistentes declarativas basadas en GitOps.",
+  "doc": "https://cloud.google.com/anthos/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 17,
+    "text": "Cloud Armor Basic"
+   },
+   {
+    "letter": "B",
+    "len": 16,
+    "text": "Google Cloud DNS"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Google Distributed Cloud / GKE Enterprise (anteriormente Anthos)"
+   },
+   {
+    "letter": "D",
+    "len": 104,
+    "text": "Contratar a 100 administradores para que configuren cada clúster manualmente por separado todos los días"
+   }
+  ],
+  "ratio": 1.4
+ },
+ {
+  "id": "CDL-D4-057",
+  "subtopic": "Autenticación de Clientes y OAuth 2.0 / OpenID Connect",
+  "caseStudy": "none",
+  "scenario": "Una aplicación web desarrollada en Google Cloud necesita permitir a los usuarios iniciar sesión utilizando sus cuentas de Google de forma segura, otorgando a la app únicamente acceso a su perfil básico sin compartir su contraseña con la aplicación. ¿Qué estándares abiertos de la industria utiliza Google Cloud para autenticación y autorización segura?",
+  "correct": "A",
+  "clave_len": 83,
+  "explanation": "Google Cloud y sus servicios de identidad se basan en estándares abiertos globales líderes: OAuth 2.0 para delegación de autorización de recursos y OpenID Connect (OIDC) para verificación de identidad y autenticación de usuarios de forma segura sin revelar contraseñas a aplicaciones de terceros.",
+  "doc": "https://cloud.google.com/docs/authentication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "OAuth 2.0 (para autorización) y OpenID Connect / OIDC (para autenticación federada)"
+   },
+   {
+    "letter": "B",
+    "len": 80,
+    "text": "Pedir al usuario que envíe su contraseña en texto plano por mensaje de texto SMS"
+   },
+   {
+    "letter": "C",
+    "len": 79,
+    "text": "Guardar todas las contraseñas en un archivo de texto en una memoria USB pública"
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 1.38
+ },
+ {
+  "id": "CDL-D2-067",
+  "subtopic": "Explainable AI: Explicabilidad y Atribución de Características en ML",
+  "caseStudy": "none",
+  "scenario": "Una entidad financiera utiliza un modelo de Machine Learning para aprobar o rechazar solicitudes de crédito hipotecario. Los reguladores bancarios exigen que el banco explique exactamente qué factores (ingresos, historial crediticio, edad, monto) influyeron en la decisión de rechazo para cada solicitante individual. ¿Qué capacidad de Google Cloud proporciona estas atribuciones de características?",
+  "correct": "D",
+  "clave_len": 102,
+  "explanation": "Vertex Explainable AI ayuda a comprender las decisiones de los modelos de Machine Learning al cuantificar la contribución y peso relativo de cada característica (Feature Attribution) en el resultado de la predicción, facilitando la auditoría, la equidad y el cumplimiento regulatorio.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/explainable-ai/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 125,
+    "text": "Decir al regulador que los modelos de inteligencia artificial son 'cajas negras' impenetrables y que no es posible saber nada"
+   },
+   {
+    "letter": "B",
+    "len": 68,
+    "text": "Desinstalar todos los modelos y usar una moneda al aire para decidir"
+   },
+   {
+    "letter": "C",
+    "len": 29,
+    "text": "Cloud Armor Security Policies"
+   },
+   {
+    "letter": "D",
+    "len": 102,
+    "text": "Vertex Explainable AI (que calcula y muestra las atribuciones de características para cada predicción)"
+   }
+  ],
+  "ratio": 1.38
+ },
+ {
+  "id": "CDL-D1-001",
+  "subtopic": "FinOps: CapEx vs OpEx en la Nube",
+  "caseStudy": "none",
+  "scenario": "Una empresa tradicional de servicios financieros desea migrar sus centros de datos locales a Google Cloud. El Director Financiero (CFO) solicita entender el cambio fundamental en la estructura de costos financieros que experimentará la organización. ¿Cómo describe Google Cloud este cambio en el modelo financiero?",
+  "correct": "D",
+  "clave_len": 182,
+  "explanation": "La computación en la nube transforma la economía de TI al sustituir grandes inversiones iniciales de capital (CapEx) en hardware y centros de datos por un modelo elástico de costos operativos (OpEx), donde solo se paga por los recursos efectivamente consumidos bajo demanda.",
+  "doc": "https://cloud.google.com/learn/what-is-cloud-computing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 128,
+    "text": "Eliminación completa de cualquier gasto financiero mediante subsidios automáticos de infraestructura ofrecidos por Google Cloud."
+   },
+   {
+    "letter": "B",
+    "len": 122,
+    "text": "Mantenimiento del mismo modelo CapEx pero transfiriendo la propiedad física del hardware a los centros de datos de Google."
+   },
+   {
+    "letter": "C",
+    "len": 152,
+    "text": "Cambio de un modelo de gastos operativos (OpEx) a un modelo de gastos de capital (CapEx) donde la empresa compra servidores virtuales de forma perpetua."
+   },
+   {
+    "letter": "D",
+    "len": 182,
+    "text": "Cambio de un modelo de gastos de capital (CapEx) con grandes inversiones iniciales en hardware a un modelo de gastos operativos (OpEx) basado en el pago por consumo real de recursos."
+   }
+  ],
+  "ratio": 1.36
+ },
+ {
+  "id": "CDL-D4-062",
+  "subtopic": "Auditoría de Vulnerabilidades de Software con Web Security Scanner",
+  "caseStudy": "none",
+  "scenario": "Una empresa despliega una aplicación web en App Engine y Compute Engine. Desean un escáner automatizado que rastree periódicamente el sitio web en busca de vulnerabilidades comunes de seguridad (como scripts entre sitios XSS, recursos con contraseñas en texto plano o librerías desactualizadas con fallas conocidas). ¿Qué componente de Security Command Center realiza este escaneo?",
+  "correct": "B",
+  "clave_len": 47,
+  "explanation": "Web Security Scanner rastrea automáticamente aplicaciones web públicas en Compute Engine, GKE y App Engine para identificar vulnerabilidades comunes como Cross-Site Scripting (XSS), inyección de contenido y bibliotecas JavaScript vulnerables, reportando los hallazgos en Security Command Center.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-web-security-scanner-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 18,
+    "text": "Cloud Interconnect"
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Web Security Scanner en Security Command Center"
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Desactivar la aplicación para que nadie pueda ver vulnerabilidades"
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 1.34
+ },
+ {
+  "id": "CDL-D2-007",
+  "subtopic": "Cloud Storage: Tipos de Ubicación de Buckets (Regional vs Dual-Region vs Multi-Region)",
+  "caseStudy": "none",
+  "scenario": "Una empresa multinacional requiere almacenar activos digitales accesibles por usuarios en todo Estados Unidos con la máxima resiliencia ante la falla total de un centro de datos regional completo. ¿Qué tipo de ubicación de bucket de Cloud Storage proporciona redundancia geográfica automática?",
+  "correct": "D",
+  "clave_len": 55,
+  "explanation": "Los buckets Multi-Region y Dual-Region almacenan los datos de forma geo-redundante en al menos dos zonas geográficas separadas por cientos de kilómetros, garantizando disponibilidad y continuidad del negocio incluso ante la pérdida completa de una región.",
+  "doc": "https://cloud.google.com/storage/docs/locations",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "IP pública estática sin almacenamiento asociado"
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Regional (por ejemplo, 'us-central1' exclusivamente)"
+   },
+   {
+    "letter": "C",
+    "len": 27,
+    "text": "Local Zonal Persistent Disk"
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Multi-Region o Dual-Region (por ejemplo, 'us' o 'nam4')"
+   }
+  ],
+  "ratio": 1.31
+ },
+ {
+  "id": "CDL-D3-023",
+  "subtopic": "Cloud CDN: Red de Entrega de Contenido y Aceleración en el Borde",
+  "caseStudy": "none",
+  "scenario": "Un sitio web de noticias publica fotografías de alta resolución. Los usuarios de Australia experimentan lentitud al cargar las imágenes alojadas en un servidor de Estados Unidos. Para acelerar la carga y reducir el tráfico en los servidores de origen almacenando en caché las imágenes en los más de 100 puntos de presencia (PoPs) de Google alrededor del mundo, ¿qué servicio debe habilitarse?",
+  "correct": "C",
+  "clave_len": 71,
+  "explanation": "Cloud CDN aprovecha la red global de puntos de presencia (PoPs) perimetrales de Google para almacenar en caché contenido web estático y dinámico cerca de los usuarios finales, reduciendo drásticamente la latencia, acelerando los tiempos de carga y descargando el tráfico de los servidores de origen.",
+  "doc": "https://cloud.google.com/cdn/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Reducir la calidad de las fotos hasta que sean irreconocibles"
+   },
+   {
+    "letter": "B",
+    "len": 13,
+    "text": "Cloud Logging"
+   },
+   {
+    "letter": "C",
+    "len": 71,
+    "text": "Cloud CDN (Content Delivery Network integrado con Cloud Load Balancing)"
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Comprar computadoras físicas en cada ciudad de Australia y enviarles discos duros por avión"
+   }
+  ],
+  "ratio": 1.29
+ },
+ {
+  "id": "CDL-D1-015",
+  "subtopic": "Democratización de Datos y Analítica para Usuarios de Negocio",
+  "caseStudy": "none",
+  "scenario": "El equipo de marketing y ventas depende de solicitudes manuales al equipo de ingeniería de datos para generar reportes, lo que causa demoras de semanas. La empresa busca empoderar a los analistas de negocio para consultar datos de forma autónoma. ¿Qué concepto describe esta estrategia?",
+  "correct": "A",
+  "clave_len": 132,
+  "explanation": "La democratización de datos proporciona a los usuarios de toda la organización herramientas de autoservicio seguras e intuitivas para acceder, explorar y analizar datos en tiempo real sin requerir intervención constante de los ingenieros de TI.",
+  "doc": "https://cloud.google.com/bigquery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 132,
+    "text": "Democratización de datos mediante herramientas de analítica y business intelligence de autoservicio (como BigQuery y Looker Studio)."
+   },
+   {
+    "letter": "B",
+    "len": 91,
+    "text": "Contratación de un equipo externo que procese manualmente cada consulta comercial en papel."
+   },
+   {
+    "letter": "C",
+    "len": 106,
+    "text": "Centralización exclusiva de los reportes en hojas de cálculo enviadas por correo electrónico semanalmente."
+   },
+   {
+    "letter": "D",
+    "len": 112,
+    "text": "Bloqueo total del acceso a las bases de datos para evitar que los usuarios de negocio hagan preguntas complejas."
+   }
+  ],
+  "ratio": 1.28
+ },
+ {
+  "id": "CDL-D3-049",
+  "subtopic": "App Engine: División de Tráfico para Pruebas A/B (Traffic Splitting)",
+  "caseStudy": "none",
+  "scenario": "El equipo de producto de una aplicación en App Engine desea lanzar una nueva interfaz de usuario. Quieren enviar el 50% de las solicitudes entrantes a la versión antigua (v1) y el 50% a la nueva versión (v2) basándose en la dirección IP o cookies del usuario para evaluar cuál genera mayor interacción comercial. ¿Qué funcionalidad de App Engine permite hacer esto sin programar balanceadores adicionales?",
+  "correct": "D",
+  "clave_len": 53,
+  "explanation": "App Engine incluye la funcionalidad de División de Tráfico (Traffic Splitting), que permite distribuir porcentajes exactos del tráfico entrante entre múltiples versiones desplegadas de la aplicación mediante cookies o direcciones IP, facilitando pruebas A/B y despliegues canarios.",
+  "doc": "https://cloud.google.com/appengine/docs/standard/splitting-traffic",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Borrar la versión v1 antes de probar la v2"
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Pedir a los usuarios que escriban un código secreto en la URL"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "División de Tráfico (Traffic Splitting) en App Engine"
+   }
+  ],
+  "ratio": 1.28
+ }
+]

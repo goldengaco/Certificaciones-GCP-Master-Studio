@@ -1,0 +1,674 @@
+[
+  {
+    "id": "CDL-MS-001",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Características esenciales de la computación en la nube",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Qué distingue a la nube de un alojamiento remoto",
+    "scenario": "Una empresa compara la oferta de un proveedor de nube con la de su alojamiento actual. Quiere identificar qué características definen realmente el modelo de nube y no se cumplen en un alojamiento tradicional. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "comparación de ofertas",
+      "alojamiento actual",
+      "definición del modelo",
+      "empresa que evalúa"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Autoservicio bajo demanda: el cliente aprovisiona recursos cuando los necesita, sin intervención humana."
+      },
+      {
+        "letter": "B",
+        "text": "Elasticidad rápida: la capacidad crece y se reduce siguiendo la demanda real del servicio."
+      },
+      {
+        "letter": "C",
+        "text": "Ubicación fija de los servidores en un único centro de datos escogido por el cliente al firmar el contrato inicial."
+      },
+      {
+        "letter": "D",
+        "text": "Facturación anual anticipada por una capacidad reservada, con independencia de lo que el cliente consuma después."
+      },
+      {
+        "letter": "E",
+        "text": "Obligación de adquirir licencias perpetuas del software antes de poder desplegar cualquier carga sobre la plataforma."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "El autoservicio bajo demanda y la elasticidad rápida son dos de las características esenciales que definen la computación en la nube, junto con el acceso por red, la agrupación de recursos y el servicio medido. Un alojamiento tradicional puede tener servidores remotos sin cumplir ninguna de las dos.",
+    "distractors": {
+      "C": "Fijar la ubicación en un único centro contradice la agrupación de recursos y la posibilidad de elegir región por carga.",
+      "D": "La facturación anticipada por capacidad reservada es el modelo tradicional; la nube factura por consumo medido.",
+      "E": "Las licencias perpetuas anticipadas son propias del modelo local: en la nube el software gestionado se paga por uso."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-cloud-computing",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-MS-002",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Beneficios de desplegar en varias regiones",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Argumentos para abrir una segunda región",
+    "scenario": "Una empresa con clientes en dos continentes evalúa desplegar su plataforma en una segunda región. La dirección pide los argumentos de negocio que justifican el gasto adicional. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "dos continentes",
+      "segunda región",
+      "gasto adicional",
+      "argumentos para la dirección"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Reduce la latencia percibida por los usuarios que están lejos de la región original."
+      },
+      {
+        "letter": "B",
+        "text": "Permite seguir dando servicio aunque una región completa sufra una interrupción prolongada."
+      },
+      {
+        "letter": "C",
+        "text": "Elimina la necesidad de mantener copias de seguridad, porque la segunda región ya actúa como respaldo permanente."
+      },
+      {
+        "letter": "D",
+        "text": "Reduce de forma automática la factura mensual, ya que el consumo se reparte entre dos regiones distintas."
+      },
+      {
+        "letter": "E",
+        "text": "Garantiza el cumplimiento de cualquier normativa de protección de datos sin necesidad de configurar nada más."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Desplegar en más de una región mejora la latencia para audiencias distantes y permite sobrevivir a la caída de una región entera. Son los dos motivos clásicos: rendimiento y continuidad del negocio.",
+    "distractors": {
+      "C": "Replicar no sustituye a las copias de seguridad: un borrado o una corrupción se replican igual de rápido a la otra región.",
+      "D": "Operar en dos regiones aumenta el gasto; repartir el consumo no genera ningún descuento automático.",
+      "E": "El cumplimiento depende de qué regiones se eligen y de cómo se configuren los controles, no de tener varias."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/disaster-recovery",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-MS-003",
+    "certId": "cdl",
+    "domainId": "CDL-D2",
+    "domainName": "2. Exploración de la transformación de datos",
+    "subsectionId": "CDL-2",
+    "subtopic": "Servicios de analítica frente a servicios transaccionales",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Montar una canalización de analítica en streaming",
+    "scenario": "Una empresa quiere ingerir eventos de su web en tiempo real y analizarlos después a gran escala. Debe elegir las dos piezas centrales de esa canalización dentro de Google Cloud. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "eventos de la web",
+      "tiempo real",
+      "gran escala",
+      "canalización"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cloud Pub/Sub para ingerir los eventos y desacoplar a quien los produce de quien los consume después."
+      },
+      {
+        "letter": "B",
+        "text": "BigQuery para almacenar y analizar esos eventos más tarde, a escala de petabytes y con SQL."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Memorystore para conservar de forma duradera el histórico completo de eventos de los últimos años."
+      },
+      {
+        "letter": "D",
+        "text": "Persistent Disk como destino final de los eventos, montado directamente sobre una única máquina virtual del proyecto."
+      },
+      {
+        "letter": "E",
+        "text": "Cloud DNS para dirigir cada evento generado en la web hacia el servicio de analítica correspondiente."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Pub/Sub es la puerta de entrada para eventos en tiempo real y BigQuery el destino analítico a gran escala. Entre ambos suele ir Dataflow cuando hace falta transformar, pero las dos piezas centrales de esta canalización son esas.",
+    "distractors": {
+      "C": "Memorystore es una caché en memoria pensada para acceso muy rápido y volátil, no para conservar años de histórico.",
+      "D": "Un disco montado en una sola máquina no escala ni tolera fallos, y limita el análisis a esa instancia concreta.",
+      "E": "Cloud DNS resuelve nombres de dominio; no participa en el encaminamiento de eventos de una canalización de datos."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/stream-analytics",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-MS-004",
+    "certId": "cdl",
+    "domainId": "CDL-D2",
+    "domainName": "2. Exploración de la transformación de datos",
+    "subsectionId": "CDL-2",
+    "subtopic": "Bases de datos gestionadas según la forma del dato",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 115,
+    "caseStudy": "none",
+    "title": "Dos cargas con necesidades muy distintas",
+    "scenario": "Una empresa tiene dos necesidades: una aplicación de contabilidad regional que exige transacciones con integridad, y una plataforma global de pagos con millones de operaciones por segundo y consistencia fuerte. (Selecciona DOS respuestas que asignen correctamente los servicios.)",
+    "keywords": [
+      "dos necesidades",
+      "contabilidad regional",
+      "pagos globales",
+      "asignación de servicios"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cloud SQL encaja con la aplicación de contabilidad regional por su tamaño y su carácter relacional."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Spanner encaja con la plataforma de pagos por su distribución global y su consistencia fuerte."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Storage encaja con la contabilidad, ya que un bucket de objetos ofrece transacciones con integridad garantizada."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Bigtable encaja con la plataforma de pagos porque proporciona transacciones relacionales entre varias regiones."
+      },
+      {
+        "letter": "E",
+        "text": "BigQuery encaja con ambas cargas, dado que un almacén analítico también resuelve el trabajo transaccional del día a día."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Cloud SQL cubre cargas relacionales de tamaño moderado y alcance regional; Cloud Spanner está diseñado para sistemas relacionales distribuidos globalmente que necesitan consistencia fuerte a gran escala. Es la asignación estándar entre ambos.",
+    "distractors": {
+      "C": "Cloud Storage guarda objetos y no ofrece transacciones relacionales sobre filas y tablas.",
+      "D": "Bigtable es NoSQL de altísimo caudal, pero no aporta transacciones relacionales entre regiones.",
+      "E": "BigQuery está optimizado para analítica, no para el trabajo transaccional continuo de una aplicación."
+    },
+    "officialDocUrl": "https://cloud.google.com/products/databases",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-MS-005",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Usar IA sin construir un modelo desde cero",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Aplicar IA con un equipo pequeño",
+    "scenario": "Una empresa con un equipo técnico reducido quiere incorporar IA a sus procesos sin contratar científicos de datos ni construir modelos desde cero. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "equipo reducido",
+      "sin científicos de datos",
+      "incorporar IA",
+      "procesos internos"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Consumir APIs preentrenadas como Cloud Vision o Cloud Natural Language mediante llamadas al servicio."
+      },
+      {
+        "letter": "B",
+        "text": "Usar AutoML en Vertex AI para entrenar un modelo con sus propios datos etiquetados y sin escribir código."
+      },
+      {
+        "letter": "C",
+        "text": "Programar desde cero una red neuronal y ajustar a mano cada uno de sus hiperparámetros durante varias semanas."
+      },
+      {
+        "letter": "D",
+        "text": "Adquirir servidores con aceleradores propios para entrenar modelos fundacionales dentro de sus propias instalaciones."
+      },
+      {
+        "letter": "E",
+        "text": "Renunciar a la inteligencia artificial hasta poder contratar un equipo de investigación con dedicación completa."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Las APIs preentrenadas resuelven tareas comunes sin datos propios, y AutoML permite entrenar un modelo específico del negocio sin programar. Son los dos escalones pensados justamente para equipos sin especialistas en aprendizaje automático.",
+    "distractors": {
+      "C": "Programar y ajustar una red desde cero es exactamente el trabajo especializado que la empresa quiere evitar.",
+      "D": "Comprar aceleradores y entrenar modelos fundacionales internamente exige inversión y experiencia de gran escala.",
+      "E": "Existen opciones accesibles hoy mismo; esperar a tener un equipo de investigación no es una necesidad real."
+    },
+    "officialDocUrl": "https://cloud.google.com/products/ai",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-MS-006",
+    "certId": "cdl",
+    "domainId": "CDL-D3",
+    "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+    "subsectionId": "CDL-3",
+    "subtopic": "Prácticas de inteligencia artificial responsable",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 115,
+    "caseStudy": "none",
+    "title": "Preparar un modelo para que pase la revisión ética",
+    "scenario": "Un comité interno debe aprobar el despliegue de un modelo que influirá en decisiones sobre personas. Pide dos medidas concretas alineadas con los principios de IA responsable. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "revisión ética",
+      "despliegue pendiente",
+      "modelo interno",
+      "dos medidas"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Revisar que los datos de entrenamiento representen a toda la población afectada por las decisiones."
+      },
+      {
+        "letter": "B",
+        "text": "Mantener supervisión humana sobre las decisiones que afecten de forma significativa a una persona."
+      },
+      {
+        "letter": "C",
+        "text": "Ocultar al personal afectado que existe un modelo interviniendo, para no condicionar su comportamiento durante la evaluación."
+      },
+      {
+        "letter": "D",
+        "text": "Elegir siempre el modelo con mayor exactitud global, sin analizar cómo se reparte el error entre los distintos grupos."
+      },
+      {
+        "letter": "E",
+        "text": "Guardar el modelo cifrado en reposo, dado que el cifrado es lo que garantiza la equidad de sus predicciones futuras."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "La representatividad de los datos y la supervisión humana en decisiones de alto impacto son dos medidas centrales de la IA responsable. La primera ataca el sesgo en el origen; la segunda evita delegar por completo lo que afecta a personas.",
+    "distractors": {
+      "C": "La transparencia es un principio de IA responsable: ocultar la intervención del modelo va justo en contra.",
+      "D": "Una exactitud global alta puede esconder un error muy desigual entre grupos, que es la definición del problema de equidad.",
+      "E": "El cifrado protege la confidencialidad de los datos, pero no tiene ninguna relación con la equidad del modelo."
+    },
+    "officialDocUrl": "https://cloud.google.com/responsible-ai",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-MS-007",
+    "certId": "cdl",
+    "domainId": "CDL-D4",
+    "domainName": "4. Modernización de infraestructura y aplicaciones",
+    "subsectionId": "CDL-4",
+    "subtopic": "Opciones de cómputo sin servidor",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Cómputo que escala a cero cuando no hay tráfico",
+    "scenario": "Un equipo busca opciones de cómputo en las que no tenga que administrar servidores y que dejen de facturar cuando no hay peticiones. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "sin administrar servidores",
+      "dejan de facturar",
+      "sin peticiones",
+      "opciones de cómputo"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cloud Run, que ejecuta contenedores sin servidor y puede reducirse hasta cero instancias."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Functions, que ejecuta una función como respuesta a un evento y no requiere servidores."
+      },
+      {
+        "letter": "C",
+        "text": "Compute Engine con máquinas virtuales encendidas de forma permanente para poder responder en cualquier momento."
+      },
+      {
+        "letter": "D",
+        "text": "Google Kubernetes Engine en modo estándar, con un grupo de nodos siempre activo que sostiene el clúster."
+      },
+      {
+        "letter": "E",
+        "text": "Bare Metal Solution, que proporciona servidores físicos dedicados dentro de las instalaciones del proveedor."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Cloud Run y Cloud Functions son las opciones sin servidor: no se administran máquinas y el escalado llega hasta cero, de modo que sin tráfico no hay cómputo que facturar. Las demás mantienen recursos encendidos.",
+    "distractors": {
+      "C": "Las máquinas virtuales permanentes facturan mientras están encendidas, haya o no peticiones que atender.",
+      "D": "En modo estándar el clúster mantiene nodos activos, con su coste asociado aunque no llegue tráfico.",
+      "E": "Bare Metal Solution entrega servidores físicos dedicados: es el extremo opuesto al modelo sin servidor."
+    },
+    "officialDocUrl": "https://cloud.google.com/serverless",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-MS-008",
+    "certId": "cdl",
+    "domainId": "CDL-D4",
+    "domainName": "4. Modernización de infraestructura y aplicaciones",
+    "subsectionId": "CDL-4",
+    "subtopic": "Estrategias de migración que no reescriben la aplicación",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Migrar rápido sin tocar el código",
+    "scenario": "Una empresa necesita vaciar su centro de datos en seis meses y no dispone de tiempo para reescribir aplicaciones. Busca las estrategias de migración compatibles con esa restricción. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "vaciar el centro de datos",
+      "seis meses",
+      "sin reescribir",
+      "restricción de tiempo"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Rehost, es decir, trasladar las cargas tal y como están hacia su equivalente directo en la nube."
+      },
+      {
+        "letter": "B",
+        "text": "Replatform, con ajustes mínimos como pasar a una base de datos gestionada sin tocar la lógica."
+      },
+      {
+        "letter": "C",
+        "text": "Refactor, rediseñando la aplicación en microservicios antes de poder moverla fuera del centro de datos actual."
+      },
+      {
+        "letter": "D",
+        "text": "Rebuild, escribiendo desde cero cada una de las aplicaciones para aprovechar al máximo los servicios gestionados."
+      },
+      {
+        "letter": "E",
+        "text": "Retain, dejando las aplicaciones donde están, lo que no permitiría vaciar el centro de datos en el plazo previsto."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Rehost mueve la carga sin cambios y replatform introduce ajustes menores sin tocar la lógica de negocio. Ambas son compatibles con un plazo corto; refactorizar o reconstruir exige mucho más tiempo del disponible.",
+    "distractors": {
+      "C": "Refactorizar a microservicios es un rediseño profundo que no cabe en un plazo de seis meses para todo el parque.",
+      "D": "Reconstruir desde cero es la opción más lenta y cara de todas las estrategias de migración.",
+      "E": "Retain mantiene la aplicación donde está, lo que contradice el objetivo de cerrar el centro de datos."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/migration-to-gcp-getting-started",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-MS-009",
+    "certId": "cdl",
+    "domainId": "CDL-D5",
+    "domainName": "5. Confianza y seguridad con Google Cloud",
+    "subsectionId": "CDL-5",
+    "subtopic": "Responsabilidades que nunca se transfieren al proveedor",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Qué sigue siendo tuyo aunque todo esté gestionado",
+    "scenario": "Un responsable de seguridad revisa el modelo de responsabilidad compartida y quiere dejar claro ante su comité qué obligaciones siguen siendo de la empresa incluso usando servicios totalmente gestionados. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "responsable de seguridad",
+      "ante su comité",
+      "servicios gestionados",
+      "obligaciones de la empresa"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Definir quién accede a qué mediante la configuración de identidades y permisos."
+      },
+      {
+        "letter": "B",
+        "text": "Clasificar sus datos y decidir cómo se tratan, se conservan y se comparten."
+      },
+      {
+        "letter": "C",
+        "text": "Aplicar los parches de seguridad del hipervisor que ejecuta las máquinas virtuales de la plataforma."
+      },
+      {
+        "letter": "D",
+        "text": "Garantizar la seguridad física de los centros de datos y el control de acceso de su personal técnico."
+      },
+      {
+        "letter": "E",
+        "text": "Mantener el firmware de los equipos de red que interconectan las regiones del proveedor entre sí."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "En cualquier nivel de servicio, la configuración de accesos y el gobierno de los datos siguen siendo del cliente. Lo que sube de nivel es la operación de la infraestructura, nunca la responsabilidad sobre quién entra y qué se hace con la información.",
+    "distractors": {
+      "C": "El hipervisor forma parte de la infraestructura que opera Google en todos los modelos de servicio.",
+      "D": "La seguridad física de los centros de datos es responsabilidad exclusiva del proveedor.",
+      "E": "El firmware de la red troncal del proveedor queda fuera del alcance y del control del cliente."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-MS-010",
+    "certId": "cdl",
+    "domainId": "CDL-D5",
+    "domainName": "5. Confianza y seguridad con Google Cloud",
+    "subsectionId": "CDL-5",
+    "subtopic": "Defensa en profundidad aplicada a una aplicación web",
+    "difficulty": "advanced",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 115,
+    "caseStudy": "none",
+    "title": "Varias capas para proteger un portal público",
+    "scenario": "Un portal público sufre intentos de ataque desde internet. El equipo quiere aplicar defensa en profundidad, es decir, capas independientes que no dependan unas de otras. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "portal público",
+      "intentos de ataque",
+      "capas independientes",
+      "defensa por niveles"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cloud Armor delante de la aplicación, para filtrar tráfico malicioso y absorber ataques de denegación."
+      },
+      {
+        "letter": "B",
+        "text": "Permisos de mínimo privilegio en IAM, para limitar el daño si alguien consigue entrar."
+      },
+      {
+        "letter": "C",
+        "text": "Publicar el portal sin registro de accesos, de modo que un atacante no encuentre rastros que pueda aprovechar."
+      },
+      {
+        "letter": "D",
+        "text": "Conceder el rol de editor a todo el equipo de desarrollo para que puedan responder rápido ante un incidente."
+      },
+      {
+        "letter": "E",
+        "text": "Confiar únicamente en el cifrado en tránsito, que por sí solo impide cualquier intento de intrusión desde internet."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "La defensa en profundidad suma capas que fallan de forma independiente: un filtro en el perímetro y un control estricto de permisos dentro. Si una capa cede, la otra sigue limitando el daño.",
+    "distractors": {
+      "C": "Sin registros no se detecta ni se investiga un incidente; la oscuridad no es un control de seguridad.",
+      "D": "Repartir permisos amplios amplía el daño posible y contradice el principio de mínimo privilegio.",
+      "E": "El cifrado en tránsito protege la confidencialidad del canal, pero no impide un ataque contra la aplicación."
+    },
+    "officialDocUrl": "https://cloud.google.com/security/overview",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-MS-011",
+    "certId": "cdl",
+    "domainId": "CDL-D6",
+    "domainName": "6. Escalar con las operaciones de Google Cloud",
+    "subsectionId": "CDL-6",
+    "subtopic": "Reducir el gasto sin rediseñar la arquitectura",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 110,
+    "caseStudy": "none",
+    "title": "Bajar la factura este trimestre",
+    "scenario": "Una empresa necesita reducir su gasto en Google Cloud sin abordar un rediseño de sus aplicaciones, que llevaría meses. Busca palancas disponibles a corto plazo. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "reducir gasto",
+      "sin rediseño",
+      "corto plazo",
+      "palancas disponibles"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Contratar descuentos por uso comprometido para las cargas que se sabe que van a seguir funcionando."
+      },
+      {
+        "letter": "B",
+        "text": "Ajustar el tamaño de las máquinas sobredimensionadas siguiendo las recomendaciones de la plataforma."
+      },
+      {
+        "letter": "C",
+        "text": "Reescribir las aplicaciones como microservicios sin servidor antes de que termine el trimestre en curso."
+      },
+      {
+        "letter": "D",
+        "text": "Apagar los registros de auditoría para reducir el volumen de datos almacenado por los servicios de observabilidad."
+      },
+      {
+        "letter": "E",
+        "text": "Migrar todas las bases de datos a otro proveedor de nube para renegociar desde cero las condiciones económicas."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Los descuentos por uso comprometido y el ajuste de tamaño son las dos palancas de ahorro más inmediatas: no exigen tocar la aplicación y actúan sobre lo que ya se está pagando de más.",
+    "distractors": {
+      "C": "Reescribir a microservicios es precisamente el rediseño largo que la empresa quiere evitar este trimestre.",
+      "D": "Apagar la auditoría ahorra poco y deja a la organización sin trazabilidad ante un incidente o una inspección.",
+      "E": "Cambiar de proveedor es un proyecto de meses con riesgo alto; no es una palanca de ahorro a corto plazo."
+    },
+    "officialDocUrl": "https://cloud.google.com/cost-management",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-MS-012",
+    "certId": "cdl",
+    "domainId": "CDL-D6",
+    "domainName": "6. Escalar con las operaciones de Google Cloud",
+    "subsectionId": "CDL-6",
+    "subtopic": "Indicadores y objetivos de nivel de servicio",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 115,
+    "caseStudy": "none",
+    "title": "Definir el compromiso interno de fiabilidad",
+    "scenario": "Un equipo de fiabilidad quiere establecer objetivos internos de servicio para su plataforma de comercio. Debe identificar qué elementos forman parte de ese planteamiento. (Selecciona DOS respuestas.)",
+    "keywords": [
+      "equipo de fiabilidad",
+      "objetivos internos",
+      "plataforma de comercio",
+      "planteamiento"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Un indicador que mida algo que el usuario percibe, como el éxito del proceso de pago."
+      },
+      {
+        "letter": "B",
+        "text": "Un objetivo numérico sobre ese indicador, que deja un presupuesto de error disponible."
+      },
+      {
+        "letter": "C",
+        "text": "Un compromiso de disponibilidad del cien por cien, que elimina cualquier margen de error tolerado."
+      },
+      {
+        "letter": "D",
+        "text": "El porcentaje medio de uso de la memoria de los servidores, como medida principal de la experiencia del cliente."
+      },
+      {
+        "letter": "E",
+        "text": "La penalización económica que el proveedor abonará al equipo si el objetivo interno no llega a cumplirse."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "explanation": "Un objetivo de nivel de servicio se construye sobre un indicador que refleja la experiencia del usuario y un umbral numérico sobre él. Lo que sobra hasta el cien por cien es el presupuesto de error, que es lo que permite innovar sin romper la promesa.",
+    "distractors": {
+      "C": "Un objetivo del cien por cien elimina el presupuesto de error, paraliza los cambios y resulta inalcanzable en la práctica.",
+      "D": "El uso de memoria es una métrica interna del sistema; el cliente no la percibe ni le importa directamente.",
+      "E": "Las penalizaciones económicas pertenecen al acuerdo comercial con el proveedor, no a un objetivo interno del equipo."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/framework/reliability",
+    "blockId": "BLOCK-6"
+  }
+]

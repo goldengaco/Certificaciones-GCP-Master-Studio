@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D3-001",
+  "subtopic": "Workload Identity Federation for GitHub Actions",
+  "caseStudy": "none",
+  "scenario": "An enterprise uses GitHub Actions for CI/CD pipelines deploying to Google Cloud. Security policy strictly forbids creating, downloading, or storing long-lived service account private key JSON files in GitHub repository secrets. How should the CI/CD pipeline authenticate to Google Cloud?",
+  "correct": "D",
+  "clave_len": 257,
+  "explanation": "Workload Identity Federation exchanges external OpenID Connect (OIDC) tokens issued by GitHub Actions for short-lived Google Cloud credentials. This eliminates the security risk of managing and leaking permanent service account JSON keys.",
+  "doc": "https://cloud.google.com/iam/docs/workload-identity-federation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 91,
+    "text": "Create a service account key JSON file, encode it in base64, and save it in GitHub Secrets."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Make the deployment Google Cloud project public."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Hardcode username and passwords in GitHub workflow YAML files."
+   },
+   {
+    "letter": "D",
+    "len": 257,
+    "text": "Configure Google Cloud Workload Identity Federation with an OIDC Workload Identity Pool and Provider for GitHub (token.actions.githubusercontent.com), granting the GitHub repository subject assertion permission to impersonate the deployment Service Account."
+   }
+  ],
+  "ratio": 3.84
+ },
+ {
+  "id": "PCA-D4-021",
+  "subtopic": "Observability: PromQL & Managed Service for Prometheus",
+  "caseStudy": "none",
+  "scenario": "A large enterprise operates 50 GKE clusters across multiple regions with existing Prometheus alerting rules and Grafana dashboards. Self-hosting Prometheus servers is causing massive operational toil (managing storage, compaction, multi-cluster federation, and HA). They want a fully managed backend that natively executes existing PromQL queries and integrates with Grafana without managing Prometheus storage. What solution should you deploy?",
+  "correct": "C",
+  "clave_len": 274,
+  "explanation": "Google Cloud Managed Service for Prometheus (GMP) provides managed collection on GKE. It eliminates Prometheus storage management, automatically federates metrics across clusters globally, and natively supports PromQL queries from existing Grafana dashboards.",
+  "doc": "https://cloud.google.com/stackdriver/docs/managed-prometheus",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "Rewrite all 5,000 Prometheus alerts and Grafana dashboards into custom Python scripts."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Disable all metric collection across all clusters."
+   },
+   {
+    "letter": "C",
+    "len": 274,
+    "text": "Enable Google Cloud Managed Service for Prometheus (GMP) on all GKE clusters (managed collection), which automatically scrapes metrics, stores them in Google's globally scalable metric database, and provides a PromQL-compatible query endpoint for existing Grafana instances."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Deploy Prometheus on a single Compute Engine micro instance with standard HDD."
+   }
+  ],
+  "ratio": 3.84
+ },
+ {
+  "id": "PCA-D5-020",
+  "subtopic": "Cloud Composer (Managed Airflow) Workflow DAGs",
+  "caseStudy": "none",
+  "scenario": "An enterprise data lake pipeline orchestrates 50 interdependent tasks across multiple systems: 1) Extract data from Salesforce -> 2) Load into GCS -> 3) Trigger Dataproc Spark cleanup -> 4) Execute BigQuery SQL transformations -> 5) Train Vertex AI AutoML model -> 6) Refresh Looker datasets. The pipeline requires complex dependency graphs (DAGs), SLA tracking, task retries, and Python code definitions. What managed orchestration service should you implement?",
+  "correct": "C",
+  "clave_len": 234,
+  "explanation": "Google Cloud Composer provides fully managed Apache Airflow. It natively manages complex multi-step data pipelines using Python DAGs, offering built-in Google Cloud operators, task dependency management, and robust error recovery.",
+  "doc": "https://cloud.google.com/composer/docs/concepts/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Have data engineers run steps manually throughout the day."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Write a giant 5,000-line bash script scheduled with cron."
+   },
+   {
+    "letter": "C",
+    "len": 234,
+    "text": "Deploy Google Cloud Composer (fully managed Apache Airflow), authoring Python-based Directed Acyclic Graphs (DAGs) with Google Cloud Airflow Operators to orchestrate cross-service dependencies with automated alerting and task retries."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Trigger all 50 tasks simultaneously without dependency coordination."
+   }
+  ],
+  "ratio": 3.84
+ },
+ {
+  "id": "PCA-D1-049",
+  "subtopic": "EHR Healthcare: DICOM Radiology Imaging & Eventarc",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "Hospital CT and MRI scanners upload 2GB DICOM multi-slice imaging studies to Cloud Storage. Upon upload, the system must immediately extract metadata, store the image in the Cloud Healthcare API DICOM Store, trigger an AI inference model to detect acute brain hemorrhages, and notify the on-call radiologist via webhooks. How should this event-driven workflow be orchestrated?",
+  "correct": "D",
+  "clave_len": 264,
+  "explanation": "Eventarc provides sub-second event delivery from Cloud Storage object creation to serverless Cloud Run microservices. Cloud Run processes the DICOM payload, interfaces with the Cloud Healthcare API DICOM Store, and orchestrates ML inference instantly.",
+  "doc": "https://cloud.google.com/eventarc/docs/run/quickstart-storage",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Store DICOM images in BigQuery string columns."
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "Have radiologists manually download each DICOM file from the console and run local software."
+   },
+   {
+    "letter": "C",
+    "len": 69,
+    "text": "Run a cron job every 2 hours that scans the GCS bucket for new files."
+   },
+   {
+    "letter": "D",
+    "len": 264,
+    "text": "Use Eventarc to capture google.cloud.storage.object.v1.finalized events from the upload bucket, triggering a Cloud Run service that ingests the DICOM file into the Healthcare API DICOM Store, invokes the Vertex AI imaging model, and fires the notification webhook."
+   }
+  ],
+  "ratio": 3.83
+ },
+ {
+  "id": "PCA-D2-044",
+  "subtopic": "Cloud Interconnect SLA Topology Planning",
+  "caseStudy": "none",
+  "scenario": "An enterprise architecture board requires a formal network design for Google Cloud Dedicated Interconnect that qualifies for Google's 99.99% availability SLA. The design must survive the failure of an entire edge colocation facility or edge router without packet loss. What is the minimum physical topology required?",
+  "correct": "B",
+  "clave_len": 171,
+  "explanation": "To qualify for Google's 99.99% availability SLA for Dedicated/Partner Interconnect, traffic must be routed through at least two circuits in each of two separate metropolitan locations (4 circuits total) using redundant Cloud Routers.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/high-availability#9999-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "1 cross-connect in a single metro location."
+   },
+   {
+    "letter": "B",
+    "len": 171,
+    "text": "At least 4 cross-connects deployed across 2 separate metropolitan colocation facilities (2 circuits per metro) with redundant Cloud Routers in Global dynamic routing mode."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "2 cross-connects in a single metro location."
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "A single IPsec VPN tunnel over public internet."
+   }
+  ],
+  "ratio": 3.83
+ },
+ {
+  "id": "PCA-D1-044",
+  "subtopic": "EHR Healthcare: Multi-Region Cloud Spanner for Patient Records",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare operates critical emergency room charting software across hospitals in the East, Central, and Western United States. During regional disaster events (hurricanes, power grid failures), clinical charting must continue uninterrupted with zero data loss (RPO = 0) and immediate consistency to prevent prescribing fatal drug interactions. Which database architecture fulfills these life-critical requirements?",
+  "correct": "C",
+  "clave_len": 205,
+  "explanation": "Multi-region Cloud Spanner is the only Google Cloud database providing 99.999% availability SLA, synchronous TrueTime Paxos distributed transactions, global serializable ACID consistency, and zero-RPO failover across multiple US geographic regions.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Nightly database backups copied to Cloud Storage."
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "Cloud SQL with asynchronous cross-region read replicas."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "text": "Multi-Region Cloud Spanner instance (nam3 or nam-eur-asia1) with TrueTime-synchronized multi-region Paxos quorum replication, providing 99.999% SLA, strong ACID consistency, and zero RPO regional failover."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Cloud Bigtable with eventual consistency across clusters."
+   }
+  ],
+  "ratio": 3.82
+ },
+ {
+  "id": "PCA-D5-024",
+  "subtopic": "Cloud SQL High Availability with Regional Failover",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires high availability for its Cloud SQL for PostgreSQL database. If the primary zone (us-central1-a) experiences a hardware or power failure, the database must automatically fail over to a standby instance in us-central1-b within 60 seconds, retaining the exact same IP address and synchronous data state (RPO = 0). What configuration achieves this?",
+  "correct": "A",
+  "clave_len": 250,
+  "explanation": "Setting availability_type = REGIONAL on Cloud SQL provisions a primary instance and a synchronous standby instance in a different zone. In the event of primary zone failure, failover is automated in under 60 seconds with zero data loss (RPO=0).",
+  "doc": "https://cloud.google.com/sql/docs/postgres/high-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 250,
+    "text": "Configure the Cloud SQL instance with availability_type = 'REGIONAL' (High Availability), which provisions a primary VM in zone A and a synchronous standby VM in zone B with persistent disk network-level replication and automated sub-minute failover."
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "Create an asynchronous read replica in us-central1-b and manually promote it during outages."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Provision a Zonal instance with daily backups."
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "Run two separate database servers with custom bash scripts."
+   }
+  ],
+  "ratio": 3.81
+ },
+ {
+  "id": "PCA-D5-030",
+  "subtopic": "EHR Healthcare: Cloud Tasks Rate Limiting for Claims Adjudication",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare integrates with external state insurance clearinghouses to submit patient medical claims. Clearinghouse mainframe gateways throttle and reject traffic if submissions exceed 50 requests per second. During morning hospital discharge hours, claims volume spikes to 2,000 claims/sec. How should the claims submission queue be implemented?",
+  "correct": "B",
+  "clave_len": 232,
+  "explanation": "Cloud Tasks allows applications to buffer high-volume request bursts and dispatch them at a controlled rate (max_dispatches_per_second = 50), preventing clearinghouse gateway overload and automated claim rejections.",
+  "doc": "https://cloud.google.com/tasks/docs/configuring-queues",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "Send all 2,000 claims/sec directly to the clearinghouse over HTTP."
+   },
+   {
+    "letter": "B",
+    "len": 232,
+    "text": "Enqueue claims into a Google Cloud Tasks queue configured with max_dispatches_per_second = 50 and max_concurrent_dispatches = 25, buffering peak discharge bursts and pacing outbound submissions to match clearinghouse gateway limits."
+   },
+   {
+    "letter": "C",
+    "len": 77,
+    "text": "Have hospital clerks wait and click submit manually throughout the afternoon."
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "Delete claims that fail on first attempt."
+   }
+  ],
+  "ratio": 3.78
+ },
+ {
+  "id": "PCA-D2-035",
+  "subtopic": "Secure Web Proxy for Egress Filtering",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires strict egress security for private VMs and GKE pods without public IPs. Workloads must only be allowed to make outbound HTTPS connections to specific approved external partner domains (e.g., api.partner.com, *.github.com). Standard IP-based firewall rules are ineffective because SaaS providers use dynamic CDNs with constantly shifting IP addresses. Which Google Cloud service solves this?",
+  "correct": "C",
+  "clave_len": 205,
+  "explanation": "Google Cloud Secure Web Proxy is a fully managed, serverless egress proxy that enforces granular Layer 7 egress policies based on hostnames, URLs, and methods without requiring third-party proxy VM maintenance.",
+  "doc": "https://cloud.google.com/secure-web-proxy/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "Disable DNS resolution on all VMs."
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Allow all outbound 0.0.0.0/0 internet traffic unrestricted."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "text": "Deploy Google Cloud Secure Web Proxy (SWP), defining policy rules with URL lists and domain patterns (e.g. *.github.com) to enforce granular Layer 7 egress filtering without managing third-party proxy VMs."
+   },
+   {
+    "letter": "D",
+    "len": 70,
+    "text": "Create 10,000 static VPC firewall rules for every possible IP address."
+   }
+  ],
+  "ratio": 3.77
+ },
+ {
+  "id": "PCA-D1-041",
+  "subtopic": "EHR Healthcare: VPC Service Controls & Zero Data Exfiltration",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare stores petabytes of patient medical data across BigQuery, Cloud Storage, and the Cloud Healthcare API. Security officers are concerned that a malicious insider with valid IAM credentials could copy sensitive patient tables to an external, unauthorized personal Google Cloud project. What security architecture prevents unauthorized cross-project data transfers?",
+  "correct": "A",
+  "clave_len": 237,
+  "explanation": "VPC Service Controls creates a cryptographic boundary around Google-managed APIs (BigQuery, GCS, Healthcare API). Even if an attacker has valid IAM credentials, API requests that attempt to move data outside the perimeter or from unauthorized IP/device contexts are blocked.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 237,
+    "text": "Establish a VPC Service Controls (VPC-SC) Service Perimeter enclosing all production healthcare projects, restricting Cloud Healthcare API, BigQuery, and Cloud Storage APIs, and configuring Access Context Manager device-posture policies."
+   },
+   {
+    "letter": "B",
+    "len": 73,
+    "text": "Rely solely on IAM roles and disable internet access on employee laptops."
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "Require employees to sign a Non-Disclosure Agreement (NDA)."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Configure a firewall rule blocking TCP port 443 outbound."
+   }
+  ],
+  "ratio": 3.76
+ },
+ {
+  "id": "PCA-D5-028",
+  "subtopic": "Altostrat Media: Firestore vs Spanner Implementation",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media is implementing two distinct data layers: 1) In-game real-time chat and ephemeral guild messaging requiring sub-100ms push sync to mobile clients with automatic TTL message deletion; 2) Global player inventory, purchases, and real-money transactions requiring strict ACID transactions and relational joins. Which Google Cloud databases should be implemented for these respective workloads?",
+  "correct": "C",
+  "clave_len": 205,
+  "explanation": "Firestore is optimal for mobile chat with real-time document listeners (onSnapshot) and built-in TTL policies. Cloud Spanner is engineered for globally distributed, multi-region ACID transactions for purchasing and game inventory.",
+  "doc": "https://cloud.google.com/firestore/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Store chat and purchases in flat text files on Cloud Storage."
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Use Cloud Memorystore Memcached without persistence for both."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "text": "Implement Cloud Firestore in Native mode with real-time listeners and TTL policies for the mobile in-game chat layer, and implement Cloud Spanner for the global transactional inventory and purchase ledger."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Use Cloud SQL for MySQL for both workloads."
+   }
+  ],
+  "ratio": 3.73
+ },
+ {
+  "id": "PCA-D1-060",
+  "subtopic": "Altostrat Media: AR Broadcast Overlay & Memorystore",
+  "caseStudy": "altostrat_media",
+  "scenario": "TV broadcast production trucks generate Augmented Reality (AR) overlays (virtual race gates, 3D speed trails, trailing distance lines) rendered on live video feeds. The AR rendering engine requests current 3D position coordinates for all 20 aircrafts 120 times per second. Query latency must remain strictly under 2 milliseconds to avoid frame tearing. What caching architecture should you deploy?",
+  "correct": "A",
+  "clave_len": 196,
+  "explanation": "Cloud Memorystore for Redis delivers sub-millisecond in-memory read/write performance. Utilizing Redis Hashes (HSET/HGET) for active aircraft coordinates allows the AR rendering pipeline to fetch telemetry 120 times/sec with zero latency jitter.",
+  "doc": "https://cloud.google.com/memorystore/docs/redis/redis-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 196,
+    "text": "Deploy Cloud Memorystore for Redis with Read Replicas and Direct In-VPC Peering, storing latest aircraft 3D coordinates in Redis Hashes (HSET/HGET) retrieved over private high-bandwidth VPC links."
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "Query BigQuery using SQL queries 120 times per second."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Read coordinates from Cloud Storage JSON files."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Store coordinates in Cloud Spanner with full table scans."
+   }
+  ],
+  "ratio": 3.72
+ },
+ {
+  "id": "PCA-D3-008",
+  "subtopic": "IAM Recommender API for Least Privilege",
+  "caseStudy": "none",
+  "scenario": "An enterprise has 500 service accounts with overly broad Editor and Owner permissions granted years ago. Security policy mandates implementing the principle of least privilege across all service accounts. The security team needs an automated tool that analyzes historical IAM permission usage over the past 90 days and suggests precise, minimal custom roles without breaking active production applications. What service should you use?",
+  "correct": "C",
+  "clave_len": 204,
+  "explanation": "IAM Recommender applies machine learning to analyze actual API calls made by principals over the past 90 days. It detects unused permissions and generates actionable recommendations to replace overly broad roles (Owner/Editor) with least-privilege roles.",
+  "doc": "https://cloud.google.com/iam/docs/recommender-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "Grant full Owner roles to all service accounts."
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Revoke all permissions and wait for developers to complain."
+   },
+   {
+    "letter": "C",
+    "len": 204,
+    "text": "Use Google Cloud IAM Recommender (part of Policy Intelligence) to review automated role recommendations based on actual ML-analyzed 90-day permission usage and apply rightsized custom or predefined roles."
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "Manually guess which permissions each service account uses."
+   }
+  ],
+  "ratio": 3.71
+ },
+ {
+  "id": "PCA-D2-005",
+  "subtopic": "Private Service Connect (PSC) Endpoints",
+  "caseStudy": "none",
+  "scenario": "A financial SaaS vendor hosts a core payment API on Google Cloud that must be consumed by 200 corporate bank clients. Many client VPC networks have overlapping private IP ranges (e.g. 10.0.0.0/16). The vendor wants to allow clients to access the payment service securely and privately over Google's internal network without requiring complex NAT configurations or risking IP address collisions. What should you recommend?",
+  "correct": "B",
+  "clave_len": 253,
+  "explanation": "Private Service Connect (PSC) uses unidirectional NAT to connect consumer endpoints to producer services privately across projects and organizations, even when VPC networks have overlapping CIDR ranges, eliminating the IP space constraints of VPC Peering.",
+  "doc": "https://cloud.google.com/vpc/docs/private-service-connect",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "Require all 200 clients to re-IP their entire corporate networks."
+   },
+   {
+    "letter": "B",
+    "len": 253,
+    "text": "Deploy Private Service Connect (PSC): Publish the payment API using a Service Attachment behind an Internal Application Load Balancer in the vendor VPC, and have clients create a PSC Endpoint (Forwarding Rule with an internal IP) in their consumer VPCs."
+   },
+   {
+    "letter": "C",
+    "len": 76,
+    "text": "Expose the payment API on a public IP and whitelist 200 client IP addresses."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Establish standard VPC Network Peering with all 200 client VPCs."
+   }
+  ],
+  "ratio": 3.7
+ },
+ {
+  "id": "PCA-D2-017",
+  "subtopic": "Migrate to Virtual Machines (M4VM)",
+  "caseStudy": "none",
+  "scenario": "An enterprise needs to migrate 500 VMware virtual machines from an on-premises datacenter to Google Cloud Compute Engine. The migration must perform continuous background disk replication without taking on-prem systems offline, support non-disruptive test-clones in Google Cloud to validate application functionality, and execute final cutover with under 10 minutes of maintenance downtime per VM. Which tool achieves this?",
+  "correct": "D",
+  "clave_len": 255,
+  "explanation": "Migrate to Virtual Machines (formerly Migrate for Anthos/Compute Engine) provides agentless, continuous block-level data replication from VMware/AWS/Azure directly to Compute Engine, enabling non-disruptive test clones and near-zero downtime final cutover.",
+  "doc": "https://cloud.google.com/migrate/virtual-machines/docs/5.0/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "Take nightly VMware snapshots and restore them using dd commands over SSH."
+   },
+   {
+    "letter": "B",
+    "len": 69,
+    "text": "Export VM OVA images to external hard drives and mail them to Google."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Rebuild all 500 applications manually from scratch using Docker."
+   },
+   {
+    "letter": "D",
+    "len": 255,
+    "text": "Deploy Migrate to Virtual Machines (M4VM) on-premises connector, execute continuous background block replication over Cloud Interconnect/VPN, perform non-disruptive Test Clones in sandbox VPCs, and trigger final cutover with automated instance generation."
+   }
+  ],
+  "ratio": 3.7
+ },
+ {
+  "id": "PCA-D3-028",
+  "subtopic": "PCI-DSS Cardholder Data Environment (CDE) Isolation",
+  "caseStudy": "none",
+  "scenario": "An enterprise retailer processes credit card payments on Google Cloud. PCI-DSS scope reduction mandates that the Cardholder Data Environment (CDE) must be strictly isolated from general corporate workloads, with dedicated IAM administrative boundaries, dedicated Shared VPC subnets, end-to-end TLS 1.3 encryption, and no direct routing between non-CDE and CDE environments. How should you design the resource hierarchy?",
+  "correct": "C",
+  "clave_len": 261,
+  "explanation": "Isolating the Cardholder Data Environment (CDE) into dedicated Folders, Projects, and VPC Service Controls perimeters minimizes the number of systems in PCI scope, reducing audit complexity, compliance costs, and risk of lateral movement.",
+  "doc": "https://cloud.google.com/architecture/pci-dss-compliance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "Disable all firewalls between CDE and corporate office networks."
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "text": "Host payment processing code in the same project and subnet as marketing blogs."
+   },
+   {
+    "letter": "C",
+    "len": 261,
+    "text": "Create a dedicated 'PCI-CDE' Folder in the Google Cloud resource hierarchy containing isolated production projects, enclosed by a VPC Service Controls perimeter, with dedicated Shared VPC networks and strict IAM separation to drastically reduce PCI audit scope."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Store credit card numbers in unencrypted text files on Cloud Storage."
+   }
+  ],
+  "ratio": 3.69
+ },
+ {
+  "id": "PCA-D1-070",
+  "subtopic": "Altostrat Media: Cloud Armor & Edge Rate Limiting",
+  "caseStudy": "altostrat_media",
+  "scenario": "Pirate video streaming sites frequently deploy automated bot scrapers to harvest HRL's live video manifest URLs (.m3u8 / .mpd) and restream broadcasts illegally. HRL must block automated scraping bots and enforce Layer 7 rate limits (maximum 100 requests per minute per client IP) on video manifest endpoints at Google's edge before requests reach the origin storage buckets. What solution should you deploy?",
+  "correct": "C",
+  "clave_len": 241,
+  "explanation": "Google Cloud Armor security policies attached to the Global External Application Load Balancer enforce edge rate limiting and bot detection, blocking malicious scrapers at Google's edge POPs before hitting backend origin infrastructure.",
+  "doc": "https://cloud.google.com/armor/docs/rate-limiting-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 76,
+    "text": "Require all viewers to call customer support by phone to receive video URLs."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Shut down the video streaming website during races."
+   },
+   {
+    "letter": "C",
+    "len": 241,
+    "text": "Deploy Google Cloud Armor Security Policies on the Global External Application Load Balancer, configuring Rate Limiting rules (throttle to 100 req/min with HTTP 429 response) and enabling reCAPTCHA Enterprise bot detection on manifest paths."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Write custom iptables rate-limiting rules on each GCS storage server."
+   }
+  ],
+  "ratio": 3.69
+ },
+ {
+  "id": "PCA-D2-008",
+  "subtopic": "Stateful Managed Instance Groups",
+  "caseStudy": "none",
+  "scenario": "A legacy database application running on Compute Engine requires automated rolling updates and instance recreation upon hardware failure. However, each instance must retain its unique persistent data disk (containing database files) and its specific static private IP address across recreation and updates. Which Compute Engine feature supports this requirement?",
+  "correct": "D",
+  "clave_len": 174,
+  "explanation": "Stateful Managed Instance Groups preserve the state of individual instances (including persistent data disks, static IPs, and metadata) during auto-healing, rolling updates, and recreation, combining MIG automation with stateful workload requirements.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/stateful-migs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "Store database files on local RAM disks."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Unmanaged Instance Groups with custom python scripts."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Standard Stateless MIG with ephemeral boot disks."
+   },
+   {
+    "letter": "D",
+    "len": 174,
+    "text": "Configure a Stateful Managed Instance Group (Stateful MIG) defining per-instance configs for stateful persistent disks (auto_delete = NEVER) and stateful static IP addresses."
+   }
+  ],
+  "ratio": 3.68
+ },
+ {
+  "id": "PCA-D2-012",
+  "subtopic": "Cloud Bigtable Provisioning: SSD vs HDD & Autoscaling",
+  "caseStudy": "none",
+  "scenario": "An ad-tech platform stores 50TB of real-time user bidding profiles. The system requires sub-5ms read latencies at 100,000 queries per second during daytime traffic surges, but traffic drops to 10,000 QPS at night. How should you provision the Cloud Bigtable cluster to meet performance SLAs while optimizing compute costs?",
+  "correct": "A",
+  "clave_len": 195,
+  "explanation": "Bigtable SSD storage is mandatory for sub-10ms latency SLA requirements (HDD is only for batch archive workloads >500TB). Enabling native Bigtable Cluster Autoscaling dynamically adjusts node counts based on CPU utilization and storage thresholds without downtime.",
+  "doc": "https://cloud.google.com/bigtable/docs/autoscaling",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 195,
+    "text": "Provision Bigtable using SSD storage disks and enable Bigtable Autoscaling with min/max nodes and target CPU utilization (e.g. 60%), allowing the cluster to scale nodes dynamically based on load."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Use Cloud SQL for MySQL with 10 read replicas."
+   },
+   {
+    "letter": "C",
+    "len": 45,
+    "text": "Use HDD storage with a static 3-node cluster."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Re-create the Bigtable cluster every night using Terraform cron jobs."
+   }
+  ],
+  "ratio": 3.66
+ },
+ {
+  "id": "PCA-D2-031",
+  "subtopic": "Terraform Lifecycle: prevent_destroy & create_before_destroy",
+  "caseStudy": "none",
+  "scenario": "An engineer accidentally ran 'terraform destroy' in a production workspace, which attempted to delete the primary production Cloud SQL and Spanner database instances. To prevent any automated tool or human from accidentally destroying mission-critical stateful storage resources via Terraform, what configuration should be added to the resource blocks?",
+  "correct": "A",
+  "clave_len": 141,
+  "explanation": "Terraform's lifecycle { prevent_destroy = true } meta-argument causes Terraform to reject any plan or apply that would result in the destruction of the protected resource, providing a vital safeguard against accidental deletions.",
+  "doc": "https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#prevent_destroy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 141,
+    "text": "Add a lifecycle { prevent_destroy = true } block inside the Terraform resource definitions for all production database and storage resources."
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "Delete the terraform code from Git."
+   },
+   {
+    "letter": "C",
+    "len": 45,
+    "text": "Rename the production database every morning."
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "Run Terraform with the --force flag."
+   }
+  ],
+  "ratio": 3.65
+ },
+ {
+  "id": "PCA-D5-005",
+  "subtopic": "Cloud Workflows: Serverless Orchestration & State Machine",
+  "caseStudy": "none",
+  "scenario": "An enterprise onboarding pipeline requires orchestrating 5 disparate services: 1) Verify Identity (Cloud Run), 2) Create Database Account (Cloud SQL), 3) Charge Setup Fee (Stripe API), 4) Send Welcome Email (SendGrid), 5) Log Audit Record (BigQuery). If the credit card payment fails, the workflow must execute compensating rollback steps (delete database account) and alert the user. What service coordinates this multi-step state machine?",
+  "correct": "B",
+  "clave_len": 266,
+  "explanation": "Google Cloud Workflows is a fully managed, serverless orchestration service. It coordinates microservices and APIs with built-in retry policies, parallel execution, conditional logic, and error handling for Saga-pattern compensating rollbacks.",
+  "doc": "https://cloud.google.com/workflows/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "Deploy Apache Airflow on a 10-node Compute Engine cluster for simple 5-step API calls."
+   },
+   {
+    "letter": "B",
+    "len": 266,
+    "text": "Deploy Google Cloud Workflows, defining a declarative YAML workflow state machine that manages step execution, handles automated retries with exponential backoff, supports parallel branching, and executes compensating rollback steps (Saga pattern) upon step failure."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Ask developers to trigger each API endpoint manually via curl."
+   },
+   {
+    "letter": "D",
+    "len": 72,
+    "text": "Hardcode synchronous HTTP calls inside a single giant monolithic script."
+   }
+  ],
+  "ratio": 3.63
+ },
+ {
+  "id": "PCA-D5-007",
+  "subtopic": "Eventarc: Event-Driven Triggers from Cloud Storage & Audit Logs",
+  "caseStudy": "none",
+  "scenario": "An image processing application must automatically resize and optimize user profile images whenever a new image is uploaded to a Cloud Storage bucket 'gs://user-profile-photos'. The processing container runs on Cloud Run. What Google Cloud event routing service connects Cloud Storage object creation events to Cloud Run using the standard CloudEvents specification?",
+  "correct": "A",
+  "clave_len": 216,
+  "explanation": "Eventarc provides fully managed, event-driven routing of Google Cloud events (from 130+ Google Cloud sources, Pub/Sub, and Audit Logs) to Cloud Run, GKE, and Workflows using standard CloudEvents JSON payloads.",
+  "doc": "https://cloud.google.com/eventarc/docs/run/quickstart-storage",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 216,
+    "text": "Deploy Google Cloud Eventarc, configuring an Eventarc Trigger matching eventType 'google.cloud.storage.object.v1.finalized' on the bucket, routing standard HTTP CloudEvents payloads directly to the Cloud Run service."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Store images directly in Cloud Functions code files."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Manually invoke the Cloud Run URL after uploading every photo."
+   },
+   {
+    "letter": "D",
+    "len": 67,
+    "text": "Write a cron script that polls the storage bucket every 10 seconds."
+   }
+  ],
+  "ratio": 3.58
+ },
+ {
+  "id": "PCA-D5-009",
+  "subtopic": "Datastream: Real-Time Change Data Capture (CDC) to BigQuery",
+  "caseStudy": "none",
+  "scenario": "An enterprise data analytics team needs continuous real-time replication of insert, update, and delete transactions from an on-premises Oracle database into BigQuery with sub-second replication latency. The solution must be serverless, require no Kafka cluster management, and automatically handle BigQuery schema evolution and upserts. What service should you deploy?",
+  "correct": "C",
+  "clave_len": 213,
+  "explanation": "Google Cloud Datastream is a serverless Change Data Capture (CDC) service that continuously replicates changes from Oracle, PostgreSQL, MySQL, and SQL Server directly into BigQuery, Cloud Storage, or Spanner with minimal latency and zero cluster management.",
+  "doc": "https://cloud.google.com/datastream/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 71,
+    "text": "Deploy self-hosted Apache Kafka with Debezium and 10 Kafka Connect VMs."
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "Manually copy SQL queries from one database to another."
+   },
+   {
+    "letter": "C",
+    "len": 213,
+    "text": "Deploy Google Cloud Datastream, configuring an Oracle source connection profile and a BigQuery destination connection profile to stream CDC changes directly into BigQuery using BigQuery's native CDC upsert engine."
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Export the database to CSV files once a week via cron."
+   }
+  ],
+  "ratio": 3.55
+ },
+ {
+  "id": "PCA-D1-040",
+  "subtopic": "EHR Healthcare: PHI De-Identification for Medical Research",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare partners with academic medical researchers to analyze 10 million electronic medical records for oncology drug discovery. HIPAA Safe Harbor rules require the removal or transformation of all 18 designated PHI identifiers (names, dates, medical record numbers, SSNs, and free-text clinical notes) before data can be exported to researchers. What architecture automates this de-identification pipeline?",
+  "correct": "D",
+  "clave_len": 312,
+  "explanation": "The Cloud Healthcare API includes native de-identification tools that integrate with Cloud DLP. It supports HIPAA Safe Harbor and Expert Determination methods, including cryptographic hashing, date shifting (preserving temporal intervals across visits), and redaction of free-text doctor notes.",
+  "doc": "https://cloud.google.com/healthcare-api/docs/how-tos/fhir-de-identification",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 82,
+    "text": "Run a simple SQL REPLACE statement to remove the word 'patient' from the database."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Hire manual reviewers to read and redact 10 million patient charts by hand."
+   },
+   {
+    "letter": "C",
+    "len": 110,
+    "text": "Export raw clinical records to a public BigQuery dataset and rely on researchers not to look at patient names."
+   },
+   {
+    "letter": "D",
+    "len": 312,
+    "text": "Execute the Cloud Healthcare API de-identify operation on the FHIR Store, configuring Date Shifting (randomized per-patient shift within +/- 30 days) and Sensitive Data Protection (Cloud DLP) infoType masking on unstructured free-text clinical notes, writing results to a separate de-identified research dataset."
+   }
+  ],
+  "ratio": 3.51
+ },
+ {
+  "id": "PCA-D6-009",
+  "subtopic": "Cloud Spanner Leader Election & Region Outages",
+  "caseStudy": "none",
+  "scenario": "In a multi-region Spanner configuration with default leader region us-east4, all read-write transaction coordination is led by Paxos leaders in us-east4. If a catastrophic disaster destroys us-east4, how does Cloud Spanner recover write leadership?",
+  "correct": "D",
+  "clave_len": 268,
+  "explanation": "Under Paxos consensus, if the leader region fails, the remaining quorum members detect missing heartbeats and immediately elect a new leader among healthy read-write replicas, restoring write transactions automatically within seconds.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview#replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 81,
+    "text": "Spanner remains locked in read-only mode until Google manually restores us-east4."
+   },
+   {
+    "letter": "B",
+    "len": 81,
+    "text": "Spanner requires database administrators to run 'spanner promote-leader' via CLI."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "All database tables are deleted and must be re-imported from backup."
+   },
+   {
+    "letter": "D",
+    "len": 268,
+    "text": "Remaining read-write replicas in alternate regions (e.g. us-central1 and us-east1) detect leader heartbeat loss and automatically elect new Paxos leaders among themselves within seconds, restoring full read-write transactional capability with zero data loss (RPO = 0)."
+   }
+  ],
+  "ratio": 3.5
+ }
+]

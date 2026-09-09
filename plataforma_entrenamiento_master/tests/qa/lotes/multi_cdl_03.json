@@ -1,0 +1,374 @@
+[
+ {
+  "id": "CDL-D1-005",
+  "domainId": "CDL-D1",
+  "subtopic": "Google Cloud Adoption Framework (CAF) - Pilar Scale",
+  "scenario": "Una empresa de software empresarial busca migrar sus procesos manuales de despliegue a canalizaciones CI/CD automatizadas, utilizar contenedores y aplicar infraestructura como código para reducir el tiempo de lanzamiento de productos. ¿Qué pilar del CAF guía estas mejoras operativas?",
+  "correct": "B",
+  "explanation": "El pilar 'Scale' del Google Cloud Adoption Framework se enfoca en la madurez operativa, la automatización de la infraestructura, los procesos ágiles de entrega continua y la capacidad de responder dinámicamente a la demanda del mercado.",
+  "doc": "https://cloud.google.com/adoption-framework",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Pilar Learn (Aprender)"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Pilar Scale (Escalar)"
+   },
+   {
+    "letter": "C",
+    "len": 23,
+    "text": "Pilar Secure (Asegurar)"
+   },
+   {
+    "letter": "D",
+    "len": 20,
+    "text": "Pilar Lead (Liderar)"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-033",
+  "domainId": "CDL-D2",
+  "subtopic": "Protección de Datos Sensibles (Cloud DLP / Sensitive Data Protection)",
+  "scenario": "Una empresa de salud transfiere millones de registros clínicos a Google Cloud. Para cumplir con leyes de privacidad como HIPAA y GDPR, necesitan escanear automáticamente los archivos para detectar, clasificar y anonimizar (enmascarar o tokenizar) información de identificación personal (PII) como números de seguro social y tarjetas de crédito antes de que los analistas tengan acceso. ¿Qué servicio proporciona esta capacidad?",
+  "correct": "C",
+  "explanation": "Sensitive Data Protection (Cloud DLP) es un servicio totalmente administrado que ayuda a descubrir, clasificar, enmascarar, tokenizar y redactar automáticamente datos confidenciales (como PII, PHI y credenciales) en Cloud Storage, BigQuery y flujos de datos.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Cloud Key Management Service (Cloud KMS con CMEK)"
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Dataplex Universal Catalog (antes Data Catalog)"
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Sensitive Data Protection (anteriormente Cloud DLP)"
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Assured Workloads con controles de residencia de datos"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-087",
+  "domainId": "CDL-D3",
+  "subtopic": "Cloud Run: Despliegues Graduales (Traffic Rolling Updates)",
+  "scenario": "Un equipo despliega una nueva versión (Revisión 2) de un microservicio en Cloud Run. Desean enrutar inicialmente el 10% de las solicitudes de usuarios a la Revisión 2 y el 90% restante a la Revisión 1. Al comprobar que no hay errores en los registros de Cloud Logging, desean cambiar el tráfico al 100% en la Revisión 2 con un solo comando. ¿Qué capacidad nativa de Cloud Run facilita este flujo?",
+  "correct": "B",
+  "explanation": "Cada despliegue en Cloud Run crea una Revisión inmutable. Cloud Run permite dividir el tráfico por porcentajes exactos entre múltiples revisiones, facilitando despliegues graduales, pruebas canarias y reversiones instantáneas a revisiones anteriores.",
+  "doc": "https://cloud.google.com/run/docs/rollouts-rollbacks-traffic-split",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 98,
+    "text": "Desplegar la Revisión 2 como un servicio de Cloud Run distinto y repartir el tráfico con Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Gestión de Revisiones inmutables y División de Tráfico (Traffic Splitting) en Cloud Run"
+   },
+   {
+    "letter": "C",
+    "len": 93,
+    "text": "Ajustar el escalado automático de Cloud Run fijando un mínimo de instancias por cada revisión"
+   },
+   {
+    "letter": "D",
+    "len": 90,
+    "text": "Publicar la Revisión 2 con `--no-traffic` y una URL de etiqueta para probarla por separado"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-087",
+  "domainId": "CDL-D4",
+  "subtopic": "Cloud Monitoring: Pruebas Sintéticas y Monitoreo de Experiencia de Usuario",
+  "scenario": "Un portal bancario no solo necesita saber si el servidor web responde en el puerto 443, sino validar que un usuario simulado pueda completar un flujo completo: iniciar sesión, consultar su saldo y simular una transferencia bancaria cada 5 minutos de forma automática. ¿Qué tipo de monitoreo proporciona esta validación de flujos sintéticos de extremo a extremo?",
+  "correct": "A",
+  "explanation": "Los Synthetic Monitors en Cloud Monitoring ejecutan código automatizado personalizado (mediante Cloud Functions) para simular transacciones completas de usuarios de varios pasos a intervalos regulares, validando que la lógica de negocio y las dependencias complejas funcionen correctamente.",
+  "doc": "https://cloud.google.com/monitoring/synthetic-monitoring/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 117,
+    "text": "Monitores Sintéticos (Synthetic Monitors en Cloud Monitoring basados en scripts de Cloud Functions con Mocha/Node.js)"
+   },
+   {
+    "letter": "B",
+    "len": 105,
+    "text": "Comprobaciones de tiempo de actividad (Uptime Checks) de Cloud Monitoring contra el puerto 443 del portal"
+   },
+   {
+    "letter": "C",
+    "len": 113,
+    "text": "Comprobaciones de estado (Health Checks) del balanceador de carga configuradas contra la ruta de inicio de sesión"
+   },
+   {
+    "letter": "D",
+    "len": 112,
+    "text": "Cloud Trace con muestreo de latencia distribuida sobre las peticiones reales de los clientes del portal bancario"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D1-026",
+  "domainId": "CDL-D1",
+  "subtopic": "Velocidad de Innovación y Reducción del Costo de Falla (Fail Fast)",
+  "scenario": "Una empresa de medios digitales desea fomentar que sus equipos prueben nuevas ideas de productos sin temor a que un experimento fallido resulte en una pérdida financiera masiva de infraestructura. ¿Cómo respalda Google Cloud este enfoque cultural?",
+  "correct": "B",
+  "explanation": "La computación elástica y los entornos serverless democratizan la innovación: las organizaciones pueden probar decenas de ideas en paralelo con costos mínimos; si una idea funciona se escala al instante, y si falla se apaga en segundos sin costos residuales.",
+  "doc": "https://cloud.google.com/serverless",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 204,
+    "text": "Concediendo créditos del programa Google for Startups y un nivel gratuito de servicios, de modo que la empresa pueda lanzar sus experimentos sin coste alguno hasta que agote el saldo promocional recibido."
+   },
+   {
+    "letter": "B",
+    "len": 201,
+    "text": "Al permitir crear prototipos rápidamente con servicios administrados y serverless pagando solo por los minutos utilizados, reduciendo a casi cero el costo financiero de descartar una hipótesis fallida."
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "text": "Permitiendo reservar capacidad mediante Descuentos por Compromiso de Uso a tres años, que abaratan el precio por hora de las máquinas virtuales dedicadas a los experimentos de cada equipo de producto."
+   },
+   {
+    "letter": "D",
+    "len": 198,
+    "text": "Replicando cada prototipo en varias regiones con balanceo de carga global desde el primer día, de modo que cualquier experimento pueda absorber millones de usuarios en cuanto se publique al mercado."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-009",
+  "domainId": "CDL-D2",
+  "subtopic": "Bases de Datos Relacionales: Cloud SQL para MySQL, PostgreSQL y SQL Server",
+  "scenario": "Una empresa de comercio electrónico desea migrar su base de datos PostgreSQL existente a Google Cloud para reducir la carga de administración (parcheo del sistema operativo, copias de seguridad automáticas y configuración de alta disponibilidad). ¿Qué servicio es el más adecuado?",
+  "correct": "C",
+  "explanation": "Cloud SQL es el servicio de base de datos relacional totalmente administrado de Google Cloud compatible con motores estándar como PostgreSQL, MySQL y Microsoft SQL Server, gestionando automáticamente parches, backups y replicación.",
+  "doc": "https://cloud.google.com/sql/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 14,
+    "text": "Cloud Bigtable"
+   },
+   {
+    "letter": "B",
+    "len": 20,
+    "text": "Google Cloud Storage"
+   },
+   {
+    "letter": "C",
+    "len": 9,
+    "text": "Cloud SQL"
+   },
+   {
+    "letter": "D",
+    "len": 15,
+    "text": "Cloud Firestore"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-080",
+  "domainId": "CDL-D3",
+  "subtopic": "Migración de Bases de Datos Heterogéneas: Oracle a PostgreSQL",
+  "scenario": "Una empresa desea liberarse de costosas licencias comerciales migrando su base de datos Oracle a Cloud SQL for PostgreSQL / AlloyDB for PostgreSQL. Requieren convertir automáticamente los esquemas, procedimientos almacenados y replicar los cambios en tiempo real (CDC) durante la transición. ¿Qué solución de Google Cloud lidera esta modernización de bases de datos?",
+  "correct": "C",
+  "explanation": "Database Migration Service (DMS) simplifica las migraciones heterogéneas complejas (como Oracle a PostgreSQL o AlloyDB) guiando la conversión de esquemas, procedimientos y tipos de datos, y manteniendo la replicación continua de datos para minimizar el tiempo de inactividad durante la transición.",
+  "doc": "https://cloud.google.com/database-migration/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 138,
+    "text": "Datastream (la captura de cambios sin servidor que replica en tiempo real las tablas de Oracle hacia BigQuery para su análisis posterior)."
+   },
+   {
+    "letter": "B",
+    "len": 135,
+    "text": "Storage Transfer Service (la transferencia administrada de un volcado completo del esquema de Oracle hacia un bucket de Cloud Storage)."
+   },
+   {
+    "letter": "C",
+    "len": 147,
+    "text": "Database Migration Service (DMS) con capacidades integradas de conversión de esquemas basadas en IA para modernizar de Oracle a PostgreSQL/AlloyDB."
+   },
+   {
+    "letter": "D",
+    "len": 130,
+    "text": "Cloud Data Fusion (el integrador visual de canalizaciones ETL sin código basado en CDAP para mover los datos entre ambos motores)."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-080",
+  "domainId": "CDL-D4",
+  "subtopic": "Cloud Monitoring: Alertas Basadas en Registros (Log-Based Alerts)",
+  "scenario": "El equipo de seguridad necesita recibir una alerta instantánea cada vez que aparezca en Cloud Logging una línea de registro específica que indique un intento de acceso no autorizado con error '403 Forbidden' a un recurso confidencial. ¿Qué tipo de alerta permite vincular una búsqueda de registros directamente con una notificación en tiempo real?",
+  "correct": "C",
+  "explanation": "Las Log-Based Alerts en Cloud Logging permiten definir una consulta de filtro de registros específica y disparar automáticamente una notificación de Cloud Monitoring en el momento exacto en que coincide un mensaje de registro crítico (como un fallo 403 de seguridad).",
+  "doc": "https://cloud.google.com/logging/docs/alerting/log-based-alerts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Métricas basadas en registros (Log-Based Metrics) de tipo contador en Cloud Logging"
+   },
+   {
+    "letter": "B",
+    "len": 78,
+    "text": "Enrutadores de registros (Log Sinks) de Cloud Logging hacia un tema de Pub/Sub"
+   },
+   {
+    "letter": "C",
+    "len": 83,
+    "text": "Alertas basadas en registros (Log-Based Alerts en Cloud Logging y Cloud Monitoring)"
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "Registros de Auditoría de Acceso a Datos (Data Access Logs) en Cloud Audit Logs"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D1-019",
+  "domainId": "CDL-D1",
+  "subtopic": "Gestión del Cambio Organizacional en la Nube",
+  "scenario": "Durante la migración a Google Cloud, varios equipos de operaciones tradicionales temen perder relevancia y muestran resistencia a adoptar herramientas automatizadas de autoservicio. ¿Cuál es la estrategia de gestión del cambio recomendada para facilitar esta transición?",
+  "correct": "D",
+  "explanation": "La gestión exitosa del cambio organizacional requiere invertir en las personas a través de programas de desarrollo de habilidades (re-skilling), comunicación transparente y la creación de un CCoE que empodere a los equipos para adoptar nuevas responsabilidades de mayor valor.",
+  "doc": "https://cloud.google.com/adoption-framework",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 220,
+    "text": "Externalizar por completo la operación de la nueva plataforma de nube a un proveedor gestionado, de modo que los equipos de operaciones internos conserven sin cambios sus tareas actuales sobre el entorno físico heredado."
+   },
+   {
+    "letter": "B",
+    "len": 214,
+    "text": "Imponer la migración por decreto ejecutivo con una única fecha límite y medir el desempeño de cada equipo por el número de servidores físicos apagados, sin comunicar qué papel tendrán en el modelo operativo futuro."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "text": "Constituir un equipo separado de ingenieros de nube contratados del exterior que opere la nueva plataforma en paralelo, dejando a los equipos tradicionales al cargo del entorno heredado hasta su extinción."
+   },
+   {
+    "letter": "D",
+    "len": 201,
+    "text": "Implementar un plan estructurado de capacitación y re-especialización (re-skilling), comunicar los beneficios estratégicos y establecer un Centro de Excelencia en la Nube (CCoE) como guía colaborativa."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-008",
+  "domainId": "CDL-D2",
+  "subtopic": "Cloud Storage: Inmutabilidad y Bloqueo de Retención (Bucket Lock)",
+  "scenario": "Una casa de bolsa necesita almacenar registros financieros con el requerimiento estricto de que nadie, ni siquiera un administrador con permisos 'Owner', pueda modificar o borrar los archivos durante 5 años (modelo WORM - Write Once, Read Many). ¿Qué funcionalidad de Google Cloud garantiza este cumplimiento?",
+  "correct": "D",
+  "explanation": "Bucket Lock permite fijar y bloquear de forma irrevocable una política de retención en Cloud Storage, haciendo que los objetos sean inmutables (WORM) y no puedan ser sobrescritos ni eliminados hasta que venza el periodo de retención especificado, cumpliendo con normas como SEC 17a-4.",
+  "doc": "https://cloud.google.com/storage/docs/bucket-lock",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 122,
+    "text": "Activar el control de versiones de objetos (Object Versioning) para conservar todas las revisiones anteriores del archivo."
+   },
+   {
+    "letter": "B",
+    "len": 123,
+    "text": "Aplicar una regla de ciclo de vida que mueva los objetos a la clase Archive y los conserve durante los cinco años exigidos."
+   },
+   {
+    "letter": "C",
+    "len": 125,
+    "text": "Retirar el rol Storage Object Admin a todos los usuarios y dejar los permisos únicamente al administrador de la organización."
+   },
+   {
+    "letter": "D",
+    "len": 112,
+    "text": "Configurar una política de retención en el bucket de Cloud Storage y bloquearla permanentemente con Bucket Lock."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-032",
+  "domainId": "CDL-D3",
+  "subtopic": "Descuentos por Uso Sostenido (Sustained Use Discounts - SUDs)",
+  "scenario": "Un cliente ejecuta varias máquinas virtuales Compute Engine durante la mayor parte del mes de facturación. No firmó ningún contrato de compromiso a largo plazo previo. Al revisar la factura, notan un descuento automático por haber mantenido las VMs encendidas de forma constante. ¿Cómo se denomina este descuento automático de Google Cloud?",
+  "correct": "B",
+  "explanation": "Los Sustained Use Discounts (SUDs) son descuentos automáticos aplicados por Compute Engine cuando una instancia de VM (de familias compatibles como N1/N2) se ejecuta durante más del 25% de un mes de facturación, incrementando el descuento conforme mayor porcentaje del mes esté activa la máquina, sin requerir ningún compromiso previo por parte del cliente.",
+  "doc": "https://cloud.google.com/compute/docs/sustained-use-discounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Descuentos por Compromiso de Uso (Committed Use Discounts)"
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Descuentos por Uso Sostenido (Sustained Use Discounts - SUDs)"
+   },
+   {
+    "letter": "C",
+    "len": 57,
+    "text": "Descuentos por volumen negociados en contrato empresarial"
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Créditos por incumplimiento del SLA de Compute Engine"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-006",
+  "domainId": "CDL-D4",
+  "subtopic": "Google Groups: Administración Eficiente de Permisos Basada en Roles (RBAC)",
+  "scenario": "Una empresa tiene 50 ingenieros en su equipo de DevOps. Constantemente ingresan nuevos empleados y otros cambian de departamento. En lugar de asignar manualmente 15 roles de IAM a la dirección de correo individual de cada ingeniero en cada uno de los 30 proyectos de la empresa, ¿cuál es la mejor práctica de administración de accesos?",
+  "correct": "C",
+  "explanation": "Asignar roles de IAM a Google Groups en lugar de a usuarios individuales es una mejor práctica fundamental en Google Cloud: simplifica la administración de identidades, reduce el error humano y garantiza que cuando un empleado cambia de rol o deja la empresa, revocar sus accesos solo requiera removerlo del grupo central.",
+  "doc": "https://cloud.google.com/iam/docs/groups-in-cloud-console",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 194,
+    "text": "Crear una Service Account por ingeniero (p. ej. `ingeniero@proyecto.iam.gserviceaccount.com`), con los 15 roles de IAM, y entregar la clave JSON al empleado, rotándola si cambia de departamento."
+   },
+   {
+    "letter": "B",
+    "len": 184,
+    "text": "Definir un rol personalizado `roles/miEmpresa.devOps15` con los 15 permisos y asignarlo al correo de cada ingeniero en los 30 proyectos, repitiendo la asignación en cada alta o cambio."
+   },
+   {
+    "letter": "C",
+    "len": 181,
+    "text": "Crear un Grupo de Google (ej. `devops-team@tuempresa.com`), asignarle los roles de IAM necesarios y simplemente agregar o remover a los ingenieros del grupo según cambien de puesto."
+   },
+   {
+    "letter": "D",
+    "len": 196,
+    "text": "Conceder el rol básico `roles/editor` a nivel de organización a los 50 ingenieros para que hereden acceso a los 30 proyectos sin necesidad de gestionar asignaciones de roles proyecto por proyecto."
+   }
+  ]
+ }
+]

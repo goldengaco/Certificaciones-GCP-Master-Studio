@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D3-068",
+  "options": {
+   "A": "gcloud alpha monitoring channels create --channel-content-from-file=high-cpu-alert.json",
+   "B": "gcloud monitoring dashboards create --config-from-file=high-cpu-alert.json",
+   "D": "gcloud logging metrics create high-cpu-alert --config-from-file=high-cpu-alert.json"
+  },
+  "distractors": {
+   "A": "Right file, wrong resource: this creates a NotificationChannel, the destination of an alert, not the alert itself. The API rejects an AlertPolicy body here because the channel schema expects type and labels, and the 85% CPU condition is never evaluated.",
+   "B": "A Dashboard only renders charts of existing metrics. It has no condition, no duration window and no notificationChannels field, so nothing is ever compared against 85% and channel 98765 is never notified.",
+   "D": "A log-based metric counts log entries matching a filter; it is not an alerting policy. Even if the file parsed as a metric descriptor, a metric on its own has no threshold and no notification target, so no alert fires."
+  }
+ },
+ {
+  "id": "ACE-D4-030",
+  "options": {
+   "A": "gcloud bigtable clusters create cluster-b --instance=iot-telemetry --num-nodes=12 --zone=us-central1-b",
+   "C": "gcloud bigtable clusters update cluster-us-central1 --instance=iot-telemetry --autoscaling-max-nodes=12",
+   "D": "gcloud bigtable app-profiles update default --instance=iot-telemetry --route-any --force"
+  },
+  "distractors": {
+   "A": "This adds a second replicated cluster instead of resizing the hot one. cluster-us-central1 keeps its 4 nodes, and a single-cluster-routing app profile keeps sending every write to it, so the 50ms write latency stays while storage cost doubles.",
+   "C": "This swaps manual scaling for autoscaling: the autoscaling flag group also needs --autoscaling-min-nodes and --autoscaling-cpu-target, and even when complete it only sets a ceiling that the autoscaler approaches in gradual steps, so no immediate 4 to 12 resize happens.",
+   "D": "Multi-cluster routing only spreads traffic across clusters that already exist. This instance has exactly one cluster, so the same 4 overloaded nodes serve every read and write and CPU utilization stays above 80%."
+  }
+ },
+ {
+  "id": "ACE-D3-018",
+  "options": {
+   "B": "bq mk --table --time_partitioning_type=DAY --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json",
+   "C": "bq load --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json",
+   "D": "bq mk --table --schema=./schema.json --time_partitioning_field=transaction_time --require_partition_filter corp_finance.transactions"
+  },
+  "distractors": {
+   "B": "--time_partitioning_type=DAY without --time_partitioning_field produces an ingestion-time partitioned table keyed on the pseudocolumn _PARTITIONTIME. Queries filtering on transaction_time then prune nothing and scan every partition.",
+   "C": "bq load ingests data: its last positional argument is the source data file, so ./schema.json is parsed as the rows to load, not as the schema. The command is for populating an existing table, not for creating the empty partitioned table.",
+   "D": "The partitioning column is set correctly, but --clustering_fields is missing, so the table is not clustered by merchant_id and customer_id. It also silently makes a partition filter mandatory on every future query."
+  }
+ },
+ {
+  "id": "ACE-D4-049",
+  "options": {
+   "B": "gcloud storage buckets update gs://sec-archive-vault --retention-period=P7Y",
+   "C": "gcloud storage buckets update gs://sec-archive-vault --default-event-based-hold",
+   "D": "gcloud storage buckets update gs://sec-archive-vault --soft-delete-duration=90d"
+  },
+  "distractors": {
+   "B": "This re-declares the 7-year period but leaves the policy unlocked, which is the state the bucket is already in. Any principal holding storage.buckets.update can still shorten it to one day or clear it, so nothing is immutable.",
+   "C": "A default event-based hold is applied per object and can be released by anyone with storage.objects.update, and it applies only to objects created after the flag is set. The retention policy itself remains editable.",
+   "D": "Soft delete only keeps already-deleted objects recoverable for a retention window (7 to 90 days). It does not stop the deletion, does not stop shortening the retention period, and expires long before the 7-year SEC window."
+  }
+ },
+ {
+  "id": "ACE-D4-037",
+  "options": {
+   "A": "gcloud storage buckets update gs://customer-contracts-vault --default-event-based-hold",
+   "C": "gcloud storage objects update gs://customer-contracts-vault/*.pdf --custom-time=2027-06-01T00:00:00Z",
+   "D": "gcloud storage objects update gs://customer-contracts-vault/contract-2026-xyz.pdf --storage-class=ARCHIVE"
+  },
+  "distractors": {
+   "A": "The default hold is a bucket setting that is stamped onto objects as they are created. The contract files under litigation already exist, so they receive no hold at all and stay deletable while the suit runs.",
+   "C": "Custom time is only a user-defined timestamp in object metadata, used as a condition by lifecycle rules. It blocks no operation: any principal with storage.objects.delete can still delete or overwrite the contracts.",
+   "D": "Changing the storage class rewrites the object and attaches a 365-day minimum storage duration charge, but Archive objects are deleted and overwritten exactly like Standard ones. Cost changes, deletability does not."
+  }
+ },
+ {
+  "id": "ACE-D4-055",
+  "options": {
+   "B": "resource.type=\"nat_gateway\" AND jsonPayload.allocation_status=\"OK\"",
+   "C": "resource.type=\"gce_subnetwork\" AND jsonPayload.disposition=\"DENIED\"",
+   "D": "resource.type=\"gce_instance\" AND jsonPayload.allocation_status=\"DROPPED\""
+  },
+  "distractors": {
+   "B": "OK is the status written when Cloud NAT did find a free source port and translated the connection. This filter returns precisely the successful translations and excludes every port-exhaustion drop being investigated.",
+   "C": "jsonPayload.disposition is the field of VPC firewall rules logging, whose entries are written against gce_subnetwork. It shows packets a firewall rule blocked, not connections Cloud NAT could not translate for lack of ports.",
+   "D": "The predicate is right but the monitored resource is wrong: Cloud NAT writes its entries against the nat_gateway resource on the Cloud Router, never against gce_instance, so this filter matches no log entries at all."
+  }
+ },
+ {
+  "id": "ACE-D5-021",
+  "options": {
+   "A": "Create an ingress firewall rule specifying --target-tags=app-tier, --source-tags=db-tier, and --allow=tcp:3306.",
+   "C": "Create an ingress firewall rule specifying --target-tags=db-tier, --source-ranges=10.128.0.0/9, and --allow=tcp:3306.",
+   "D": "Create an ingress rule specifying --action=DENY, --target-tags=db-tier, --source-ranges=0.0.0.0/0, and --rules=tcp:3306."
+  },
+  "distractors": {
+   "A": "The two tags are swapped, so the rule opens port 3306 on the app-tier VMs for traffic coming from the database VMs. Ingress to db-tier is still covered only by the implied deny rule, and the application cannot reach MySQL.",
+   "C": "Scoping by CIDR instead of by tag admits every VM whose NIC falls in that internal range, including the web tier and any workload created later in those subnets. The requirement is authorization by tag, not by address block.",
+   "D": "Ingress is already denied by the implied deny rule, so an extra deny adds nothing and, more importantly, no allow rule is ever created. The database ends up unreachable from the app tier and the application breaks."
+  }
+ },
+ {
+  "id": "ACE-D4-019",
+  "options": {
+   "B": "kubectl logs -f web-app-8594-xyz --namespace=staging --container=web",
+   "C": "kubectl describe pod web-app-8594-xyz --namespace=staging --show-events",
+   "D": "kubectl run -it debug-box --image=busybox --namespace=staging -- /bin/sh"
+  },
+  "distractors": {
+   "B": "This streams the container's stdout and stderr from the node's log files. It gives no TTY inside the container, so the local configuration files cannot be opened and no diagnostic command can be run.",
+   "C": "describe reads the pod object from the API server: spec, status, mounts and events. It never enters the container's namespace, so nothing on the container filesystem is visible and no command is executed.",
+   "D": "This schedules a brand-new pod from a different image. Its filesystem, environment and processes belong to busybox, not to the running web application, so none of the app's configuration files can be inspected."
+  }
+ },
+ {
+  "id": "ACE-D5-011",
+  "options": {
+   "A": "gcloud storage buckets update gs://corp-sensitive-docs --no-uniform-bucket-level-access",
+   "B": "gcloud storage objects update gs://corp-sensitive-docs/** --predefined-acl=projectPrivate",
+   "D": "gcloud storage buckets update gs://corp-sensitive-docs --public-access-prevention"
+  },
+  "distractors": {
+   "A": "The --no- form is the inverse switch: it returns the bucket to fine-grained mode, where per-object ACLs remain authoritative. That is exactly the mechanism the audit flagged, so the exposure is preserved, not removed.",
+   "B": "This rewrites the ACLs of the objects that exist right now. ACLs stay enabled on the bucket, so the next upload carries its own ACL and any principal with storage.objects.setIamPolicy can re-share a file externally.",
+   "D": "Public access prevention only blocks grants to allUsers and allAuthenticatedUsers. An ACL naming a specific external email address is not public access, so those object-level grants keep working untouched."
+  }
+ },
+ {
+  "id": "ACE-D4-002",
+  "options": {
+   "B": "gcloud container clusters upgrade my-cluster --master --cluster-version=1.28 --region=us-central1",
+   "C": "gcloud container node-pools update app-pool --cluster=my-cluster --max-surge-upgrade=1 --region=us-central1",
+   "D": "gcloud container clusters upgrade my-cluster --node-pool=app-pool --cluster-version=1.28 --zone=us-central1-a"
+  },
+  "distractors": {
+   "B": "--master upgrades only the control plane. The app-pool nodes stay on 1.27: no node is cordoned, drained or recreated, so the node pool version the task asks for is never changed.",
+   "C": "This configures the surge upgrade policy but starts no upgrade, so nodes keep running 1.27. Reaching zero unavailable nodes also requires --max-unavailable-upgrade=0 in the same call, which is missing here.",
+   "D": "The cluster is regional (--region=us-central1 in its creation), so addressing it with --zone=us-central1-a makes gcloud look for a zonal cluster of that name in a single zone and fail with a not-found error."
+  }
+ },
+ {
+  "id": "ACE-D3-036",
+  "options": {
+   "A": "Transfer Appliance, shipped to the source site and ingested into GCS.",
+   "B": "BigQuery Data Transfer Service with a scheduled Amazon S3 transfer.",
+   "D": "A Dataflow batch pipeline reading from S3 and writing to Cloud Storage."
+  },
+  "distractors": {
+   "A": "The appliance is an offline device you physically attach to storage you control. It cannot be racked inside an AWS region to read s3://media-source-bucket, and it performs one seed copy, not a recurring daily sync.",
+   "B": "BigQuery Data Transfer Service loads data into BigQuery tables, so the 100 TB of media would land as table rows, never as objects in gs://media-target-bucket, and it targets loadable structured files rather than binary media.",
+   "D": "Dataflow has no managed S3-to-GCS bulk copy connector: you write and maintain the pipeline, pay for worker VMs for the whole 100 TB, and implement the checksum validation and retry logic yourself."
+  }
+ },
+ {
+  "id": "ACE-D4-060",
+  "options": {
+   "B": "gcloud logging buckets update _Required --location=global --retention-days=365",
+   "C": "gcloud logging buckets create finance-365 --location=global --retention-days=365",
+   "D": "gcloud storage buckets update gs://corp-finance-prod-logs --retention-period=P365D"
+  },
+  "distractors": {
+   "B": "_Required is immutable: its 400-day retention cannot be changed and the API rejects the update. It also holds only Admin Activity and System Event audit logs, while the regulated logs are being written to _Default.",
+   "C": "This creates an empty second log bucket. Without a log sink whose destination is that bucket, entries keep being routed to _Default and are still deleted after 30 days, so nothing is retained for a year.",
+   "D": "That is Cloud Storage object retention, which applies to exported log files sitting in a GCS bucket. It has no effect on the Cloud Logging log bucket _Default, whose retention is still the 30-day default."
+  }
+ },
+ {
+  "id": "ACE-D5-003",
+  "options": {
+   "A": "Grant roles/secretmanager.viewer to order-sa on the secret prod-db-conn.",
+   "C": "Grant roles/secretmanager.secretVersionManager to order-sa on prod-db-conn.",
+   "D": "Grant roles/secretmanager.secretAccessor to order-sa at the project level."
+  },
+  "distractors": {
+   "A": "viewer carries only metadata permissions (secretmanager.secrets.get, versions.list, versions.get). It lacks secretmanager.versions.access, so the AccessSecretVersion call at startup returns PERMISSION_DENIED and the service cannot build its connection string.",
+   "C": "secretVersionManager can add, enable, disable and destroy versions but has no secretmanager.versions.access, so the payload still cannot be read. It also hands a request-serving workload the ability to destroy the production credential.",
+   "D": "Correct role, wrong scope: a project-level binding lets order-sa read the payload of every secret in the project, present and future. The requirement is read access to prod-db-conn only, so this violates least privilege."
+  }
+ },
+ {
+  "id": "ACE-D5-038",
+  "options": {
+   "A": "gcloud sql ssl client-certs create app key.pem --instance=corp-db-prod",
+   "C": "gcloud sql instances patch corp-db-prod --authorized-networks=10.0.0.0/8",
+   "D": "gcloud sql instances describe corp-db-prod --format=\"value(serverCaCert)\""
+  },
+  "distractors": {
+   "A": "Issuing a client certificate makes an encrypted connection possible but changes no server-side policy. With ssl-mode still allowing both, an application server that simply omits the certificate keeps connecting in plaintext.",
+   "C": "Authorized networks decide which source addresses may reach the instance, not whether the session is encrypted. Every host inside 10.0.0.0/8 can still open an unencrypted MySQL connection on port 3306.",
+   "D": "describe is a read-only call that prints the server CA certificate so clients can verify the server. Distributing that certificate enables verification but never forces it: plaintext connections are still accepted."
+  }
+ },
+ {
+  "id": "ACE-D3-058",
+  "options": {
+   "B": "gcloud sql backups restore 1755697200 --restore-instance=customer-db --backup-instance=customer-db",
+   "C": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:32:00.000Z",
+   "D": "gcloud sql export sql customer-db gs://corp-backups/customer-db.sql --database=customer --offload"
+  },
+  "distractors": {
+   "B": "A backup restore lands on the timestamp of an automated nightly backup, not on 14:30:00, so every transaction written after that backup is lost. It also overwrites customer-db in place instead of creating customer-db-restored.",
+   "C": "The mechanism is right but the timestamp is wrong: 14:32:00 is the moment the destructive migration ran, so the clone is created with the corrupting statements already applied and the data is still bad.",
+   "D": "An export dumps the current contents of the live instance, which already contain the corruption. It reads table data, not the binary logs, so it cannot reconstruct the state the database had two minutes earlier."
+  }
+ },
+ {
+  "id": "ACE-D4-054",
+  "options": {
+   "A": "gcloud compute project-info add-metadata --metadata=environment=production,release_version=3.2 --project=corp-prod",
+   "B": "gcloud compute instances add-labels api-gateway-1 --zone=us-central1-b --labels=environment=production,release_version=3-2",
+   "C": "gcloud compute instances add-metadata api-gateway-1 --zone=us-central1-b --metadata-from-file=startup-script=./env.sh"
+  },
+  "distractors": {
+   "A": "Project-level metadata is inherited by every VM in corp-prod, not just api-gateway-1, and instance metadata overrides it. The requirement is a per-instance value, so this both misses the target and leaks the keys to unrelated VMs.",
+   "B": "Labels are API-side key/value tags used for billing breakdowns and resource filtering. They are never served by the metadata endpoint at 169.254.169.254, so the guest cannot read them, and label values reject the dot in 3.2.",
+   "C": "--metadata-from-file writes the key given before the equals sign, here startup-script, from the contents of env.sh. The environment and release_version keys are never created, and a startup script only executes on the next boot."
+  }
+ },
+ {
+  "id": "ACE-D3-025",
+  "options": {
+   "B": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --set-env-vars=DATABASE_PASSWORD=$(gcloud secrets versions access 1 --secret=db-password)",
+   "C": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-secrets=/secrets/db=db-password:latest",
+   "D": "gcloud run services update api-service --region=us-central1 --update-env-vars=DATABASE_PASSWORD=projects/my-proj/secrets/db-password"
+  },
+  "distractors": {
+   "B": "The shell expands the secret on the deploying machine, so the plaintext password is stored in the revision's environment variables and is readable by anyone with run.services.get. It is also pinned to version 1, so rotation never reaches the service.",
+   "C": "A left-hand side starting with a slash is the volume form: Cloud Run mounts the secret as a file at /secrets/db. No DATABASE_PASSWORD variable is defined, so the container starts with the variable unset.",
+   "D": "Cloud Run does not dereference secret resource names passed as plain environment variables. The container receives the literal string projects/my-proj/secrets/db-password and uses it as the database password, which fails to authenticate."
+  }
+ }
+]

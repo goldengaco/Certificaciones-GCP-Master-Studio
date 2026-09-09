@@ -1,0 +1,312 @@
+[
+ {
+  "id": "PCA-D1-044",
+  "domainId": "PCA-D1",
+  "subtopic": "EHR Healthcare: Multi-Region Cloud Spanner for Patient Records",
+  "scenario": "EHR Healthcare operates critical emergency room charting software across hospitals in the East, Central, and Western United States. During regional disaster events (hurricanes, power grid failures), clinical charting must continue uninterrupted with zero data loss (RPO = 0) and immediate consistency to prevent prescribing fatal drug interactions. Which database architecture fulfills these life-critical requirements?",
+  "correct": "C",
+  "explanation": "Multi-region Cloud Spanner is the only Google Cloud database providing 99.999% availability SLA, synchronous TrueTime Paxos distributed transactions, global serializable ACID consistency, and zero-RPO failover across multiple US geographic regions.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 222,
+    "text": "Regional Cloud Spanner instance in us-central1 with an hourly backup schedule copied cross-region to us-east4, restoring the database into the surviving region whenever a regional disaster takes the primary region offline."
+   },
+   {
+    "letter": "B",
+    "len": 185,
+    "text": "Cloud SQL for PostgreSQL configured with availability_type REGIONAL plus a cross-region replica in a second US region promoted automatically when the primary region becomes unreachable."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "text": "Multi-Region Cloud Spanner instance (nam3 or nam-eur-asia1) with TrueTime-synchronized multi-region Paxos quorum replication, providing 99.999% SLA, strong ACID consistency, and zero RPO regional failover."
+   },
+   {
+    "letter": "D",
+    "len": 203,
+    "text": "AlloyDB for PostgreSQL with cross-region replication to a secondary cluster promoted during a regional disaster, offering strongly consistent reads from the primary cluster and a 99.99% availability SLA."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-032",
+  "domainId": "PCA-D2",
+  "subtopic": "AlloyDB for PostgreSQL Provisioning & Storage Autoscaling",
+  "scenario": "An enterprise e-commerce platform experiences severe database bottlenecks on standard PostgreSQL during Black Friday sales. They require 4x higher transactional throughput than standard PostgreSQL, sub-second analytical columnar engine acceleration on live data without ETL, automated storage autoscaling up to 64TB, and automated failover in under 10 seconds. What managed database should you provision?",
+  "correct": "C",
+  "explanation": "AlloyDB for PostgreSQL is Google Cloud's fully managed PostgreSQL-compatible database designed for demanding enterprise workloads. It delivers 4x the throughput of standard PostgreSQL, disaggregated compute/storage architecture with sub-10s failover, and a built-in Columnar Engine for real-time HTAP analytics.",
+  "doc": "https://cloud.google.com/alloydb/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 244,
+    "text": "Cloud SQL for PostgreSQL Enterprise Plus on a 128 vCPU machine with the data cache enabled and read replicas absorbing the reporting queries that run alongside the Black Friday checkout peak; enable automatic storage growth to absorb the spike."
+   },
+   {
+    "letter": "B",
+    "len": 240,
+    "text": "Cloud SQL for PostgreSQL with Datastream change data capture streaming into BigQuery, so analytical queries run in the warehouse while transactional traffic stays on the operational database, with Looker Studio pointed at the BigQuery copy."
+   },
+   {
+    "letter": "C",
+    "len": 222,
+    "text": "Provision Google Cloud AlloyDB for PostgreSQL with a High Availability Primary Instance (with automatic standby in another zone) and enable the AlloyDB Columnar Engine for hybrid transactional/analytical processing (HTAP)."
+   },
+   {
+    "letter": "D",
+    "len": 252,
+    "text": "Memorystore for Redis Cluster in front of the standard PostgreSQL instance: enable caching for the catalogue and session reads so the transactional database only handles checkout writes during the Black Friday peak, with caching set up in the API tier."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-042",
+  "domainId": "PCA-D3",
+  "subtopic": "Altostrat Media: IAM Role Separation for Game Services",
+  "scenario": "In altostrat's GKE cluster, the 'telemetry-ingestion' pod only needs to publish messages to a Pub/Sub topic, while the 'billing-service' pod only needs read/write access to Cloud Spanner. To prevent a compromised telemetry pod from accessing the billing database, how should you architect IAM service accounts?",
+  "correct": "A",
+  "explanation": "Workload Identity allows individual Kubernetes pods to assume distinct Google Service Accounts with granular least-privilege IAM roles, preventing lateral privilege escalation if a pod is compromised.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 242,
+    "text": "Enable GKE Workload Identity and create dedicated Google Service Accounts: grant roles/pubsub.publisher to 'gsa-telemetry' and bind it to KSA 'telemetry-ksa'; grant roles/spanner.databaseUser to 'gsa-billing' and bind it to KSA 'billing-ksa'."
+   },
+   {
+    "letter": "B",
+    "len": 235,
+    "text": "Create two Google Service Accounts holding roles/pubsub.publisher and roles/spanner.databaseUser respectively, generate JSON keys for each, and mount the keys as Kubernetes Secrets into the telemetry-ingestion and billing-service pods."
+   },
+   {
+    "letter": "C",
+    "len": 240,
+    "text": "Place telemetry-ingestion and billing-service in separate Kubernetes namespaces with NetworkPolicies and RBAC roles isolating each namespace, while both node pools keep using the default Compute Engine service account for Google API access."
+   },
+   {
+    "letter": "D",
+    "len": 209,
+    "text": "Enable GKE Workload Identity and bind a single shared Google Service Account holding both roles/pubsub.publisher and roles/spanner.databaseUser to the telemetry-ksa and billing-ksa Kubernetes service accounts."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-032",
+  "domainId": "PCA-D4",
+  "subtopic": "SRE: Health Checks & Flapping Mitigation",
+  "scenario": "A backend service running behind an External Application Load Balancer is under heavy CPU load. The health check is configured with check_interval = 1s, timeout = 1s, unhealthy_threshold = 1. Due to brief 1.2-second CPU garbage collection pauses, the load balancer prematurely marks backends unhealthy, removing them and cascading the overload to remaining instances (thundering herd). How should the health check be tuned?",
+  "correct": "D",
+  "explanation": "Health check flapping occurs when thresholds are overly aggressive. Setting unhealthy_threshold to 3 consecutive failures with appropriate timeouts absorbs transient JVM garbage collection pauses and prevents catastrophic cascading load balancer ejections.",
+  "doc": "https://cloud.google.com/load-balancing/docs/health-check-concepts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 248,
+    "text": "Raise only timeout_sec from 1 second to 10 seconds while leaving check_interval_sec at 1 and unhealthy_threshold at 1, so that a probe which is slow to answer during a garbage collection pause is given far longer before it is judged to have failed."
+   },
+   {
+    "letter": "B",
+    "len": 248,
+    "text": "Leave the health check exactly as configured and enable outlier detection on the backend service with consecutiveErrors set to 5 and a 30-second base ejection time, together with a connection draining timeout of 300 seconds on that backend service."
+   },
+   {
+    "letter": "C",
+    "len": 248,
+    "text": "Leave the health check thresholds untouched and remove the pauses instead, switching the JVM to the ZGC low-latency collector, enlarging the heap and adding backends so that no single instance ever stalls for longer than the 1-second probe timeout."
+   },
+   {
+    "letter": "D",
+    "len": 237,
+    "text": "Tune health check parameters: Increase timeout_sec to 5s, check_interval_sec to 5-10s, unhealthy_threshold to 3 consecutive failures (preventing false ejections from transient GC pauses), and healthy_threshold to 2 consecutive successes."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-014",
+  "domainId": "PCA-D5",
+  "subtopic": "Cloud Spanner Mutation Limits & Commit Batches",
+  "scenario": "A batch ingestion job attempting to insert 100,000 rows into Cloud Spanner in a single transaction fails with error 'INVALID_ARGUMENT: The transaction contains too many mutations (limit is 80,000)'. The table has 10 columns and 3 secondary indexes. Why did the transaction fail, and how should the implementation be corrected?",
+  "correct": "A",
+  "explanation": "In Cloud Spanner, a mutation is counted for each column write plus each secondary index update per row. Inserting 100,000 rows with 10 columns and 3 indexes generates over 1.3 million mutations, exceeding the hard 80,000 mutation limit per commit. Batching into chunks of 2,000-5,000 rows resolves the issue.",
+  "doc": "https://cloud.google.com/spanner/docs/quotas#limits-for-creating-reading-updating-and-deleting-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 273,
+    "text": "Recognize that total mutations equal (Number of Rows * (Columns Updated + Secondary Indexes)); partition the bulk ingest into smaller commit batches (e.g. 2,000 to 5,000 rows per transaction) using Dataflow or partitioned DML to remain well below the 80,000 mutation limit."
+   },
+   {
+    "letter": "B",
+    "len": 247,
+    "text": "Rewrite the load as a single Partitioned DML statement (INSERT INTO target SELECT ... FROM staging), since Partitioned DML is executed by Spanner as many independent smaller transactions and is therefore not bound by the per-commit mutation limit."
+   },
+   {
+    "letter": "C",
+    "len": 257,
+    "text": "Drop the three secondary indexes before the bulk load and rebuild them with CREATE INDEX once the data is committed, then retry the same single 100,000-row transaction now that only the ten base-table columns, and no index entries, are mutated for each row."
+   },
+   {
+    "letter": "D",
+    "len": 254,
+    "text": "Increase the instance from 1 to 10 nodes and file a quota increase request for 'Mutations per commit' under IAM & Admin > Quotas, then retry the unchanged 100,000-row load once the larger per-transaction mutation budget has been approved for the project."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-022",
+  "domainId": "PCA-D6",
+  "subtopic": "Cloud Router BGP Graceful Restart & BFD",
+  "scenario": "An enterprise financial trading firm connects on-premises datacenters to Google Cloud using Dedicated Interconnects. Default BGP keepalive timers take up to 60-90 seconds to detect a physical fiber link break, during which trade packets are dropped. How can you configure Cloud Router to detect link failures and reroute traffic in under 1 second?",
+  "correct": "C",
+  "explanation": "Bidirectional Forwarding Detection (BFD) provides sub-second link failure detection for BGP sessions on Cloud Router. Configuring BFD intervals (e.g. 300ms * 3 = 900ms) triggers fast failover to redundant Interconnect links without waiting for 60-second BGP hold timers.",
+  "doc": "https://cloud.google.com/router/docs/concepts/bfd",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 221,
+    "text": "Lower the BGP keepalive interval on the Cloud Router peer to 20s so the hold timer expires after 60s, and add a second Interconnect attachment with equal-cost multipath so traffic is already balanced across both circuits."
+   },
+   {
+    "letter": "B",
+    "len": 220,
+    "text": "Alert on the interconnect operational status metric in Cloud Monitoring with a 60s alignment period and trigger a Cloud Function that withdraws the affected routes and shifts the trading traffic onto the standby circuit."
+   },
+   {
+    "letter": "C",
+    "len": 246,
+    "text": "Enable Bidirectional Forwarding Detection (BFD) on the Cloud Router BGP peer configuration, setting receive and transmit intervals to 300ms (detect multiplier = 3), enabling sub-second physical link failure detection and instant route withdrawal."
+   },
+   {
+    "letter": "D",
+    "len": 215,
+    "text": "Enable BGP graceful restart on the Cloud Router session so the peer keeps forwarding along the established paths while the BGP session is re-established after the failure, avoiding traffic loss during reconvergence."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-035",
+  "domainId": "PCA-D1",
+  "subtopic": "Knightmotives Automotive: Real-Time Fleet Tracking & BI Engine",
+  "scenario": "knightmotives_automotive fleet managers monitor the live status, location, and diagnostic health of 200,000 connected vehicles on a centralized Looker Studio map dashboard. Over 2,000 managers refresh the dashboard concurrently every morning. To achieve sub-second dashboard rendering without incurring massive BigQuery on-demand query costs, what should you configure?",
+  "correct": "B",
+  "explanation": "BigQuery BI Engine is an in-memory analysis service that accelerates SQL queries in Looker and Looker Studio to sub-second response times while drastically reducing query costs by caching query plans and scanned columns in memory.",
+  "doc": "https://cloud.google.com/bigquery/docs/bi-engine-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 178,
+    "text": "Have Looker Studio query a BigQuery external table over the raw JSON telemetry in Cloud Storage, refreshing the dashboard extract every five minutes for the 2,000 fleet managers."
+   },
+   {
+    "letter": "B",
+    "len": 156,
+    "text": "Provision a BigQuery BI Engine memory reservation in the analytics project and create materialized views of current fleet status for Looker Studio to query."
+   },
+   {
+    "letter": "C",
+    "len": 173,
+    "text": "Rely on the Looker Studio data freshness cache set to twelve hours so the 2,000 concurrent managers share one cached result set instead of issuing separate BigQuery queries."
+   },
+   {
+    "letter": "D",
+    "len": 175,
+    "text": "Buy a BigQuery slot reservation with autoscaling for the analytics project so dashboard queries run on committed capacity with a predictable cost instead of on-demand pricing."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-013",
+  "domainId": "PCA-D2",
+  "subtopic": "Cloud Router & BGP Routing Modes",
+  "scenario": "An enterprise has a multi-region Google Cloud VPC deployment with subnets in us-central1 and europe-west1. They connect an on-premises datacenter to us-central1 via Cloud Interconnect. By default, on-premises routers can only see routes to subnets in us-central1 and cannot reach europe-west1 subnets. What Cloud Router setting must be updated?",
+  "correct": "C",
+  "explanation": "In Regional Dynamic Routing mode, Cloud Router only advertises subnets located in its local region. Setting Dynamic Routing Mode to GLOBAL allows Cloud Router to learn and propagate routes across all regions in the VPC dynamically.",
+  "doc": "https://cloud.google.com/router/docs/concepts/overview#dynamic-routing-mode",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 216,
+    "text": "Assign external IP addresses to the europe-west1 instances and let the on-premises datacenter reach them over the internet, restricting the traffic with VPC firewall rules that allow only the corporate egress ranges."
+   },
+   {
+    "letter": "B",
+    "len": 206,
+    "text": "Build an HA VPN tunnel between a gateway in us-central1 and another in europe-west1 inside the same VPC, so that the European subnets become reachable from the Interconnect through the newly created tunnel."
+   },
+   {
+    "letter": "C",
+    "len": 195,
+    "text": "Change the VPC Dynamic Routing Mode from REGIONAL to GLOBAL, allowing Cloud Routers in us-central1 to advertise routes to all VPC subnets across all Google Cloud regions to on-premises BGP peers."
+   },
+   {
+    "letter": "D",
+    "len": 215,
+    "text": "Create custom static routes in the Google Cloud VPC for each europe-west1 subnet with the Cloud Interconnect VLAN attachment as the next hop, so traffic destined for Europe leaves through the on-premises connection."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-051",
+  "domainId": "PCA-D3",
+  "subtopic": "Altostrat Media: Cloud Armor Edge Protection",
+  "scenario": "Attackers attempt to discover HRL's backend Cloud Storage origin bucket names to bypass CDN caching and launch direct HTTP flood attacks on storage APIs. HRL must ensure that storage buckets reject all direct public internet requests and only accept requests routed through the Global External Application Load Balancer with Cloud Armor edge security policies applied. How should you secure the origin bucket?",
+  "correct": "B",
+  "explanation": "Keeping Cloud Storage buckets private and serving them exclusively through Global External Application Load Balancers (Backend Buckets) ensures all incoming traffic is inspected by Cloud Armor at Google's edge, preventing direct bucket access attacks.",
+  "doc": "https://cloud.google.com/armor/docs/cloud-armor-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 233,
+    "text": "Leave the bucket publicly readable, and attach a Cloud Armor policy with rate limiting to the backend; the bucket stays public, so attackers who discover its name send direct requests straight to storage, bypassing the load balancer."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "text": "Keep the Cloud Storage bucket private (remove all public IAM roles), attach it as a Backend Bucket to the Global External Application Load Balancer, and enforce Cloud CDN / Cloud Armor security policies at the edge."
+   },
+   {
+    "letter": "C",
+    "len": 244,
+    "text": "Keep the bucket private and have Cloud Run issue signed URLs to fetch objects from storage instead of accepting public internet requests; every download still bypasses the load balancer, so Cloud Armor's edge security policies never inspect it."
+   },
+   {
+    "letter": "D",
+    "len": 244,
+    "text": "Place the bucket inside a VPC Service Controls perimeter, with an ingress rule for it; public internet requests from inside the perimeter reach the bucket's storage directly, bypassing the load balancer and Cloud Armor's edge security policies."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-017",
+  "domainId": "PCA-D4",
+  "subtopic": "SRE: Incident Management & PagerDuty/Slack Webhooks",
+  "scenario": "When a critical production alert fires in Cloud Monitoring (e.g., GKE control plane unreachable or database CPU > 95%), the on-call SRE team must be paged immediately via PagerDuty, an incident war room Slack channel must receive structured diagnostic payloads, and an ITSM ticket must be created in ServiceNow automatically. What Cloud Monitoring mechanism configures this multi-channel incident dispatch?",
+  "correct": "B",
+  "explanation": "Cloud Monitoring Alert Policies support multiple simultaneous Notification Channels (PagerDuty, Slack, Webhooks, SMS, Email). When an alert fires, notifications are dispatched to all configured channels automatically with incident context.",
+  "doc": "https://cloud.google.com/monitoring/support/notification-options",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 240,
+    "text": "Configure one Email notification channel for the SRE distribution list and attach it to every critical alert policy, then build a Google Apps Script that parses the incoming alert mails and forwards their contents into Slack and ServiceNow."
+   },
+   {
+    "letter": "B",
+    "len": 247,
+    "text": "Configure Cloud Monitoring Notification Channels targeting PagerDuty (for on-call paging), Slack (for war room notifications), and Webhook endpoints (for automated ServiceNow incident generation), attaching all channels to critical Alert Policies."
+   },
+   {
+    "letter": "C",
+    "len": 225,
+    "text": "Attach a single Webhook notification channel to the critical alert policies pointing at a self-managed relay VM in us-central1 that fans each incident out to PagerDuty, Slack and ServiceNow through their respective REST APIs."
+   },
+   {
+    "letter": "D",
+    "len": 233,
+    "text": "Create log-based alerts in Cloud Logging matching the control plane and database error entries and connect them to a Slack notification channel, so that the war room sees a message carrying the raw log entry as soon as it is written."
+   }
+  ]
+ }
+]

@@ -1,0 +1,522 @@
+[
+ {
+  "id": "PCA-D6-001",
+  "scenario": "An enterprise financial system requires a multi-region database deployment spanning North America (us-central1 and us-east1) that delivers 99.999% availability SLA, RPO = 0, and RTO = 0 during a total regional outage of us-central1. How does Cloud Spanner multi-region instance configuration maintain Paxos write quorum if an entire region fails?",
+  "correct": "D",
+  "clave_len": 371,
+  "densidad_clave": 12,
+  "eco_clave": 10,
+  "explanation": "Multi-region Cloud Spanner configurations distribute read-write and witness replicas across 3 geographic regions. Paxos consensus requires a majority (e.g. 3 of 5). If an entire region containing 2 replicas fails, the remaining 2 read-write replicas and 1 witness maintain quorum, guaranteeing continuous zero-loss writes and 99.999% availability.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 337,
+    "densidad": 4,
+    "eco": 2,
+    "text": "Cloud Spanner designates one leader replica in us-central1 and keeps a synchronous hot standby in us-east1; when us-central1 is lost, an operator runs a failover command that promotes the us-east1 standby, which completes in a few minutes while the client libraries retry, discarding any transaction the standby had not yet acknowledged."
+   },
+   {
+    "letter": "B",
+    "len": 362,
+    "densidad": 4,
+    "eco": 3,
+    "text": "Deploy two independent regional Spanner instances, one in us-central1 and one in us-east1, and keep them converged with a Dataflow pipeline that reads change streams from the primary and applies the mutations to the secondary; on a regional outage, repoint the application to us-east1 with a DNS change and re-seed the pipeline from the last committed watermark."
+   },
+   {
+    "letter": "C",
+    "len": 331,
+    "densidad": 12,
+    "eco": 5,
+    "text": "Use a regional Spanner instance in us-central1 with three read-write replicas spread across us-central1-a, us-central1-b and us-central1-c, plus a read-only replica in us-east1 that is promoted to serve writes when the Paxos group in us-central1 becomes unavailable, serving stale reads from us-east1 until the promotion completes."
+   },
+   {
+    "letter": "D",
+    "len": 371,
+    "densidad": 12,
+    "eco": 10,
+    "text": "Cloud Spanner uses a multi-region configuration (e.g. nam3: 2 read-write replicas in us-central1, 2 read-write replicas in us-east1, and 1 witness replica in us-east4); if us-central1 fails, the 2 replicas in us-east1 and the witness replica in us-east4 maintain a 3-of-5 Paxos majority quorum, continuing writes seamlessly with zero data loss and zero failover downtime."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-057",
+  "scenario": "To ensure that official race lap times and telemetry cannot be manipulated or disputed by racing teams, the official timing system must cryptographically sign race result payloads using an asymmetric digital signature before publishing records to the public leaderboard and regulatory officials. What Cloud KMS key configuration should you use?",
+  "correct": "C",
+  "clave_len": 265,
+  "densidad_clave": 9,
+  "eco_clave": 9,
+  "explanation": "Cloud KMS Asymmetric Signing uses public-key cryptography (RSA/ECDSA). The private key never leaves the secure Cloud KMS hardware perimeter, and third parties can verify authenticity and non-repudiation using the public key.",
+  "doc": "https://cloud.google.com/kms/docs/create-validate-signatures",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 244,
+    "densidad": 1,
+    "eco": 6,
+    "text": "Create a Cloud KMS MAC key (HMAC_SHA256), have the timing service call macSign on each result payload and publish the tag next to the lap times, so teams and officials call macVerify with the same key to confirm the record has not been altered."
+   },
+   {
+    "letter": "B",
+    "len": 268,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Encrypt the result payloads with a Cloud HSM backed customer-managed key and store them in a Cloud Storage bucket with Bucket Lock and a retention policy, so published records cannot be deleted or rewritten and are readable only by principals holding the decrypt role."
+   },
+   {
+    "letter": "C",
+    "len": 265,
+    "densidad": 9,
+    "eco": 9,
+    "text": "Create an Asymmetric Sign/Verify CryptoKey in Cloud KMS (e.g. RSA_SIGN_PSS_4096_SHA512 or EC_SIGN_P256_SHA256); the official timing service signs race payloads using the private key inside Cloud KMS, while teams and officials verify signatures using the public key."
+   },
+   {
+    "letter": "D",
+    "len": 258,
+    "densidad": 5,
+    "eco": 7,
+    "text": "Create an asymmetric CryptoKey with the ASYMMETRIC_DECRYPT purpose (RSA_DECRYPT_OAEP_4096_SHA256), publish its public key to the racing teams, and have the official timing service transform every race payload with the private key that stays inside Cloud KMS."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-003",
+  "scenario": "An enterprise FinOps team is optimizing Google Cloud spend. The organization has two distinct workload profiles: 1) A steady-state fleet of 200 N2 Compute Engine instances in us-central1 running 24/7 with zero planned architecture changes for 3 years; 2) Microservices undergoing rapid modernization transitioning unpredictably between Compute Engine (C2/N2D), GKE Autopilot, and Cloud Run across multiple US regions. What Committed Use Discount (CUD) strategy maximizes cost savings?",
+  "correct": "A",
+  "clave_len": 282,
+  "densidad_clave": 12,
+  "eco_clave": 5,
+  "explanation": "Resource-Based CUDs offer the highest discounts (up to 70%) for predictable, fixed machine families in a specific region. Flexible Spend-Based CUDs offer lower percentage discounts but apply flexibly across Compute Engine machine types, GKE Autopilot, and Cloud Run across multiple regions.",
+  "doc": "https://cloud.google.com/compute/docs/instances/signing-up-committed-use-discounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 282,
+    "densidad": 12,
+    "eco": 5,
+    "text": "Purchase 3-year Resource-Based CUDs for the steady-state N2 us-central1 fleet (maximizing discount up to 57-70%), and purchase 1-year or 3-year Flexible Spend-Based CUDs for the modernizing workloads (providing cross-machine-family, cross-service, and cross-region spend discounts)."
+   },
+   {
+    "letter": "B",
+    "len": 270,
+    "densidad": 2,
+    "eco": 7,
+    "text": "Purchase three-year Flexible Spend-Based CUDs sized to the combined hourly spend of both workload profiles, so a single commitment covers the 200 N2 instances, the GKE Autopilot pods and the Cloud Run services across every US region without forecasting machine families."
+   },
+   {
+    "letter": "C",
+    "len": 241,
+    "densidad": 4,
+    "eco": 2,
+    "text": "Purchase three-year Resource-Based CUDs in us-central1 for the N2 fleet, plus additional Resource-Based CUDs sized to the current C2 and N2D footprint of the modernizing microservices, adjusting those commitments as the migration progresses."
+   },
+   {
+    "letter": "D",
+    "len": 268,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Rely on the automatic Sustained Use Discounts that Compute Engine applies to instances running most of the month, together with rightsizing recommendations from the Recommender API, and cover seasonal growth with Spot VMs rather than signing any multi-year commitment."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-017",
+  "scenario": "An enterprise needs to migrate 500 VMware virtual machines from an on-premises datacenter to Google Cloud Compute Engine. The migration must perform continuous background disk replication without taking on-prem systems offline, support non-disruptive test-clones in Google Cloud to validate application functionality, and execute final cutover with under 10 minutes of maintenance downtime per VM. Which tool achieves this?",
+  "correct": "D",
+  "clave_len": 255,
+  "densidad_clave": 3,
+  "eco_clave": 14,
+  "explanation": "Migrate to Virtual Machines (formerly Migrate for Anthos/Compute Engine) provides agentless, continuous block-level data replication from VMware/AWS/Azure directly to Compute Engine, enabling non-disruptive test clones and near-zero downtime final cutover.",
+  "doc": "https://cloud.google.com/migrate/virtual-machines/docs/5.0/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 228,
+    "densidad": 0,
+    "eco": 5,
+    "text": "Use Migrate to Containers to modernize the 500 VMware virtual machines into GKE workloads, extracting each application layer out of the guest, generating Kubernetes manifests and cutting the applications over cluster by cluster."
+   },
+   {
+    "letter": "B",
+    "len": 229,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Export the VMware guests to VMDK/OVA images, move them into Cloud Storage with Storage Transfer Service or a Transfer Appliance, and run gcloud compute images import for each of the 500 VMs before booting the resulting instances."
+   },
+   {
+    "letter": "C",
+    "len": 237,
+    "densidad": 1,
+    "eco": 6,
+    "text": "Use Database Migration Service together with Application Integration to replicate the 500 workloads continuously, running test clones in a sandbox project before scheduling the final cutover inside a ten-minute maintenance window per VM."
+   },
+   {
+    "letter": "D",
+    "len": 255,
+    "densidad": 3,
+    "eco": 14,
+    "text": "Deploy Migrate to Virtual Machines (M4VM) on-premises connector, execute continuous background block replication over Cloud Interconnect/VPN, perform non-disruptive Test Clones in sandbox VPCs, and trigger final cutover with automated instance generation."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-032",
+  "scenario": "Agricultural tractors frequently operate in rural remote farm fields with zero cellular connectivity for 12 to 18 hours at a time. The onboard vehicle telemetry system must continue logging fine-grained sensor data (100+ parameters) locally without buffer overflow, and automatically synchronize the buffered batch records to Google Cloud Storage / Pub/Sub once cellular coverage or farm Wi-Fi is restored. What architecture ensures zero data loss?",
+  "correct": "A",
+  "clave_len": 304,
+  "densidad_clave": 8,
+  "eco_clave": 9,
+  "explanation": "Edge Store-and-Forward buffers sensor data on local vehicle hardware during cellular disconnects. When connectivity returns, data is securely batched, compressed, and uploaded to Google Cloud Storage/Pub/Sub without data loss.",
+  "doc": "https://cloud.google.com/architecture/iot-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 304,
+    "densidad": 8,
+    "eco": 9,
+    "text": "Implement an Edge Store-and-Forward architecture: Buffer sensor readings locally on encrypted vehicle solid-state storage (eMMC/NVMe) with FIFO rotation; upon detecting network connectivity, compress and batch-upload files to Cloud Storage / Pub/Sub with SHA-256 checksum verification and retry policies."
+   },
+   {
+    "letter": "B",
+    "len": 285,
+    "densidad": 3,
+    "eco": 3,
+    "text": "Buffer sensor readings in an in-memory ring buffer inside the telemetry ECU process and publish to Pub/Sub with the client library's exponential-backoff retry, letting the retry loop drain the buffer as soon as the modem reattaches, with the buffer sized from the unit's available RAM."
+   },
+   {
+    "letter": "C",
+    "len": 274,
+    "densidad": 2,
+    "eco": 4,
+    "text": "Publish every reading to Cloud Pub/Sub as it is produced and rely on the topic's seven-day message retention together with subscription seek to replay anything that was not delivered while the tractor was outside cellular coverage, so no buffering logic runs on the vehicle."
+   },
+   {
+    "letter": "D",
+    "len": 277,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Mount the destination Cloud Storage bucket on the vehicle computer with Cloud Storage FUSE and have the logger write sensor files straight into the mount, so the operating system handles the upload transparently whenever a link is available, with no application-level batching."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-004",
+  "scenario": "An enterprise order processing service must invoke a legacy third-party shipping partner REST API to purchase postage labels. The partner API crashes if it receives more than 20 requests per second and charges double if duplicate label requests are submitted. How should you architect the invocation pipeline?",
+  "correct": "A",
+  "clave_len": 287,
+  "densidad_clave": 10,
+  "eco_clave": 5,
+  "explanation": "Google Cloud Tasks queues enforce granular dispatch rate limits (max_dispatches_per_second) and concurrency limits. Providing explicit Task Names guarantees idempotency and automated task deduplication, preventing duplicate billing.",
+  "doc": "https://cloud.google.com/tasks/docs/configuring-queues",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 287,
+    "densidad": 10,
+    "eco": 5,
+    "text": "Dispatch shipping requests via Google Cloud Tasks: Configure the Queue rate limits (max_dispatches_per_second = 20, max_concurrent_dispatches = 10) and assign deterministic Task Names (e.g. tasks/order-12345) to enforce automatic task deduplication and prevent duplicate label purchases."
+   },
+   {
+    "letter": "B",
+    "len": 253,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Publish each label request to a Pub/Sub topic and configure the subscription with exactly-once delivery and flow control limiting the client to twenty outstanding messages, so the partner API never sees more than twenty requests in flight at any moment."
+   },
+   {
+    "letter": "C",
+    "len": 254,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Call the partner API from a Cloud Run service configured with maximum instances set to twenty and container concurrency set to one, recording each processed order identifier in a Firestore document before the outbound call is made so a repeat is skipped."
+   },
+   {
+    "letter": "D",
+    "len": 299,
+    "densidad": 3,
+    "eco": 5,
+    "text": "Wrap the partner call in a client-side token-bucket rate limiter backed by a Memorystore counter refilled at twenty tokens per second across all order-processing replicas, and attach a freshly generated UUID idempotency key to every attempt so the partner can discard requests it has already served."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-024",
+  "scenario": "During an unexpected 10x traffic spike, a retail backend service is overwhelmed and its database is approaching CPU saturation. To prevent a catastrophic total outage, the system must prioritize critical revenue transactions (completing checkout purchases) while automatically shedding non-critical traffic (recommendations, personalized banners, review loading). What architectural patterns implement this graceful degradation?",
+  "correct": "D",
+  "clave_len": 320,
+  "densidad_clave": 7,
+  "eco_clave": 7,
+  "explanation": "Google SRE resilience patterns utilize load shedding, circuit breakers, and graceful degradation. Dropping non-essential background features and returning fallbacks preserves database capacity for mission-critical core revenue transactions.",
+  "doc": "https://sre.google/sre-book/addressing-cascading-failures/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 330,
+    "densidad": 3,
+    "eco": 3,
+    "text": "Configure aggressive horizontal autoscaling on the backend Managed Instance Group with a 40% CPU target and a 30-second cool-down, and raise both the Cloud SQL max_connections limit and each replica's connection pool size, so every incoming request, critical or not, is absorbed by extra stateless replicas until the spike passes."
+   },
+   {
+    "letter": "B",
+    "len": 314,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Enable client-side and sidecar retries with exponential backoff and jitter, raise the Envoy request timeout from 5 to 60 seconds, and increase the connection pool queue depth and the connection wait limit so that requests park waiting for a free database connection instead of being rejected while the spike lasts."
+   },
+   {
+    "letter": "C",
+    "len": 314,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Put Memorystore for Redis in front of every endpoint with a long TTL and a write-through policy, serving all reads from cache including cart contents, inventory counts and checkout confirmations, so that for the duration of the spike the database receives only write traffic and its CPU utilization stops climbing."
+   },
+   {
+    "letter": "D",
+    "len": 320,
+    "densidad": 7,
+    "eco": 7,
+    "text": "Implement Load Shedding and Circuit Breakers (e.g. using Envoy / Cloud Armor / Istio): Return cached or fallback default responses for non-critical services (recommendations), prioritize checkout traffic via separate priority threadpools/queues, and drop low-priority requests with HTTP 429/503 before backends saturate."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-038",
+  "scenario": "An enterprise web service is only licensed to operate in the United States and Canada. Furthermore, traffic from known malicious Tor exit nodes and suspicious IP ranges must be blocked before reaching backend VMs. How should you configure Cloud Armor Security Policies?",
+  "correct": "A",
+  "clave_len": 277,
+  "densidad_clave": 9,
+  "eco_clave": 5,
+  "explanation": "Google Cloud Armor natively supports geographic filtering via origin.region_code expressions and Google-curated Threat Intelligence Named IP Lists (e.g. Tor exit nodes, search engine crawlers, threat actors) evaluated directly at Google's global Anycast edge.",
+  "doc": "https://cloud.google.com/armor/docs/rules-language-reference",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 277,
+    "densidad": 9,
+    "eco": 5,
+    "text": "Configure Cloud Armor Security Policy rules using geographic expressions (e.g., origin.region_code != 'US' && origin.region_code != 'CA') and integrate Google-managed Named IP Lists (e.g. evaluatePreconfiguredExpr('anon-threat-intel')) to drop traffic at Google's edge network."
+   },
+   {
+    "letter": "B",
+    "len": 274,
+    "densidad": 2,
+    "eco": 7,
+    "text": "Attach a Cloud Armor edge security policy to the backend service and write the rules there, combining origin.region_code allow-listing for US and CA with Google Threat Intelligence named lists, so that traffic is filtered in the caching layer before any backend is selected."
+   },
+   {
+    "letter": "C",
+    "len": 269,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Create a hierarchical firewall policy at the organization node that denies ingress from every source range except the US and Canada allocations, plus a deny rule holding the published Tor exit-node ranges, refreshed nightly by a Cloud Function that rewrites the policy."
+   },
+   {
+    "letter": "D",
+    "len": 258,
+    "densidad": 3,
+    "eco": 2,
+    "text": "Implement the checks in application middleware on the backend VMs, resolving the client address from the X-Forwarded-For header against a MaxMind GeoIP2 database and an hourly Tor exit-node feed, and returning HTTP 403 for anything outside the US and Canada."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-057",
+  "scenario": "During live aircraft races, HRL wants to automatically generate 15-second social media highlight clips whenever an exciting event occurs (e.g. an aggressive overtaking maneuver, a near-miss, or a crash). The system must analyze live video streams with computer vision, detect the event timestamp within 5 seconds of occurrence, trigger video segmentation, and publish the clip to social channels. Which Google Cloud pipeline achieves this?",
+  "correct": "B",
+  "clave_len": 250,
+  "densidad_clave": 6,
+  "eco_clave": 8,
+  "explanation": "Vertex AI Video Intelligence API and custom vision models on Cloud Run GPUs process video streams to detect shot changes, object tracking, and custom action events in real-time. Integrating with Transcoder API automates clip clipping and social distribution.",
+  "doc": "https://cloud.google.com/video-intelligence/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 245,
+    "densidad": 0,
+    "eco": 4,
+    "text": "Upload each completed race recording to Cloud Storage, run a Video Intelligence API batch annotation job for shot change and object tracking when the file lands, and use the returned timestamps to cut the highlight clips with the Transcoder API."
+   },
+   {
+    "letter": "B",
+    "len": 250,
+    "densidad": 6,
+    "eco": 8,
+    "text": "Stream video segments to Cloud Storage -> trigger Vertex AI Video Intelligence API / custom object detection model on Cloud Run GPUs -> detect action events -> invoke Transcoder API to render 15-second clips -> publish via Cloud Tasks to social APIs."
+   },
+   {
+    "letter": "C",
+    "len": 236,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Ingest the live camera feeds with the Live Stream API and let the production team press a marker button in a Cloud Run control panel whenever they see an overtake, which triggers the Transcoder API to cut and publish the 15-second clip."
+   },
+   {
+    "letter": "D",
+    "len": 234,
+    "densidad": 1,
+    "eco": 4,
+    "text": "Stream the aircraft accelerometer telemetry into Cloud Monitoring as custom metrics and configure alerting policies that fire when G-force crosses a threshold, invoking a Cloud Function that cuts the corresponding 15 seconds of video."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-007",
+  "scenario": "An enterprise SRE team suffers from alert fatigue due to noisy short-lived error spikes while simultaneously missing slow, catastrophic error budget drains that deplete 100% of the budget over 3 days. According to Google SRE Workbook principles, how should SLO alerting be configured in Cloud Monitoring?",
+  "correct": "D",
+  "clave_len": 301,
+  "densidad_clave": 11,
+  "eco_clave": 2,
+  "explanation": "Multi-Window Multi-Burn-Rate alerting (from Google's Site Reliability Engineering Workbook) pairs short and long evaluation windows at different burn rate multipliers. This eliminates false alarms from transient spikes while rapidly paging for severe budget depletion.",
+  "doc": "https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring/alerting-on-budget-burn-rate",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 276,
+    "densidad": 5,
+    "eco": 5,
+    "text": "Configure a single fast-burn SLO alert: a 14.4x burn rate evaluated over a 1-hour long window with a 5-minute short window that pages the on-call whenever 2% of the 30-day error budget is consumed in one hour, and silence every other SLO notification to end the alert fatigue."
+   },
+   {
+    "letter": "B",
+    "len": 300,
+    "densidad": 3,
+    "eco": 2,
+    "text": "Alert directly on the raw error ratio: page the on-call whenever the 5-minute HTTP 5xx rate exceeds 1% of requests, open a non-paging ticket whenever it exceeds 0.5% for 30 minutes, add a parallel threshold on p99 latency, and retune all three static thresholds every quarter as request volume grows."
+   },
+   {
+    "letter": "C",
+    "len": 301,
+    "densidad": 3,
+    "eco": 5,
+    "text": "Alert only on cumulative error budget consumption at the end of each 30-day compliance window: define the SLO with a 30-day rolling window in Cloud Monitoring, review the burndown chart in the weekly reliability meeting, and page the on-call engineer once the budget for the period is fully exhausted."
+   },
+   {
+    "letter": "D",
+    "len": 301,
+    "densidad": 11,
+    "eco": 2,
+    "text": "Configure Multi-Window Multi-Burn-Rate Alerting: Use a high burn rate (e.g. 14.4x burn rate over 1-hour and 5-minute windows, burning 2% budget in 1 hour) to page on-call immediately, and a low burn rate (e.g. 6x burn rate over 6-hour and 30-minute windows) to file a non-paging ticket for slow leaks."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-003",
+  "scenario": "An enterprise streams 100,000 IoT sensor messages per second to a Pub/Sub topic and needs to write them directly into a BigQuery table with minimal latency. Deploying and managing a Cloud Dataflow or Cloud Run pipeline just to write Pub/Sub messages into BigQuery adds unnecessary compute costs and operational overhead. What Pub/Sub subscription type solves this?",
+  "correct": "C",
+  "clave_len": 233,
+  "densidad_clave": 3,
+  "eco_clave": 10,
+  "explanation": "Pub/Sub BigQuery Subscriptions stream messages directly from Pub/Sub into BigQuery tables with zero intermediate compute infrastructure (no Dataflow or Cloud Run needed), dramatically simplifying architecture and lowering costs.",
+  "doc": "https://cloud.google.com/pubsub/docs/bigquery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 236,
+    "densidad": 1,
+    "eco": 7,
+    "text": "Create a Cloud Pub/Sub Cloud Storage subscription that writes batched Avro files into a staging bucket and define a BigQuery external table over that bucket so analysts query the sensor messages without any intermediate compute service."
+   },
+   {
+    "letter": "B",
+    "len": 230,
+    "densidad": 1,
+    "eco": 7,
+    "text": "Create a Pub/Sub pull subscription and configure the BigQuery Data Transfer Service to run recurring load jobs that ingest the accumulated sensor messages into the destination table, avoiding any Dataflow job or Cloud Run service."
+   },
+   {
+    "letter": "C",
+    "len": 233,
+    "densidad": 3,
+    "eco": 10,
+    "text": "Create a Cloud Pub/Sub BigQuery Subscription (bigquery_config), allowing Pub/Sub to write messages directly into the destination BigQuery table serverlessly without deploying or managing intermediate Dataflow jobs or Cloud Functions."
+   },
+   {
+    "letter": "D",
+    "len": 230,
+    "densidad": 2,
+    "eco": 6,
+    "text": "Publish the sensor messages to the topic and configure a Pub/Sub push subscription that POSTs each message to the BigQuery tabledata.insertAll REST endpoint with an OIDC token, letting Pub/Sub deliver rows straight into the table."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-051",
+  "scenario": "Attackers attempt to discover HRL's backend Cloud Storage origin bucket names to bypass CDN caching and launch direct HTTP flood attacks on storage APIs. HRL must ensure that storage buckets reject all direct public internet requests and only accept requests routed through the Global External Application Load Balancer with Cloud Armor edge security policies applied. How should you secure the origin bucket?",
+  "correct": "B",
+  "clave_len": 215,
+  "densidad_clave": 1,
+  "eco_clave": 12,
+  "explanation": "Keeping Cloud Storage buckets private and serving them exclusively through Global External Application Load Balancers (Backend Buckets) ensures all incoming traffic is inspected by Cloud Armor at Google's edge, preventing direct bucket access attacks.",
+  "doc": "https://cloud.google.com/armor/docs/cloud-armor-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 217,
+    "densidad": 1,
+    "eco": 6,
+    "text": "Leave the bucket publicly readable for cache-fill performance and attach a Cloud Armor edge security policy with rate limiting to the backend bucket, so floods are dropped at the Google edge before they reach storage."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "densidad": 1,
+    "eco": 12,
+    "text": "Keep the Cloud Storage bucket private (remove all public IAM roles), attach it as a Backend Bucket to the Global External Application Load Balancer, and enforce Cloud CDN / Cloud Armor security policies at the edge."
+   },
+   {
+    "letter": "C",
+    "len": 203,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Keep the bucket private and issue short-lived V4 signed URLs from a Cloud Run service, which fans hand to their players so each media segment is fetched directly from the storage.googleapis.com endpoint."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Place the origin bucket inside a VPC Service Controls perimeter restricting storage.googleapis.com and add an ingress rule for the serving project, so any request coming from outside the perimeter is denied before it ever reaches an object."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-036",
+  "scenario": "During the final lap of the World Championship race, mobile app traffic surges from 5,000 to 500,000 requests per second within 10 seconds. Standard serverless autoscaling from min_instances = 0 experiences cold-start latency spikes. How should the SRE team prepare Cloud Run infrastructure before the race starts to guarantee sub-50ms API response times during sudden surges?",
+  "correct": "A",
+  "clave_len": 258,
+  "densidad_clave": 9,
+  "eco_clave": 4,
+  "explanation": "Setting min_instances on Cloud Run keeps a designated baseline of container instances pre-warmed in memory. Adjusting min_instances prior to scheduled live high-traffic events absorbs massive traffic spikes with zero cold-start latency.",
+  "doc": "https://cloud.google.com/run/docs/configuring/min-instances",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 258,
+    "densidad": 9,
+    "eco": 4,
+    "text": "Pre-warm Cloud Run 30 minutes before race start by updating min_instances = 1,000 and max_instances = 5,000 (with concurrency = 80), keeping pre-warmed container instances warm and active in memory to absorb the 500k req/s surge with zero cold-start latency."
+   },
+   {
+    "letter": "B",
+    "len": 244,
+    "densidad": 3,
+    "eco": 5,
+    "text": "Leave min_instances = 0 and have Cloud Scheduler call a /warmup endpoint every 60 seconds while raising concurrency to 250 requests per container, letting the Cloud Run autoscaler add instances as the request backlog grows during the final lap."
+   },
+   {
+    "letter": "C",
+    "len": 243,
+    "densidad": 4,
+    "eco": 2,
+    "text": "Keep min_instances = 0 and front Cloud Run with a Global External Application Load Balancer plus Cloud CDN, setting a 60-second cache TTL on the API responses so that the 500k req/s surge is served from the edge instead of the container fleet."
+   },
+   {
+    "letter": "D",
+    "len": 229,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Migrate the API from Cloud Run to a GKE Autopilot Deployment with a Horizontal Pod Autoscaler targeting 60% CPU utilisation and Cluster Autoscaler node provisioning, so that Kubernetes adds replicas as the final-lap load arrives."
+   }
+  ]
+ }
+]

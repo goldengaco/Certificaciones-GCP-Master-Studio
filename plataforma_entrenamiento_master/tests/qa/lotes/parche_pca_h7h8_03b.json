@@ -1,0 +1,171 @@
+[
+ {
+  "id": "PCA-D6-009",
+  "options": {
+   "A": "The Spanner control plane in us-central1 and us-east1 promotes read-only replicas to read-write status, rebuilding a Paxos quorum via gcloud spanner instances describe, and resumes write transactions in us-east4 only once replication-lag metrics reported through monitoring.googleapis.com drain to zero.",
+   "B": "Write transactions continue in us-central1 and us-east1 but are queued locally and applied asynchronously via a --async-replay flag once us-east4 is restored, so gcloud spanner instances describe shows zero downtime and client applications observe no errors during the outage.",
+   "C": "An operator must run gcloud spanner instances update --default-leader=us-central1 to shift control manually, after which the standby replicas in us-east1 form a new Paxos quorum and resume read-write operations for the affected database after a short delay."
+  },
+  "distractors": {
+   "A": "La promoción de réplicas de solo lectura y la reconstrucción del quorum no dependen de comandos de descripción ni de esperar métricas de replication-lag hasta cero: Spanner realiza la conmutación de liderazgo automáticamente sin ese paso manual de monitoreo.",
+   "B": "Cloud Spanner no ofrece una bandera --async-replay ni permite encolar escrituras de forma asíncrona; sin quorum de escritura activo, las transacciones simplemente fallan hasta que se elige un nuevo líder.",
+   "C": "La recuperación de liderazgo de Spanner es automática mediante elección de Paxos; no requiere que un operador ejecute manualmente un comando gcloud para reasignar el líder por defecto."
+  }
+ },
+ {
+  "id": "PCA-D1-030",
+  "options": {
+   "A": "Install the gcloud CLI on each of the 50 legacy SFTP servers and run a nightly gcloud storage rsync against gs://knightmotives-logs/, migrating the historical logs reliably and logging delta-sync results for the operations team.",
+   "C": "Order Transfer Appliances for the 50 datacenters, copy the 100TB of CSV logs onto them with checksum verification, ship them to Google for ingestion into gs://knightmotives-logs/, repeating for each delta-sync.",
+   "D": "Publish the historical CSV logs over HTTPS on each regional SFTP server and create a Storage Transfer Service url-list job pointing at a manifest.tsv enumerating the URL, size, and MD5 checksum of every file for the sync."
+  },
+  "distractors": {
+   "A": "gcloud storage rsync no realiza verificación de checksum end-to-end automática ni maneja reintentos de red robustos como Storage Transfer Service; depende de que cada servidor legado ejecute el CLI de forma fiable y sin fallos.",
+   "C": "Transfer Appliance está pensado para una migración masiva única por envío físico, no para sincronizaciones incrementales recurrentes; repetir el envío físico para cada delta-sync es lento y costoso frente a una transferencia gestionada continua.",
+   "D": "Un job de tipo URL list requiere generar y mantener manualmente el manifiesto para cada sincronización incremental, sin la detección automática de deltas que ofrecen los Transfer Agents on-premises."
+  }
+ },
+ {
+  "id": "PCA-D1-047",
+  "options": {
+   "A": "Terminate the remote clinician laptops on an HA VPN gateway into the production VPC and rely on VPC firewall rules plus a per-user IPsec pre-shared key, static routes, and device health checks to limit which private GKE-hosted clinical charting subnets each clinician's tunnel may reach based on geographic origin.",
+   "B": "Expose the clinical charting portals through an External Application Load Balancer protected by Cloud Armor rules that allow only known clinic IP ranges and validate geographic origin, letting each web app hosted on private GKE clusters implement its own Google OAuth identity sign-in flow for clinicians.",
+   "C": "Publish the clinical charting portals only inside the private VPC and have clinicians validate their identity by opening an IAP TCP forwarding tunnel from their laptop through a bastion host to the GKE clusters, then browse the forwarded local port to reach the web app securely."
+  },
+  "distractors": {
+   "A": "Basarse en IPsec con claves precompartidas por usuario y rutas estáticas no ofrece verificación de identidad ni de postura del dispositivo en cada solicitud; sigue siendo acceso de red amplio tipo VPN, no un proxy Zero-Trust consciente del contexto.",
+   "B": "Delegar la autenticación a un flujo OAuth propio de cada aplicación no aplica una política de acceso centralizada ni verifica el estado del dispositivo; el filtrado por rango de IP en Cloud Armor no sustituye la verificación de identidad y contexto de BeyondCorp.",
+   "C": "Un túnel de reenvío TCP de IAP hacia un bastión sigue exponiendo acceso a nivel de red al host bastión y requiere gestión manual del túnel por parte del clínico, en lugar de una política de proxy consciente del contexto aplicada directamente al tráfico de la aplicación."
+  }
+ },
+ {
+  "id": "PCA-D4-029",
+  "options": {
+   "B": "Run a nightly z/OS batch job that unloads the core banking Db2 tables and VSAM datasets to sequential files, FTPs them to Cloud Storage, and loads them into BigQuery so business intelligence dashboards read yesterday's snapshot instead of querying the mainframe, reducing MIPS consumption.",
+   "C": "Keep the enterprise core banking data on the mainframe and expose it to BigQuery through a federated external connection, so analysts write BigQuery SQL pushed down and executed against Db2 on z/OS at query time, avoiding the annual MIPS consumption charges without any modernization changes.",
+   "D": "Replatform the entire enterprise core banking system, both OLTP transactions and business intelligence analytics, onto Compute Engine using a COBOL runtime with an emulated CICS layer, then decommission the mainframe once the annual MIPS consumption charges are eliminated."
+  },
+  "distractors": {
+   "B": "Un lote nocturno con FTP a Cloud Storage introduce un retraso de un día completo, ya que los dashboards leen datos del día anterior, y sigue dependiendo de un proceso de extracción por lotes sobre el mainframe en lugar de un streaming CDC continuo que reduzca el consumo de MIPS en tiempo real.",
+   "C": "Una consulta federada ejecuta el procesamiento SQL contra Db2 en el propio mainframe en el momento de la consulta, por lo que cada consulta analítica sigue consumiendo MIPS en el mainframe en lugar de eliminar ese costo, contradiciendo el objetivo del banco.",
+   "D": "Reescribir toda la carga transaccional OLTP en Compute Engine con un runtime COBOL emulado es una migración de altísimo riesgo e innecesaria cuando el objetivo es solo descargar las consultas analíticas, no reemplazar el núcleo transaccional del banco."
+  }
+ },
+ {
+  "id": "PCA-D1-056",
+  "options": {
+   "A": "Keep a regional managed instance group of n2-standard-8 x 1,000 Compute Engine instances running continuously behind a Global External Application Load Balancer with --target-size=1000 in us-central1, sized so autoscaling never delays a live telemetry request.",
+   "C": "Deploy the telemetry and betting-odds endpoints as Cloud Functions (1st gen) with --trigger-http --max-instances=3000 and concurrency fixed at one request per instance to absorb the sudden race-day burst of traffic across the fleet.",
+   "D": "Run the microservices on a GKE Autopilot cluster in us-central1 with a Horizontal Pod Autoscaler --cpu-percent=70 --max=500 and cluster-autoscaler enabled, scaling nodes from a minimal baseline via gke.googleapis.com when traffic arrives."
+  },
+  "distractors": {
+   "A": "Un grupo de instancias siempre activo dimensionado para el pico de 500,000 req/s implica pagar la capacidad máxima las 24 horas del día durante toda la semana, sin lograr el costo cero en horas de inactividad que exige el escenario.",
+   "C": "Cloud Functions de 1ra generación limita la concurrencia a una solicitud por instancia, por lo que absorber 500,000 solicitudes por segundo requeriría cientos de miles de instancias simultáneas, muy por encima del límite práctico y con arranques en frío notables.",
+   "D": "El autoescalado de pods y nodos en GKE Autopilot reacciona a métricas de CPU con retraso de decenas de segundos a minutos, por lo que no evita los picos de latencia por arranque en frío cuando el tráfico salta de cero a 500,000 req/s en cuestión de segundos."
+  }
+ },
+ {
+  "id": "PCA-D2-006",
+  "options": {
+   "A": "Give each of the 500 VMs an ephemeral external IP via gcloud compute instances add-access-config --address=EPHEMERAL and detach them from the NAT gateway, letting each one reach the internet directly without translation.",
+   "B": "Keep the two existing NAT IP addresses and raise --min-ports-per-vm from the default 64 to 4096 via gcloud compute routers nats update, giving each of the 500 instances a larger static block of source ports.",
+   "D": "Disable Cloud NAT and route egress through a single squid-proxy VM at 10.0.0.5 with --forward-all=true and several external IPs attached, reconfiguring each microservice's outbound calls to use HTTP_PROXY=10.0.0.5:3128."
+  },
+  "distractors": {
+   "A": "Asignar IP externas efímeras a cada instancia expone directamente 500 VMs a Internet, con la superficie de ataque y el costo de IP pública que implica, y abandona los controles de salida centralizados que exige el escenario en lugar de resolver el agotamiento de puertos.",
+   "B": "Aumentar minPortsPerVm de forma estática reduce el margen de puertos disponible para otras VMs y sigue sin usar asignación dinámica, por lo que el agotamiento puede reaparecer si el tráfico crece, ya que el bloque de puertos por VM queda fijo en vez de ajustarse a la demanda real.",
+   "D": "Enrutar todo el tráfico saliente de 500 instancias a través de una única VM proxy squid crea un punto único de fallo y de cuello de botella, sin la escalabilidad ni la resiliencia gestionada de Cloud NAT frente a los picos de conexiones salientes."
+  }
+ },
+ {
+  "id": "PCA-D1-026",
+  "options": {
+   "A": "Rely on the Pub/Sub client library's built-in publisher retry with a long total-timeout setting, keeping unacknowledged telemetry buffered in-process until the cellular link to pubsub.googleapis.com returns.",
+   "B": "Buffer the readings in a bounded in-memory ring buffer sized for two minutes of telemetry, overwrite-oldest enabled, and publish whatever remains via pubsub.googleapis.com --topic=telemetry-prod as soon as the cellular modem reattaches to the network.",
+   "D": "Accumulate every unsent reading in an unbounded in-memory list inside the telemetry process and flush the whole list in a single --batch-size=0 pubsub.googleapis.com publish call when the modem regains signal, ordering entries by capture-timestamp."
+  },
+  "distractors": {
+   "A": "El búfer interno del publisher de Pub/Sub vive en memoria de proceso; si el vehículo se reinicia o se queda sin memoria durante los 30 minutos sin conectividad, los mensajes no confirmados se pierden por completo, sin persistencia en disco.",
+   "B": "Un ring buffer en memoria de solo dos minutos sobrescribe silenciosamente los registros más antiguos cuando el túnel dura más de dos minutos, violando el requisito de no perder ningún registro de telemetría durante el apagón celular.",
+   "D": "Acumular todo en una lista en memoria no acotada puede agotar la RAM del vehículo durante un apagón de 30 minutos con alta frecuencia de muestreo, y publicar todo en una sola llamada al reconectar genera una ráfaga que puede saturar la aplicación en lugar de reintentos graduales."
+  }
+ },
+ {
+  "id": "PCA-D2-020",
+  "options": {
+   "B": "Build a full mesh of HA VPN tunnels between the 20 branch offices, the 3 datacenters, and the 10 VPC networks, with Cloud Routers exchanging dynamic BGP routes on every tunnel across Google's backbone so every site learns every other prefix.",
+   "C": "Designate one of the 10 VPC networks as the hub, peer the other nine to it with VPC Peering, and attach the Dedicated Interconnects and IPsec VPN gateways from the branch offices and datacenters to that hub so traffic transits through it.",
+   "D": "Deploy third-party SD-WAN appliances on Compute Engine that terminate the branch IPsec VPN tunnels and datacenter Interconnects, redistributing dynamic routes between the 10 VPC networks across Google's backbone through their interfaces."
+  },
+  "distractors": {
+   "B": "Una malla completa de túneles VPN entre 33 sitios crece de forma cuadrática en número de túneles y sesiones BGP a gestionar manualmente, sin el control centralizado ni el enrutamiento de tránsito administrado de un modelo hub-and-spoke.",
+   "C": "El peering de VPC no transita: una VPC hub no puede reenviar automáticamente el tráfico entre las VPCs peer conectadas a través de ella, por lo que las sucursales y datacenters no lograrían alcanzar las nueve VPCs restantes.",
+   "D": "Añadir aparatos SD-WAN de terceros sobre Compute Engine introduce infraestructura adicional que administrar y escalar manualmente, sin aprovechar la malla de tránsito totalmente gestionada y nativa de la red troncal de Google."
+  }
+ },
+ {
+  "id": "PCA-D3-028",
+  "options": {
+   "A": "Keep every workload in the single existing production project but carve the Cardholder Data Environment into its own Shared VPC subnet with dedicated firewall rules and custom IAM roles narrowed by resource-level IAM Conditions, isolating administrative boundaries within the corporate environment.",
+   "B": "Create a dedicated PCI-CDE folder holding the isolated production projects and connect it to the corporate VPC with VPC Network Peering, permitting only end-to-end TLS traffic from the corporate workloads into the Cardholder Data Environment subnets.",
+   "D": "Create a dedicated PCI-CDE project inside the existing production folder, enable Assured Workloads on it, and apply organization policy constraints restricting resource locations and mandating CMEK for all cardholder data within the corporate environment."
+  },
+  "distractors": {
+   "A": "Mantener todo en el mismo proyecto de producción y separar solo por subred y condiciones IAM no reduce el alcance de la auditoría PCI-DSS: cualquier brecha en esas condiciones o en las reglas de firewall dentro del mismo proyecto sigue exponiendo el resto de la carga corporativa al alcance PCI.",
+   "B": "Conectar la carpeta PCI-CDE a la VPC corporativa mediante VPC Network Peering crea una ruta de red directa entre los entornos no-CDE y CDE, justo lo que el requisito prohíbe explícitamente, sin importar que el tráfico se restrinja a TLS.",
+   "D": "Aislar solo a nivel de un único proyecto con Assured Workloads y políticas de organización no proporciona el perímetro de VPC Service Controls ni la separación en carpeta dedicada que exige la reducción de alcance PCI-DSS frente a las demás cargas corporativas."
+  }
+ },
+ {
+  "id": "PCA-D1-040",
+  "options": {
+   "A": "Export the FHIR store into BigQuery via gcloud healthcare fhir-stores export bq, run a Cloud DLP inspection job with the HIPAA infoTypes over dlp.googleapis.com, and apply column-level access policy tags via --policy-tag so researchers cannot read the 18 identifier columns while values stay stored in the table.",
+   "B": "Run a Dataflow pipeline via gcloud dataflow jobs run over the FHIR export applying Cloud DLP deterministic crypto-hash transforms to all 18 identifier fields, including every admission, discharge and treatment date, and write the pseudonymised records into gs://research-bucket/output/ for the researchers' BigQuery dataset.",
+   "C": "Configure a Cloud Healthcare API FHIR store de-identification config via healthcare.googleapis.com that redacts structured identifier fields and generalizes ages above 89, exporting the result to gs://research-dataset/output/ while leaving the clinical narrative notes untouched to preserve research value."
+  },
+  "distractors": {
+   "A": "Las etiquetas de política de acceso a nivel de columna restringen la lectura mediante permisos IAM, pero los valores identificables de PHI permanecen almacenados sin transformar en la tabla, incumpliendo el requisito de eliminar o transformar los 18 identificadores antes de exportar los datos a los investigadores.",
+   "B": "El hash criptográfico determinista aplicado también a las fechas de admisión, alta y tratamiento destruye los intervalos temporales entre visitas clínicas, eliminando información necesaria para el análisis longitudinal que persigue la investigación oncológica.",
+   "C": "Redactar solo los campos identificadores estructurados y dejar intactas las notas clínicas de texto libre no cumple la Regla de Puerto Seguro de HIPAA, ya que esas notas suelen contener nombres, fechas y otros identificadores en texto no estructurado que también deben eliminarse."
+  }
+ },
+ {
+  "id": "PCA-D4-037",
+  "options": {
+   "A": "Raise the subscription --ack-deadline to the 600-second maximum and enable exactly-once delivery, giving the consumer extra time before Pub/Sub re-delivers to another instance rather than treating the delivery as failed, and retain the data for later replay of any dropped item.",
+   "B": "Configure the subscription retry-policy with a 10-second min-backoff and 600-second max-backoff via gcloud pubsub subscriptions update, so redelivery of the failing message spaces further apart and the subscriber has time to restart cleanly between attempts.",
+   "D": "Reduce message-retention-duration to the ten-minute minimum via gcloud pubsub topics update so the malformed poison-pill message ages out of the backlog on its own, and enable ordering with an ordering-key per account so valid entries behind it stay in sequence."
+  },
+  "distractors": {
+   "A": "Extender el ack-deadline y activar entrega exactly-once no evita que el mismo mensaje corrupto se siga reintentando indefinidamente al mismo o a otro suscriptor: el consumidor sigue fallando al procesarlo, sin ningún tema de mensajes fallidos donde aislarlo.",
+   "B": "El backoff exponencial solo espacia cada vez más los reintentos, pero el mensaje envenenado nunca deja de reenviarse al mismo suscriptor, que seguirá fallando en cada intento y bloqueando el procesamiento del resto de la cola indefinidamente.",
+   "D": "Reducir la retención del tema a diez minutos no impide que el mensaje envenenado sea reenviado y bloquee al suscriptor mientras siga sin confirmarse dentro de esa ventana, y arriesga con perder mensajes válidos legítimos que aún no se hayan podido procesar."
+  }
+ },
+ {
+  "id": "PCA-D3-052",
+  "options": {
+   "A": "Issue per-user ID tokens through Firebase Auth and verify the signature and audience claim in the Cloud Run backend, rejecting any voting or telemetry request lacking a signed credential from a legitimate app binary on genuine hardware.",
+   "B": "Store the API key in the Android Keystore and iOS Keychain, apply obfuscation to the mobile binary and pin the backend TLS certificate so attackers who decompile the app cannot extract the credential used against Cloud Run.",
+   "C": "Attach a Cloud Armor policy to the load balancer in front of Cloud Run with reCAPTCHA Enterprise bot management and per-IP rate limiting on the voting and telemetry endpoints, blocking automated scripted traffic from decompiled app binaries."
+  },
+  "distractors": {
+   "A": "Un token de identidad de usuario prueba quién inició sesión, pero no atestigua que el binario de la app esté intacto ni que se ejecute en hardware genuino; un atacante que extraiga la lógica de la app puede seguir generando tokens válidos desde un cliente falsificado.",
+   "B": "Ofuscar el binario y anclar el certificado TLS solo eleva el costo de la ingeniería inversa, pero no impide que un atacante decidido extraiga la clave API y siga automatizando solicitudes de voto y telemetría desde un cliente ilegítimo.",
+   "C": "Cloud Armor con reCAPTCHA y límites por IP detecta patrones de tráfico automatizado, pero no verifica la integridad ni la autenticidad del binario de la app en sí, por lo que un script que imite el comportamiento humano puede seguir pasando desapercibido."
+  }
+ },
+ {
+  "id": "PCA-D5-002",
+  "options": {
+   "A": "Validate downstream via a Dataflow pipeline that deserializes each message against the expected Avro schema loaded from gs://schema-registry/avro/, routing deserialization failures to a dead-letter Pub/Sub topic and alerting the publishing team to fix the producer before its next release.",
+   "B": "Create a BigQuery subscription bound to a destination table via bigquery.googleapis.com, enabling use-topic-schema so any message whose columns don't match the table's structure is diverted to a dead-letter destination instead of landing in the warehouse.",
+   "C": "Publish exclusively through a shared internal client library (publisher-lib==2.4.0) that validates each event against the registered Avro schema before calling publish, requiring every team to pin that exact version in their build-dependencies.txt file."
+  },
+  "distractors": {
+   "A": "Validar contra el esquema Avro en Dataflow ocurre después de que el mensaje ya fue publicado y aceptado por el tema, por lo que solo detecta el problema de forma reactiva en cada pipeline consumidor en lugar de rechazar la publicación incompatible en el origen.",
+   "B": "La suscripción de BigQuery con 'use topic schema' solo protege esa suscripción concreta hacia esa tabla; no aplica ninguna validación en el propio tema de Pub/Sub, así que otras suscripciones y pipelines siguen recibiendo los mensajes con el esquema roto.",
+   "C": "Depender de que cada equipo use e integre correctamente una biblioteca cliente interna no impide que un equipo publique directamente a la API de Pub/Sub sin pasar por esa biblioteca, dejando la validación de contrato como una convención opcional y no una garantía a nivel del tema."
+  }
+ }
+]

@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D6-036",
+  "options": {
+   "B": "Leave min_instances = 0 and have Cloud Scheduler call a /warmup endpoint every 60 seconds while raising concurrency to 250 requests per container, letting the Cloud Run autoscaler add instances as the request backlog grows during the final lap.",
+   "C": "Keep min_instances = 0 and front Cloud Run with a Global External Application Load Balancer plus Cloud CDN, setting a 60-second cache TTL on the API responses so that the 500k req/s surge is served from the edge instead of the container fleet.",
+   "D": "Migrate the API from Cloud Run to a GKE Autopilot Deployment with a Horizontal Pod Autoscaler targeting 60% CPU utilisation and Cluster Autoscaler node provisioning, so that Kubernetes adds replicas as the final-lap load arrives."
+  },
+  "distractors": {
+   "B": "Un ping periódico solo mantiene viva una o dos instancias: el autoscaler sigue teniendo que arrancar en frío miles de contenedores cuando el tráfico se multiplica por 100 en 10 segundos.",
+   "C": "Las respuestas de la API de carrera son dinámicas y personalizadas por usuario, con TTL prácticamente nulo: casi todas las peticiones son cache miss y acaban igualmente en contenedores que arrancan en frío.",
+   "D": "El HPA evalúa métricas en un bucle de unos 15 segundos y el aprovisionamiento de nodos de Autopilot tarda minutos: la flota no puede crecer 100x dentro de la ventana de 10 segundos del pico."
+  }
+ },
+ {
+  "id": "PCA-D4-012",
+  "options": {
+   "A": "Route the health check and DEBUG entries with a dedicated sink into a separate user-defined log bucket, set its retention to 1 day and disable Log Analytics on it, so the entries expire long before generating storage charges.",
+   "C": "Reconfigure the GKE cluster with --logging=SYSTEM so that only control plane, kubelet and node components emit logs, removing the container workload stream that produces the 500 million health check lines every day.",
+   "D": "Create an aggregated sink that exports the health check entries to a Coldline Cloud Storage bucket with a 90-day lifecycle rule and leave the _Default sink untouched, moving the high-volume logs to cheaper archival storage."
+  },
+  "distractors": {
+   "A": "La ingesta (0,50 USD/GiB) se factura al escribir en cualquier log bucket, sea _Default o definido por el usuario, y los primeros 30 días de retención son gratuitos: la factura de 15.000 USD no baja ni un dólar.",
+   "C": "SYSTEM elimina todos los logs de contenedor de las cargas de trabajo, incluidas las entradas ERROR y WARNING de la aplicación que el equipo SRE necesita seguir ingiriendo en el bucket _Default.",
+   "D": "Un sink copia entradas a un destino adicional: el sink _Default sigue ingiriendo y facturando los mismos 500 millones de líneas, y la exportación a GCS añade coste en lugar de quitarlo."
+  }
+ },
+ {
+  "id": "PCA-D5-016",
+  "options": {
+   "A": "Keep the device_type prefix and prepend the deployment region and the utility company code, giving [region]#[utility]#[device_type]#[timestamp], so that writes spread across the geographies where the smart meters are installed.",
+   "B": "Keep the current row key, enable multi-cluster routing in the application profile and add a second replicated Bigtable cluster in another zone, spreading the incoming write traffic evenly across both clusters of the instance.",
+   "D": "Redesign the row key as [reverse_timestamp]#[device_type]#[device_id] so the most recent readings sort first, and pre-split the table into 20 tablets so that each node receives an equal share of the initial key space."
+  },
+  "distractors": {
+   "A": "La región y la comercializadora siguen siendo prefijos de cardinalidad muy baja: el hotspot se reparte entre un puñado de tablets en vez de distribuirse entre el millón de contadores que escriben.",
+   "B": "La replicación copia cada escritura a los dos clústeres y cada clúster conserva el mismo orden lexicográfico de tablets: el mismo tablet único se satura en ambos y solo se duplica el coste.",
+   "D": "Un prefijo derivado del timestamp sigue siendo monótono: todas las escrituras concurrentes caen en el único tablet que cubre el rango de tiempo actual y el hotspot solo se desplaza al avanzar el reloj."
+  }
+ },
+ {
+  "id": "PCA-D4-034",
+  "options": {
+   "A": "Grant the NOC team roles/monitoring.viewer and roles/logging.viewer at the organization level so a single set of credentials opens the built-in dashboards of all 100 projects, and bookmark each project dashboard URL in a shared browser profile.",
+   "B": "Build an export pipeline that reads every project's time series through the Cloud Monitoring API into a central BigQuery dataset partitioned by day, and build the NOC dashboards in Looker Studio on top of the collected metric tables.",
+   "D": "Move the 100 projects under a single monitoring folder and enable folder-level dashboards and folder-level alerting policies, so that the metrics of every child project roll up automatically to the parent node of the resource hierarchy."
+  },
+  "distractors": {
+   "A": "IAM concede permiso, no agregación: cada proyecto conserva su propio metrics scope, así que el equipo sigue cambiando entre 100 consolas y no puede graficar ni alertar entre proyectos.",
+   "B": "Las copias exportadas llegan con retraso y pierden el motor nativo de alertas e incidentes: Looker Studio grafica el histórico pero no evalúa políticas de alerta ni consultas MQL sobre series vivas.",
+   "D": "Los metrics scopes se asocian a un scoping project, nunca a una carpeta: Cloud Monitoring no ofrece agregación a nivel de folder, de modo que no se consolida ninguna métrica en el nodo padre."
+  }
+ },
+ {
+  "id": "PCA-D3-014",
+  "options": {
+   "A": "Apply an unkeyed SHA256() hash to the SSN and email columns directly in a BigQuery scheduled query, producing the same digest for the same input so that analysts can still join the tables on the hashed value.",
+   "B": "Use Cloud DLP CharacterMaskConfig to mask every character except the last four of each email address and SSN, keeping a stable masked value that analysts can group by and join on across the BigQuery tables.",
+   "D": "Leave the values in plaintext and protect them with BigQuery column-level security: tag the SSN and email columns with Data Catalog policy tags and withhold the Fine-Grained Reader role from the analyst group."
+  },
+  "distractors": {
+   "A": "Sin clave secreta la transformación es reproducible por cualquiera: un SSN (10^9 combinaciones) o un email conocido se recuperan por fuerza bruta, así que no es irreversible en la práctica.",
+   "B": "El enmascarado es muchos-a-uno: clientes distintos colapsan en el mismo valor y los joins producen coincidencias falsas, además de ser irreversible incluso para el equipo de cumplimiento.",
+   "D": "Es control de acceso, no seudonimización: al analista se le niega la columna entera, con lo que no puede unir por ella, y el PII en claro sigue existiendo para quien tenga el rol."
+  }
+ },
+ {
+  "id": "PCA-D5-029",
+  "options": {
+   "A": "Create BigQuery materialized views that pre-aggregate warranty repairs and fleet health per dealer over the telemetry tables, and point the Looker Studio dashboards at those materialized views instead of the base tables.",
+   "B": "Purchase a BigQuery Enterprise Edition capacity commitment with an autoscaling slot reservation for the analytics project, so the dealer dashboards get dedicated compute instead of competing for on-demand slots.",
+   "C": "Schedule a nightly Dataflow job that pre-aggregates the telemetry into Cloud SQL for PostgreSQL with per-dealer indexes, and repoint the Looker Studio dashboards at that serving database instead of BigQuery."
+  },
+  "distractors": {
+   "A": "Una vista materializada solo acelera las formas de agregación para las que se definió: cada nuevo filtro o drill-down del concesionario vuelve a escanear la tabla base de petabytes.",
+   "B": "La reserva hace predecible el coste y elimina las colas, pero los slots vuelven a ejecutar cada consulta contra el almacenamiento: sin cache en memoria los paneles siguen tardando segundos.",
+   "C": "Añade una segunda copia con una ventana de obsolescencia de 24 horas, y una única instancia de Cloud SQL no sirve 5.000 paneles concurrentes sin escalado vertical continuo."
+  }
+ },
+ {
+  "id": "PCA-D3-033",
+  "options": {
+   "B": "Author a custom Organization Policy constraint on compute.googleapis.com/Instance CREATE that rejects any resource whose zone does not begin with 'europe-', and apply it in enforced mode to the European Folder.",
+   "C": "Create a VPC Service Controls perimeter around the European projects protecting the Compute Engine, Cloud Storage, BigQuery and Cloud SQL APIs, so that requests originating outside Europe cannot reach those services.",
+   "D": "Grant the developer group roles/compute.admin, roles/storage.admin and roles/bigquery.admin through an IAM Condition that restricts each binding to resources whose location matches europe-west1 or europe-west3."
+  },
+  "distractors": {
+   "B": "Las custom constraints solo alcanzan el tipo de recurso que declaran: esta bloquea VMs y deja crear buckets de GCS, datasets de BigQuery e instancias de Cloud SQL en cualquier región.",
+   "C": "Un perímetro gobierna qué identidades y redes pueden llamar a la API y frena la exfiltración, pero nunca limita la región de creación: un admin dentro del perímetro crea igualmente un bucket en us-central1.",
+   "D": "Las IAM Conditions exponen resource.name, resource.type, resource.service y atributos de la petición, pero no un atributo de ubicación: la condición no se puede escribir ni frena la creación."
+  }
+ },
+ {
+  "id": "PCA-D3-060",
+  "options": {
+   "A": "Use Cloud DLP CryptoHashConfig with a Cloud KMS wrapped key to replace every SSN with a keyed HMAC-SHA256 surrogate, so that the same SSN always produces the same token in every record exported to the academic research databases.",
+   "B": "Use Cloud DLP CryptoDeterministicConfig (AES-SIV) with a Cloud KMS wrapped key so that each SSN is deterministically encrypted into a stable surrogate which the compliance team can decrypt back to plaintext when an audit requires it.",
+   "C": "Apply a Cloud DLP CharacterMaskConfig that replaces the first five digits with '*' and keeps the last four (***-**-1234), preserving the nine-character layout that the legacy statistical tools expect when parsing the records."
+  },
+  "distractors": {
+   "A": "El hash es de un solo sentido: los responsables de cumplimiento nunca recuperan el SSN original, y el digest es una cadena base64 de más de 40 caracteres que rompe los parsers de 9 dígitos.",
+   "B": "AES-SIV es reversible pero no preserva el formato: emite un sustituto base64 de longitud y alfabeto distintos, con lo que las herramientas estadísticas de 9 dígitos fallan al parsearlo.",
+   "C": "El enmascarado es irreversible y destruye entropía: cumplimiento no puede descifrarlo nunca, y todos los SSN que comparten los cuatro últimos dígitos colapsan en el mismo valor."
+  }
+ },
+ {
+  "id": "PCA-D6-003",
+  "options": {
+   "B": "Trigger the Cloud SQL high-availability failover on the us-central1 instance so the regional standby takes over the primary role, keep the same instance connection name in every application, and let the HA pair rebuild its standby automatically once the region is restored and the failed zone comes back online.",
+   "C": "Provision a brand new Cloud SQL for PostgreSQL instance in us-east1, restore the most recent automated backup into it, re-point the application connection strings and Private Service Connect endpoints once the restore finishes, and re-enable High Availability after verifying data consistency and replaying the transactions still pending in the application queues.",
+   "D": "Leave the us-east1 instance as a cross-region read replica and simply re-point the application connection strings, DNS records and Private Service Connect endpoints at it, since it already holds a continuously replicated copy of the primary and needs no further configuration change."
+  },
+  "distractors": {
+   "B": "La HA regional coloca el standby en otra ZONA de us-central1: en una caída de toda la región el primario y su standby están igualmente fuera de servicio, así que el failover no se puede ejecutar.",
+   "C": "Ignora la réplica que ya está replicando: restaurar el backup de una instancia grande tarda horas y pierde todas las transacciones posteriores a la última copia, incumpliendo a la vez el RTO y el RPO.",
+   "D": "Una read replica rechaza escrituras: todo el tráfico INSERT/UPDATE de la aplicación falla hasta que la réplica se promociona a primario independiente de lectura y escritura."
+  }
+ },
+ {
+  "id": "PCA-D6-024",
+  "options": {
+   "B": "Place the worker VMs in a regional managed instance group with an autohealing health check probing the daemon's TCP port every 30 seconds, so that the MIG automatically recreates any instance whose health check has been failing for longer than the 10-minute initial delay.",
+   "C": "Create a Cloud Scheduler job that invokes an OS Config patch deployment every hour to restart the queue processing daemon on every worker VM through the guest agent, keeping the whole fleet healthy regardless of when an individual daemon happens to freeze.",
+   "D": "Create an Eventarc trigger on the Cloud Audit Logs events for compute.instances.* that routes to a Cloud Run remediation service, which authenticates with a service account and restarts the systemd unit on the VM named in the event payload."
+  },
+  "distractors": {
+   "B": "El demonio se congela sin morir: el puerto TCP sigue abierto y el health check sigue pasando; además el autohealing recrea la VM entera en vez de reiniciar la unidad systemd afectada.",
+   "C": "Es disparado por tiempo y no por la alerta: reinicia VMs sanas sin necesidad y puede dejar un demonio congelado hasta una hora, incumpliendo la respuesta automática a la alerta de 10 minutos.",
+   "D": "Manejador correcto anclado a la fuente de eventos equivocada: un demonio congelado no escribe ninguna entrada de audit log de Compute Engine y el umbral de una alerta no es un evento de auditoría."
+  }
+ },
+ {
+  "id": "PCA-D3-022",
+  "options": {
+   "B": "Put the private VMs behind a Global External Application Load Balancer with Identity-Aware Proxy enabled on the backend service, and grant the administrators roles/iap.httpsResourceAccessor so that they authenticate with their corporate Workspace accounts and MFA.",
+   "C": "Enable OS Login with two-factor authentication on the project, assign ephemeral external IP addresses to the VMs, restrict the ingress firewall rules for TCP 22 and 3389 to the corporate office CIDR ranges, and rotate the SSH keys through the metadata server.",
+   "D": "Deploy Cloud NAT on the subnet holding the private VMs and enable Private Google Access together with OS Login and 2FA, so that administrators reach the instances through the NAT gateway using 'gcloud compute ssh' with their corporate Workspace credentials."
+  },
+  "distractors": {
+   "B": "Producto correcto en el modo equivocado: IAP para aplicaciones web solo intermedia HTTP(S) a través del balanceador y no transporta SSH 22 ni RDP 3389, que exigen IAP TCP forwarding.",
+   "C": "Reconstruye la superficie de ataque pública que el proyecto quiere eliminar y ata a los administradores a la red de la oficina, lo que no sirve para portátiles que se conectan desde cualquier sitio.",
+   "D": "Cloud NAT es solo de salida: permite que las VMs alcancen internet pero no acepta ninguna conexión entrante, por lo que desde el portátil no se puede establecer ninguna sesión SSH ni RDP."
+  }
+ },
+ {
+  "id": "PCA-D4-045",
+  "options": {
+   "B": "Split traffic with a Global External Application Load Balancer weighted URL map sending 5% of requests to a backend service backed by the updated Agones game servers and 95% to the stable fleet, rolling the weights back to 0/100 if crash reports spike.",
+   "C": "Perform a Kubernetes rolling update on the Agones Fleet with maxSurge=5% and maxUnavailable=0, letting the scheduler replace the game server pods gradually while Cloud Monitoring watches crash rates and the team pauses the rollout manually if the SLO degrades.",
+   "D": "Deploy the patched game servers to a single region such as asia-east1 first and keep every other region on the stable build, comparing match completion rates and crash reports between regions for a week before promoting the patch to the worldwide fleet."
+  },
+  "distractors": {
+   "B": "El reparto ponderado enruta peticiones HTTP sin estado; las partidas de Agones son asignaciones UDP de larga duración hechas por el matchmaker, así que el peso del balanceador no decide la flota asignada.",
+   "C": "Un rolling update converge solo hasta el 100% sin ninguna puerta basada en métricas, y reemplazar pods GameServer expulsa a los jugadores de las partidas que esos pods estaban alojando.",
+   "D": "Un reparto por región no es el 5% de las partidas y confunde la calidad del parche con la latencia y el perfil de jugadores de esa región; revertir obliga a drenar una región entera."
+  }
+ },
+ {
+  "id": "PCA-D3-027",
+  "options": {
+   "B": "Configure a Security Command Center Continuous Export to BigQuery and run a scheduled query every 15 minutes that lists the new PUBLIC_BUCKET_ACL findings and calls a remote function to strip the public IAM binding and post the summary to the SOC Slack channel.",
+   "C": "Enforce the organization policy constraint 'constraints/storage.publicAccessPrevention' on every folder so that allUsers and allAuthenticatedUsers can never be granted storage.objectViewer, and audit the enforcement monthly with a Cloud Asset Inventory export.",
+   "D": "Schedule an hourly Cloud Run job that enumerates every bucket with 'gcloud storage buckets get-iam-policy', removes the allUsers and allAuthenticatedUsers bindings it finds, writes the change to Cloud Logging and posts the result to the SOC Slack channel."
+  },
+  "distractors": {
+   "B": "La cadencia por lotes es el fallo: una consulta programada cada 15 minutos no puede cumplir la ventana de 30 segundos y deja el bucket legible por todo el mundo hasta un cuarto de hora.",
+   "C": "Es un control preventivo, no el pipeline dirigido por eventos que se pide: no envía ninguna notificación al SOC y no hace nada con los buckets que ya eran públicos antes de aplicar la política.",
+   "D": "Sondear todos los buckets en un bucle horario incumple el requisito de 30 segundos y escala linealmente con el número de buckets en vez de reaccionar al hallazgo en el instante en que se emite."
+  }
+ },
+ {
+  "id": "PCA-D4-007",
+  "options": {
+   "A": "Configure a single fast-burn SLO alert: a 14.4x burn rate evaluated over a 1-hour long window with a 5-minute short window that pages the on-call whenever 2% of the 30-day error budget is consumed in one hour, and silence every other SLO notification to end the alert fatigue.",
+   "B": "Alert directly on the raw error ratio: page the on-call whenever the 5-minute HTTP 5xx rate exceeds 1% of requests, open a non-paging ticket whenever it exceeds 0.5% for 30 minutes, add a parallel threshold on p99 latency, and retune all three static thresholds every quarter as request volume grows.",
+   "C": "Alert only on cumulative error budget consumption at the end of each 30-day compliance window: define the SLO with a 30-day rolling window in Cloud Monitoring, review the burndown chart in the weekly reliability meeting, and page the on-call engineer once the budget for the period is fully exhausted."
+  },
+  "distractors": {
+   "A": "Solo existe la ventana rápida: agotar el presupuesto de 30 días en 3 días equivale a un burn rate de 10x, que nunca alcanza el umbral de 14.4x en una hora, así que la fuga lenta jamás se detecta.",
+   "B": "Un umbral sobre la tasa de error cruda no guarda relación con el presupuesto restante: sigue paginando ante picos transitorios de 5 minutos y calla ante una fuga sostenida que agota el presupuesto en tres días.",
+   "C": "Es una señal puramente retrospectiva: cuando el presupuesto llega a cero la caída ya ha ocurrido, de modo que no queda ninguna ventana en la que el ingeniero de guardia pueda evitar el agotamiento."
+  }
+ },
+ {
+  "id": "PCA-D4-029",
+  "options": {
+   "B": "Run a nightly z/OS batch job that unloads the full Db2 tables and VSAM files to sequential datasets, transfers them by FTP to Cloud Storage, and loads them into BigQuery so the business intelligence dashboards read the previous day's snapshot.",
+   "C": "Keep the data on the mainframe and expose it to BigQuery through a federated external connection, so analysts write ordinary BigQuery SQL that is pushed down and executed against Db2 on z/OS at query time without moving a single record.",
+   "D": "Replatform the entire core banking system, both the OLTP transactions and the analytics, onto Compute Engine using a COBOL runtime with an emulated CICS transaction layer, and decommission the mainframe once the parallel run has been validated."
+  },
+  "distractors": {
+   "B": "Una descarga completa nocturna consume MIPS en el mainframe por cada fila y cada noche: traslada el coste en vez de eliminarlo, y los analistas trabajan con datos de un día de antigüedad.",
+   "C": "La federación devuelve la ejecución al mainframe: cada consulta analítica sigue quemando los MIPS que el banco quiere eliminar, y BigQuery no ofrece conexión externa para Db2 sobre z/OS.",
+   "D": "Incumple el requisito de mantener el núcleo transaccional OLTP en el mainframe y convierte una descarga analítica acotada en una reescritura completa de altísimo riesgo."
+  }
+ },
+ {
+  "id": "PCA-D4-013",
+  "options": {
+   "A": "Rehost first: use Migrate to Virtual Machines to lift and shift the monolith's VMs into Compute Engine unchanged, decommission the on-premises datacenter, keep the application behaviour identical, and schedule the decomposition into microservices as a later phase once the workload has run stably in Google Cloud for a couple of quarters.",
+   "B": "Apply branch-by-abstraction inside the monolith: introduce interface seams behind feature flags in the existing codebase, build the replacement modules behind those flags, run both implementations in shadow mode, and cut every API consumer over to the new microservices in one coordinated release once all modules pass integration testing.",
+   "C": "Containerize the monolith with Migrate to Containers, deploy the resulting image to a GKE Autopilot cluster fronted by an internal Application Load Balancer, and scale it horizontally with a Horizontal Pod Autoscaler so the application runs cloud-native on Kubernetes before any functional decomposition is attempted."
+  },
+  "distractors": {
+   "A": "El rehost cambia solo dónde se ejecuta el monolito: no aporta ninguna fachada de enrutado con la que ir extrayendo capacidades una a una, así que la reescritura arriesgada se pospone intacta.",
+   "B": "La conmutación final sigue siendo un big bang: todos los consumidores cambian a la vez en una única entrega, que es exactamente el perfil de riesgo que el consejo de dirección ha rechazado.",
+   "C": "Contenerizar un monolito produce un único contenedor grande: no hay fronteras de servicio ni rutas por capacidad, de modo que ninguna funcionalidad se puede migrar de forma incremental."
+  }
+ },
+ {
+  "id": "PCA-D3-004",
+  "options": {
+   "A": "Remove the Owner role from every principal and grant narrowly scoped custom roles that deliberately omit cloudkms.cryptoKeyVersions.destroy and logging.sinks.delete, reviewing all bindings quarterly.",
+   "C": "Set the KMS key destroy scheduled duration to 90 days on every key and lock the _Default log bucket with a retention policy, so that destroyed keys and deleted log data can always be recovered by the security team.",
+   "D": "Build a VPC Service Controls perimeter around Cloud KMS and Cloud Logging in every project so that destroy and sink-delete calls coming from outside the perimeter are rejected before reaching the API."
+  },
+  "distractors": {
+   "A": "Las políticas de allow son aditivas: cualquiera con resourcemanager.projects.setIamPolicy, o un Owner heredado de la carpeta, vuelve a concederse el permiso, así que omitirlo no es una barrera.",
+   "C": "Retrasa el daño en vez de bloquear la acción: la destrucción sigue programándose y un bucket bloqueado no impide que alguien borre el sink de logs que lo alimenta.",
+   "D": "Un perímetro filtra las peticiones que cruzan la frontera: un Project Owner que opera desde dentro del perímetro no se ve afectado y puede destruir la clave igualmente."
+  }
+ },
+ {
+  "id": "PCA-D2-037",
+  "options": {
+   "A": "Buy a BigQuery Standard Edition capacity commitment, create a baseline slot allocation for the finance project and a separate autoscaling reservation with a max_slots cap for the ad-hoc analysts, and assign each project to its own reservation.",
+   "B": "Buy an Enterprise Edition capacity commitment and place all the projects in one shared reservation with idle slot sharing enabled, so any project can borrow the unused capacity of the others whenever it needs additional throughput.",
+   "D": "Stay on on-demand pricing and apply a per-user BigQuery query usage quota on the analysts' project, capping the bytes each analyst may scan per day so that ad-hoc work cannot crowd out the end-of-month finance reporting queries."
+  },
+  "distractors": {
+   "A": "Standard Edition es solo autoescalado: no admite baseline slots ni capacity commitments y su reserva topa en 1.600 slots, de modo que finanzas no obtiene ningún suelo garantizado de capacidad.",
+   "B": "Un único pool compartido recrea el problema del vecino ruidoso: las consultas ad-hoc compiten por los mismos slots y los informes de cierre de mes de finanzas siguen encolándose detrás de ellas.",
+   "D": "Las cuotas cortan al analista con un error en vez de autoescalarlo, y bajo on-demand finanzas sigue sin capacidad reservada ni un suelo comprometido de slots para el cierre de mes."
+  }
+ },
+ {
+  "id": "PCA-D3-010",
+  "options": {
+   "B": "Grant the Dataflow worker service account of Project B the roles/bigquery.dataViewer and roles/bigquery.jobUser roles on the finance dataset in Project A, leaving both perimeters untouched and relying on IAM alone to authorise the cross-project read.",
+   "C": "Create an access level matching the Dataflow worker service account and the Project B subnet ranges, attach it to Perimeter A and reference it from the perimeter, so requests carrying those attributes reach the finance datasets.",
+   "D": "Add Project B to Perimeter A so the Dataflow jobs and the finance BigQuery datasets end up inside a single perimeter, and then rely on IAM roles and BigQuery authorized views to keep the analytics team away from the finance tables."
+  },
+  "distractors": {
+   "B": "IAM decide quién puede llamar a la API y el perímetro decide si la llamada puede cruzar la frontera: la petición se sigue rechazando con una violación de VPC Service Controls pese al rol concedido.",
+   "C": "Los access levels solo admiten peticiones originadas FUERA de cualquier perímetro: no pueden usarse para permitir una petición que procede de un recurso protegido por otro perímetro.",
+   "D": "Fusiona los dos dominios de seguridad, justo lo que el escenario prohíbe: la carga analítica gana alcance de perímetro sobre todos los recursos de finanzas, no solo sobre las tablas pactadas."
+  }
+ },
+ {
+  "id": "PCA-D3-029",
+  "options": {
+   "A": "Manually apply constraints/gcp.resourceLocations restricted to US regions, enforce CMEK backed by Cloud HSM keys, and enable Access Approval so that every Google support access is explicitly approved by the contractor.",
+   "B": "Build a VPC Service Controls perimeter around the workloads, enable Access Transparency logging for every Google administrative action, and hold the encryption keys outside Google in a third-party external key manager reached through Cloud EKM.",
+   "D": "Deploy the workloads on Google Distributed Cloud air-gapped hardware inside the contractor's own facility so that no data ever leaves the building, and let the contractor's cleared staff operate the infrastructure and its compliance controls."
+  },
+  "distractors": {
+   "A": "Cubre residencia y criptografía pero no el personal: nada garantiza que el staff de Google que da soporte sean US Persons en suelo estadounidense, que es lo que exigen FedRAMP High y CJIS.",
+   "B": "Las claves de EKM viven en un HSM de terceros fuera del límite FedRAMP y Access Transparency solo informa a posteriori: ninguno restringe al personal de soporte ni garantiza FIPS 140-2 nivel 3.",
+   "D": "Un despliegue air-gapped renuncia a los servicios gestionados autorizados en FedRAMP High y convierte los controles de cumplimiento en responsabilidad manual del contratista, no automatizada."
+  }
+ },
+ {
+  "id": "PCA-D4-010",
+  "options": {
+   "A": "Instrument the service with OpenTelemetry and send distributed traces to Cloud Trace, using the span waterfall and the latency distributions to locate the request path responsible for the elevated CPU consumption.",
+   "C": "Exec into the running pods on a schedule to capture jcmd thread dumps and Java Flight Recorder recordings, then merge the samples offline to find the methods that dominate CPU time inside the Java service.",
+   "D": "Build a Cloud Monitoring dashboard from the container CPU and memory metrics scraped by Google Cloud Managed Service for Prometheus, alerting whenever the Java service exceeds 80% of its configured CPU request."
+  },
+  "distractors": {
+   "A": "El tracing mide latencia de reloj por span, no tiempo de CPU por función: no puede atribuir ciclos a una expresión regular ni a una rutina de serialización dentro de un mismo span.",
+   "C": "JFR exige arrancar la JVM con flags de grabación, es decir reiniciar el binario de producción, y los volcados manuales son fotos puntuales, no el perfilado continuo que pide el requisito.",
+   "D": "Las métricas dicen que el contenedor está caliente pero se detienen en la frontera del contenedor: no hay atribución a nivel de código, así que la expresión regular ineficiente nunca se identifica."
+  }
+ },
+ {
+  "id": "PCA-D3-059",
+  "options": {
+   "B": "Enforce a GKE Policy Controller (OPA Gatekeeper) constraint that only admits pods whose image reference starts with the official Artifact Registry repository path used by the Cloud Build pipeline.",
+   "C": "Enable Artifact Analysis vulnerability scanning on the Artifact Registry repository and configure it to flag any image carrying a critical CVE before the release engineer promotes it to production.",
+   "D": "Restrict the artifactregistry.writer role to the Cloud Build service account and use Workload Identity on the cluster so that only images produced by the pipeline can reach the production namespaces."
+  },
+  "distractors": {
+   "B": "Valida dónde está almacenada la imagen, no cómo se construyó: un ingeniero con permiso de push sube al mismo repositorio una imagen creada en su portátil y sin escanear, y el clúster la admite.",
+   "C": "El escaneo genera hallazgos, no bloquea nada en la admisión: GKE seguirá planificando un pod a partir de una imagen sin escanear o sin firmar porque no hay control en tiempo de despliegue.",
+   "D": "Controla quién puede publicar, no qué acepta el clúster: una imagen ya presente en el registro, o traída de otro proyecto, se despliega sin que se verifique ninguna atestación criptográfica."
+  }
+ },
+ {
+  "id": "PCA-D4-017",
+  "options": {
+   "A": "Configure one Email notification channel for the SRE distribution list and attach it to every critical alert policy, then build a Google Apps Script that parses the incoming alert mails and forwards their contents into Slack and ServiceNow.",
+   "C": "Attach a single Webhook notification channel to the critical alert policies pointing at a self-managed relay VM in us-central1 that fans each incident out to PagerDuty, Slack and ServiceNow through their respective REST APIs.",
+   "D": "Create log-based alerts in Cloud Logging matching the control plane and database error entries and connect them to a Slack notification channel, so that the war room sees a message carrying the raw log entry as soon as it is written."
+  },
+  "distractors": {
+   "A": "El correo es best-effort, sin escalado de paginado ni confirmación de recepción, y el cuerpo parseado es texto no estructurado en lugar del payload de incidente que necesitan la war room y el ITSM.",
+   "C": "Mete una VM no gestionada en la ruta de paginado: si esa instancia, o la zona que la aloja, forma parte de la propia caída, no llega ningún aviso al ingeniero de guardia.",
+   "D": "Solo cubre la pata de Slack: las alertas basadas en logs se disparan por entrada coincidente y no por incidente, y nada pagina a PagerDuty ni abre el ticket en ServiceNow."
+  }
+ },
+ {
+  "id": "PCA-D5-002",
+  "options": {
+   "A": "Validate downstream: have the Dataflow pipeline deserialize every message against the expected Avro schema, route the messages that fail deserialization to a dead-letter Pub/Sub topic, and alert the publishing team so they can fix the offending producer before its next release.",
+   "B": "Create a BigQuery subscription on the shared topic bound to a table carrying the canonical schema and enable 'use topic schema', so that messages whose fields do not match the table columns are diverted to a dead-letter topic instead of the analytics table.",
+   "C": "Publish exclusively through a shared internal client library that validates each event against the registered Avro schema before calling publish, and require every team to pin the released version of that library in their build dependencies."
+  },
+  "distractors": {
+   "A": "La validación ocurre a posteriori: los mensajes malformados ya están en el topic compartido, el resto de suscriptores los siguen recibiendo y el publicador obtuvo un ack de éxito.",
+   "B": "El punto de aplicación es el sumidero y no el topic: la publicación sigue teniendo éxito, solo rechaza esa suscripción, y el resto de pipelines siguen ingiriendo los payloads incompatibles.",
+   "C": "La validación en cliente es solo consultiva: cualquier equipo puede saltársela publicando con una llamada REST o gRPC directa, así que el contrato no queda aplicado por el propio topic."
+  }
+ },
+ {
+  "id": "PCA-D3-056",
+  "options": {
+   "A": "Run HA VPN over Cloud Interconnect, building IPsec tunnels on top of the Dedicated Interconnect VLAN attachments so that the radiology imaging traffic is encrypted between the hospital edge routers and the Cloud Router.",
+   "B": "Rely on Google's default encryption in transit, since traffic is automatically encrypted at Layer 3 the moment it reaches the Google edge from the hospital routers, and document that fact in the HIPAA risk assessment.",
+   "C": "Terminate TLS 1.3 at the application layer for every DICOM and HL7v2 transfer so the payloads are encrypted end to end between hospital and cloud, regardless of what happens on the physical fiber between the routers."
+  },
+  "distractors": {
+   "A": "Reintroduce justo la penalización que el escenario descarta: cada túnel HA VPN ronda los 3 Gbps y añade encapsulado IPsec, de modo que saturar 100 Gbps exigiría decenas de túneles en paralelo.",
+   "B": "El cifrado automático cubre el tráfico dentro de la red de Google: la interconexión física entre el router del hospital y el router de borde de Google no va cifrada por defecto, y es justo el tramo en cuestión.",
+   "C": "Devuelve el coste de cifrado a las mismas CPUs que el escenario quiere aliviar y deja en claro las cabeceras y metadatos de las tramas de nivel 2 sobre el cross-connect físico."
+  }
+ }
+]

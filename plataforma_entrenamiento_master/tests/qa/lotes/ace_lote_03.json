@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D3-070",
+  "subtopic": "Kubernetes PriorityClasses & Pod Preemption",
+  "scenario": "In a crowded GKE cluster running both batch analytics and core payment processing, worker nodes occasionally experience resource contention. You need to ensure that payment processing Pods are NEVER evicted and can preempt lower-priority batch pods if node resources run low. What Kubernetes resource should you deploy and attach to the payment Pod spec?",
+  "correct": "C",
+  "clave_len": 138,
+  "explanation": "Kubernetes `PriorityClass` defines the scheduling priority of Pods. When high-priority Pods cannot be scheduled due to resource starvation, the Kubernetes scheduler preempts (evicts) lower-priority Pods to guarantee compute resources for critical workloads.",
+  "doc": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "Set node pool autoscaling max-nodes to 1000."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Deploy an unmanaged Compute Engine instance group."
+   },
+   {
+    "letter": "C",
+    "len": 138,
+    "text": "Deploy a PriorityClass resource with a high integer value (e.g. 1000000) and set priorityClassName in the payment deployment Pod template."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Create an IAM Deny policy on batch developers."
+   }
+  ],
+  "ratio": 2.96
+ },
+ {
+  "id": "ACE-D3-048",
+  "subtopic": "Kubernetes NetworkPolicy Deployment",
+  "scenario": "You have an e-commerce microservices cluster in GKE. Security policy dictates that Pods with label `app=database` in namespace `prod` must ONLY accept incoming TCP connections on port 5432 from Pods carrying the label `app=backend-api`, blocking all other Pods and external traffic. What manifest should you apply?",
+  "correct": "B",
+  "clave_len": 151,
+  "explanation": "Kubernetes NetworkPolicies enforce Pod-to-Pod L3/L4 network segmentation inside a cluster. Specifying `spec.podSelector: {matchLabels: {app: database}}` and `ingress.from.podSelector: {matchLabels: {app: backend-api}}` ensures only authorized backend pods can communicate with the database.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Set the database Service type to NodePort."
+   },
+   {
+    "letter": "B",
+    "len": 151,
+    "text": "Deploy a Kubernetes NetworkPolicy with podSelector matching 'app: database' and an ingress rule allowing port 5432 from podSelector 'app: backend-api'."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Create a VPC firewall rule targeting network tag 'app-database'."
+   },
+   {
+    "letter": "D",
+    "len": 48,
+    "text": "Deploy a Cloud Armor policy targeting port 5432."
+   }
+  ],
+  "ratio": 2.94
+ },
+ {
+  "id": "ACE-D5-010",
+  "subtopic": "Workload Identity Federation & Keyless Auth",
+  "scenario": "A software development team deploys container images to Google Artifact Registry using GitHub Actions CI/CD workflows. To comply with security best practices, the team must eliminate long-lived service account JSON keys. What mechanism should you configure to allow GitHub Actions to authenticate to GCP using short-lived tokens?",
+  "correct": "B",
+  "clave_len": 206,
+  "explanation": "Workload Identity Federation allows external workloads (GitHub Actions, AWS, Azure, on-premises OIDC/SAML) to exchange external credentials for short-lived Google Cloud access tokens, completely eliminating the risks of downloadable long-lived service account JSON keys.",
+  "doc": "https://cloud.google.com/iam/docs/workload-identity-federation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "Grant roles/owner to github-actions@corp.iam.gserviceaccount.com."
+   },
+   {
+    "letter": "B",
+    "len": 206,
+    "text": "Configure Workload Identity Federation with an OIDC Workload Identity Pool and Provider for GitHub Actions, and grant the GitHub workflow principal permissions to impersonate the deployment service account."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Generate a service account JSON key and store it in GitHub Secrets."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Make the Artifact Registry repository publicly accessible without authentication."
+   }
+  ],
+  "ratio": 2.9
+ },
+ {
+  "id": "ACE-D4-001",
+  "subtopic": "Compute Engine IAP SSH Tunneling",
+  "scenario": "You need to SSH into a backend Linux Compute Engine instance `backend-worker-1` located in a private VPC subnet with no external public IP address. Corporate policy forbids opening port 22 to the public internet or deploying a dedicated bastion host VM. How should you establish the SSH connection?",
+  "correct": "C",
+  "clave_len": 209,
+  "explanation": "Identity-Aware Proxy (IAP) TCP forwarding allows authorized users to establish encrypted SSH connections to private instances with no public IPs over Google Cloud's edge infrastructure. Traffic originates from `35.235.240.0/20` and requires `roles/iap.tunnelResourceAccessor`.",
+  "doc": "https://cloud.google.com/compute/docs/connect/iap-using-ssh",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Connect using standard telnet over port 23."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Mount the VM boot disk to your local workstation using Cloud Storage FUSE."
+   },
+   {
+    "letter": "C",
+    "len": 209,
+    "text": "Connect using gcloud compute ssh backend-worker-1 --zone=us-central1-a --tunnel-through-iap, ensuring you have roles/iap.tunnelResourceAccessor and an ingress firewall rule allows port 22 from 35.235.240.0/20."
+   },
+   {
+    "letter": "D",
+    "len": 100,
+    "text": "Assign an ephemeral public IP address to the instance and connect directly over the public internet."
+   }
+  ],
+  "ratio": 2.89
+ },
+ {
+  "id": "ACE-D5-037",
+  "subtopic": "Organization Policy Domain Restricted Sharing",
+  "scenario": "An enterprise security mandate dictates that project administrators must NEVER be able to grant IAM roles to external identities (such as personal `@gmail.com` or contractor domains). All IAM grants across all projects in the organization must be strictly restricted to corporate Google Workspace directory domain `corp.example.com`. Which Organization Policy constraint enforces this?",
+  "correct": "D",
+  "clave_len": 134,
+  "explanation": "The `iam.allowedPolicyMemberDomains` Organization Policy constraint (Domain Restricted Sharing) restricts IAM policy bindings exclusively to accounts within approved Google Workspace / Cloud Identity customer domains, preventing accidental or malicious addition of external personal Gmail accounts.",
+  "doc": "https://cloud.google.com/resource-manager/docs/organization-policy/restricting-domains",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 32,
+    "text": "Delete all default VPC networks."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Deploy a Cloud Function that checks IAM every hour."
+   },
+   {
+    "letter": "C",
+    "len": 57,
+    "text": "Create an ingress firewall rule blocking all foreign IPs."
+   },
+   {
+    "letter": "D",
+    "len": 134,
+    "text": "Enforce the Organization Policy constraint 'iam.allowedPolicyMemberDomains' specifying the Directory Customer ID for corp.example.com."
+   }
+  ],
+  "ratio": 2.87
+ },
+ {
+  "id": "ACE-D5-004",
+  "subtopic": "Cloud IAM Custom Role Creation",
+  "scenario": "A security team requires a custom role `computeOperator` in project `corp-prod` that allows developers to start, stop, and reset Compute Engine VMs, but explicitly forbids creating new instances, deleting instances, or modifying disk attachments. Which command creates this custom role?",
+  "correct": "B",
+  "clave_len": 227,
+  "explanation": "`gcloud iam roles create <ROLE_ID> --project=<PROJECT> --permissions=<COMMA_SEPARATED_PERMISSIONS>` creates a custom IAM role containing an exact list of granular GCP API permissions, adhering strictly to least privilege.",
+  "doc": "https://cloud.google.com/iam/docs/creating-custom-roles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "gcloud compute roles create computeOperator --permissions=start,stop,reset"
+   },
+   {
+    "letter": "B",
+    "len": 227,
+    "text": "gcloud iam roles create computeOperator --project=corp-prod --title='Compute Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.get,compute.instances.list --stage=GA"
+   },
+   {
+    "letter": "C",
+    "len": 97,
+    "text": "gcloud iam roles create computeOperator --project=corp-prod --role=roles/compute.instanceAdmin.v1"
+   },
+   {
+    "letter": "D",
+    "len": 67,
+    "text": "gcloud organizations roles create computeOperator --all-permissions"
+   }
+  ],
+  "ratio": 2.86
+ },
+ {
+  "id": "ACE-D5-044",
+  "subtopic": "VPC Private Google Access Security Configuration",
+  "scenario": "Compute Engine instances in subnet `private-sub` (in region `us-central1`) have private IP addresses only and no public external IPs. Applications on these VMs need to read and write data to Cloud Storage (`storage.googleapis.com`) and BigQuery (`bigquery.googleapis.com`) without sending traffic through the public internet or deploying a NAT gateway. Which subnet setting must be enabled?",
+  "correct": "B",
+  "clave_len": 155,
+  "explanation": "Enabling Private Google Access (`--enable-private-ip-google-access`) on a VPC subnet allows VM instances with only internal private IP addresses to reach the public IP endpoints of Google APIs and services (Cloud Storage, BigQuery, Pub/Sub) directly over Google's internal private fiber backbone.",
+  "doc": "https://cloud.google.com/vpc/docs/private-google-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Deploy an unmanaged Squid Proxy VM on a public subnet."
+   },
+   {
+    "letter": "B",
+    "len": 155,
+    "text": "Enable Private Google Access on the subnet using gcloud compute networks subnets update private-sub --region=us-central1 --enable-private-ip-google-access."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Create an ingress firewall rule allowing port 80 to 0.0.0.0/0."
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "Assign public IP addresses to all VM instances."
+   }
+  ],
+  "ratio": 2.85
+ },
+ {
+  "id": "ACE-D3-052",
+  "subtopic": "GKE Pod Resource Requests & Limits",
+  "scenario": "You have an application container that requires a guaranteed minimum of 500m CPU and 1 GiB memory to start, but must be throttled if it exceeds 2 vCPUs and terminated (OOMKilled) if memory consumption reaches 4 GiB to protect other Pods on the node. How should the container resources be defined in the Kubernetes YAML?",
+  "correct": "A",
+  "clave_len": 127,
+  "explanation": "In Kubernetes manifests, `resources.requests` defines the minimum compute capacity reserved by the scheduler for the Pod, while `resources.limits` enforces hard caps on CPU throttling and memory OOM termination.",
+  "doc": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 127,
+    "text": "Set resources.requests with cpu: '500m', memory: '1Gi' and resources.limits with cpu: '2', memory: '4Gi' in the container spec."
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "Create an HPA policy with min-cpu=500m."
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Configure Cloud Monitoring alerts to kill the node."
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "Set node pool machine type to custom-2-4096."
+   }
+  ],
+  "ratio": 2.84
+ },
+ {
+  "id": "ACE-D3-016",
+  "subtopic": "GKE Node Pool Creation & Preemptible Sizing",
+  "scenario": "You have an existing GKE Standard cluster named `analytics-cluster`. To run ephemeral batch workloads at a 70% cost reduction, you need to add a new node pool named `batch-pool` containing 5 `e2-standard-4` Spot / Preemptible worker nodes with the `app=batch-worker` node label. What command should you run?",
+  "correct": "A",
+  "clave_len": 175,
+  "explanation": "`gcloud container node-pools create <POOL_NAME> --cluster=<CLUSTER>` adds a discrete node pool with specific machine sizing, `--spot` (or `--preemptible`), node count, and Kubernetes node labels.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/node-pools",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 175,
+    "text": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker"
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "gcloud compute instances create batch-pool-node-[1-5] --preemptible"
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "kubectl scale deployment batch-pool --replicas=5"
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "gcloud container clusters update analytics-cluster --add-nodes=5 --spot"
+   }
+  ],
+  "ratio": 2.82
+ },
+ {
+  "id": "ACE-D3-021",
+  "subtopic": "Compute Engine Custom Image Creation",
+  "scenario": "You have configured a golden base VM `base-template-vm` in zone `us-east1-b` with custom security patches and corporate agent software. The VM has been stopped. You need to create a reusable Compute Engine Custom Image named `golden-ubuntu-v1` in image family `corp-ubuntu` from this instance's boot disk. Which command should you run?",
+  "correct": "D",
+  "clave_len": 177,
+  "explanation": "`gcloud compute images create <IMAGE_NAME> --source-disk=<DISK> --source-disk-zone=<ZONE> --family=<FAMILY>` creates an immutable custom image from a stopped VM's persistent disk and adds it to an image family for automated instance template rollouts.",
+  "doc": "https://cloud.google.com/compute/docs/images/create-custom",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 55,
+    "text": "gsutil cp /dev/sda1 gs://my-images/golden-ubuntu-v1.img"
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "gcloud compute disks export base-template-vm --format=qcow2"
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "gcloud compute instances snapshot base-template-vm --image=golden-ubuntu-v1"
+   },
+   {
+    "letter": "D",
+    "len": 177,
+    "text": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu --description='Golden hardened Ubuntu base image'"
+   }
+  ],
+  "ratio": 2.81
+ },
+ {
+  "id": "ACE-D3-067",
+  "subtopic": "Cloud Pub/Sub Push Subscription Deployment",
+  "scenario": "You have an order ingestion service deployed on Cloud Run at `https://orders-api-xyz.a.run.app/handle-order`. The Cloud Run service requires authentication (`--no-allow-unauthenticated`). You need to deploy a Cloud Pub/Sub push subscription that automatically delivers messages to this HTTPS endpoint, securely attaching an OIDC token signed by service account `pubsub-invoker@corp.iam.gserviceaccount.com`. Which command creates the subscription?",
+  "correct": "C",
+  "clave_len": 264,
+  "explanation": "Cloud Pub/Sub Push Subscriptions support authenticated HTTP endpoints. Using `--push-auth-service-account` and `--push-auth-token-audience` causes Google Pub/Sub to sign a short-lived OpenID Connect (OIDC) JWT token and include it in the `Authorization: Bearer <TOKEN>` header of every push request.",
+  "doc": "https://cloud.google.com/pubsub/docs/push#push_service_account",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "gcloud compute instances create order-pusher --topic=order-events"
+   },
+   {
+    "letter": "B",
+    "len": 150,
+    "text": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --unauthenticated"
+   },
+   {
+    "letter": "C",
+    "len": 264,
+    "text": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --push-auth-service-account=pubsub-invoker@corp.iam.gserviceaccount.com --push-auth-token-audience=https://orders-api-xyz.a.run.app"
+   },
+   {
+    "letter": "D",
+    "len": 67,
+    "text": "gsutil notification create -e PUSH https://orders-api-xyz.a.run.app"
+   }
+  ],
+  "ratio": 2.81
+ },
+ {
+  "id": "ACE-D3-034",
+  "subtopic": "Compute Engine Disk Creation & Attachment",
+  "scenario": "You have an existing virtual machine `data-processor-vm` in zone `us-central1-a`. The application requires an additional 200 GB SSD persistent disk formatted as ext4 to store database index files. Which sequence of gcloud commands creates and attaches the disk?",
+  "correct": "D",
+  "clave_len": 193,
+  "explanation": "Creating and attaching extra block storage involves: 1) `gcloud compute disks create <DISK_NAME> --size=<SIZE> --type=<TYPE> --zone=<ZONE>`, and 2) `gcloud compute instances attach-disk <VM_NAME> --disk=<DISK_NAME> --zone=<ZONE>`.",
+  "doc": "https://cloud.google.com/compute/docs/disks/add-persistent-disk",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 76,
+    "text": "gcloud compute instances create data-processor-vm --add-disk=data-index-disk"
+   },
+   {
+    "letter": "B",
+    "len": 63,
+    "text": "gcloud storage objects create gs://data-index-disk --size=200GB"
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "gcloud compute disks attach data-index-disk --instance=data-processor-vm"
+   },
+   {
+    "letter": "D",
+    "len": 193,
+    "text": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a"
+   }
+  ],
+  "ratio": 2.74
+ },
+ {
+  "id": "ACE-D4-021",
+  "subtopic": "Compute Engine MIG Health Check Diagnostics",
+  "scenario": "Instances in a Managed Instance Group `frontend-mig` are continuously being destroyed and recreated every 5 minutes in an endless autohealing loop. You suspect the application health check endpoint `/health` is failing or timing out. Which gcloud command displays the exact health check status of instances in the MIG?",
+  "correct": "B",
+  "clave_len": 87,
+  "explanation": "`gcloud compute instance-groups managed list-instances <MIG_NAME>` lists all member VM instances along with their current instance status (`RUNNING`), current action (`NONE`, `CREATING`, `RECREATING`), and their detailed health state (`HEALTHY`, `UNHEALTHY`, `TIMEOUT`).",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs#checking_health_status",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "gcloud compute instances delete frontend-mig"
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "gcloud compute instance-groups managed list-instances frontend-mig --region=us-central1"
+   },
+   {
+    "letter": "C",
+    "len": 29,
+    "text": "kubectl describe healthchecks"
+   },
+   {
+    "letter": "D",
+    "len": 23,
+    "text": "bq show instance_health"
+   }
+  ],
+  "ratio": 2.72
+ },
+ {
+  "id": "ACE-D4-028",
+  "subtopic": "Cloud Storage Insights Inventory Reports",
+  "scenario": "A storage administrator needs to generate a daily CSV inventory report listing all 50 million objects across 10 Cloud Storage buckets, including object size, creation date, storage class, and last access time to plan lifecycle transition policies. What native feature should you configure?",
+  "correct": "D",
+  "clave_len": 145,
+  "explanation": "Cloud Storage Insights provides managed inventory reports that deliver daily or weekly CSV or Parquet files containing comprehensive object metadata (storage class, size, timestamps, CRC32c) directly into a destination bucket for fast BigQuery analysis without incurring millions of List API charges.",
+  "doc": "https://cloud.google.com/storage/docs/insights/inventory-reports",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Run gsutil ls -lR gs://bucket/** in a daily bash script."
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "SSH into each storage bucket and run ls -la."
+   },
+   {
+    "letter": "C",
+    "len": 60,
+    "text": "Deploy a Compute Engine instance group to crawl the buckets."
+   },
+   {
+    "letter": "D",
+    "len": 145,
+    "text": "Configure Cloud Storage Insights inventory reports to automatically generate daily object metadata CSV/Parquet files in a target analysis bucket."
+   }
+  ],
+  "ratio": 2.72
+ },
+ {
+  "id": "ACE-D5-049",
+  "subtopic": "Organization Policy Disable Service Account Key Creation",
+  "scenario": "To enforce modern identity governance and eliminate the risk of leaked static credentials, corporate security mandates that NO USER or administrator across any project in the organization shall be allowed to create downloadable service account JSON keys. Which Organization Policy constraint enforces this?",
+  "correct": "C",
+  "clave_len": 118,
+  "explanation": "The `iam.disableServiceAccountKeyCreation` Organization Policy constraint blocks calls to `CreateServiceAccountKey`, preventing the generation and download of static private key JSON files while allowing keyless Workload Identity Federation and OAuth token impersonation.",
+  "doc": "https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "Delete all service accounts across all projects."
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Create an ingress firewall rule on port 22."
+   },
+   {
+    "letter": "C",
+    "len": 118,
+    "text": "Enforce the Organization Policy constraint 'iam.disableServiceAccountKeyCreation' at the Organization or Folder level."
+   },
+   {
+    "letter": "D",
+    "len": 39,
+    "text": "Revoke Owner roles from all developers."
+   }
+  ],
+  "ratio": 2.72
+ },
+ {
+  "id": "ACE-D4-022",
+  "subtopic": "GKE Node Maintenance & kubectl drain",
+  "scenario": "You need to perform kernel diagnostics on physical GKE worker node `gke-prod-pool-1-abc1`. Before stopping the underlying VM, you must safely evict all running Pods from the node and reschedule them onto other healthy nodes in the cluster, ensuring that no new Pods are scheduled onto this node during maintenance. Which kubectl commands should you run?",
+  "correct": "B",
+  "clave_len": 130,
+  "explanation": "`kubectl cordon <NODE>` marks the node as unschedulable (preventing new pods), and `kubectl drain <NODE>` gracefully evicts existing workloads following PodDisruptionBudgets, moving them safely to other cluster nodes.",
+  "doc": "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 38,
+    "text": "Run kubectl delete pods --all --force."
+   },
+   {
+    "letter": "B",
+    "len": 130,
+    "text": "Run kubectl cordon gke-prod-pool-1-abc1 followed by kubectl drain gke-prod-pool-1-abc1 --ignore-daemonsets --delete-emptydir-data."
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Run gcloud container clusters delete prod-cluster."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Run gcloud compute instances delete gke-prod-pool-1-abc1."
+   }
+  ],
+  "ratio": 2.69
+ },
+ {
+  "id": "ACE-D5-006",
+  "subtopic": "VPC Service Controls Perimeter Deployment",
+  "scenario": "A healthcare company processes HIPAA-regulated patient records in BigQuery and Cloud Storage within project `patient-data-prod`. To prevent rogue insiders or compromised service account credentials from copying or exfiltrating data to external Cloud Storage buckets or personal BigQuery datasets outside the enterprise organization, what security control should you deploy?",
+  "correct": "D",
+  "clave_len": 163,
+  "explanation": "VPC Service Controls (VPC SC) establishes security perimeters around Google-managed services (Cloud Storage, BigQuery). It blocks API requests that attempt to move data from inside the perimeter to storage resources outside the perimeter, even if the user has valid IAM permissions.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "Create an egress firewall rule blocking all traffic to 0.0.0.0/0."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Set Cloud Storage bucket permissions to public read-only."
+   },
+   {
+    "letter": "C",
+    "len": 60,
+    "text": "Deploy an unmanaged proxy VM running iptables in the subnet."
+   },
+   {
+    "letter": "D",
+    "len": 163,
+    "text": "Create a VPC Service Controls Service Perimeter enclosing project patient-data-prod and protecting the bigquery.googleapis.com and storage.googleapis.com services."
+   }
+  ],
+  "ratio": 2.69
+ }
+]

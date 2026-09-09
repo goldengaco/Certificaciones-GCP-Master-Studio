@@ -138,8 +138,8 @@ window.GCP_I18N = {
     const langBtn = document.getElementById("langToggleBtn");
     if (langBtn) {
       langBtn.innerHTML = lang === "es" 
-        ? '<span style="font-weight:700;letter-spacing:0.05em">ES</span> <span style="opacity:0.5;font-size:0.75rem">EN</span>' 
-        : '<span style="font-weight:700;letter-spacing:0.05em">EN</span> <span style="opacity:0.5;font-size:0.75rem">ES</span>';
+        ? '<svg class="icon" aria-hidden="true" style="width:20px;height:20px;"><use href="#icon-globe"/></svg><span class="lang-text" style="font-size:0.85rem; font-weight: 700; margin-left:6px;">ES</span>' 
+        : '<svg class="icon" aria-hidden="true" style="width:20px;height:20px;"><use href="#icon-globe"/></svg><span class="lang-text" style="font-size:0.85rem; font-weight: 700; margin-left:6px;">EN</span>';
     }
   }
 };

@@ -1,0 +1,67 @@
+[
+ {
+  "id": "CDL-D2-016",
+  "options": {
+   "A": "Cloud Bigtable",
+   "B": "Cloud Spanner",
+   "D": "Cloud SQL (MySQL)"
+  },
+  "distractors": {
+   "A": "Bigtable es NoSQL de columna ancha para series temporales y cargas de altísimo volumen; no tiene SDK móvil, listeners en tiempo real ni modo sin conexión.",
+   "B": "Spanner es relacional con SQL y consistencia global, pensado para transacciones a escala; no ofrece documentos JSON flexibles ni sincronización sin conexión.",
+   "D": "Cloud SQL es una base relacional administrada con esquema fijo; no sincroniza cambios en tiempo real con la app ni persiste los datos localmente sin señal."
+  }
+ },
+ {
+  "id": "CDL-D3-026",
+  "options": {
+   "A": "Cloud VPN con túnel IPsec hacia el router de la red local",
+   "B": "Un balanceador de carga externo delante de las instancias",
+   "C": "Una regla de firewall de salida (egress) que permita 0.0.0.0/0"
+  },
+  "distractors": {
+   "A": "Enruta la salida por el centro de datos propio: añade latencia, costo y dependencia del enlace, en vez de resolver la salida directa administrada.",
+   "B": "El balanceador publica tráfico entrante hacia los backends; el requisito es exactamente el contrario, salida sin exponer conexiones entrantes.",
+   "C": "La regla autoriza el tráfico, pero una VM sin IP externa sigue sin ruta hacia Internet: hace falta la traducción de direcciones para que salga."
+  }
+ },
+ {
+  "id": "CDL-D2-041",
+  "options": {
+   "A": "Speech-to-Text y Text-to-Speech como APIs por separado",
+   "B": "Vertex AI Search sobre los documentos internos del banco",
+   "D": "Conversational Insights con analítica de las llamadas"
+  },
+  "distractors": {
+   "A": "Son bloques que transcriben y sintetizan audio, pero no gestionan el diálogo ni sugieren respuestas al operador durante la llamada.",
+   "B": "Indexa documentos para búsqueda empresarial; no atiende la línea telefónica ni mantiene una conversación por voz con el cliente.",
+   "D": "Insights analiza las conversaciones después de ocurridas para detectar tendencias; no desvía llamadas con agentes virtuales ni reduce la espera."
+  }
+ },
+ {
+  "id": "CDL-D3-022",
+  "options": {
+   "A": "Un balanceador de aplicaciones externo regional en cada una de las tres regiones",
+   "B": "Cloud DNS con directivas de enrutamiento por geolocalización hacia tres IP distintas",
+   "C": "Cloud CDN habilitado sobre el bucket de contenido estático de la aplicación"
+  },
+  "distractors": {
+   "A": "Cada balanceador regional expone su propia dirección IP, de modo que no existe la única IP pública estable que pide el requisito.",
+   "B": "El enrutamiento por DNS acerca al usuario, pero publica tres IP distintas y depende del TTL y de la caché del resolutor, sin conmutación Anycast.",
+   "C": "Cloud CDN almacena contenido estático en el borde; no balancea las peticiones dinámicas entre los backends de Europa, Asia y América."
+  }
+ },
+ {
+  "id": "CDL-D3-054",
+  "options": {
+   "A": "Cloud Build con canalizaciones que despliegan manifiestos",
+   "B": "Organization Policy Service con restricciones por carpeta",
+   "C": "Terraform aplicado a mano en cada uno de los 40 clústeres"
+  },
+  "distractors": {
+   "A": "Cloud Build empuja los cambios cuando alguien ejecuta la canalización, pero no reconcilia de forma continua ni revierte la desviación en el clúster.",
+   "B": "Las políticas de organización restringen recursos de Google Cloud, no lo que ocurre dentro de Kubernetes: no controlan root ni las cuotas del contenedor.",
+   "C": "Terraform describe la infraestructura, pero al aplicarse manualmente por clúster no hay reconciliación automática desde una única fuente de verdad."
+  }
+ }
+]

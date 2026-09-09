@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D3-030",
+  "subtopic": "Cloud SQL Private IP & User Deployment",
+  "scenario": "You have provisioned a Cloud SQL PostgreSQL instance `app-db` configured with a Private IP address in VPC `prod-vpc`. You need to create an application database user `app_user` with a strong password and grant permissions to connect from Compute Engine instances in `prod-vpc`. Which command creates the user?",
+  "correct": "A",
+  "clave_len": 87,
+  "explanation": "`gcloud sql users create <USERNAME> --instance=<INSTANCE> --password=<PASSWORD>` creates database user accounts in Cloud SQL instances, allowing applications to authenticate over Private IP connections.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/create-manage-users",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 87,
+    "text": "gcloud sql users create app_user --instance=app-db --password='SuperSecurePassword987!'"
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "gcloud compute users create app_user --instance=app-db"
+   },
+   {
+    "letter": "C",
+    "len": 60,
+    "text": "gcloud iam service-accounts create app_user --cloud-sql-user"
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "gcloud sql databases create app_user --instance=app-db"
+   }
+  ],
+  "ratio": 1.55
+ },
+ {
+  "id": "ACE-D4-041",
+  "subtopic": "Cloud Monitoring Dashboard Operations",
+  "scenario": "An operations team has designed a standardized JSON dashboard template `microservices-dashboard.json` featuring Monitoring Query Language (MQL) charts for CPU, memory, request latency, and HTTP 5xx error rates. You need to deploy this dashboard programmatically into project `corp-monitoring-prod`. Which gcloud command deploys the dashboard?",
+  "correct": "B",
+  "clave_len": 83,
+  "explanation": "`gcloud monitoring dashboards create --config-from-file=<FILE.json>` imports declarative JSON dashboard templates into Cloud Monitoring, enabling Dashboards-as-Code practices across projects.",
+  "doc": "https://cloud.google.com/monitoring/dashboards/api-dashboard",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "gcloud compute instances create-dashboard microservices-dashboard.json"
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "gcloud monitoring dashboards create --config-from-file=microservices-dashboard.json"
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "bq mk --dashboard=microservices-dashboard.json"
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "kubectl apply -f microservices-dashboard.json"
+   }
+  ],
+  "ratio": 1.55
+ },
+ {
+  "id": "ACE-D4-020",
+  "subtopic": "Compute Engine OS Login Management",
+  "scenario": "An enterprise security audit requires that developers must authenticate to Compute Engine instances using their centralized Google Cloud Identity credentials and 2FA, completely disabling static user-added SSH keys in instance metadata. What configuration must be enabled across project instances?",
+  "correct": "A",
+  "clave_len": 77,
+  "explanation": "Enabling OS Login (`enable-oslogin=TRUE`) links Linux user accounts and SSH keys directly to Google Cloud Identity accounts and IAM roles (e.g. `roles/compute.osAdminLogin`, `roles/compute.osLogin`), enforcing central revocation, 2FA, and eliminating unmanaged static SSH keys.",
+  "doc": "https://cloud.google.com/compute/docs/oslogin/set-up-oslogin",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Enable OS Login at the project metadata level by setting enable-oslogin=TRUE."
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "text": "Add individual developer SSH public keys to the project-wide metadata manually."
+   },
+   {
+    "letter": "C",
+    "len": 34,
+    "text": "Disable Compute Engine networking."
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "Create an IAM Deny policy on port 22."
+   }
+  ],
+  "ratio": 1.54
+ },
+ {
+  "id": "ACE-D4-053",
+  "subtopic": "BigQuery Table Snapshot Operations",
+  "scenario": "Before running a massive data transformation pipeline that updates 50 million rows in table `warehouse.customer_master`, you need to take an instant, zero-copy point-in-time snapshot named `warehouse.customer_master_snapshot_20260820` that preserves the exact state of the table before modification. Which `bq` command creates this snapshot?",
+  "correct": "B",
+  "clave_len": 86,
+  "explanation": "BigQuery table snapshots (`bq cp --snapshot <SOURCE_TABLE> <SNAPSHOT_TABLE>`) create instant, zero-byte incremental snapshots of a table. Storage costs only accrue for data rows that are subsequently modified or deleted in the base table.",
+  "doc": "https://cloud.google.com/bigquery/docs/table-snapshots-create",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 55,
+    "text": "gcloud compute disks snapshot warehouse.customer_master"
+   },
+   {
+    "letter": "B",
+    "len": 86,
+    "text": "bq cp --snapshot warehouse.customer_master warehouse.customer_master_snapshot_20260820"
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "gsutil cp gs://bq-data/master gs://bq-data/backup"
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "bq export warehouse.customer_master gs://my-backups/customer.csv"
+   }
+  ],
+  "ratio": 1.54
+ },
+ {
+  "id": "ACE-D3-069",
+  "subtopic": "Cloud Run CPU Allocation Deployment",
+  "scenario": "A team is deploying a WebSockets chat server and background message listener on Cloud Run. Unlike standard REST APIs, the container needs continuous CPU execution to maintain long-lived WebSocket connections and process background threads even when no active HTTP request is being processed. Which flag must be configured during deployment?",
+  "correct": "B",
+  "clave_len": 64,
+  "explanation": "By default, Cloud Run throttles CPU to 0 outside of active HTTP request processing. To support WebSockets, streaming connections, and background thread execution, you must deploy with `--no-cpu-throttling` (CPU is always allocated throughout the instance lifecycle).",
+  "doc": "https://cloud.google.com/run/docs/configuring/cpu-allocation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 28,
+    "text": "Set memory limits to 32 GiB."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Deploy with the --no-cpu-throttling flag (CPU always allocated)."
+   },
+   {
+    "letter": "C",
+    "len": 23,
+    "text": "Set min-instances to 0."
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Deploy with the --cpu-throttling flag (CPU allocated only during requests)."
+   }
+  ],
+  "ratio": 1.52
+ },
+ {
+  "id": "ACE-D3-071",
+  "subtopic": "Cloud SQL Database Flags Configuration",
+  "scenario": "You have deployed a PostgreSQL database on Cloud SQL. To support high concurrent connections from microservices, you need to configure the PostgreSQL database flag `max_connections=500` and `shared_buffers=1048576` (1 GB) on instance `prod-pg-1`. Which gcloud command applies these database flags?",
+  "correct": "D",
+  "clave_len": 96,
+  "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --database-flags=<FLAG1=VAL1,FLAG2=VAL2>` applies database engine configuration parameters (such as `max_connections`, `log_output`, `autovacuum`) directly to Cloud SQL managed instances.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/flags",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "gcloud compute instances update prod-pg-1 --pg-flags='max_connections=500'"
+   },
+   {
+    "letter": "B",
+    "len": 66,
+    "text": "SSH into the Cloud SQL instance and edit postgresql.conf directly."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "bq update --flags='max_connections=500' prod-pg-1"
+   },
+   {
+    "letter": "D",
+    "len": 96,
+    "text": "gcloud sql instances patch prod-pg-1 --database-flags=max_connections=500,shared_buffers=1048576"
+   }
+  ],
+  "ratio": 1.52
+ },
+ {
+  "id": "ACE-D3-057",
+  "subtopic": "GKE Node Auto-Provisioning Deployment",
+  "scenario": "You manage a multi-tenant GKE Standard cluster where developers submit jobs requiring widely varying resource shapes (some require high-memory, others compute-optimized, and others GPU accelerators). Instead of manually creating dozens of node pools with different machine types in advance, you want GKE to automatically provision and size specialized node pools on demand whenever pending Pods request them. Which cluster feature should you enable?",
+  "correct": "B",
+  "clave_len": 116,
+  "explanation": "Node Auto-Provisioning (NAP) extends the GKE Cluster Autoscaler by automatically creating, configuring, and deleting new node pools with the exact machine types, CPU/memory specifications, accelerators, and taint/toleration requirements needed by unscheduled Pods.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Create an unmanaged Compute Engine instance group with 100 n2-standard-4 instances."
+   },
+   {
+    "letter": "B",
+    "len": 116,
+    "text": "Enable Node Auto-Provisioning (NAP) on the cluster using gcloud container clusters update --enable-autoprovisioning."
+   },
+   {
+    "letter": "C",
+    "len": 54,
+    "text": "Deploy a Horizontal Pod Autoscaler for each namespace."
+   },
+   {
+    "letter": "D",
+    "len": 94,
+    "text": "Write a bash cron script that polls kubectl get pods and runs gcloud compute instances create."
+   }
+  ],
+  "ratio": 1.51
+ },
+ {
+  "id": "ACE-D3-039",
+  "subtopic": "Cloud DNS Record Creation & Management",
+  "scenario": "You have registered the domain `api.corp.com` in a Cloud DNS Public Managed Zone named `corp-public-zone`. You need to create an `A` record pointing `api.corp.com` to the external IP address `34.120.50.80` with a TTL of 300 seconds. Which gcloud command creates this record?",
+  "correct": "C",
+  "clave_len": 109,
+  "explanation": "`gcloud dns record-sets create <FQDN> --zone=<ZONE_NAME> --type=<TYPE> --ttl=<TTL> --rrdatas=<IP_OR_VALUE>` adds DNS resource records (A, CNAME, TXT, MX) to a Cloud DNS managed zone.",
+  "doc": "https://cloud.google.com/dns/docs/records",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "gcloud compute networks update corp-public-zone --dns-a-record=34.120.50.80"
+   },
+   {
+    "letter": "B",
+    "len": 70,
+    "text": "bq query 'INSERT INTO dns_records VALUES (api.corp.com, 34.120.50.80)'"
+   },
+   {
+    "letter": "C",
+    "len": 109,
+    "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80"
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "gcloud dns managed-zones add-record corp-public-zone --type=A --ip=34.120.50.80"
+   }
+  ],
+  "ratio": 1.46
+ },
+ {
+  "id": "ACE-D3-053",
+  "subtopic": "Cloud Storage CORS Configuration",
+  "scenario": "A web application hosted at `https://app.example.com` allows users to upload profile pictures directly from their web browsers to a Cloud Storage bucket `gs://user-avatars-vault` using signed URLs. When users attempt to upload, the browser blocks the PUT request due to Cross-Origin Resource Sharing (CORS) security errors. Which command applies the JSON CORS policy?",
+  "correct": "B",
+  "clave_len": 82,
+  "explanation": "Browser cross-origin AJAX/fetch uploads to Cloud Storage require a CORS configuration on the target bucket. `gcloud storage buckets update <BUCKET> --cors-file=<JSON_FILE>` sets allowed origins (e.g. `https://app.example.com`), HTTP methods (PUT, GET), and headers.",
+  "doc": "https://cloud.google.com/storage/docs/using-cors",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "gcloud compute firewall-rules create allow-cors --allow=tcp:443"
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "text": "gcloud storage buckets update gs://user-avatars-vault --cors-file=cors-policy.json"
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "gsutil defacl set public-read gs://user-avatars-vault"
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "bq update --cors=cors-policy.json user-avatars-vault"
+   }
+  ],
+  "ratio": 1.46
+ },
+ {
+  "id": "ACE-D5-009",
+  "subtopic": "Cloud IAM Conditions & Time-Window Access",
+  "scenario": "An external contractor needs temporary access to administer Compute Engine instances in project `corp-prod` to perform a software patch. The contractor must have `roles/compute.instanceAdmin.v1`, but access must automatically expire on August 25, 2026 at 18:00 UTC without requiring manual administrative revocation. How should you grant this access?",
+  "correct": "A",
+  "clave_len": 120,
+  "explanation": "Cloud IAM Conditions allow attaching conditional expressions to role bindings. Using `request.time < timestamp(\"2026-08-25T18:00:00Z\")` ensures that the role binding is automatically invalidated by Google IAM the moment the timestamp passes.",
+  "doc": "https://cloud.google.com/iam/docs/conditions-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 120,
+    "text": "Grant roles/compute.instanceAdmin.v1 with an IAM Condition expression: request.time < timestamp(\"2026-08-25T18:00:00Z\")."
+   },
+   {
+    "letter": "B",
+    "len": 107,
+    "text": "Grant roles/compute.instanceAdmin.v1 and set a calendar reminder on your phone to delete the role manually."
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "Grant primitive roles/editor at the organization level."
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "Create an unmanaged cron script on an e2-micro VM that deletes the user on August 25."
+   }
+  ],
+  "ratio": 1.46
+ },
+ {
+  "id": "ACE-D4-009",
+  "subtopic": "App Engine Version Operations & Traffic Splitting",
+  "scenario": "A new version `v2` of an App Engine standard service was deployed and started throwing unhandled exceptions. You need to immediately roll back 100% of live traffic to the previous stable version `v1` with zero downtime. Which command executes this instant rollback?",
+  "correct": "C",
+  "clave_len": 63,
+  "explanation": "`gcloud app services set-traffic <SERVICE> --splits=<VERSION>=1 --migrate` instantly routes 100% of incoming requests back to the specified stable version using App Engine traffic migration.",
+  "doc": "https://cloud.google.com/appengine/docs/standard/nodejs/migrating-traffic",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "gcloud app deploy v1/app.yaml --no-promote"
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "gcloud compute instances restart --service=appengine"
+   },
+   {
+    "letter": "C",
+    "len": 63,
+    "text": "gcloud app services set-traffic default --splits=v1=1 --migrate"
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "gcloud app versions delete v2 --force"
+   }
+  ],
+  "ratio": 1.44
+ },
+ {
+  "id": "ACE-D4-042",
+  "subtopic": "GKE OOMKilled Diagnostics & Resource Limits",
+  "scenario": "An image processing container in GKE namespace `prod` periodically exits with exit code `137` and status reason `OOMKilled`. You need to confirm the container's memory limit vs actual usage, and identify why the kernel killer terminated the container. Which kubectl command shows the termination reason and exit code?",
+  "correct": "C",
+  "clave_len": 48,
+  "explanation": "`kubectl describe pod <POD_NAME>` inspects container state details. Under the `Last State: Terminated` section, it explicitly shows `Reason: OOMKilled` and `Exit Code: 137`, indicating that the container exceeded its configured `resources.limits.memory` and was terminated by the Linux cgroup killer.",
+  "doc": "https://cloud.google.com/blog/products/containers-kubernetes/understanding-and-troubleshooting-oom-errors-in-kubernetes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 32,
+    "text": "cat /var/log/messages | grep oom"
+   },
+   {
+    "letter": "B",
+    "len": 25,
+    "text": "kubectl get nodes -o yaml"
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "kubectl describe pod [POD_NAME] --namespace=prod"
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "gcloud compute instances list --filter='oom'"
+   }
+  ],
+  "ratio": 1.43
+ },
+ {
+  "id": "ACE-D3-064",
+  "subtopic": "Cloud Storage Retention Policy Deployment",
+  "scenario": "You are setting up compliance storage for transaction records in Cloud Storage bucket `gs://compliance-vault-2026`. You must configure a retention policy enforcing a 1-year (31,536,000 seconds) retention period on all objects uploaded to the bucket. Which command configures this retention policy?",
+  "correct": "C",
+  "clave_len": 85,
+  "explanation": "`gcloud storage buckets update <BUCKET> --retention-period=<DURATION>` configures a Bucket Retention Policy, preventing any object inside the bucket from being deleted or overwritten until its individual retention period has elapsed.",
+  "doc": "https://cloud.google.com/storage/docs/bucket-lock",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "gcloud compute disks snapshot create gs://compliance-vault-2026 --retention=1y"
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "gsutil versioning set on gs://compliance-vault-2026"
+   },
+   {
+    "letter": "C",
+    "len": 85,
+    "text": "gcloud storage buckets update gs://compliance-vault-2026 --retention-period=31536000s"
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "bq update --retention=31536000 compliance-vault-2026"
+   }
+  ],
+  "ratio": 1.41
+ },
+ {
+  "id": "ACE-D4-016",
+  "subtopic": "Compute Engine Machine Image Operations",
+  "scenario": "You have a multi-disk Compute Engine instance `app-server-1` (including 1 OS boot disk and 2 attached data persistent disks) with specialized instance metadata, IAM service account configurations, and network tags. You need to capture the complete VM state (all disks, metadata, and configuration) into an immutable single resource to replicate identical VMs in other projects. What resource should you create?",
+  "correct": "A",
+  "clave_len": 74,
+  "explanation": "Compute Engine Machine Images capture all configuration, metadata, permissions, and multi-disk persistent storage data of a VM in a single comprehensive resource, making them superior to single-disk snapshots for complete system duplication and backup.",
+  "doc": "https://cloud.google.com/compute/docs/machine-images",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "A Compute Engine Machine Image (via gcloud compute machine-images create)."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "A standard Zonal Persistent Disk Snapshot of the boot disk only."
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "A Cloud Storage bucket containing tar.gz archives of /etc."
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "An App Engine version configuration."
+   }
+  ],
+  "ratio": 1.41
+ },
+ {
+  "id": "ACE-D3-027",
+  "subtopic": "Cloud Deploy & Delivery Pipelines",
+  "scenario": "You are implementing an automated multi-target CD pipeline using Google Cloud Deploy. The pipeline must deploy a Kubernetes application first to a `staging` GKE cluster, require manual promotion approval, and then deploy to a `production` GKE cluster. Which command registers this delivery pipeline defined in `clouddeploy.yaml`?",
+  "correct": "C",
+  "clave_len": 64,
+  "explanation": "Google Cloud Deploy delivery pipelines and target definitions are applied to the Cloud Deploy service using `gcloud deploy apply --file=<PIPELINE_FILE> --region=<REGION>`.",
+  "doc": "https://cloud.google.com/deploy/docs/create-pipeline",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 33,
+    "text": "kubectl apply -f clouddeploy.yaml"
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "gcloud builds submit --config=clouddeploy.yaml"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "gcloud deploy apply --file=clouddeploy.yaml --region=us-central1"
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "gcloud container clusters apply --pipeline=clouddeploy.yaml"
+   }
+  ],
+  "ratio": 1.39
+ },
+ {
+  "id": "ACE-D3-028",
+  "subtopic": "Cloud Storage Lifecycle JSON Deployment",
+  "scenario": "You have authored a lifecycle rule JSON file `lifecycle-30d.json` that instructs Cloud Storage to transition objects older than 30 days to `NEARLINE` and delete objects older than 365 days. Which command applies this lifecycle configuration to bucket `gs://corp-archive-vault`?",
+  "correct": "C",
+  "clave_len": 89,
+  "explanation": "The `gcloud storage buckets update <BUCKET> --lifecycle-file=<FILE>` command applies an Object Lifecycle Management JSON configuration to a Cloud Storage bucket, enabling automated storage class transitions and object purges.",
+  "doc": "https://cloud.google.com/storage/docs/managing-lifecycles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "gcloud storage objects update gs://corp-archive-vault/* --lifecycle=lifecycle-30d.json"
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "bq update --lifecycle=lifecycle-30d.json corp-archive-vault"
+   },
+   {
+    "letter": "C",
+    "len": 89,
+    "text": "gcloud storage buckets update gs://corp-archive-vault --lifecycle-file=lifecycle-30d.json"
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "gsutil lifecycle delete gs://corp-archive-vault"
+   }
+  ],
+  "ratio": 1.39
+ },
+ {
+  "id": "ACE-D5-016",
+  "subtopic": "Security Command Center Findings & Posture",
+  "scenario": "A security analyst needs a unified security and risk management platform in Google Cloud that continuously discovers cloud assets, identifies misconfigurations (such as public Cloud Storage buckets or open firewall ports), detects vulnerabilities, and reports threats across the entire organization. Which Google Cloud service provides this?",
+  "correct": "D",
+  "clave_len": 30,
+  "explanation": "Google Cloud Security Command Center (SCC) is the centralized vulnerability and threat management platform for Google Cloud. It continuously monitors cloud asset inventory, surfaces security findings (Security Health Analytics, Event Threat Detection), and evaluates compliance posture.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-security-command-center-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 31,
+    "text": "BigQuery Data Transfer Service."
+   },
+   {
+    "letter": "B",
+    "len": 12,
+    "text": "Cloud Trace."
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Billing Reports."
+   },
+   {
+    "letter": "D",
+    "len": 30,
+    "text": "Security Command Center (SCC)."
+   }
+  ],
+  "ratio": 1.38
+ }
+]

@@ -1,0 +1,171 @@
+[
+ {
+  "id": "PCA-D6-006",
+  "options": {
+   "A": "Configure a Bigtable Application Profile using a custom 'cluster group' routing policy that lists both us-central1-b and us-east1-c clusters, assuming requests from different clients always converge immediately on one consistent view without needing single-cluster routing for strong consistency.",
+   "B": "Call Bigtable's 'generateConsistencyToken' API on the table after each write to a cluster, then poll 'checkConsistency' with that token until it reports true, so a different client immediately confirms replication of that record to both us-central1-b and us-east1-c clusters before reading it back.",
+   "D": "Delete the us-east1-c cluster so the Bigtable instance runs a single cluster in us-central1-b, removing the Multi-Cluster Any-Routing replication lag entirely and letting a different client immediately read back the record it just wrote without receiving an old value."
+  },
+  "distractors": {
+   "A": "'Cluster group routing' no es una política real de application profiles de Bigtable (solo existen single-cluster y multi-cluster routing); además asumir convergencia inmediata contradice la replicación asíncrona.",
+   "B": "generateConsistencyToken/checkConsistency verifica la consistencia de toda la tabla replicada, no ofrece un mecanismo práctico de lectura post-escritura por fila y añade latencia de sondeo en cada operación.",
+   "D": "Eliminar el clúster secundario sacrifica el SLA de disponibilidad de 99.999% y la tolerancia a fallos regionales que exige el enunciado, resolviendo la consistencia al costo de la resiliencia."
+  }
+ },
+ {
+  "id": "PCA-D6-007",
+  "options": {
+   "B": "Raise the Managed Instance Group's minimum instance count to the observed 08:00 peak size on the CPU-based autoscaler, and leave the 60 percent target utilization policy reacting to whatever additional traffic surges above that permanently provisioned floor each morning.",
+   "C": "Add a scaling schedule to the Managed Instance Group autoscaler starting at 08:00 with a 30-minute duration and a minimum required instance count equal to the peak size, leaving the reactive CPU utilization autoscaler active around that recurring morning traffic window.",
+   "D": "Change the Managed Instance Group's autoscaling signal from CPU utilization to a Cloud Monitoring metric of load-balancer requests per instance, so the group reacts to the actual traffic arriving each morning rather than to the CPU spikes that traffic eventually causes."
+  },
+  "distractors": {
+   "B": "Fijar el mínimo al pico observado provisiona esa capacidad permanentemente las 24 horas, desperdiciando costo el resto del día en vez de anticipar solo la ventana de la mañana.",
+   "C": "Un scaling schedule fijo no se adapta si el tráfico real varía día a día; sigue siendo capacidad programada estática, no una predicción basada en el patrón histórico real de tráfico.",
+   "D": "Cambiar la señal de escalado a solicitudes por instancia sigue siendo reactivo: el autoscaler detecta el aumento de tráfico cuando ya está ocurriendo, sin anticipar el pico recurrente de las 08:00."
+  }
+ },
+ {
+  "id": "PCA-D6-012",
+  "options": {
+   "A": "Run the drill inside the live production project during a low-traffic window: trigger 'gcloud sql instances failover' on the Cloud SQL HA primary in us-central1 to promote its us-east1-b standby, repoint Cloud DNS at the failover region, execute the transaction suite against production, then fail back.",
+   "C": "Hold a tabletop exercise in which the platform team walks the financial-audit reviewers through the disaster-recovery runbook, the primary-region architecture diagrams and the latest backup-completion report, then records the agreed RTO/RPO targets for each database tier in the compliance evidence pack.",
+   "D": "Restore the production database backup into the existing staging environment, which shares the same VPC-peering, service-accounts and roles/cloudsql.admin bindings as production, run the transaction-processing suite there against the restored data, then delete the restored instance once auditors review results."
+  },
+  "distractors": {
+   "A": "Ejecutar el failover real sobre la instancia de producción interrumpe a los usuarios en vivo, justo lo que el enunciado prohíbe explícitamente.",
+   "C": "Un ejercicio de mesa puramente documental no valida el arranque real de la aplicación, la restauración de base de datos ni el procesamiento de transacciones que exige el enunciado.",
+   "D": "Restaurar en un entorno de staging que comparte VPC, cuentas de servicio y roles con producción no simula la pérdida real de la región primaria ni aísla la prueba del entorno productivo."
+  }
+ },
+ {
+  "id": "PCA-D6-021",
+  "options": {
+   "A": "Create a multi-region Cloud Storage bucket in the US location (location=US), storing the settlement records redundantly across regions and replicating every newly-written XML object with no extra configuration or --async-turbo flag needed.",
+   "B": "Create two single-region Standard buckets in us-central1 and us-east1, syncing them with a gsutil -m rsync -r job scheduled hourly via Cloud Scheduler, copying newly-written settlement objects from the primary bucket to the secondary bucket path.",
+   "C": "Write settlement records to a single-region bucket in us-central1 with object versioning (versioning.enabled=true) and a Pub/Sub notification (pubsub.googleapis.com) that triggers a Cloud Function to copy each object into a bucket in us-east1."
+  },
+  "distractors": {
+   "A": "Un bucket multi-región en la ubicación US no permite fijar explícitamente us-central1 y us-east1 como par de regiones, y su SLA de disponibilidad estándar es del 99.9%, no del 99.99% exigido.",
+   "B": "Una sincronización por lotes cada hora deja una ventana de pérdida de datos de hasta 60 minutos, incumpliendo el RPO menor a 15 minutos exigido.",
+   "C": "La copia disparada por una Cloud Function es asíncrona y depende de que esa cadena de eventos se ejecute con éxito; un fallo o retraso puede superar los 15 minutos de RPO y no ofrece el SLA de 99.99% de forma nativa."
+  }
+ },
+ {
+  "id": "PCA-D6-025",
+  "options": {
+   "B": "Schedule a BigQuery Data Transfer Service cross-region copy job from us-central1 to us-east1 every hour via bigquerydatatransfer.googleapis.com, and repoint the analytics service-accounts at the us-east1 copy once us-central1 is declared unavailable.",
+   "C": "Export every table nightly to Avro files in a dual-region gs://warehouse-dr bucket spanning us-central1 and us-east1, then run load jobs from the most recent export to rebuild the dataset and its partitioning in us-east1 during an outage.",
+   "D": "Create a dataset in us-east1 holding authorized-views (bigquery.googleapis.com/views) that reference the production tables in us-central1, so analysts' queries keep resolving through the us-east1 dataset if the primary region fails."
+  },
+  "distractors": {
+   "B": "Una copia programada cada hora deja horas de datos desactualizados en caso de fallo y requiere repuntar manualmente las cuentas de servicio; no ofrece failover inmediato.",
+   "C": "Un export nocturno a Avro solo captura el estado de la noche anterior, y reconstruir el dataset desde Cloud Storage durante una interrupción real toma minutos u horas, no es inmediato.",
+   "D": "Las vistas autorizadas en us-east1 siguen apuntando a las tablas físicas en us-central1; si la región primaria falla, esas vistas dejan de resolver datos porque las tablas subyacentes son inaccesibles."
+  }
+ },
+ {
+  "id": "PCA-D6-003",
+  "options": {
+   "B": "Trigger 'gcloud sql instances failover' on the us-central1 primary so the regional high-availability standby takes over the primary role within the same zone pair, keep the same instance-connection-name (project:region:instance) in every application's connection pool, and let the HA pair rebuild a fresh standby once us-central1 fully recovers.",
+   "C": "Provision a new Cloud SQL for PostgreSQL instance in us-east1 via 'gcloud sql instances create', restore the most recent automated backup into it, re-point connection strings and Private Service Connect endpoints, then re-enable regional HA after verifying data-consistency.",
+   "D": "Leave the us-east1 Cross-Region Read Replica as-is and simply re-point application connection-strings, DNS records and Private Service Connect endpoints at the replica's cloudsql.googleapis.com endpoint, since it already holds a continuously-replicated copy of the primary database and needs no further configuration change before serving production traffic."
+  },
+  "distractors": {
+   "B": "El failover de HA regional solo conmuta entre la primaria y su standby dentro de la misma región; si toda la región us-central1 está caída, ese standby también es inalcanzable y el failover no puede ejecutarse.",
+   "C": "Restaurar desde el backup automatizado más reciente en una instancia nueva pierde todas las transacciones posteriores a ese backup, a diferencia de usar la réplica entre regiones ya sincronizada.",
+   "D": "Una réplica de lectura entre regiones no puede aceptar escrituras hasta ser promovida explícitamente a primaria independiente; repuntar el tráfico sin promoverla deja a la aplicación sin poder escribir."
+  }
+ },
+ {
+  "id": "PCA-D3-022",
+  "options": {
+   "B": "Put the private VMs behind a Global External Application Load Balancer with Identity-Aware Proxy enabled on the backend-service, grant administrators roles/iap.httpsResourceAccessor, and connect via https://iap.googleapis.com so Workspace SSO/MFA authenticates the session.",
+   "C": "Enable OS Login (enable-oslogin=TRUE) with two-factor auth on the project metadata, assign ephemeral external-IPs to the VMs, restrict ingress firewall-rules for tcp:22 and tcp:3389 to the corporate office CIDR range, and rotate SSH keys via the metadata-server.",
+   "D": "Configure Cloud NAT on the subnet hosting the VMs and enable Private Google Access alongside OS Login and 2FA, so operators reach the instances through the NAT gateway using 'gcloud compute ssh --internal-ip --zone=us-central1-a' with Workspace SSO."
+  },
+  "distractors": {
+   "B": "roles/iap.httpsResourceAccessor protege balanceadores HTTP(S), no sesiones SSH/RDP por TCP; para tunelizar SSH/RDP a VMs privadas se necesita IAP TCP Forwarding con roles/iap.tunnelResourceAccessor, no el rol HTTPS.",
+   "C": "Asignar IPs externas efímeras a las VMs reintroduce exactamente la superficie de ataque pública que el enunciado exige eliminar, y restringir por CIDR de oficina no cubre a administradores conectándose desde cualquier lugar.",
+   "D": "Cloud NAT solo habilita tráfico saliente desde las VMs hacia internet; no permite conexiones entrantes SSH/RDP desde los laptops de los administradores hacia instancias sin IP pública."
+  }
+ },
+ {
+  "id": "PCA-D3-036",
+  "options": {
+   "A": "Deploy the Ops Agent to every guest Compute Engine VM and create log-based alerting policies that detect malware, rootkits and cryptocurrency-mining processes, catching unauthorized activity even if performance degrades inside the guest OS.",
+   "B": "Enable Event Threat Detection in Security Command Center Premium, which continuously scans Cloud Logging, VPC Flow Logs and Cloud DNS query logs for malware and cryptocurrency-mining signatures across every Compute Engine VM in the organization.",
+   "D": "Enable Shielded VM with vTPM, Secure Boot and Measured Boot on every guest Compute Engine VM, alerting when integrity monitoring finds boot measurements diverge from baseline, revealing rootkits without installing agent software inside the VM."
+  },
+  "distractors": {
+   "A": "El Ops Agent es exactamente el software de terceros instalado dentro del sistema operativo invitado que el enunciado pide evitar, por el riesgo de degradar el rendimiento o ser desactivado si el root es comprometido.",
+   "B": "Event Threat Detection analiza registros de red, VPC Flow Logs y DNS a nivel de organización; no escanea la memoria del proceso invitado ni detecta malware que opera solo en memoria sin generar tráfico de red sospechoso.",
+   "D": "Shielded VM valida la integridad del proceso de arranque (boot), no escanea la memoria en tiempo de ejecución; un rootkit o minero cargado después del arranque no altera las mediciones de boot y pasa inadvertido."
+  }
+ },
+ {
+  "id": "PCA-D5-017",
+  "options": {
+   "B": "Use Apache Beam BigQueryIO with Method.STREAMING_INSERTS and supply a deterministic insert-id on every row via insertId=row-hash, so BigQuery deduplicates repeated rows when a Dataflow worker restarts mid-bundle at 500k rows/sec.",
+   "C": "Use Method.STORAGE_API_AT_LEAST_ONCE with the default_stream and no downstream de-duplication logic in the streaming pipeline, since the storage.googleapis.com Write API commits records in-order and already yields one row per Dataflow input event.",
+   "D": "Drop the Dataflow stage and publish transactions straight to a pubsub.googleapis.com topic (projects/proj/topics/tx) configured with a --bigquery-table subscription, letting Pub/Sub write each message into the table with no intermediate runner."
+  },
+  "distractors": {
+   "B": "La deduplicación por insertId del legacy streaming insert API es de mejor esfuerzo y con ventana de tiempo limitada, además de ser el mecanismo de mayor costo que el enunciado pide evitar; no garantiza exactly-once estricto.",
+   "C": "STORAGE_API_AT_LEAST_ONCE es, por diseño, un modo 'al menos una vez' que puede producir duplicados en reintentos; requiere deduplicación externa explícita, la cual esta opción omite por completo.",
+   "D": "Las suscripciones de BigQuery en Pub/Sub no ofrecen semántica exactly-once garantizada frente a reintentos de publicación duplicados, y esta opción omite por completo el pipeline de Dataflow que el enunciado exige mantener."
+  }
+ },
+ {
+  "id": "PCA-D1-058",
+  "options": {
+   "A": "Stream telemetry via bigquery.googleapis.com Storage-Write-API into BigQuery, letting the graphics-engine query the last seconds through a BI-Engine reservation with materialized-views refreshed on every insert for sub-10ms.",
+   "B": "Write the 2,000 points/sec per aircraft into Cloud SQL for MySQL with a composite primary-key of aircraft-id and timestamp, serving flight-path visualization from cross-zone read-replicas placed near the broadcast trucks.",
+   "D": "Write each sample into Firestore (mode=NATIVE) as one doc-per-vehicle-per-second under /telemetry/{id}, letting the rendering engine and companion apps subscribe via onSnapshot() listeners for live path updates."
+  },
+  "distractors": {
+   "A": "BigQuery con BI Engine está optimizado para consultas analíticas agregadas, no para latencias de lectura por debajo de 10 milisegundos sobre puntos individuales de alta frecuencia; las vistas materializadas no se refrescan a esa velocidad.",
+   "B": "Cloud SQL para MySQL no está diseñado para 40,000 escrituras por segundo con latencia de lectura de un solo dígito de milisegundos; el modelo relacional y sus índices degradan el throughput a esa escala.",
+   "D": "Firestore está optimizado para documentos por aplicación, no para series temporales de alta frecuencia; miles de escrituras por segundo generan contención por documento y la latencia sube muy por encima de los 10 ms."
+  }
+ },
+ {
+  "id": "PCA-D3-050",
+  "options": {
+   "B": "Serve the exclusive HLS and DASH streams to international media partners through Media CDN with signed-URLs and signed-cookies scoped to short-lived tokens, blocking unauthorized redistribution across devices without touching DRM key-management infrastructure.",
+   "C": "Encrypt the HLS video segments with AES-128 clear-key encryption and publish the key-URI inside the playlist, serving the key from a Cloud Run endpoint that checks the partner session cookie before returning key bytes over TLS to prevent screen-recording piracy.",
+   "D": "Store the exclusive mezzanine and packaged video assets for international media partners in a Cloud Storage bucket encrypted with Cloud KMS customer-managed keys, protected by VPC Service Controls and Cloud Armor geographic restrictions to prevent unauthorized piracy."
+  },
+  "distractors": {
+   "B": "Las URLs y cookies firmadas de Media CDN controlan quién puede solicitar el manifiesto y los segmentos, pero no cifran el contenido en sí; no cumplen con el requisito explícito de Common Encryption (CENC) multi-DRM.",
+   "C": "El cifrado 'clear-key' de AES-128 entrega la clave de descifrado en texto plano al reproductor, sin la protección por hardware que ofrecen Widevine, FairPlay o PlayReady, por lo que no constituye un esquema DRM real.",
+   "D": "Cifrar los activos en reposo en Cloud Storage protege el almacenamiento, no la transmisión: una vez que el segmento se transcodifica y se entrega al reproductor, no queda cifrado DRM alguno en el flujo de reproducción."
+  }
+ },
+ {
+  "id": "PCA-D5-023",
+  "options": {
+   "A": "Restore the most recent backup produced by the Spanner backup-schedule, which ran at 02:00-UTC, into a new database via 'gcloud spanner backups restore', then replay the request-log from 02:00 up to 14:31:00 to rebuild the intervening customer-balance transactions.",
+   "B": "Import the most recent hourly Avro export from a gs://spanner-exports/ Cloud Storage bucket into a new spanner.googleapis.com database and reapply the mutations captured by the change-stream reader for the remaining minutes before 14:31:00.",
+   "C": "Fail the instance over to another region of the multi-region config (nam6) and serve reads-and-writes from the us-east1 replica, which still holds the customer balances as of 14:31:00 UTC, before the DROP TABLE statement was applied at 14:32:15."
+  },
+  "distractors": {
+   "A": "Restaurar el backup de las 02:00 y 'reproducir el request-log' no es una capacidad real de Spanner; no existe tal registro reproducible con ese propósito, y de todas formas se perdería la precisión de microsegundos exigida.",
+   "B": "Un export horario a Avro solo captura el estado de la última hora completa, muy lejos de la granularidad de microsegundos que exige recuperar el estado exacto a las 14:31:00.",
+   "C": "En un despliegue multi-región de Cloud Spanner todas las réplicas comparten el mismo estado transaccional replicado de forma síncrona; el DROP TABLE ya se propagó a todas las réplicas, por lo que un failover no revierte la corrupción."
+  }
+ },
+ {
+  "id": "PCA-D5-001",
+  "options": {
+   "A": "Shard the pipeline into 100 topics by hashing order_id modulo 100 (topic-{n}), give each topic one subscription consumed by a single-threaded subscriber process, and rely on one consumer draining each topic's backlog serially so every order_id's events stay in publish-sequence order.",
+   "B": "Publish every event with the ordering_key attribute set to order_id and leave the subscription-settings at default, since Pub/Sub buffers messages sharing an ordering-key at the publisher and hands that buffer to the subscriber as one contiguous batch in publish-sequence, per pubsub.googleapis.com docs.",
+   "D": "Publish the events unordered and reorder them downstream in a Cloud Dataflow streaming pipeline, keying by order_id and applying an event-time window (allowed_lateness=30s), then sort each key's buffered events by embedded publish-timestamp in a stateful DoFn so status transitions emit in-sequence once the window closes."
+  },
+  "distractors": {
+   "A": "Fragmentar en 100 temas fijos por hash no reparte de forma pareja entre order_ids reales y sigue exigiendo exactamente un suscriptor de un solo hilo por tema, sacrificando el paralelismo que el enunciado pide.",
+   "B": "El orden de mensajes en Pub/Sub no se garantiza por defecto solo con establecer ordering_key; hay que habilitar explícitamente enable_message_ordering=true en la suscripción, algo que esta opción omite.",
+   "D": "Reordenar en Dataflow con ventanas de tiempo y tolerancia a retrasos introduce latencia adicional y aún puede emitir eventos fuera de orden si un mensaje llega tras el cierre de la ventana, en vez de garantizar el orden estricto que Pub/Sub ya ofrece nativamente con ordering keys."
+  }
+ }
+]

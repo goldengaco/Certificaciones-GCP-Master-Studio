@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D4-047",
+  "options": {
+   "A": "Solicitar a Cloud Billing la transferencia del compromiso de 100 vCPUs desde el Proyecto A hacia los proyectos que sí están consumiendo capacidad, reasignando el contrato de compromiso al proyecto con mayor consumo real.",
+   "C": "Confiar en los Descuentos por Uso Sostenido (SUD), que se aplican automáticamente a las vCPUs de Compute Engine que superan cierto porcentaje del mes en cada uno de los 14 proyectos restantes de la empresa.",
+   "D": "Configurar la exportación de facturación a BigQuery y un panel de costos por etiquetas para redistribuir contablemente entre los 14 proyectos la parte del compromiso que el Proyecto A no llegó a consumir."
+  },
+  "distractors": {
+   "A": "Un compromiso de uso no se puede mover ni reasignar a otro proyecto una vez adquirido: el contrato queda anclado donde se compró. Lo que sí existe es el uso compartido a nivel de Cuenta de Facturación, que aplica el descuento sobrante sin mover nada.",
+   "C": "Los SUD son descuentos automáticos calculados por el uso mensual de cada proyecto y son independientes del CUD comprado: no recuperan ni aplican en ningún otro proyecto el compromiso de 60 vCPUs que quedó sin consumir en el Proyecto A.",
+   "D": "La exportación de facturación y las etiquetas solo dan visibilidad y permiten repartir el costo en los informes internos: no cambian el importe facturado por Google ni consiguen que el descuento se aplique al consumo real de los otros proyectos."
+  }
+ },
+ {
+  "id": "CDL-D2-033",
+  "options": {
+   "A": "Cloud Key Management Service (Cloud KMS con CMEK)",
+   "B": "Dataplex Universal Catalog (antes Data Catalog)",
+   "D": "Assured Workloads con controles de residencia de datos"
+  },
+  "distractors": {
+   "A": "Cloud KMS gestiona las claves con las que se cifran los datos en reposo, pero no inspecciona el contenido de los archivos: no descubre ni clasifica PII y no puede enmascarar ni tokenizar campos concretos dentro de los registros clínicos.",
+   "B": "Dataplex cataloga y gobierna metadatos (esquemas, linaje y etiquetas) de los activos de datos, pero no analiza el contenido para detectar números de seguro social ni aplica transformaciones de anonimización sobre los valores.",
+   "D": "Assured Workloads impone controles de cumplimiento y de residencia geográfica sobre el entorno donde vive la carga de trabajo, pero no inspecciona los archivos ni desidentifica la PII que contienen antes de exponerla a los analistas."
+  }
+ },
+ {
+  "id": "CDL-D4-069",
+  "options": {
+   "B": "Ejecuta directamente los proyectos de migración del cliente, escribiendo el código de las aplicaciones y desplegando la infraestructura como un equipo de entrega técnica asignado a tiempo completo.",
+   "C": "Atiende personalmente y en primera línea todos los casos de soporte técnico las 24 horas del día, depurando el código de la aplicación del cliente y aplicando la corrección en cada incidente que se abre.",
+   "D": "Negocia las condiciones económicas del contrato, gestiona la renovación anual del acuerdo comercial, aprueba los descuentos por compromiso de uso y fija el presupuesto anual de nube del cliente."
+  },
+  "distractors": {
+   "B": "Esa es la función de Google Cloud Consulting (servicios profesionales), una contratación aparte con entregables definidos. El TAM asesora, planifica y coordina, pero no ejecuta la implementación ni desarrolla la solución del cliente.",
+   "C": "Los casos los resuelve el equipo de Cloud Customer Care según la severidad y el plan contratado. El TAM no es el primer nivel de atención: coordina el caso, aporta contexto de la cuenta y actúa como punto de escalamiento.",
+   "D": "La relación comercial, los precios y la renovación son responsabilidad del ejecutivo de cuenta. El valor del TAM es técnico y operativo: arquitectura, fiabilidad y preparación para eventos de alta demanda, no la negociación del contrato."
+  }
+ },
+ {
+  "id": "CDL-D3-046",
+  "options": {
+   "B": "(1) Balanced Persistent Disk (pd-balanced SSD); (2) SSD Persistent Disk (pd-ssd); (3) Extreme Persistent Disk / Hyperdisk (pd-extreme)",
+   "C": "(1) Local SSD efímero (NVMe); (2) Standard Persistent Disk (pd-standard HDD); (3) Balanced Persistent Disk regional (pd-balanced SSD)",
+   "D": "(1) Standard Persistent Disk (pd-standard HDD); (2) SSD Persistent Disk (pd-ssd); (3) Local SSD NVMe efímero conectado a la instancia"
+  },
+  "distractors": {
+   "B": "El mapeo está desplazado un nivel hacia arriba: para registros de acceso infrecuente con costo mínimo se estaría pagando precio de SSD balanceado en lugar de pd-standard, y pd-ssd no es la opción de mejor relación precio/rendimiento.",
+   "C": "El Local SSD es almacenamiento efímero cuyo contenido se pierde al detener la instancia, de modo que no sirve para conservar registros, y pd-balanced no alcanza los cientos de miles de IOPS que exige la base de datos transaccional.",
+   "D": "El Local SSD no es un tipo de Persistent Disk y sus datos no sobreviven a la detención de la VM, por lo que no es válido para una base de datos transaccional que necesita durabilidad, aunque ofrezca IOPS muy altos."
+  }
+ },
+ {
+  "id": "CDL-D3-019",
+  "options": {
+   "A": "Cada región recibe su propia red VPC independiente y Google establece automáticamente túneles de Cloud VPN entre ellas, de modo que el tráfico entre regiones viaja cifrado por Internet sin que el equipo tenga que configurar puertas de enlace ni rutas manuales.",
+   "C": "Convierte las subredes en recursos globales, de modo que un mismo rango CIDR y las mismas direcciones IP internas quedan disponibles simultáneamente en todas las regiones del mundo y desaparece la necesidad de planificar rangos por región.",
+   "D": "Enruta automáticamente a cada usuario de Internet hacia el backend más cercano mediante una única dirección IP anycast y almacena en caché el contenido estático en los puntos de presencia de la red perimetral de Google más próximos al usuario."
+  },
+  "distractors": {
+   "A": "Ese es precisamente el modelo de VPC regional de otros proveedores, que obliga a interconectar redes. En Google Cloud una sola VPC ya abarca todas las regiones, por lo que no hace falta ningún túnel VPN ni que el tráfico salga a Internet.",
+   "C": "La VPC es global, pero las subredes siguen siendo regionales y cada una tiene su propio rango CIDR asociado a una única región. Sigue siendo necesario planificar los rangos, y una misma IP interna no puede existir en varias regiones.",
+   "D": "Eso describe el Balanceador de Carga global con Cloud CDN sobre el Nivel Premium de red, que optimiza el tráfico externo de los usuarios finales. La ventaja de la VPC global es la comunicación interna entre recursos por IP privada."
+  }
+ },
+ {
+  "id": "CDL-D4-082",
+  "options": {
+   "A": "Sumideros de registros (Log Sinks) que exportan a Cloud Storage Coldline",
+   "B": "Métricas basadas en registros (Log-Based Metrics) sobre los logs DEBUG",
+   "C": "Reducir a un día la retención del bucket _Default de Cloud Logging"
+  },
+  "distractors": {
+   "A": "Un sumidero enruta una copia de los registros a otro destino, pero los logs DEBUG se siguen ingiriendo en Cloud Logging y la ingesta es lo que se factura: el costo no baja y se añade el de Cloud Storage.",
+   "B": "Las métricas basadas en registros extraen valores numéricos para graficar y alertar, pero se calculan sobre registros que ya fueron ingeridos: no evitan ni la ingesta ni el almacenamiento facturable de los logs DEBUG.",
+   "C": "La retención determina cuánto tiempo se conservan los registros, no si se ingieren: Cloud Logging factura principalmente por volumen ingerido. Además borraría también los registros ERROR y WARN que deben conservarse."
+  }
+ },
+ {
+  "id": "CDL-D4-015",
+  "options": {
+   "A": "Cloud Monitoring (anteriormente Stackdriver Monitoring)",
+   "B": "Google Cloud Managed Service para Prometheus (GMP)",
+   "C": "Cloud Trace, Cloud Profiler y Error Reporting juntos"
+  },
+  "distractors": {
+   "A": "Cloud Monitoring es solo el componente de métricas, paneles y alertas. No abarca la recopilación centralizada de registros, el rastreo de microservicios ni el perfilado de CPU y memoria que pide el escenario.",
+   "B": "GMP es el servicio administrado para ingerir y consultar métricas en formato Prometheus dentro de Cloud Monitoring: cubre únicamente métricas, sin gestión de registros, trazas ni perfiles de rendimiento.",
+   "C": "Son tres componentes reales de la suite, pero solo los de nivel de aplicación: falta Cloud Monitoring y Cloud Logging, y esa enumeración no es el nombre del conjunto integrado de observabilidad por el que se pregunta."
+  }
+ },
+ {
+  "id": "CDL-D3-062",
+  "options": {
+   "A": "Warm Standby: una réplica dimensionada al mínimo permanece encendida en la segunda región y se escala para asumir el tráfico cuando se declara la conmutación por error.",
+   "B": "Cold Standby: copias de seguridad automáticas almacenadas en Cloud Storage multirregión que se restauran sobre infraestructura nueva cuando se declara el desastre.",
+   "C": "Pilot Light: la base de datos se replica de forma asíncrona a la región secundaria y los servidores de aplicación permanecen apagados hasta que se activa el plan."
+  },
+  "distractors": {
+   "A": "El Warm Standby deja un entorno reducido encendido, pero la conmutación exige escalar la capacidad y redirigir el tráfico, lo que produce un RTO de minutos, y la replicación asíncrona habitual deja un RPO mayor que cero.",
+   "B": "El Cold Standby no tiene infraestructura en ejecución: hay que aprovisionar y restaurar, con un RTO de horas, y el RPO queda determinado por el intervalo entre copias de seguridad, lo que incumple el requisito de cero segundos.",
+   "C": "La replicación asíncrona admite pérdida de transacciones en vuelo, de modo que el RPO no es cero, y encender los servidores de aplicación durante la contingencia impide alcanzar un RTO cercano a cero."
+  }
+ },
+ {
+  "id": "CDL-D4-025",
+  "options": {
+   "A": "Al alcanzar el 100% del presupuesto, Cloud Billing aplica automáticamente un tope de gasto que impide crear nuevos recursos en los proyectos asociados hasta el siguiente ciclo de facturación, aunque mantiene en ejecución los ya desplegados.",
+   "B": "Las alertas solo pueden dispararse sobre el gasto real ya acumulado en el mes; Google Cloud no puede notificar sobre costos previstos, por lo que el equipo debe proyectar manualmente el cierre a partir del consumo diario observado.",
+   "C": "Las notificaciones se envían únicamente al Propietario del proyecto donde se genera el gasto y no pueden dirigirse a los administradores de facturación ni integrarse con Pub/Sub o los canales de Cloud Monitoring para automatizar respuestas."
+  },
+  "distractors": {
+   "A": "Un presupuesto no es un tope de gasto: Google Cloud no ofrece un límite duro que bloquee la creación de recursos al alcanzarlo. Detener el consumo exige construir una automatización propia con Pub/Sub y una función que desactive la facturación.",
+   "B": "Los presupuestos admiten umbrales tanto de gasto real como de gasto previsto: la regla de importe previsto notifica cuando la tendencia del mes indica que se superará el umbral, que es justo lo que pide el Director Financiero.",
+   "C": "Por defecto la alerta llega a los administradores y usuarios de la Cuenta de Facturación, no al Propietario del proyecto, y además puede enrutarse a un tema de Pub/Sub o a canales de notificación de Cloud Monitoring."
+  }
+ },
+ {
+  "id": "CDL-D3-074",
+  "options": {
+   "A": "Desplegar Cloud Run en ambas regiones y publicar los dos extremos en Cloud DNS con una política de enrutamiento por geolocalización y comprobaciones de estado que conmuten el registro ante una caída regional.",
+   "C": "Configurar un Balanceador de Carga de Aplicaciones externo regional en us-central1 con Serverless NEGs que apunten a los servicios de Cloud Run desplegados en las dos regiones del escenario.",
+   "D": "Usar Cloud Service Mesh con Traffic Director para enrutar las peticiones de los usuarios de Internet hacia el servicio de Cloud Run más cercano y conmutar automáticamente a la otra región ante un corte."
+  },
+  "distractors": {
+   "A": "El enrutamiento por DNS depende del TTL que los resolutores y los clientes mantienen en caché, por lo que la conmutación tarda y no es inmediata, y no existe una única dirección IP global que absorba el tráfico durante la transición.",
+   "C": "Un Serverless NEG solo puede referenciar servicios de Cloud Run de su misma región, y un balanceador regional vive dentro de esa región: si us-central1 cae, el propio punto de entrada desaparece y no hay conmutación posible.",
+   "D": "Cloud Service Mesh gobierna el tráfico entre servicios mediante un plano de datos en los clientes internos; no es un punto de entrada público para usuarios de Internet, que necesitan la IP anycast del balanceador global."
+  }
+ },
+ {
+  "id": "CDL-D4-002",
+  "options": {
+   "A": "La responsabilidad del cliente no varía: sigue teniendo que aplicar los parches del sistema operativo subyacente, dimensionar el número de instancias y planificar la capacidad, y Google solo asume el hardware físico y la red del centro de datos.",
+   "B": "Google pasa a hacerse cargo también de la configuración de acceso IAM, de la clasificación de los datos que se cargan y de la corrección del código de la aplicación desplegada, de modo que el cliente queda exento de tareas de seguridad.",
+   "D": "Google asume la gestión completa del cifrado y de las claves, de modo que el cliente deja de necesitar CMEK, políticas de retención o controles de residencia, porque las certificaciones de cumplimiento de Google cubren toda la gobernanza."
+  },
+  "distractors": {
+   "A": "En Cloud Run y BigQuery el parcheo del sistema operativo, el escalado y el aprovisionamiento de capacidad los realiza Google. Ese reparto describe el modelo de IaaS de Compute Engine, no el de los servicios serverless y administrados.",
+   "B": "La identidad, los datos y el código son responsabilidad del cliente en todos los niveles del modelo: Google responde de la seguridad de la nube, y el cliente de la seguridad en la nube, por muy administrado que sea el servicio.",
+   "D": "Las certificaciones de Google acreditan los controles de la plataforma, pero las obligaciones normativas sobre los datos del cliente (residencia, retención y control de claves con CMEK) siguen siendo suyas incluso en servicios serverless."
+  }
+ },
+ {
+  "id": "CDL-D3-030",
+  "options": {
+   "A": "Configurar una política de escalado automático (Autoscaling) en el grupo de instancias basada en el uso de CPU, de modo que se añadan instancias nuevas en cuanto la aplicación deje de responder a las peticiones.",
+   "C": "Adjuntar un Health Check al servicio de backend del balanceador de carga para que deje de enviar peticiones a la instancia en cuanto falle la comprobación HTTP de la aplicación web alojada.",
+   "D": "Activar la Migración en Vivo (Live Migration) y el Reinicio Automático (Automatic Restart) en las instancias para que Compute Engine las traslade a otro host físico cuando la aplicación se congele."
+  },
+  "distractors": {
+   "A": "El escalado automático reacciona a métricas de carga, no al estado de salud: una VM congelada suele mostrar CPU baja, así que nunca dispararía el escalado, y además el escalado añade instancias pero no destruye ni recrea la enferma.",
+   "C": "El health check del balanceador solo decide a qué instancias se les envía tráfico: retira de la rotación la VM enferma pero la deja encendida y averiada. Recrearla desde la plantilla es tarea de la política de autorreparación del MIG.",
+   "D": "Ambas son políticas de disponibilidad frente a eventos del host: mantenimiento programado o fallo del hardware. No observan la salud de la aplicación, y un proceso web colgado deja la VM en estado RUNNING sin disparar nada."
+  }
+ },
+ {
+  "id": "CDL-D4-049",
+  "options": {
+   "A": "Analizador de Políticas de IAM (IAM Policy Analyzer)",
+   "B": "Simulador de Políticas de IAM (IAM Policy Simulator)",
+   "C": "Registros de Auditoría de Acceso a Datos (Data Access)"
+  },
+  "distractors": {
+   "A": "El Policy Analyzer responde a preguntas sobre quién tiene acceso a qué según los enlaces vigentes, pero no compara esos permisos con el uso real de los últimos 90 días ni propone un rol alternativo más restrictivo.",
+   "B": "El Policy Simulator predice el impacto de un cambio de política antes de aplicarlo, es decir, valida una propuesta que alguien ya ha redactado: no detecta por sí mismo el exceso de permisos ni genera la recomendación.",
+   "C": "Los registros de auditoría son la evidencia en bruto de qué llamadas hizo el usuario, pero exigen análisis manual: no correlacionan el uso con los permisos concedidos ni sugieren automáticamente un rol de menor privilegio."
+  }
+ },
+ {
+  "id": "CDL-D4-067",
+  "options": {
+   "A": "Registros de Auditoría de Actividad del Administrador (Admin Activity Audit Logs, activados siempre)",
+   "B": "Registros de Transparencia de Acceso (Access Transparency Logs del personal de Google)",
+   "C": "Registros de Eventos del Sistema (System Event Audit Logs generados por la infraestructura)"
+  },
+  "distractors": {
+   "A": "Los Admin Activity registran las llamadas que modifican la configuración o los metadatos de los recursos, como crear un bucket o cambiar una política de IAM, pero no dejan constancia de quién leyó el contenido de los datos.",
+   "B": "Access Transparency documenta los accesos del personal de soporte e ingeniería de Google a los datos del cliente, no las lecturas realizadas por los usuarios y cuentas de servicio de la propia empresa que se quieren auditar.",
+   "C": "Los System Event recogen acciones automáticas que ejecuta la propia infraestructura de Google Cloud, como una migración en vivo del host, y nunca reflejan operaciones de lectura de datos iniciadas por un usuario."
+  }
+ },
+ {
+  "id": "CDL-D4-073",
+  "options": {
+   "A": "Pruebas de Conectividad (Connectivity Tests del Network Intelligence Center)",
+   "B": "Panel de Rendimiento de Red (Performance Dashboard con latencia y pérdida)",
+   "C": "Registros de Flujo de VPC (VPC Flow Logs) exportados a BigQuery para su análisis"
+  },
+  "distractors": {
+   "A": "Connectivity Tests es un diagnóstico bajo demanda que simula el camino entre un origen y un destino concretos que hay que indicar: no descubre de forma proactiva y continua problemas en toda la VPC ni vigila las cuotas.",
+   "B": "El Performance Dashboard muestra latencia y pérdida de paquetes entre zonas y proyectos, es decir, cómo se comporta el tráfico. No analiza la configuración de reglas de firewall, rutas ni el consumo de cuotas de direcciones IP.",
+   "C": "Los Flow Logs registran el tráfico que efectivamente ocurrió y requieren consultas manuales para interpretarlos: muestran el síntoma de una conexión bloqueada, pero no identifican la regla ni la ruta mal configurada que lo causa."
+  }
+ },
+ {
+  "id": "CDL-D4-075",
+  "options": {
+   "A": "Centralizar todo el gasto en el departamento de finanzas, que debe aprobar formalmente cada solicitud de recurso antes de su creación, restaurando así el control presupuestario previo a cualquier despliegue en la nube.",
+   "C": "Implantar la exportación de facturación a BigQuery con paneles de costos en Looker Studio y alertas de presupuesto, de modo que la herramienta de visibilidad sustituya a cualquier cambio de hábitos en los equipos.",
+   "D": "Fijar como objetivo la reducción del gasto mensual en la nube al mínimo posible, midiendo el éxito de cada equipo por el porcentaje de factura recortado respecto al mismo trimestre del ejercicio anterior."
+  },
+  "distractors": {
+   "A": "Reinstaura el modelo de aprobación previa que la nube vino a eliminar: destruye la agilidad de aprovisionamiento en segundos y concentra la decisión en quien no conoce la arquitectura, en lugar de repartir la responsabilidad.",
+   "C": "La visibilidad de costos es solo la primera fase del marco FinOps (Informar). Un panel no cambia por sí solo ninguna decisión de arquitectura: el cambio cultural es que el ingeniero asuma el impacto económico de sus decisiones.",
+   "D": "FinOps busca maximizar el valor de negocio por dólar invertido, no minimizar la factura: un aumento de gasto que genere más ingresos o acelere el lanzamiento de un producto es un éxito según el marco, no un fracaso."
+  }
+ },
+ {
+  "id": "CDL-D2-088",
+  "options": {
+   "A": "Restaurar sobre una base de datos nueva la copia de seguridad automática de Cloud Spanner de la noche anterior y volver a aplicar después las transacciones legítimas registradas durante el día.",
+   "B": "Promover la réplica de lectura de la región secundaria de la instancia multirregional de Cloud Spanner para que sirva el estado que los datos tenían antes de ejecutarse la sentencia errónea.",
+   "C": "Exportar la base de datos a Cloud Storage con una plantilla de Dataflow y volver a importar únicamente la tabla de saldos con los valores anteriores a las 14:15 horas del día del incidente."
+  },
+  "distractors": {
+   "A": "Una copia de seguridad de Spanner es una instantánea del momento en que se creó, así que restaurarla pierde todas las transacciones del día, y Spanner no reproduce un registro de transacciones sobre la copia restaurada.",
+   "B": "Las réplicas de Spanner se mantienen mediante replicación síncrona, de modo que contienen exactamente las mismas filas corruptas. La replicación protege frente a la caída de una región, nunca frente a un error lógico de datos.",
+   "C": "La exportación lee el estado actual de la base de datos, que ya está corrupto: no existe ninguna versión anterior que extraer salvo que se use la lectura obsoleta o la recuperación a un punto en el tiempo."
+  }
+ },
+ {
+  "id": "CDL-D4-058",
+  "options": {
+   "B": "El registro en vivo de la llamada del incidente con los comandos ejecutados, el reparto de los roles de Comandante de Incidente y Comunicador, y el estado de la sala de crisis minuto a minuto.",
+   "C": "La identificación del cambio y del ingeniero que lo desplegó, la valoración de su desempeño y las medidas disciplinarias o de formación obligatoria asignadas para que el error no se repita.",
+   "D": "El cálculo de los minutos de indisponibilidad frente al SLA contratado, los créditos de servicio que deben reclamarse al proveedor y la comunicación formal enviada a los clientes afectados."
+  },
+  "distractors": {
+   "B": "Eso es el registro operativo que se produce durante la gestión del incidente, mientras el servicio está caído. La autopsia se redacta después y su objetivo es el aprendizaje sistémico y las acciones preventivas.",
+   "C": "Atribuir consecuencias personales es justo lo que la metodología sin culpa prohíbe: incentiva a ocultar información, impide reconstruir la cronología real y desvía el análisis de las causas sistémicas hacia el individuo.",
+   "D": "Son artefactos contractuales y de comunicación derivados del incidente, útiles para el negocio, pero no explican la causa raíz ni generan la lista de acciones correctivas que hace que el sistema mejore."
+  }
+ },
+ {
+  "id": "CDL-D4-059",
+  "options": {
+   "A": "Porque redactar y revisar cada año el plan de recuperación con los responsables de cada sistema y obtener su firma acredita ante los auditores externos que la organización cumple la normativa sectorial de continuidad de negocio.",
+   "C": "Porque los simulacros permiten medir el consumo máximo de CPU y memoria de la región secundaria durante la conmutación y así dimensionar con antelación las cuotas y las reservas de capacidad necesarias en la contingencia.",
+   "D": "Porque restaurar periódicamente las copias de seguridad en un entorno aislado confirma que los datos están íntegros y son recuperables, que es en definitiva lo que determina si la empresa sobrevive a un desastre regional."
+  },
+  "distractors": {
+   "A": "Un plan aprobado y firmado demuestra cumplimiento documental, pero no aporta ninguna evidencia de que los procedimientos funcionen: solo la ejecución real revela los pasos obsoletos y las dependencias no documentadas.",
+   "C": "Dimensionar la capacidad es un beneficio colateral del ejercicio, no su propósito. El objetivo de DiRT es validar los procedimientos de conmutación, la automatización y la respuesta del equipo humano bajo presión real.",
+   "D": "Verificar las copias es necesario pero insuficiente: en un desastre real hacen falta además la conmutación de tráfico, las dependencias entre servicios y la coordinación del equipo, y eso solo se prueba con un simulacro completo."
+  }
+ },
+ {
+  "id": "CDL-D4-023",
+  "options": {
+   "A": "Crear roles personalizados de IAM que excluyan el permiso `compute.instances.create` y asignarlos a todos los desarrolladores en cada una de las carpetas de la organización.",
+   "C": "Configurar Cloud Asset Inventory con feeds en tiempo real y una función que elimine las máquinas virtuales con IP externa o creadas fuera de las regiones de la Unión Europea.",
+   "D": "Definir un perímetro de Controles de Servicio de VPC (VPC Service Controls) que abarque todos los proyectos de la organización y las regiones europeas autorizadas."
+  },
+  "distractors": {
+   "A": "IAM decide quién puede actuar, no cómo debe configurarse el recurso: cualquier desarrollador que conserve permiso para crear una VM podrá asignarle una IP externa y elegir cualquier región del mundo.",
+   "C": "Es un control detectivo y reactivo: el recurso no conforme llega a existir y queda expuesto durante la ventana entre su creación y la remediación. El requisito pide un guardarraíl preventivo que impida crearlo.",
+   "D": "VPC Service Controls crea un perímetro que evita la exfiltración de datos entre servicios administrados, pero no impide asignar una dirección IP externa a una VM ni restringe en qué región se crean los recursos."
+  }
+ },
+ {
+  "id": "CDL-D3-044",
+  "options": {
+   "A": "Desplegar varias máquinas virtuales dentro de una única zona con discos SSD replicados entre ellas y copias de seguridad programadas cada hora hacia un bucket regional de Cloud Storage situado en esa misma región geográfica.",
+   "C": "Distribuir las instancias entre varias zonas de una misma región y confiar en que un bucket de Cloud Storage multirregión conserve los datos, dado que las regiones de Google Cloud nunca llegan a fallar por completo a la vez.",
+   "D": "Desplegar la aplicación en dos regiones geográficas distintas colocando una única instancia en cada una de ellas, ya que la separación entre regiones hace innecesaria cualquier redundancia adicional dentro de cada región."
+  },
+  "distractors": {
+   "A": "Todas las instancias comparten el mismo dominio de fallo: una zona tiene energía y red propias, y si cae se pierden a la vez. Las copias horarias en la misma región tampoco sobreviven a la catástrofe regional del requisito (2).",
+   "C": "El diseño multizona cubre el requisito (1), pero deja el (2) sin resolver: aunque los datos sobrevivan en el bucket multirregión, no hay cómputo desplegado fuera de la región y el servicio queda caído mientras dure la contingencia.",
+   "D": "Una sola instancia por región no tolera el fallo de su zona ni del host físico, que son sucesos mucho más frecuentes que la caída de una región entera: se resuelve el requisito (2) pero se deja sin cubrir el (1)."
+  }
+ },
+ {
+  "id": "CDL-D4-051",
+  "options": {
+   "A": "Canales de notificación de Cloud Monitoring (correo, SMS y Pub/Sub)",
+   "B": "Los administradores de la cuenta de facturación en Cloud Billing",
+   "C": "El perfil de pagos y los contactos administrativos del dominio"
+  },
+  "distractors": {
+   "A": "Los canales de notificación entregan las alertas que generan las políticas del propio cliente sobre sus métricas. No son la vía por la que Google comunica avisos de seguridad, privacidad, facturación o mantenimiento de la plataforma.",
+   "B": "Ese rol solo recibe los avisos relacionados con la facturación y los pagos, y no permite dirigir por categorías los avisos de incidentes de seguridad al equipo correspondiente ni los legales al departamento jurídico.",
+   "C": "El perfil de pagos guarda los datos fiscales y de método de pago para la emisión de facturas: no clasifica destinatarios por tema y no es el mecanismo que enruta avisos de seguridad, privacidad u operaciones."
+  }
+ },
+ {
+  "id": "CDL-D2-043",
+  "options": {
+   "A": "Mediante las certificaciones de cumplimiento ISO 27001 y SOC 2 y las cláusulas contractuales de tratamiento de datos, que auditan de forma independiente los controles de seguridad de la plataforma.",
+   "C": "A través de las herramientas técnicas de Vertex AI, como los filtros de seguridad configurables, Model Garden y las tarjetas de modelo, que bloquean automáticamente cualquier respuesta sesgada o dañina.",
+   "D": "Delegando la decisión ética en cada cliente mediante el modelo de responsabilidad compartida, en el que Google aporta la infraestructura y el cliente firma un código de conducta propio antes de usar los modelos."
+  },
+  "distractors": {
+   "A": "Esas certificaciones acreditan los controles de seguridad y de tratamiento de datos de la infraestructura, pero no dicen nada sobre equidad, sesgos ni beneficio social, que es lo que exige la junta directiva.",
+   "C": "Esas funciones ayudan a aplicar los principios en un proyecto concreto, pero son características de producto, no el compromiso ético formal de la compañía, y ningún filtro garantiza la ausencia de sesgos injustos.",
+   "D": "Los Principios de IA son un compromiso público y propio de Google que condiciona qué tecnología desarrolla y qué usos rechaza: no es una obligación que se transfiera al cliente ni depende de que este firme nada."
+  }
+ },
+ {
+  "id": "CDL-D3-065",
+  "options": {
+   "A": "Google Cloud permite trasladar tal cual las máquinas virtuales del centro de datos con Migrate to Virtual Machines, conservando la misma arquitectura y los mismos procesos de operación, lo que reduce el riesgo del proyecto de migración.",
+   "B": "El valor de la modernización se concentra en el ahorro: al sustituir la inversión de capital en servidores por gasto operativo variable y aplicar descuentos por compromiso de uso, la factura de TI se reduce cada ejercicio.",
+   "D": "La modernización consiste en implantar Cloud Monitoring, Cloud Logging y paneles de observabilidad que den al comité de dirección visibilidad en tiempo real del estado de los sistemas y del cumplimiento de los acuerdos de nivel de servicio."
+  },
+  "distractors": {
+   "A": "Un traslado literal reubica la carga de trabajo pero mantiene su rigidez: no aporta por sí solo elasticidad, no acorta el tiempo de lanzamiento de productos y conserva la capacidad sobredimensionada que causa el costo actual.",
+   "B": "Recoge únicamente el tercer pilar, la eficiencia financiera, y deja fuera la escalabilidad elástica global y la agilidad de innovación, que son las dos palancas de crecimiento que interesan a la junta directiva.",
+   "D": "La observabilidad mejora cómo se opera lo que ya existe y es un habilitador, no un pilar de valor: no aporta escalabilidad elástica ni acorta el tiempo al mercado de nuevos productos."
+  }
+ },
+ {
+  "id": "CDL-D2-090",
+  "options": {
+   "A": "Google Cloud sustituye las hojas de cálculo por paneles de Looker Studio conectados a los sistemas actuales y por informes programados por correo, de modo que la dirección consulte los resultados del trimestre anterior y los indicadores de cada área sin depender del equipo de TI.",
+   "C": "Google Cloud permite migrar con Database Migration Service las bases de datos operativas a Cloud SQL y las máquinas virtuales a Compute Engine con Migrate to Virtual Machines, conservando los mismos informes y procesos actuales pero sobre infraestructura totalmente administrada.",
+   "D": "Google Cloud ofrece modelos preentrenados de Vertex AI y agentes de Gemini que pueden invocarse por API sobre los archivos y correos existentes de la empresa, de modo que la IA genere las predicciones sin necesidad de consolidar ni gobernar previamente los datos operativos."
+  },
+  "distractors": {
+   "A": "Los paneles sobre datos históricos siguen siendo una operación descriptiva y reactiva: mejoran la distribución del informe, pero no incorporan ingesta en tiempo real, gobernanza del dato ni modelos que anticipen lo que va a ocurrir.",
+   "C": "Migrar los sistemas transaccionales elimina la carga de administrar hardware, pero deja intactos los silos y el proceso reactivo: no introduce almacén analítico, procesamiento en tiempo real ni modelos de aprendizaje automático.",
+   "D": "Sin una base de datos consolidada y gobernada, los modelos se alimentan de información dispersa, duplicada y sin linaje, y sus predicciones no son fiables: la ingesta, el almacén analítico y la gobernanza son requisitos previos, no opcionales."
+  }
+ }
+]

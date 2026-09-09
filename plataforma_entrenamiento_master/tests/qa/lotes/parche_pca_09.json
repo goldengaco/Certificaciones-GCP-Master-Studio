@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D3-025",
+  "options": {
+   "A": "Attach Cloud Armor security policies with the preconfigured OWASP ModSecurity core rule set to the external Application Load Balancer backend services, inspecting every request for exploit and malware signatures before it reaches the VMs.",
+   "B": "Enable VPC Flow Logs at 100 percent sampling on every subnet and stream them into Security Command Center Event Threat Detection, correlating the 5-tuple connection records to identify malware, spyware and exploit attempts.",
+   "D": "Deploy a fleet of third-party next-generation firewall appliance VMs behind an Internal Passthrough Network Load Balancer and add custom static routes so every subnet's traffic is forced through the appliances for deep packet inspection."
+  },
+  "distractors": {
+   "A": "Cloud Armor solo inspecciona el trafico HTTP(S) que atraviesa el balanceador externo (Norte-Sur); el trafico Este-Oeste entre subredes nunca pasa por el, asi que la mitad del requisito PCI queda sin cubrir.",
+   "B": "Los Flow Logs registran metadatos de conexion (5-tupla, bytes, paquetes), no la carga util: sin payload no hay firmas de malware, spyware ni exploits que detectar.",
+   "D": "Es exactamente lo que el escenario prohibe: obliga a reencaminar el trafico por VM appliance que actuan de cuello de botella y que hay que dimensionar, parchear y escalar."
+  }
+ },
+ {
+  "id": "PCA-D2-002",
+  "options": {
+   "B": "Trigger a Cloud Build pipeline on every GitLab merge that runs terraform plan and terraform apply against a GCS remote state backend, provisioning the Pub/Sub topics, BigQuery datasets and GKE clusters declaratively.",
+   "C": "Install Config Sync on a standard GKE cluster pointed at the GitLab repository so it continuously reconciles the manifests, letting the cluster's own namespaces and RBAC objects define the Pub/Sub topics and BigQuery datasets.",
+   "D": "Define the resources in Cloud Deployment Manager YAML templates stored in GitLab and run a deployment update from a Cloud Scheduler job so the configuration is re-applied against Google Cloud every fifteen minutes."
+  },
+  "distractors": {
+   "B": "Terraform es HCL, no Recursos Kubernetes (CRD), y solo reconcilia en el momento del merge: entre ejecuciones el drift introducido a mano en la consola sobrevive sin ser detectado.",
+   "C": "Config Sync reconcilia objetos Kubernetes; sin Config Connector instalado no existe el CRD que traduzca un manifiesto en un dataset de BigQuery o un topic de Pub/Sub reales.",
+   "D": "Deployment Manager esta en retirada y no expone recursos como CRD de Kubernetes; ademas un re-apply programado cada 15 minutos no informa del drift, solo lo pisa en silencio."
+  }
+ },
+ {
+  "id": "PCA-D1-062",
+  "options": {
+   "A": "Cloud SQL for MySQL Enterprise Plus with a single regional primary, SELECT ... FOR UPDATE row locks on the seat inventory table, and cross-region read replicas in Europe and Asia serving the fan-facing availability queries.",
+   "C": "Cloud Firestore in Native mode with a multi-region location, holding the seat inventory of each event in a single document and using Firestore transactions with automatic retries to decrement the seat counter per purchase.",
+   "D": "Cloud Bigtable with replicated clusters in North America, Europe and Asia, storing one row per seat and relying on single-row read-modify-write atomicity plus multi-cluster routing to serve the global ticket purchases."
+  },
+  "distractors": {
+   "A": "El primario de escritura sigue siendo una unica instancia: no escala horizontalmente para 100.000 compras en 60 segundos y los bloqueos FOR UPDATE sobre las mismas butacas degeneran en deadlocks.",
+   "C": "Firestore limita un documento a aproximadamente una escritura por segundo sostenida; concentrar el inventario en un documento provoca contencion y aborta las transacciones justo en el pico de venta.",
+   "D": "La replicacion de Bigtable es eventualmente consistente y el enrutamiento multi-cluster no coordina escrituras entre clusters: dos regiones pueden vender la misma butaca antes de converger."
+  }
+ },
+ {
+  "id": "PCA-D4-026",
+  "options": {
+   "A": "Front the credit scoring APIs with Cloud Endpoints ESPv2, issue an API key per developer, and bill each tier by exporting the Service Control request logs to BigQuery and running a monthly scheduled query per key.",
+   "C": "Publish the APIs through Google Cloud API Gateway with an OpenAPI specification declaring per-key quota limits of 1,000 calls per month, and hand the endpoint URLs to partners with a static documentation site.",
+   "D": "Deploy Apigee X and use the built-in API Analytics dashboards to count traffic per developer app, exporting the aggregated call counts to a spreadsheet that the finance team turns into quarterly invoices by hand."
+  },
+  "distractors": {
+   "A": "Endpoints aporta claves y cuotas, pero no tiene planes de tarifa, facturacion automatizada ni portal de desarrolladores: la monetizacion habria que construirla entera a mano sobre los logs.",
+   "C": "API Gateway aplica cuotas pero no sabe cobrar: no existe rate plan por llamada de 0,05 dolares ni alta de autoservicio, asi que el nivel Gold se queda sin mecanismo de facturacion.",
+   "D": "Usa el producto correcto pero desactiva la pieza que resuelve el escenario: Analytics mide trafico, mientras los rate plans y la facturacion automatizada viven en el modulo de Monetization."
+  }
+ },
+ {
+  "id": "PCA-D2-023",
+  "options": {
+   "B": "Deploy an Internal Passthrough Network Load Balancer in each region, publish both forwarding rule addresses to the client applications, and let each client retry the other address on failure.",
+   "C": "Publish the microservice through an External Network Load Balancer with a public Anycast IP address, restricting access with VPC firewall rules and Cloud Armor policies that allow only corporate ranges.",
+   "D": "Create a Cloud DNS private zone with a failover routing policy resolving the service name to the us-central1 backends and switching to the us-east1 backends when probes report the primary unhealthy."
+  },
+  "distractors": {
+   "B": "Son dos direcciones IP internas distintas, no la unica IP privada que exige el escenario, y la conmutacion queda en manos del codigo cliente en vez de ser automatica por health check.",
+   "C": "Expone el servicio en una direccion publica cuando el requisito es una unica IP interna privada; las reglas de firewall filtran quien entra pero no devuelven el trafico al plano privado.",
+   "D": "DNS reparte nombres, no una unica IP: cada cliente cachea la respuesta durante el TTL, asi que la conmutacion tarda minutos en vez de reencaminar la conexion al instante."
+  }
+ },
+ {
+  "id": "PCA-D3-058",
+  "options": {
+   "A": "Route all vehicle audit events into a dedicated Cloud Logging bucket in the organization with the custom retention period raised to 3,650 days, and restrict the roles/logging.admin role to two members of the security team.",
+   "C": "Export the audit sink to a Cloud Storage bucket with Object Versioning enabled and a lifecycle rule deleting noncurrent versions after 3,650 days, plus an IAM deny policy blocking storage.objects.delete for dealers.",
+   "D": "Send the aggregated sink to a BigQuery dataset partitioned by day with the partition expiration set to 3,650 days, exposing the warranty events to the legal team through authorized views for dispute investigations."
+  },
+  "distractors": {
+   "A": "Sin bloquear el bucket de logs (--locked) la retencion sigue siendo editable: quien recupere logging.admin puede acortarla o borrar el bucket mucho antes de los 10 anios.",
+   "C": "El versionado conserva copias pero no impide el borrado definitivo: un administrador del proyecto puede retirar la politica deny y eliminar las versiones, asi que no es almacenamiento WORM.",
+   "D": "BigQuery no ofrece almacenamiento inmutable: la caducidad de particion es un ajuste editable y cualquiera con dataEditor puede ejecutar un DELETE sobre las filas en litigio."
+  }
+ },
+ {
+  "id": "PCA-D5-026",
+  "options": {
+   "A": "Wrap the Spanner mutation and the Elasticsearch index call in the same application transaction with a try/catch and a compensating rollback, retrying the search write with exponential backoff and logging any mismatch to a reconciliation table reviewed nightly.",
+   "B": "Run a Dataflow job that polls Spanner every five seconds with SELECT * FROM Orders WHERE updated_at > @last_checkpoint, publishing the rows it finds to Pub/Sub for the fraud pipeline and the Elasticsearch indexer before advancing the checkpoint.",
+   "C": "Configure a Datastream stream with Cloud Spanner as the source database and Pub/Sub as the destination, letting the managed change data capture service replicate every committed mutation to the fraud pipeline and the Elasticsearch connector."
+  },
+  "distractors": {
+   "A": "Sigue siendo escritura dual: Elasticsearch no participa en la transaccion de Spanner, asi que un fallo posterior al commit deja el indice desincronizado hasta la reconciliacion nocturna.",
+   "B": "El sondeo por marca de tiempo pierde las filas cuyo commit se hace visible despues del checkpoint y nunca ve los DELETE, ademas de anadir hasta cinco segundos de latencia al pipeline de fraude.",
+   "C": "Datastream no admite Cloud Spanner como origen (solo Oracle, MySQL, PostgreSQL y SQL Server); la captura de cambios nativa de Spanner son los Change Streams."
+  }
+ },
+ {
+  "id": "PCA-D1-046",
+  "options": {
+   "A": "Enable Admin Activity and Data Access audit logs for the Healthcare API, BigQuery and Cloud Storage, route them through an aggregated sink into a BigQuery dataset in a dedicated logging project, and grant only the compliance team the bigquery.dataViewer role on it.",
+   "B": "Extend the retention of the _Default Cloud Logging bucket to 2,555 days, enable Data Access audit logs on the Healthcare API and BigQuery, and restrict roles/logging.admin to two compliance officers so no other principal can shorten the window.",
+   "D": "Configure the aggregated sink to a Cloud Storage bucket with a 2,555-day retention policy and Object Versioning enabled, applying an event-based hold on each new log object so that it cannot be overwritten while the hold remains in place."
+  },
+  "distractors": {
+   "A": "BigQuery no implementa WORM: un propietario del proyecto de logging puede ejecutar DELETE o borrar el dataset entero, de modo que los registros no sobreviven a un administrador malicioso durante los 7 anios.",
+   "B": "La retencion de un bucket de Cloud Logging solo es inmutable si el bucket se bloquea; sin el bloqueo, quien recupere logging.admin puede reducirla a 30 dias y destruir la evidencia.",
+   "D": "Una retention policy sin bloquear se puede reducir o eliminar y quien tenga storage.admin puede liberar el hold: solo Bucket Lock impide el borrado incluso al propietario del proyecto."
+  }
+ },
+ {
+  "id": "PCA-D1-066",
+  "options": {
+   "A": "Provision every fan as a Cloud Identity user inside the HRL Workspace domain, put Identity-Aware Proxy in front of the Cloud Run APIs, and let IAP validate the session cookie and inject the signed identity header that each microservice reads on every request.",
+   "B": "Build an OAuth 2.0 broker on Cloud Run that redirects fans to each social provider, stores the resulting session in Cloud Memorystore for Redis, and returns an opaque session identifier that every API request exchanges for the fan's profile.",
+   "D": "Register each social provider as an OIDC workload identity pool provider in Google Cloud IAM and have the mobile app exchange the provider token at the Security Token Service for a short-lived Google Cloud access token that the Cloud Run APIs check."
+  },
+  "distractors": {
+   "A": "Cloud Identity esta pensado para empleados, no para millones de aficionados con cuentas de Apple, Facebook o Twitter: no federa esos proveedores sociales y su licenciamiento por usuario hace inviable el alta de un clic.",
+   "B": "Un identificador opaco obliga a cada API a consultar Redis en cada peticion, que es justo la busqueda externa que el escenario prohibe; solo un JWT firmado se verifica sin estado.",
+   "D": "Workload Identity Federation federa cargas de trabajo, no usuarios finales: no gestiona el registro ni el perfil de los fans y el token resultante se valida contra Google, no localmente."
+  }
+ },
+ {
+  "id": "PCA-D2-003",
+  "options": {
+   "A": "Grant the developers and their service accounts roles/compute.networkUser on the entire Host Project, and rely on VPC firewall rules that block traffic between the web subnet and the analytics instances.",
+   "B": "Grant roles/compute.networkAdmin on the Host Project to the Analytics-Dev developers and their service accounts so they can create the instances and GKE clusters, documenting that the web subnet is off limits.",
+   "D": "Give the Analytics-Dev project its own VPC with the 10.10.0.0/20 range and connect it to the Host Project network with VPC Network Peering, letting the central team choose which subnet routes are exported to the analytics side."
+  },
+  "distractors": {
+   "A": "networkUser concedido a nivel de proyecto habilita todas las subredes del host: los desarrolladores podrian crear instancias en 10.20.0.0/20, y una regla de firewall filtra trafico pero no impide adjuntar la NIC.",
+   "B": "networkAdmin permite ademas crear, modificar y borrar subredes y rutas del Host Project: el equipo puede concederse acceso al tier web y romper el control centralizado de la red.",
+   "D": "El peering de VPC exporta todas las subredes de la red par, no un subconjunto elegido, y ademas abandona el Shared VPC que el equipo central necesita para administrar la red."
+  }
+ },
+ {
+  "id": "PCA-D3-013",
+  "options": {
+   "B": "Create a Sensitive Data Protection inspection job trigger for each BigQuery table with the built-in PII, PCI and HIPAA infoTypes, scheduling the 10,000 job triggers to run weekly and writing the findings back into a central BigQuery results table.",
+   "C": "Register the 100 datasets in Dataplex as lakes and zones, and have the data stewards apply Data Catalog tag templates marking each column as PII, PCI or HIPAA so that auditors can search the catalog for the sensitive assets across the lake.",
+   "D": "Write a Cloud Composer DAG that iterates INFORMATION_SCHEMA every night, runs regular expression queries against a sample of rows in every table using on-demand slots, and records the columns matching card or identifier patterns."
+  },
+  "distractors": {
+   "B": "Los inspection jobs escanean tablas ya declaradas una por una: no descubren automaticamente las tablas ni las columnas nuevas, que es justo la exigencia de perfilado continuo del escenario.",
+   "C": "El etiquetado en Dataplex es una declaracion manual del steward: no clasifica el contenido real de las columnas ni calcula puntuaciones de riesgo, y queda obsoleto en cuanto se crea una tabla.",
+   "D": "Las expresiones regulares propias no reproducen los mas de 150 infoTypes ni el calculo de riesgo de Sensitive Data Protection, y muestrear filas deja sin detectar columnas con PII poco frecuente."
+  }
+ },
+ {
+  "id": "PCA-D5-021",
+  "options": {
+   "A": "Keep the 30 clusters independent and drive every configuration change through a shared Terraform module invoked by a Cloud Build pipeline that runs terraform apply against each cluster's kubeconfig in sequence after a pull request merges.",
+   "C": "Consolidate the workloads into three regional GKE clusters, one per continent, and manage their policies with a separate Config Sync repository per cluster plus Anthos Service Mesh installed independently inside each of the three control planes.",
+   "D": "Install Policy Controller with the same set of Gatekeeper constraint templates in each of the 30 clusters, distributing the constraint bundle with a Helm chart that the platform team upgrades cluster by cluster during the monthly maintenance window."
+  },
+  "distractors": {
+   "A": "Terraform aplica en el momento del merge y no vigila el cluster despues: el drift que introduzca un kubectl manual sobrevive hasta el siguiente apply, y no habilita malla ni ingress multicluster.",
+   "C": "Reduce el numero de clusters pero sigue configurando cada uno por separado, sin dominio administrativo comun: los servicios no se descubren entre continentes ni comparten politica.",
+   "D": "Policy Controller valida admisiones pero no sincroniza la configuracion desde Git ni agrupa los clusters: distribuir el bundle a mano reproduce el mismo trabajo operativo cluster por cluster."
+  }
+ },
+ {
+  "id": "PCA-D1-057",
+  "options": {
+   "A": "Upload each completed race recording to Cloud Storage, run a Video Intelligence API batch annotation job for shot change and object tracking when the file lands, and use the returned timestamps to cut the highlight clips with the Transcoder API.",
+   "C": "Ingest the live camera feeds with the Live Stream API and let the production team press a marker button in a Cloud Run control panel whenever they see an overtake, which triggers the Transcoder API to cut and publish the 15-second clip.",
+   "D": "Stream the aircraft accelerometer telemetry into Cloud Monitoring as custom metrics and configure alerting policies that fire when G-force crosses a threshold, invoking a Cloud Function that cuts the corresponding 15 seconds of video."
+  },
+  "distractors": {
+   "A": "La anotacion por lotes solo arranca cuando el fichero esta completo: el evento se detecta minutos u horas despues, mientras el escenario exige detectarlo en menos de 5 segundos durante la carrera.",
+   "C": "Sustituye la vision por computador por un operador humano: no hay deteccion automatica del evento y la latencia depende del reflejo del realizador, no de un modelo.",
+   "D": "Los umbrales sobre telemetria detectan impactos pero no los adelantamientos agresivos ni los casi-choques que pide el escenario: el analisis de video desaparece del pipeline."
+  }
+ },
+ {
+  "id": "PCA-D1-027",
+  "options": {
+   "B": "Publish the signed firmware images to a public Cloud Storage bucket fronted by Cloud CDN, ship the expected SHA-256 digests inside the vehicle software, and let each ECU download the newest package whenever it detects any Wi-Fi or cellular connection available.",
+   "C": "Publish each firmware binary as a Pub/Sub message payload on a per-region topic that the vehicles subscribe to over cellular, staging the canary rings by publishing first to a 1 percent topic and watching the subscription backlog for delivery errors.",
+   "D": "Store the packages in Artifact Registry, expose them through an authenticated Cloud Run download service, and let each vehicle poll a Firestore document that the release engineer edits by hand to move the fleet from 1 percent to 10 percent to 100 percent."
+  },
+  "distractors": {
+   "B": "Un bucket publico sirve a cualquiera y no distingue la Wi-Fi del taller de la red celular: 20 millones de vehiculos pueden descargar por datos moviles y no existe control de anillos.",
+   "C": "Pub/Sub limita el mensaje a 10 MB y entrega a todos los suscriptores del topic por celular: es exactamente el coste de datos moviles que el escenario quiere evitar, y no sirve binarios grandes.",
+   "D": "El avance del canary y el corte quedan en manos de un ingeniero editando un documento: no hay politica de alerta que pause automaticamente el despliegue al superar el 0,05 % de errores."
+  }
+ },
+ {
+  "id": "PCA-D3-044",
+  "options": {
+   "B": "Generate a unique API key per tractor, store the keys in Secret Manager and validate them at an Apigee proxy that rejects unknown keys, rotating each key every ninety days with a Cloud Scheduler job that pushes the new value down over the cellular link.",
+   "C": "Issue each tractor a signed JSON Web Token minted with a shared Cloud KMS asymmetric key embedded in the firmware image, and have the ingestion service on Cloud Run verify the token signature before accepting any telemetry payload from the vehicle.",
+   "D": "Contract a private cellular APN with the mobile operator, terminate it on an HA VPN gateway into the ingestion VPC, and accept telemetry only from the operator's assigned IP range using VPC firewall rules and Cloud Armor allowlists."
+  },
+  "distractors": {
+   "B": "Una clave de API es un secreto en software que se puede extraer del modem y reutilizar desde cualquier equipo: no hay vinculo con el elemento seguro del vehiculo ni mTLS, asi que la suplantacion sigue siendo posible.",
+   "C": "La clave de firma es la misma en los 200.000 equipos: quien extraiga el firmware de un solo tractor puede emitir tokens validos para cualquier VIN, lo contrario de una identidad por dispositivo.",
+   "D": "Es autenticacion por red, no por dispositivo: cualquier tractor comprometido dentro del APN puede inyectar telemetria falsa a nombre de otro VIN, y el escenario exige mTLS con certificado individual."
+  }
+ },
+ {
+  "id": "PCA-D2-006",
+  "options": {
+   "A": "Assign an ephemeral external IP address to each of the 500 instances and remove them from the Cloud NAT gateway, so that every microservice opens its outbound payment gateway connections directly from its own public address.",
+   "B": "Keep the two existing NAT IP addresses and raise minPortsPerVm from the default 64 to 4,096 so that each of the 500 instances receives a much larger static block of source ports for its concurrent payment gateway connections.",
+   "D": "Disable Cloud NAT and route the default path through a single squid forward proxy VM with several external IP addresses attached, reconfiguring each microservice to send its payment gateway calls through that proxy."
+  },
+  "distractors": {
+   "A": "Rompe el requisito de instancias sin IP publica y multiplica por 500 la superficie expuesta; ademas obliga a re-declarar todas las direcciones en la lista blanca de la pasarela de pago.",
+   "B": "500 VM por 4.096 puertos exceden los 129.024 que ofrecen dos IP de NAT: el gateway no puede asignar los bloques y las instancias sobrantes se quedan directamente sin NAT.",
+   "D": "Cambia un cuello de botella por otro peor: una unica VM proxy concentra miles de conexiones concurrentes sin escalado ni SLA, y sus propios puertos efimeros se agotan igual."
+  }
+ },
+ {
+  "id": "PCA-D3-026",
+  "options": {
+   "A": "Enable Data Access audit logs on every service in the organization and build a Log Analytics view filtering the entries whose principal email belongs to a google.com domain, alerting security on each match.",
+   "C": "Rely on the Admin Activity audit logs, which are always enabled and cannot be disabled, and export them with an aggregated sink so the compliance team can review every administrative action.",
+   "D": "Place all the projects inside a VPC Service Controls perimeter with an ingress policy that denies every identity outside the corporate access level during a support investigation."
+  },
+  "distractors": {
+   "A": "Los Cloud Audit Logs registran las acciones de los principals del cliente; los accesos del personal de Google no generan entradas ahi, solo en los registros de Access Transparency.",
+   "C": "Admin Activity solo cubre las llamadas de escritura hechas por el propio cliente: no incluye ninguna entrada por el acceso del personal de soporte de Google al contenido.",
+   "D": "Un perimetro de VPC Service Controls filtra el acceso por API desde fuera, pero no genera el registro auditable de las acciones del personal de Google que exige el regulador."
+  }
+ },
+ {
+  "id": "PCA-D2-024",
+  "options": {
+   "A": "Internal Passthrough Network Load Balancer fronting the GKE game server node pool, preserving the client source IP on the UDP datagrams and letting the backends answer without traversing the balancer.",
+   "B": "Global External Application Load Balancer with HTTP/3 and QUIC enabled on the frontend, terminating the players' UDP traffic at Google edge POPs and forwarding it to the GKE game server backends.",
+   "D": "External Proxy Network Load Balancer terminating the players' connections at the closest Google edge POP and proxying them to the GKE game servers with the PROXY protocol header carrying the source IP."
+  },
+  "distractors": {
+   "A": "El reenvio pasante y el retorno directo son correctos, pero la regla de reenvio es una IP interna RFC 1918: los moviles de los jugadores estan en internet y no pueden alcanzarla.",
+   "B": "El balanceador de aplicacion es un proxy HTTP: solo entiende HTTP/3 sobre QUIC, no los datagramas UDP propios del juego, y la respuesta vuelve a atravesar el proxy.",
+   "D": "El Proxy Network Load Balancer solo admite TCP y SSL, no UDP, y al ser proxy anade un salto en el camino de vuelta: se pierde el Direct Server Return que exige el jitter minimo."
+  }
+ },
+ {
+  "id": "PCA-D2-015",
+  "options": {
+   "A": "Deploy a Filestore Basic HDD instance in a single us-central1 zone and mount it into the pods with the Filestore CSI driver as a ReadWriteMany PersistentVolumeClaim shared by the deployment.",
+   "B": "Mount a regional Cloud Storage bucket into every pod with the Cloud Storage FUSE CSI driver, giving all the replicas the same shared namespace of files across the three zones of us-central1.",
+   "D": "Provision a Regional Persistent Disk replicated across two zones and attach it with the ReadWriteOnce access mode to the CMS StatefulSet, reattaching in the surviving zone after a failure."
+  },
+  "distractors": {
+   "A": "El tier Basic es zonal y su SLA es del 99,9 %: no hay replicacion sincrona multizona, asi que la caida de esa zona deja sin volumen a todos los pods.",
+   "B": "Cloud Storage FUSE no implementa la semantica POSIX completa (sin bloqueo de ficheros ni escrituras parciales en su sitio), y el CMS heredado depende de ella.",
+   "D": "ReadWriteOnce solo permite montar el disco en un nodo a la vez: los cientos de pods repartidos por varias zonas no pueden compartirlo simultaneamente."
+  }
+ },
+ {
+  "id": "PCA-D1-064",
+  "options": {
+   "B": "Write the camera frames and accelerometer readings into BigQuery and run a Vertex AI batch prediction job over the newly landed partition every minute, publishing an emergency dispatch message for every row the model flags as an impact.",
+   "C": "Deploy the PyTorch container to a Compute Engine managed instance group of CPU-only C3 instances behind an internal load balancer, scaling out horizontally so that aggregate throughput matches the frame rate of all the track-side cameras.",
+   "D": "Stream the camera frames and telemetry through Pub/Sub into a Dataflow pipeline that runs the PyTorch model inside a RunInference transform on n2-standard workers, emitting the alerts to the rescue dispatch topic."
+  },
+  "distractors": {
+   "B": "La prediccion por lotes sobre particiones de BigQuery introduce como minimo un minuto de latencia, dos ordenes de magnitud por encima de los 500 ms que exige el despacho de rescate.",
+   "C": "Escalar en CPU aumenta el rendimiento agregado pero no la latencia por inferencia de un modelo de vision profundo, que sigue en segundos por fotograma sin acelerador NVIDIA.",
+   "D": "Los workers n2-standard no llevan GPU y el paso por Pub/Sub con agrupamiento en ventanas suma latencia: el presupuesto de 500 ms se agota antes de completar la inferencia."
+  }
+ },
+ {
+  "id": "PCA-D1-068",
+  "options": {
+   "B": "Publish the flag commands and telemetry adjustments to Cloud Pub/Sub topics and have each aircraft maintain a streaming pull subscription, using a second topic for the uplink so both directions travel through the managed messaging service.",
+   "C": "Expose REST endpoints on Cloud Run over HTTP/1.1 and have the aircraft poll them every 200 milliseconds for pending flag commands while uploading telemetry with chunked POST requests carrying JSON payloads.",
+   "D": "Terminate the cockpit radio on a SIP and RTP voice gateway running on Compute Engine and send the race flag commands as separate UDP datagrams from a second service, keeping audio and control on independent transports."
+  },
+  "distractors": {
+   "B": "Pub/Sub es mensajeria desacoplada con entrega al menos una vez y sin garantia de latencia extremo a extremo: no es un canal bidireccional persistente para audio de radio en directo.",
+   "C": "El sondeo abre una conexion nueva por ciclo y no permite que tierra empuje una bandera amarilla al instante; ademas JSON sobre HTTP/1.1 no multiplexa ni compacta como Protobuf.",
+   "D": "Separa audio y control en dos transportes sin multiplexado ni tipado: el escenario pide un unico canal HTTP/2 bidireccional con Protocol Buffers para telemetria y banderas."
+  }
+ },
+ {
+  "id": "PCA-D6-008",
+  "options": {
+   "A": "Deploy BIND9 name servers on a regional managed instance group spread across three zones in us-central1, fronted by an External Passthrough Network Load Balancer answering UDP port 53 queries with autohealing health checks.",
+   "C": "Create Cloud DNS private managed zones authorized on the production VPC networks, so the corporate records are resolved by Google's internal metadata resolver for every client that queries the domain from inside the network.",
+   "D": "Serve the authoritative records from a Cloud Run service that answers DNS over HTTPS queries, backed by a Global External Application Load Balancer with an Anycast IP so resolution happens at Google's edge points of presence."
+  },
+  "distractors": {
+   "A": "Sigue siendo una unica region: una interrupcion regional deja el dominio sin resolucion, y ningun SLA de Google cubre la disponibilidad de un servicio autogestionado sobre VM.",
+   "C": "Una zona privada solo responde a los clientes dentro de las VPC autorizadas: no es autoritativa en internet ni se sirve desde los POP anycast globales que respaldan el SLA del 100 %.",
+   "D": "Los resolvers recursivos de internet consultan DNS sobre UDP y TCP en el puerto 53, no DoH: un servicio HTTPS no puede actuar como servidor autoritativo del dominio."
+  }
+ },
+ {
+  "id": "PCA-D2-025",
+  "options": {
+   "A": "Define a PodDisruptionBudget with maxUnavailable set to zero for the Agones game server fleet and enable the cluster autoscaler so that Kubernetes refuses to evict any pod hosting an active match while the node is being reclaimed.",
+   "B": "Create a Cloud Monitoring log-based metric on the compute.instances.preempted system event and an alerting policy that invokes a Cloud Function which cordons the node and notifies the Agones allocator through the Kubernetes API.",
+   "C": "Move the game server fleet to on-demand instances covered by a three-year committed use discount and keep Spot VMs only for the batch analytics node pool, removing the preemption notice from the game server path entirely."
+  },
+  "distractors": {
+   "A": "Un PodDisruptionBudget solo frena las expulsiones voluntarias; la reclamacion de una Spot VM por Google es involuntaria y la instancia se apaga a los 30 segundos aunque el PDB lo prohiba.",
+   "B": "El evento de preemption se registra cuando la instancia ya se ha terminado y la politica de alertas tarda decenas de segundos: el margen de 30 segundos se agota antes de acordonar el nodo.",
+   "C": "Elimina el problema renunciando al ahorro que motiva el escenario, y sigue sin ningun mecanismo de drenaje cuando un nodo on-demand se reinicia por mantenimiento del host."
+  }
+ },
+ {
+  "id": "PCA-D1-050",
+  "options": {
+   "A": "Parse the EDI files with Cloud Run and publish one message per claim to Pub/Sub, subscribing with a Cloud Run service whose maximum instance count and per-instance concurrency are tuned so that the fleet issues roughly 200 Medicaid calls per second.",
+   "C": "Load the 5 million parsed claims into a BigQuery staging table and launch a Dataflow batch pipeline whose ParDo calls the Medicaid eligibility endpoint for every row, letting Dataflow autoscale the worker pool to finish before noon.",
+   "D": "Store the parsed claims in Cloud SQL and run a Cloud Scheduler job every minute that selects the next 12,000 pending claims and issues them from a single Cloud Run worker, spreading the calls evenly across each minute."
+  },
+  "distractors": {
+   "A": "Pub/Sub no ofrece un limite de despacho por segundo: el tope se aproxima con instancias y concurrencia, y cualquier reescalado o reintento rebasa el maximo estricto de 200 req/s del clearinghouse.",
+   "C": "El autoescalado de Dataflow se dimensiona por retraso de procesamiento, no por el limite del servicio externo: al crecer los workers se supera el tope de 200 req/s y la API devuelve 429.",
+   "D": "12.000 llamadas por minuto son 200 por segundo solo de media: la rafaga dentro del minuto rebasa el tope instantaneo y un unico worker sin reintentos gestionados pierde las reclamaciones fallidas."
+  }
+ },
+ {
+  "id": "PCA-D1-051",
+  "options": {
+   "B": "Create one Google Cloud Organization per business division with its own billing account and Cloud Identity domain, and connect the five organizations with VPC Network Peering plus a replicated set of organization policies maintained by each division's own platform team.",
+   "C": "Provision one project per division directly under the organization node without any folders, give each division its own VPC and billing account, and connect the five VPC networks with a full mesh of VPC Network Peering for internal IP reachability.",
+   "D": "Place all the divisional workloads in a single large project attached to one billing account, separating the divisions with labels on every resource and with distinct subnets in the project's VPC for hospitals, labs, insurance, research and corporate IT."
+  },
+  "distractors": {
+   "B": "Cinco organizaciones no comparten jerarquia: la herencia de politicas hay que replicarla a mano en cada una y desaparece la administracion central de red que exige el escenario.",
+   "C": "Sin carpetas no hay punto intermedio donde heredar la politica por division, y el peering en malla no es transitivo: cada VPC nueva obliga a crear enlaces con todas las demas.",
+   "D": "Las etiquetas desglosan el gasto pero no segregan la facturacion ni el IAM: cualquier rol concedido en el proyecto alcanza a la vez los recursos de las cinco divisiones."
+  }
+ }
+]

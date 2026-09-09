@@ -1,0 +1,235 @@
+[
+  {
+    "id": "PCA-D4-035",
+    "options": {
+      "A": "Configure a Cloud Deploy canary phase that holds 10% of traffic for 30 minutes and promotes automatically to the next phase if no Cloud Monitoring alert policy has fired on the service's latency and error-rate thresholds during that window.",
+      "B": "Split traffic ninety-ten between baseline and canary with Cloud Service Mesh and page the on-call engineer with an SLO burn-rate alert, so a human compares the two dashboards and decides whether to promote or roll back within a 30 minute window."
+    },
+    "distractors": {
+      "A": "Usa un umbral binario de alertas de Monitoring (dispara o no dispara) en vez de un analisis estadistico real entre canary y baseline; una alerta de latencia/error-rate no es un test de significancia como Mann-Whitney, asi que no cumple el requisito de analisis estadistico automatizado.",
+      "B": "Delega la decision de promocion a un humano que compara dashboards; el enunciado exige eliminar la subjetividad humana con un analisis estadistico automatizado, asi que este diseno sigue dependiendo de un ingeniero de guardia."
+    }
+  },
+  {
+    "id": "PCA-D6-022",
+    "options": {
+      "A": "Lower the BGP keepalive interval on the Cloud Router peer to 20s so the hold timer expires after 60s, and add a second Interconnect attachment with equal-cost multipath so traffic is already balanced across both circuits.",
+      "B": "Alert on the interconnect operational status metric in Cloud Monitoring with a 60s alignment period and trigger a Cloud Function that withdraws the affected routes and shifts the trading traffic onto the standby circuit."
+    },
+    "distractors": {
+      "A": "Bajar los timers de keepalive/hold sigue dependiendo del temporizador BGP normal (aunque mas corto), no de BFD; con 20s/60s la deteccion sigue muy por encima del segundo exigido, y el multipath por si solo no acelera la deteccion del fallo fisico.",
+      "B": "Es una remediacion reactiva basada en una alerta de Cloud Monitoring con Cloud Function, que tarda varios segundos en evaluarse y disparar el failover, muy por encima del umbral de menos de 1 segundo que exige BFD en el plano de datos."
+    }
+  },
+  {
+    "id": "PCA-D6-023",
+    "options": {
+      "A": "A regional Cloud Spanner instance configuration such as us-central1, which keeps 3 read-write replicas across 3 zones, survives the loss of any single zone through Paxos quorum writes, still without the availability guarantees of a multi-region setup.",
+      "D": "AlloyDB for PostgreSQL, Google Cloud's managed database service, with a high-availability primary, a standby in a second zone, read pools for reporting and a cross-region secondary cluster that can be promoted, backed by automatic zonal failover in under 10s."
+    },
+    "distractors": {
+      "A": "Una configuracion regional de Spanner (una sola region) no alcanza el SLA de 99.999%: la alta disponibilidad de 99.999% solo la ofrecen las configuraciones multi-region de Spanner o Bigtable multi-cluster, no una instancia regional aunque replique entre zonas.",
+      "D": "AlloyDB, aun con alta disponibilidad y standby, ofrece como maximo el SLA de una instancia regional, no el 99.999% multi-region exigido; el failover de segundos no cambia el nivel de SLA contratado para la configuracion."
+    }
+  },
+  {
+    "id": "PCA-D6-024",
+    "options": {
+      "B": "Place the worker VMs in a regional managed instance group with an autohealing health check that probes the queue processing daemon's TCP port every 30 seconds, so the MIG recreates any instance whose check has failed for the 10-minute delay, restarting the VM instead of just the systemd service."
+    },
+    "distractors": {
+      "B": "El MIG con autohealing sustituye la VM completa cuando el health check falla, en vez de reiniciar especificamente el servicio systemd que se congelo; esto es mas lento y mas disruptivo que el remediador dirigido que pide el enunciado, y depende de un chequeo TCP que no refleja el conteo real de mensajes procesados."
+    }
+  },
+  {
+    "id": "PCA-D1-055",
+    "options": {
+      "C": "Terminate all the camera RTMP feeds on a regional managed instance group in us-central1 running the NGINX RTMP module and FFmpeg for a multi-bitrate ladder, serving the HLS playlists and segments straight from the instances to viewers worldwide.",
+      "D": "Distribute the raw camera feeds to viewers as individual peer-to-peer WebRTC connections negotiated through a signalling service on GKE, with TURN relay instance groups deployed in each continent to traverse the viewers' network address translation."
+    },
+    "distractors": {
+      "C": "Sirve el HLS directamente desde las instancias del MIG en una sola region (us-central1) en vez de usar Cloud CDN/Media CDN en el borde global; esto genera alta latencia y egress excesivo para los espectadores fuera de esa region, y no llega a video en vivo de baja latencia a escala global.",
+      "D": "Sustituye toda la entrega por conexiones WebRTC peer-to-peer sin ningun CDN; el fan-out a 30M+ espectadores simultaneos sobrecarga la senalizacion y los relays TURN, sin aprovechar el cacheo de borde que reduce el costo de egress."
+    }
+  },
+  {
+    "id": "PCA-D2-032",
+    "options": {
+      "A": "Cloud SQL for PostgreSQL Enterprise Plus on a 128 vCPU machine with the data cache enabled and read replicas absorbing the reporting queries that run alongside the Black Friday checkout peak; enable automatic storage growth to absorb the spike.",
+      "D": "Memorystore for Redis Cluster in front of the standard PostgreSQL instance: enable caching for the catalogue and session reads so the transactional database only handles checkout writes during the Black Friday peak, with caching set up in the API tier."
+    },
+    "distractors": {
+      "A": "Cloud SQL con cache y replicas de lectura ayuda a escalar lecturas, pero sigue siendo PostgreSQL estandar: no llega al 4x de throughput transaccional ni ofrece el motor columnar en vivo (HTAP) que pide el enunciado, por mucho que se habilite el autoscaling de almacenamiento.",
+      "D": "Meter Memorystore como cache delante de PostgreSQL acelera las lecturas de catalogo, pero dejar que la base de datos maneje sola los checkouts no le da ni el 4x de throughput transaccional ni la aceleracion analitica columnar en vivo que exige el enunciado; solo ataca el sintoma de lectura, no el cuello de botella transaccional."
+    }
+  },
+  {
+    "id": "PCA-D2-035",
+    "options": {
+      "A": "Configure Cloud NAT for the internal subnets and attach a network firewall policy egress rule whose destination uses FQDN objects for api.partner.com and *.github.com, allowing outbound HTTPS to the resolved partner addresses.",
+      "B": "Deploy a fleet of self-managed Squid proxy VMs in a managed instance group behind an internal passthrough load balancer and route workload egress through it, allowlisting the approved partner domains in the Squid configuration.",
+      "D": "Enable a Cloud DNS response policy that resolves only the partner domains, combine it with a default-deny egress firewall rule, and keep Private Google Access on so workloads cannot look up any unapproved hostname."
+    },
+    "distractors": {
+      "A": "Cloud NAT + reglas de firewall por FQDN dependen de traducir el hostname a IPs en el momento de crear la regla; como los proveedores SaaS usan CDNs con IPs que cambian constantemente, las direcciones se desactualizan y el filtrado deja de reflejar los dominios aprobados.",
+      "B": "Meter una flota de proxies Squid autogestionados vuelve a las VMs que el enunciado quiere evitar mantener: ahora hay que parchear, escalar y dar alta disponibilidad al propio proxy, en vez de usar un servicio gestionado de egress de Capa 7.",
+      "D": "Una politica de respuesta de Cloud DNS solo controla que IP se resuelve para un nombre; no impide que el workload abra una conexion HTTPS directa a una IP ya resuelta o cacheada de un dominio no aprobado, asi que no aplica un filtrado real de Capa 7."
+    }
+  },
+  {
+    "id": "PCA-D3-044",
+    "options": {
+      "B": "Generate a unique API key per individual tractor and create a device credential in Secret Manager, validating it at an Apigee proxy that rejects unknown keys and rotates each key every 90 days with a Cloud Scheduler job that pushes the new value down over the cellular hardware link.",
+      "C": "Issue each tractor a signed JSON Web Token minted with a shared Cloud KMS asymmetric key embedded in the device firmware, and create a short-lived token that expires after 24h; have the ingestion service on Cloud Run verify the signature before accepting any telemetry payload from the vehicle."
+    },
+    "distractors": {
+      "B": "Una API key estatica (aunque rotada cada 90 dias) es un secreto compartido que viaja por la red; si se filtra o se clona desde el firmware de un tractor, cualquiera puede suplantar ese vehiculo hasta la siguiente rotacion, sin el anclaje de hardware (TPM/HSM) que exige mTLS.",
+      "C": "Un JWT firmado con una clave de KMS compartida por todos los tractores no autentica al dispositivo individual: si el firmware se extrae de una maquina, esa misma clave sirve para falsificar telemetria desde cualquier otro tractor, algo que el mTLS con certificado X.509 por dispositivo evita."
+    }
+  },
+  {
+    "id": "PCA-D4-042",
+    "options": {
+      "A": "Deploy the same Hot-Hot topology to both tiers: Active-Active multi-region compute behind a Global external Load Balancer with Cloud Spanner multi-region (RTO < 5s, RPO 0), running one runbook, one CI/CD pipeline, and one failover drill for Tier-1 and Tier-2 alike, ignoring the 2h/1h target and its lower cost profile.",
+      "B": "Apply Warm Standby to both tiers: cross-region Cloud SQL read-replicas (RTO ~ 2h, RPO ~ 1h) kept warm in a stand-by, primary/secondary second region; when the primary region is down for more than 60s, create a newly-promoted primary via a health-check-driven, DNS-based runbook."
+    },
+    "distractors": {
+      "A": "Replica la misma topologia Hot-Hot multi-region para los dos tiers; aplicar a la aplicacion de RR.HH. (Tier-2, que solo necesita RTO<2h/RPO<1h) el mismo Spanner multi-region activo-activo del Tier-1 dispara el costo de infraestructura sin necesidad, en vez de reservar el gasto alto solo para la carga que de verdad exige RPO=0.",
+      "B": "Aplica Warm Standby a los dos tiers por igual: el Tier-1 financiero, que exige RTO<5s y RPO=0, con un failover de Cloud SQL promovido por runbook (que tarda segundos a minutos, no es instantaneo) pierde las transacciones in-flight del intervalo, incumpliendo el RPO=0 y el RTO de segundos que pide la plataforma critica."
+    }
+  },
+  {
+    "id": "PCA-D5-023",
+    "options": {
+      "A": "Restore the most recent backup produced by the Spanner backup-schedule, which ran at 02:00-UTC, into a new database via 'gcloud spanner backups restore', then create a job that replays the request-log from 02:00 to 14:31:00 to rebuild the customer-balance transactions.",
+      "B": "Import the most recent hourly Avro export from a gs://spanner-exports/ Cloud Storage bucket into a new spanner.googleapis.com database that you create ahead of time, and reapply the mutations captured by the change-stream reader for the remaining minutes before 14:31:00."
+    },
+    "distractors": {
+      "A": "Restaurar el backup nocturno (02:00 UTC) y reproducir el log de peticiones hasta las 14:31:00 exige que exista un log de peticiones completo y reproducible; en la practica esto es una reconstruccion manual larga y propensa a errores, no la restauracion nativa a un timestamp exacto que ofrece PITR de Spanner.",
+      "B": "Depender de una exportacion Avro por hora mas un lector de change streams para reconstruir los ultimos minutos exige infraestructura de replicacion que hay que haber dejado corriendo de antemano; si el change-stream reader no venia capturando ya esos datos, los minutos previos al incidente simplemente no estan disponibles para reaplicar."
+    }
+  },
+  {
+    "id": "PCA-D5-027",
+    "options": {
+      "C": "Schedule a nightly Dataflow job that scans the whole table with a timestamp range filter and issues per-column-family DeleteFromColumn mutations for every impression cell older than 30 days, trimming each qualifier down to its three newest versions in the same non-compacting pass.",
+      "D": "Enable Bigtable managed backups on the impression table with a 30-day, table-level backup retention period and a daily backup schedule, keeping three backup copies per table so that expired impression data drops out of the retention window automatically."
+    },
+    "distractors": {
+      "C": "Un job de Dataflow que barre toda la tabla, aplica un filtro por rango de timestamp y emite mutaciones DeleteFromColumn hace por lotes lo que ya hacen las politicas de garbage collection nativas de Bigtable: gasta computo e I/O adicionales y no purga durante la compactacion, asi que no es el mecanismo automatico y sin overhead que pide el enunciado.",
+      "D": "Los backups de Bigtable son copias completas de la tabla para recuperacion ante desastres, no una politica de expiracion por celda; conservar backups de 30 dias con tres copias no borra ni recorta las versiones antiguas dentro de la tabla en vivo, asi que los datos de mas de 30 dias o mas de 3 versiones siguen sirviendose desde la tabla activa."
+    }
+  },
+  {
+    "id": "PCA-D6-029",
+    "options": {
+      "B": "Provision a Cloud Spanner instance in us-central1, then bolt on a hand-edited, non-standard instance config that adds read-only replicas in 2 regions, us-east1 and europe-west1, load-balancing user traffic worldwide through a Cloud external LB for as long as the incident lasts.",
+      "C": "Run two hand-rolled, independently-managed Cloud Spanner instances in us-central1 and us-east1, cross-wired with a home-grown, Dataflow-based, change-stream-replication pipeline that fans out each write to both sides within 5 minutes, then fail over player traffic to the surviving instance behind a global external load balancer."
+    },
+    "distractors": {
+      "B": "Anadir replicas de solo lectura a mano mediante una configuracion de instancia personalizada no da alta disponibilidad de escritura: si us-central1 cae, esas replicas read-only no pueden tomar escrituras, asi que las compras in-game (que son escrituras) se pierden hasta que alguien promueva manualmente una region, incumpliendo el 'cero downtime' exigido.",
+      "C": "Sincronizar dos instancias regionales independientes con un pipeline de Dataflow sobre los change streams es replicacion asincrona hecha a mano: hay una ventana de varios minutos en la que las escrituras confirmadas en us-central1 aun no llegaron a us-east1, asi que un fallo en ese momento pierde compras in-game, algo que el quorum sincrono de una configuracion multi-region nativa evita."
+    }
+  },
+  {
+    "id": "PCA-D1-061",
+    "options": {
+      "B": "Put a Global External Application Load Balancer in front of both providers: configure the Cloud CDN backend bucket as the primary backend service and set an internet network endpoint group pointing at the third-party CDN as the failover backend.",
+      "C": "Publish both CDN hostnames as weighted round robin records in Cloud DNS with an 86,400-second TTL, and set the video player to retry the second hostname whenever a segment request against the first one times out."
+    },
+    "distractors": {
+      "B": "Un balanceador con failover a nivel de backend (CDN primario/CDN secundario) conmuta cuando el balanceador detecta que el backend completo falla, pero no puede aislar el fallo 'solo en un pais': un POP de Cloud CDN degradado en un pais sigue siendo parte del mismo backend service, asi que no hay failover geolocalizado por pais en 10 segundos.",
+      "C": "Round robin ponderado en Cloud DNS con TTL de 86.400 segundos (24h) reparte trafico de forma estatica y tarda casi un dia en propagar cualquier cambio de pesos; ni reacciona a un health check ni conmuta en 10 segundos cuando un pais concreto se degrada."
+    }
+  },
+  {
+    "id": "PCA-D1-063",
+    "options": {
+      "B": "Buffer the latest telemetry reading per aircraft in Cloud Memorystore for Redis behind a short, sub-second TTL and have a real-time Cloud Run WebSocket service read whichever cached value is current for the selected aircraft at the instant each video frame is decoded and rendered on the fan's device.",
+      "D": "Stream video PTS metadata and telemetry into BigQuery through the Storage Write API and run scheduled, near-real-time queries every minute that join frames to GPS telemetry on a 20ms range condition, serving the joined rows to the overlay renderer through BI Engine cached results."
+    },
+    "distractors": {
+      "B": "Cachear el ultimo valor de telemetria por avion en Memorystore y leerlo en el instante en que se decodifica cada fotograma no sincroniza nada: el frame de video y la lectura de telemetria llegan por rutas separadas con retrasos distintos, asi que el valor leido puede corresponder a un instante distinto del que muestra el fotograma, sin ninguna ventana de correlacion por tiempo de evento.",
+      "D": "Consultas programadas cada minuto sobre BigQuery, aunque el JOIN use una condicion de 20ms, solo se ejecutan una vez por minuto: el overlay muestra datos con hasta 60 segundos de retraso frente al fotograma en pantalla, muy lejos de los 20ms de alineacion que exige la transmision en vivo."
+    }
+  },
+  {
+    "id": "PCA-D3-053",
+    "options": {
+      "A": "Build authorized views over the base table that wrap the SSN and MRN columns in a SHA-256 hash function, grant the analysts access to those views through an authorized dataset, and let compliance officers query the underlying table directly.",
+      "B": "Run Sensitive Data Protection de-identification templates with format-preserving encryption over the warehouse tables and land a masked copy of the table in a separate dataset that the epidemiology analysts are granted access to."
+    },
+    "distractors": {
+      "A": "Las vistas autorizadas con SHA-256 protegen a los analistas normales, pero los compliance officers siguen con acceso directo a la tabla base sin ninguna mascara; eso es control de acceso a nivel de vista, no el enmascaramiento dinamico por Policy Tag que aplica la misma regla (por ejemplo, ultimos 4 digitos) sin importar que vista o tabla se consulte.",
+      "B": "Generar una copia enmascarada de la tabla con las plantillas de desidentificacion duplica los datos fisicamente: hay que mantener sincronizadas dos copias, el almacenamiento se duplica, y cambiar el rol de un analista exige mover permisos entre datasets en vez de simplemente cambiar su rol de lector sobre la misma tabla, como permite el enmascaramiento dinamico por Policy Tag."
+    }
+  },
+  {
+    "id": "PCA-D3-056",
+    "options": {
+      "A": "Run HA VPN over Cloud Interconnect: configure IPsec tunnels on top of the Dedicated Interconnect's 100Gbps VLAN attachments so the radiology imaging traffic is encrypted between the hospital edge routers and the Cloud Router.",
+      "B": "Rely on Google's default encryption in transit across these Dedicated Interconnect circuits between hospitals and Google Cloud: since 100Gbps links are already encrypted at Layer 3 at the Google edge, just set that as the control in the HIPAA risk assessment.",
+      "C": "Terminate TLS 1.3 at the application layer for every radiology DICOM and patient HL7v2 transfer so the payloads are encrypted end to end between the hospital and Google Cloud, regardless of what happens on the physical fiber between the Dedicated Interconnect routers."
+    },
+    "distractors": {
+      "A": "Meter tuneles IPsec sobre el mismo Interconnect dedicado reintroduce exactamente la sobrecarga de cifrado por software que MACsec evita: sigue habiendo cifrado a nivel de host con impacto de CPU y latencia en un enlace de 100Gbps, en vez de cifrado por hardware a la velocidad del enlace.",
+      "B": "El cifrado 'en transito' que Google aplica por defecto protege el trafico dentro de la red de Google, pero no cifra el enlace fisico de fibra entre el router del hospital y el borde de Google antes de esa capa; en ese tramo dedicado los datos siguen viajando sin ningun cifrado de enlace.",
+      "C": "Cifrar en la capa de aplicacion con TLS 1.3 protege el contenido de cada transferencia DICOM/HL7v2, pero no resuelve el problema planteado: la latencia y fragmentacion de paquetes ocurre en el cifrado del enlace IPsec de la VPN, algo que un TLS de aplicacion no elimina ni sustituye."
+    }
+  },
+  {
+    "id": "PCA-D3-060",
+    "options": {
+      "A": "Use Cloud DLP CryptoHashConfig with a Cloud KMS-wrapped key to create a keyed HMAC-SHA256 surrogate for every SSN, so the same SSN always produces the same token in every record exported to the academic research databases.",
+      "B": "Use Cloud DLP CryptoDeterministicConfig (AES-SIV) with a Cloud KMS-wrapped key to create a deterministically-encrypted, stable surrogate for each SSN which the compliance team can decrypt back to plaintext when an audit requires it."
+    },
+    "distractors": {
+      "A": "Un HMAC-SHA256 determinista (siempre el mismo token para el mismo SSN) no es reversible: el equipo de cumplimiento no puede recuperar el SSN original en texto plano a partir del token, y el enunciado exige que el cifrado se pueda revertir con la clave de KMS.",
+      "B": "El cifrado determinista AES-SIV produce un sustituto estable y reversible, pero su longitud de salida no coincide con el formato original de 9 digitos del SSN; las herramientas estadisticas heredadas que esperan exactamente el patron NNN-NN-NNNN fallaran al parsear el sustituto."
+    }
+  },
+  {
+    "id": "PCA-D4-048",
+    "options": {
+      "A": "Ship the over-the-air firmware to every tractor at once but write it to the inactive A/B partition, leave the fleet on the current image for a 24h soak, then flip all 200,000 vehicles to the new partition and roll back the whole fleet together if failures appear.",
+      "B": "Run a fifty-fifty split test across the global fleet, giving half the tractors the new firmware and half the current one in a side-by-side comparison, and have the reliability team compare the two cohorts after 14 days of observation before deciding whether to move the remainder."
+    },
+    "distractors": {
+      "A": "Actualizar el firmware de los 200.000 tractores a la vez (aunque sea a la particion A/B inactiva) no limita el radio de impacto: si el bug aparece durante el soak de 24h, todo el parque agricola global ya recibio el firmware defectuoso, justo lo que el enunciado pide evitar con un rollout progresivo.",
+      "B": "Un split test cincuenta-cincuenta expone de entrada a la mitad de los 200.000 tractores al firmware nuevo, sin ninguna etapa previa de bajo riesgo (cien unidades internas, luego un 1%); si el bug es grave, el radio de impacto inicial ya es enorme."
+    }
+  },
+  {
+    "id": "PCA-D4-049",
+    "options": {
+      "A": "Purchase three-year resource-based committed use discounts sized to the peak of 64 nodes in the genomics node pools, converting the on-demand bill into a committed rate for the entire fleet of pipelines.",
+      "C": "Move the pipelines to GKE Autopilot with vertical pod autoscaling and cluster autoscaler scale-to-zero, so each genomics task checkpointing every 10 minutes is billed for the CPU and memory it actually requests while it runs."
+    },
+    "distractors": {
+      "A": "Un compromiso de uso a tres anos fija el gasto al pico de vCPU/memoria de forma constante; para una carga por lotes, con checkpoints, que se puede interrumpir, esto renuncia al 60-91% de descuento de las Spot VM y paga por capacidad reservada incluso cuando los pipelines no se estan ejecutando.",
+      "C": "Autopilot con autoscaling ayuda a no sobreaprovisionar, pero los nodos siguen facturandose a precio on-demand: no aplica el descuento de Spot VM del 60-91%, que es la palanca de ahorro real para una carga sin estado y tolerante a fallos como esta."
+    }
+  },
+  {
+    "id": "PCA-D5-032",
+    "options": {
+      "B": "Run a Dataflow streaming pipeline that reads 20 million tokens from Firestore and calls the APNs and FCM APIs inside a ParDo, auto-scaling to 500 workers with the pipeline's default, exponential-backoff retry policy so the whole fan-out completes within 5 minutes of the finish line.",
+      "D": "Have Cloud Scheduler trigger a Cloud Run job once every 60s that reads a slice of 200,000 tokens from Firestore and loops back-to-back through the APNs and FCM calls inside a single, cursor-based execution, tracking progress in a Firestore document until the whole audience is covered."
+    },
+    "distractors": {
+      "B": "Escalar Dataflow a 500 workers para llamar directamente a las APIs de APNs/FCM desde un ParDo satura las conexiones a esos endpoints igual que 20 millones de peticiones simultaneas: sin una cola que amortigue el ritmo de despacho, se siguen disparando rafagas que agotan el rate limit de APNs, el mismo problema que el enunciado busca evitar.",
+      "D": "Un job de Cloud Run disparado cada 60s que recorre 200.000 tokens por ejecucion tarda unos cien ciclos, mas de 3 horas, en cubrir a los 20 millones de fans, muy por encima de los pocos minutos que exige notificar a todos los usuarios cuando el corredor cruza la meta."
+    }
+  },
+  {
+    "id": "PCA-D6-034",
+    "options": {
+      "C": "AlloyDB for PostgreSQL: a high-availability primary, a standby zone, and a cross-region secondary cluster promoted on regional failure, still a database with maintenance downtime windows and under-10s failover.",
+      "D": "Oracle RAC rehosted on Bare Metal Solution, attached to the VPC by a Dedicated Interconnect and keeping PL/SQL packages unchanged, still the same legacy database with scheduled maintenance windows and downtime every 30 days."
+    },
+    "distractors": {
+      "C": "AlloyDB en alta disponibilidad reduce el downtime a segundos, pero sigue exigiendo ventanas de mantenimiento planificado y no ofrece el SLA de 99.999% ni el DDL en linea sin bloqueos que si da Spanner multi-region; para cargas clinicas 24/7 sigue quedando por debajo del nivel pedido.",
+      "D": "Rehospedar Oracle RAC en Bare Metal Solution conserva el mismo motor Oracle con sus mismas ventanas de mantenimiento y failover, sin ganar el DDL en linea sin bloqueo ni el 99.999% de disponibilidad que pide el enunciado; es una migracion de infraestructura, no una mejora de disponibilidad."
+    }
+  }
+]

@@ -18,10 +18,28 @@ window.GCP_UI_SEARCH = {
     'how', 'which', 'where', 'when', 'who', 'and', 'or'
   ]),
 
+  _listenersListos: false,
+
   init() {
     this.assembleAllQuestions();
-    this.setupListeners();
-    this.renderSearchResults();
+    // Los bancos se cargan de forma perezosa, asi que init() se vuelve a llamar
+    // cuando llegan los tres. Los listeners solo se enganchan una vez: si no,
+    // cada tecla dispara el filtrado dos veces.
+    if (!this._listenersListos) {
+      this.setupListeners();
+      this._listenersListos = true;
+    }
+    this.applySearchFilters();
+  },
+
+  /** Reconstruye el indice conservando lo que el usuario ya escribio. */
+  reindex() {
+    const consulta = this.searchQuery;
+    const filtro = this.selectedCertFilter;
+    this.assembleAllQuestions();
+    this.searchQuery = consulta;
+    this.selectedCertFilter = filtro;
+    this.applySearchFilters();
   },
 
   assembleAllQuestions() {
@@ -34,7 +52,6 @@ window.GCP_UI_SEARCH = {
 
   setupListeners() {
     const searchInput = document.getElementById("globalSearchInput");
-    const topBarSearchInput = document.getElementById("topNavSearchInput");
     const certFilterSelect = document.getElementById("searchCertFilter");
 
     // Global shortcut Ctrl+K
@@ -50,6 +67,21 @@ window.GCP_UI_SEARCH = {
       }
     });
 
+    // Chips de sugerencia: se renderizan dentro del contenedor de resultados,
+    // asi que se escuchan por delegacion (el HTML se reescribe en cada render).
+    const resultsContainer = document.getElementById("searchResultsContainer");
+    if (resultsContainer) {
+      resultsContainer.addEventListener("click", (e) => {
+        const chip = e.target.closest("[data-sugerencia]");
+        if (!chip) return;
+        const termino = chip.getAttribute("data-sugerencia");
+        const campo = document.getElementById("globalSearchInput");
+        if (campo) { campo.value = termino; campo.focus(); }
+        this.searchQuery = termino;
+        this.applySearchFilters();
+      });
+    }
+
     if (searchInput) {
       searchInput.addEventListener("input", (e) => {
         this.searchQuery = e.target.value;
@@ -57,18 +89,8 @@ window.GCP_UI_SEARCH = {
       });
     }
 
-    if (topBarSearchInput) {
-      topBarSearchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          if (window.GCP_APP?.navigateTo) {
-            window.GCP_APP.navigateTo("search");
-          }
-          this.searchQuery = topBarSearchInput.value;
-          if (searchInput) searchInput.value = this.searchQuery;
-          this.applySearchFilters();
-        }
-      });
-    }
+    // NOTA: hubo un input superior (topNavSearchInput) que ya no existe en el
+    // HTML; su cableado muerto se elimino. Si vuelve, reconectar aqui.
 
     if (certFilterSelect) {
       certFilterSelect.addEventListener("change", (e) => {
@@ -223,14 +245,18 @@ window.GCP_UI_SEARCH = {
       countDisplay.textContent = `Mostrando ${foundCount} de ${totalInPool} preguntas oficiale${foundCount === 1 ? '' : 's'}`;
     }
 
-    if (foundCount === 0) {
+    if (foundCount === 0 || !this.searchQuery) {
       resultsContainer.innerHTML = `
         <div class="search-empty-state">
           <div class="empty-icon">
             <svg class="icon" style="width:32px;height:32px;color:var(--text-muted);" aria-hidden="true"><use href="#icon-search"/></svg>
           </div>
-          <h3>No se encontraron preguntas con los términos buscados</h3>
-          <p>Prueba buscando por nombre de servicio de GCP (ejemplo: <code>IAM</code>, <code>Spanner</code>, <code>GKE</code>, <code>Cloud Run</code>, <code>VPC</code>, <code>Storage</code>).</p>
+          <h3>${this.searchQuery ? 'No se encontraron preguntas con esos términos' : 'Busca entre las 900 preguntas del banco'}</h3>
+          <p>${this.searchQuery ? 'Prueba con el nombre de un servicio, o empieza por uno de estos:' : 'Si estás empezando y no sabes por dónde, empieza por aquí:'}</p>
+          <div class="search-suggest">
+            ${['IAM','Cloud Storage','Compute Engine','GKE','Cloud Run','BigQuery','VPC','Cloud SQL','Spanner','Pub/Sub','Cloud Monitoring','Facturación']
+              .map(t => `<button type="button" class="search-suggest-chip" data-sugerencia="${t}">${t}</button>`).join('')}
+          </div>
         </div>
       `;
       return;

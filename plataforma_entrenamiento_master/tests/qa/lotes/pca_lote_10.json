@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D1-026",
+  "subtopic": "Knightmotives Automotive: Vehicle Gateway Local SSD Buffering",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "Connected vehicles streaming telemetry over cellular frequently drive through tunnels and dead zones where cellular connectivity is lost for up to 30 minutes. Telemetry records must not be lost during outages and must be transmitted in chronological order once connectivity resumes without crashing vehicle memory. How should the vehicle IoT software client be designed?",
+  "correct": "C",
+  "clave_len": 226,
+  "explanation": "Store-and-forward architecture using local persistent storage ensures telemetry records survive network disconnects and power loss. Bounded storage with exponential backoff prevents RAM exhaustion and network storming.",
+  "doc": "https://cloud.google.com/architecture/iot-overview#device-gateway",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 80,
+    "text": "Drop all telemetry readings immediately whenever the network connection is lost."
+   },
+   {
+    "letter": "B",
+    "len": 72,
+    "text": "Block the vehicle's engine microcontroller until the HTTP POST succeeds."
+   },
+   {
+    "letter": "C",
+    "len": 226,
+    "text": "Implement an embedded store-and-forward queue backed by persistent flash memory (e.g. SQLite/RocksDB) with bounded buffer size, automatically retrying with exponential backoff and publishing in-order to Pub/Sub when connected."
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "Hold all unsent messages in unconstrained RAM memory arrays."
+   }
+  ],
+  "ratio": 3.2
+ },
+ {
+  "id": "PCA-D2-007",
+  "subtopic": "Regional Managed Instance Groups & Autohealing",
+  "caseStudy": "none",
+  "scenario": "A critical backend web application runs on Compute Engine. Occasionally, the application process crashes or deadlocks while the underlying VM guest OS continues running and answering network pings. The Managed Instance Group (MIG) currently fails to detect these deadlocks. How should you configure the MIG to automatically replace failed application instances?",
+  "correct": "C",
+  "clave_len": 214,
+  "explanation": "MIG Autohealing uses application-level health checks (e.g. HTTP /healthz) to detect application freezes or deadlocks. If health probes fail repeatedly, the MIG automatically recreates the unhealthy VM. The initial_delay_sec setting prevents premature restarts during boot.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 79,
+    "text": "Manually SSH into broken instances each morning to restart the systemd service."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Rely on default VM host-level hardware monitoring."
+   },
+   {
+    "letter": "C",
+    "len": 214,
+    "text": "Create an HTTP health check probing an application /healthz endpoint and attach it as an Autohealing Policy on the Regional Managed Instance Group with an appropriate initial_delay_sec to allow application startup."
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "Write a cron script inside each VM that runs reboot if a file is missing."
+   }
+  ],
+  "ratio": 3.18
+ },
+ {
+  "id": "PCA-D1-033",
+  "subtopic": "Knightmotives Automotive: Cellular Message Batching & Cost Optimization",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive's 200,000 connected vehicles publish 9KB telemetry messages every 120 seconds. Publishing each message individually generates 1,666 Pub/Sub publish API calls per second, resulting in high network connection overhead on cellular links and API costs. How should the vehicle IoT client optimize publishing?",
+  "correct": "D",
+  "clave_len": 182,
+  "explanation": "Client-side batching and compression (gzip/Snappy) combined with persistent gRPC connections dramatically reduces HTTP connection handshakes, saves cellular data usage, and lowers Pub/Sub API request volume.",
+  "doc": "https://cloud.google.com/pubsub/docs/publisher#batching",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "Create a separate Pub/Sub topic for every individual vehicle VIN."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Transmit uncompressed XML payloads over raw TCP sockets."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Send each message as an individual HTTP GET request."
+   },
+   {
+    "letter": "D",
+    "len": 182,
+    "text": "Configure client-side message batching (bundling up to 1,000 messages or 1MB payload per batch) and use persistent gRPC connections with gzip compression to publish to Cloud Pub/Sub."
+   }
+  ],
+  "ratio": 3.16
+ },
+ {
+  "id": "PCA-D2-019",
+  "subtopic": "Hierarchical Firewall Policies",
+  "caseStudy": "none",
+  "scenario": "An enterprise Chief Information Security Officer (CISO) mandates that all VMs across all 500 Google Cloud projects must block inbound SSH (TCP port 22) and RDP (TCP port 3389) from the public internet (0.0.0.0/0). Project-level developers must not be able to override or delete this rule. How should you enforce this security control?",
+  "correct": "C",
+  "clave_len": 215,
+  "explanation": "Hierarchical Firewall Policies are applied at the Organization or Folder level. They are evaluated before VPC-level firewall rules and cannot be overridden or deleted by project-level administrators, guaranteeing organization-wide security posture enforcement.",
+  "doc": "https://cloud.google.com/firewall/docs/hierarchical-firewalls-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Create VPC firewall rules manually inside each of the 500 projects."
+   },
+   {
+    "letter": "B",
+    "len": 81,
+    "text": "Ask developers to promise not to create public firewall rules in a slack message."
+   },
+   {
+    "letter": "C",
+    "len": 215,
+    "text": "Create a Hierarchical Firewall Policy at the Organization level with a deny rule for TCP ports 22 and 3389 from source 0.0.0.0/0, ensuring all child folders and projects inherit the rule without ability to override."
+   },
+   {
+    "letter": "D",
+    "len": 56,
+    "text": "Disable all VPC networks across the entire organization."
+   }
+  ],
+  "ratio": 3.16
+ },
+ {
+  "id": "PCA-D1-052",
+  "subtopic": "EHR Healthcare: BigQuery Column-Level & Row-Level Security",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare maintains a centralized patient analytical dataset in BigQuery. Data analysts in the billing team should only see financial columns and cannot see medical diagnostic codes or patient SSNs. Furthermore, hospital administrators should only see rows corresponding to patients admitted to their specific hospital branch. How should you implement these access controls in BigQuery?",
+  "correct": "D",
+  "clave_len": 272,
+  "explanation": "BigQuery Column-Level Security uses Policy Tags to restrict access to sensitive fields (e.g. SSN) to authorized IAM roles. BigQuery Row-Level Security (RLS) dynamically filters rows returned by SQL queries based on user identity (SESSION_USER()), ensuring full multi-tenant isolation on a single unified table.",
+  "doc": "https://cloud.google.com/bigquery/docs/column-level-security-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Encrypt column values with a static XOR key hardcoded in client software."
+   },
+   {
+    "letter": "B",
+    "len": 84,
+    "text": "Grant BigQuery Admin role to all users and ask them to write WHERE clauses properly."
+   },
+   {
+    "letter": "C",
+    "len": 101,
+    "text": "Create 500 separate copies of the dataset manually in Cloud Storage and grant file-level permissions."
+   },
+   {
+    "letter": "D",
+    "len": 272,
+    "text": "Apply Policy Tags (via Dataplex / Data Catalog taxonomy) to sensitive columns (SSN, diagnosis) with Fine-Grained Reader IAM restrictions, and define Row-Level Security (RLS) policies using CREATE ROW ACCESS POLICY filter predicates based on hospital_id and SESSION_USER()."
+   }
+  ],
+  "ratio": 3.16
+ },
+ {
+  "id": "PCA-D1-047",
+  "subtopic": "EHR Healthcare: BeyondCorp Enterprise & Identity-Aware Proxy (IAP)",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "Doctors and nurses need to access internal web-based clinical charting portals securely from home and mobile clinics. EHR Healthcare wants to eliminate traditional legacy VPN concentrators (which grant broad network access) and replace them with a Zero-Trust identity and context-aware proxy that validates user identity, device health status, and geographic origin before granting access to web apps hosted on private GKE clusters. What solution meets these requirements?",
+  "correct": "D",
+  "clave_len": 275,
+  "explanation": "Identity-Aware Proxy (IAP) establishes a BeyondCorp Zero-Trust perimeter. It intercepts HTTPS requests, authenticates the user via Cloud Identity/Google Workspace with MFA, verifies device context via Access Context Manager, and proxies traffic directly to private GKE backends without exposing VMs to the public internet.",
+  "doc": "https://cloud.google.com/iap/docs/concepts-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 91,
+    "text": "Require all doctors to travel to the central hospital datacenter to view records in person."
+   },
+   {
+    "letter": "B",
+    "len": 106,
+    "text": "Expose the web applications directly to the public internet on standard port 80 with basic authentication."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Install a PPTP VPN server on an unmanaged Compute Engine instance."
+   },
+   {
+    "letter": "D",
+    "len": 275,
+    "text": "Deploy Google Cloud Identity-Aware Proxy (IAP) with BeyondCorp Enterprise Context-Aware Access policies in front of the internal backend services via an External Application Load Balancer, verifying user identity, MFA, and managed device certificates before proxying traffic."
+   }
+  ],
+  "ratio": 3.14
+ },
+ {
+  "id": "PCA-D2-013",
+  "subtopic": "Cloud Router & BGP Routing Modes",
+  "caseStudy": "none",
+  "scenario": "An enterprise has a multi-region Google Cloud VPC deployment with subnets in us-central1 and europe-west1. They connect an on-premises datacenter to us-central1 via Cloud Interconnect. By default, on-premises routers can only see routes to subnets in us-central1 and cannot reach europe-west1 subnets. What Cloud Router setting must be updated?",
+  "correct": "C",
+  "clave_len": 195,
+  "explanation": "In Regional Dynamic Routing mode, Cloud Router only advertises subnets located in its local region. Setting Dynamic Routing Mode to GLOBAL allows Cloud Router to learn and propagate routes across all regions in the VPC dynamically.",
+  "doc": "https://cloud.google.com/router/docs/concepts/overview#dynamic-routing-mode",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Assign public IP addresses to all europe-west1 instances."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Deploy an IPsec VPN tunnel between us-central1 and europe-west1."
+   },
+   {
+    "letter": "C",
+    "len": 195,
+    "text": "Change the VPC Dynamic Routing Mode from REGIONAL to GLOBAL, allowing Cloud Routers in us-central1 to advertise routes to all VPC subnets across all Google Cloud regions to on-premises BGP peers."
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Create static routes in the Google Cloud Console for every subnet."
+   }
+  ],
+  "ratio": 3.13
+ },
+ {
+  "id": "PCA-D2-022",
+  "subtopic": "GPU Accelerator Provisioning & GKE Taints",
+  "caseStudy": "none",
+  "scenario": "An enterprise GKE cluster hosts both general web microservices and heavy GPU-accelerated LLM inference workloads. GPU nodes (NVIDIA A100) are expensive ($3.67/hr per GPU). You must ensure that standard CPU web pods are never scheduled on GPU nodes, while ML inference pods are scheduled exclusively on GPU nodes. How should you configure the node pools and pod manifests?",
+  "correct": "D",
+  "clave_len": 198,
+  "explanation": "Applying Kubernetes taints (nvidia.com/gpu:NoSchedule) repels standard pods from scheduling on expensive GPU nodes. Pods requiring GPUs declare matching tolerations and nodeAffinity to land exclusively on the dedicated GPU node pool.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/gpus#scheduling_gpu_workloads",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Deploy GPU nodes in a completely separate cloud provider."
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Assign all pods cluster-admin RBAC permissions."
+   },
+   {
+    "letter": "C",
+    "len": 86,
+    "text": "Manually stop and restart pods using kubectl delete pod when placed on the wrong node."
+   },
+   {
+    "letter": "D",
+    "len": 198,
+    "text": "Apply a Kubernetes Taint (e.g. nvidia.com/gpu=present:NoSchedule) to the GPU node pool, and configure ML pod specifications with matching Tolerations and nodeSelector/nodeAffinity for GPU resources."
+   }
+  ],
+  "ratio": 3.13
+ },
+ {
+  "id": "PCA-D1-042",
+  "subtopic": "EHR Healthcare: Cloud KMS / Cloud HSM & FIPS 140-2 Level 3",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare's compliance charter mandates that all encryption keys protecting patient databases must be stored in hardware security modules certified at FIPS 140-2 Level 3, with keys rotated automatically every 90 days, and audit logs capturing every cryptographic use. What Google Cloud key management architecture satisfies this requirement?",
+  "correct": "C",
+  "clave_len": 223,
+  "explanation": "Google Cloud HSM provides fully managed Hardware Security Modules validated at FIPS 140-2 Level 3. Configuring CMEK with HSM protection level and automated 90-day key rotation ensures full compliance with federal and healthcare security standards.",
+  "doc": "https://cloud.google.com/kms/docs/hsm",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 55,
+    "text": "Store cryptographic keys in a public GitHub repository."
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Generate RSA private keys using OpenSSL on a local laptop and save them in a text file."
+   },
+   {
+    "letter": "C",
+    "len": 223,
+    "text": "Create Customer-Managed Encryption Keys (CMEK) in Google Cloud KMS with the Protection Level set to HSM (Cloud HSM), configure an automated 90-day rotation schedule, and bind the key to Cloud SQL, BigQuery, and GCS buckets."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Rely exclusively on Google-managed default encryption keys (Google-owned)."
+   }
+  ],
+  "ratio": 3.1
+ },
+ {
+  "id": "PCA-D1-053",
+  "subtopic": "EHR Healthcare: Binary Authorization & Software Supply Chain",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "To prevent unauthorized or malicious container images from deploying to production GKE clusters processing PHI, EHR Healthcare mandates that all container images must pass vulnerability scanning (zero critical CVEs), undergo automated security unit tests, and be cryptographically signed by an automated CI/CD Cloud KMS key before GKE allows pod deployment. What service enforces this gate?",
+  "correct": "A",
+  "clave_len": 231,
+  "explanation": "Binary Authorization is a deploy-time security control that ensures only trusted container images are deployed on GKE. It validates digital signatures (attestations) created during CI/CD before allowing pods to initialize.",
+  "doc": "https://cloud.google.com/binary-authorization/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 231,
+    "text": "Configure Google Cloud Binary Authorization with GKE admission rules requiring cryptographic attestations signed by Cloud Build attestors using Cloud KMS, integrated with Artifact Registry Container Analysis vulnerability scanning."
+   },
+   {
+    "letter": "B",
+    "len": 81,
+    "text": "Have security engineers manually inspect Dockerfiles and check a spreadsheet box."
+   },
+   {
+    "letter": "C",
+    "len": 84,
+    "text": "Allow any developer to push images directly from laptops to production GKE clusters."
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "Rename container image tags to include the word '-verified'."
+   }
+  ],
+  "ratio": 3.08
+ },
+ {
+  "id": "PCA-D1-037",
+  "subtopic": "EHR Healthcare: Hybrid Dedicated Interconnect & HA VPN",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare connects multiple legacy hospital on-premises datacenters to Google Cloud. They transmit continuous terabytes of Protected Health Information (PHI) including live ICU telemetry and EHR transactions. HIPAA mandates point-to-point Layer 2 encryption across all transport circuits. Furthermore, the architecture must guarantee a 99.99% availability SLA with automatic, sub-second BGP failover. How should you design the hybrid network connectivity?",
+  "correct": "D",
+  "clave_len": 233,
+  "explanation": "To achieve Google Cloud's 99.99% SLA for Dedicated Interconnect, the architecture requires 4 circuits deployed across 2 separate metropolitan locations (2 connections per edge facility). Enabling MACsec provides line-rate hardware Layer 2 encryption directly on physical fiber connections, fulfilling HIPAA requirements without IPSec VPN performance bottlenecks.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/macsec",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "Use Carrier Peering over unencrypted public ASNs with GRE tunnels."
+   },
+   {
+    "letter": "B",
+    "len": 77,
+    "text": "Deploy a single 1Gbps IPsec VPN over the public internet with a static route."
+   },
+   {
+    "letter": "C",
+    "len": 87,
+    "text": "Establish an open SSH reverse tunnel between an on-prem server and a Compute Engine VM."
+   },
+   {
+    "letter": "D",
+    "len": 233,
+    "text": "Provision 4 Dedicated Interconnect circuits across 2 distinct metro colocation facilities (2 cross-connects per metro) with IEEE 802.1AE MACsec encryption enabled, paired with Cloud Routers running dynamic BGP in Global routing mode."
+   }
+  ],
+  "ratio": 3.04
+ },
+ {
+  "id": "PCA-D1-071",
+  "subtopic": "Altostrat Media: Edge Caching & Stale-While-Revalidate",
+  "caseStudy": "altostrat_media",
+  "scenario": "During live 4K video broadcasts, video segment files (.ts / .m4s, duration 2 seconds) are generated continuously. When 30 million clients request the same video segment simultaneously, HRL wants to serve 99.9% of requests directly from Google's edge cache POPs and prevent cache-stampedes on origin storage buckets. What caching strategy should you implement?",
+  "correct": "B",
+  "clave_len": 202,
+  "explanation": "Cloud CDN and Media CDN cache video segments at edge POPs close to users. Enabling stale-while-revalidate and request collapsing (origin shielding) ensures that simultaneous requests for newly generated segments hit edge caches without overwhelming origin storage.",
+  "doc": "https://cloud.google.com/cdn/docs/caching",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Disable caching on all video segments with Cache-Control: no-cache, no-store."
+   },
+   {
+    "letter": "B",
+    "len": 202,
+    "text": "Configure Cloud CDN with Cache-Control: public, max-age=60, stale-while-revalidate=10, and enable Cloud CDN Origin Shielding / Media CDN to collapse concurrent cache misses into a single origin request."
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "Serve video files directly from a single Compute Engine VM disk without any CDN."
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "Email video files as attachments to viewers."
+   }
+  ],
+  "ratio": 3.01
+ },
+ {
+  "id": "PCA-D3-002",
+  "subtopic": "Workload Identity Federation for AWS EC2",
+  "caseStudy": "none",
+  "scenario": "An analytics application running on Amazon EC2 instances needs to query BigQuery datasets in Google Cloud. Corporate security policy mandates that no static service account JSON keys can be copied or stored outside of Google Cloud. How should the AWS workloads authenticate?",
+  "correct": "D",
+  "clave_len": 210,
+  "explanation": "Google Cloud Workload Identity Federation natively integrates with AWS STS. Workloads on AWS use their native AWS instance credentials to authenticate directly to Google Cloud IAM, receiving short-lived Google access tokens without managing static keys.",
+  "doc": "https://cloud.google.com/iam/docs/configuring-workload-identity-federation#aws",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "Create an IPsec VPN and transmit unauthenticated SQL queries over raw sockets."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Generate a service account key and hardcode it in the EC2 user data script."
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "Open BigQuery datasets to all users on the public internet."
+   },
+   {
+    "letter": "D",
+    "len": 210,
+    "text": "Configure a Workload Identity Pool with an AWS Provider in Google Cloud IAM, allowing the AWS EC2 Instance Profile IAM Role ARN to exchange AWS security tokens for short-lived Google Cloud OAuth2 access tokens."
+   }
+  ],
+  "ratio": 2.97
+ },
+ {
+  "id": "PCA-D1-055",
+  "subtopic": "Altostrat Media: Global Real-Time Video Streaming",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media (HRL) streams high-definition 4K 60FPS video feeds from 20 racing aircrafts during global tournaments to over 30 million concurrent viewers worldwide. Viewers demand sub-2 second glass-to-glass latency and multi-angle camera switching. To minimize egress network costs while guaranteeing global playback stability, how should you architect the video ingestion, transcoding, and content delivery pipeline?",
+  "correct": "A",
+  "clave_len": 278,
+  "explanation": "Google Cloud Live Stream API provides broadcast-grade live stream encoding into LL-HLS and DASH formats. Paired with Cloud CDN and Media CDN (which leverages Google's global video edge infrastructure used by YouTube), this architecture delivers 4K live streams to 30M+ concurrent viewers with sub-2s latency and minimal origin egress costs.",
+  "doc": "https://cloud.google.com/livestream/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 278,
+    "text": "Ingest live camera RTMP/SRT feeds into Google Cloud Live Stream API to transcode into multi-bitrate Low-Latency HLS (LL-HLS) and DASH formats, store segments in Cloud Storage, and deliver via a Global External Application Load Balancer with Cloud CDN and Media CDN edge caching."
+   },
+   {
+    "letter": "B",
+    "len": 90,
+    "text": "Transmit raw uncompressed video frames via Cloud Pub/Sub directly to mobile phone clients."
+   },
+   {
+    "letter": "C",
+    "len": 114,
+    "text": "Stream raw RTMP video feeds directly to a single Compute Engine instance in us-central1 running NGINX RTMP module."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "Record races on local SD cards and upload videos 24 hours after race completion."
+   }
+  ],
+  "ratio": 2.94
+ },
+ {
+  "id": "PCA-D2-020",
+  "subtopic": "Network Connectivity Center (NCC)",
+  "caseStudy": "none",
+  "scenario": "An enterprise has 20 branch offices connected via IPsec VPNs, 3 corporate datacenters connected via Dedicated Interconnects, and 10 VPC networks across Google Cloud. They want to use Google's global fiber backbone as the centralized wide-area network (WAN) transit mesh to connect branch offices to datacenters and to VPCs with automated BGP dynamic route exchange. What service provides this hub-and-spoke connectivity?",
+  "correct": "A",
+  "clave_len": 213,
+  "explanation": "Network Connectivity Center (NCC) uses a hub-and-spoke model to manage global connectivity. By attaching VPNs, Interconnects, and VPCs as spokes to an NCC Hub, enterprises leverage Google's global backbone for site-to-site and site-to-cloud WAN transit.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 213,
+    "text": "Deploy Google Cloud Network Connectivity Center (NCC), creating a centralized Hub and attaching Cloud Interconnects, Cloud VPN gateways, and VPCs as Spokes for automated transit WAN routing over Google's backbone."
+   },
+   {
+    "letter": "B",
+    "len": 86,
+    "text": "Deploy full mesh point-to-point IPsec VPN tunnels between every branch and datacenter."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Use public internet routing with DNS round-robin."
+   },
+   {
+    "letter": "D",
+    "len": 83,
+    "text": "Run BGP software on a single Compute Engine micro instance acting as a core router."
+   }
+  ],
+  "ratio": 2.93
+ },
+ {
+  "id": "PCA-D2-021",
+  "subtopic": "Cloud DNS Private Zones & DNS Peering",
+  "caseStudy": "none",
+  "scenario": "VPC-A hosts internal microservices under the domain 'corp.internal'. Workloads in VPC-B (which is in a different project) must resolve hostnames in 'corp.internal' without exposing the DNS zone publicly or deploying dedicated BIND DNS virtual machines. How should Cloud DNS be configured?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "Cloud DNS Peering allows a consumer VPC (VPC-B) to forward DNS queries for a specific private domain directly to a producer VPC (VPC-A) that hosts the private zone, enabling seamless cross-project name resolution without public exposure or DNS servers.",
+  "doc": "https://cloud.google.com/dns/docs/zones/zones-overview#peering_zones",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "Hardcode IP addresses in the /etc/hosts file of every virtual machine."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "text": "Configure a Cloud DNS Private Zone for 'corp.internal' in Project A authorized for VPC-A, and create a Cloud DNS Peering Zone in Project B for 'corp.internal' that forwards queries for that domain directly to VPC-A."
+   },
+   {
+    "letter": "C",
+    "len": 82,
+    "text": "Create a Public DNS zone and publish internal IP addresses to the global internet."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Deploy self-hosted BIND9 DNS servers on Compute Engine in both VPCs."
+   }
+  ],
+  "ratio": 2.93
+ },
+ {
+  "id": "PCA-D2-040",
+  "subtopic": "Anthos Bare Metal Provisioning",
+  "caseStudy": "none",
+  "scenario": "A manufacturing enterprise operates robotics assembly lines in factory locations. Real-time sensor processing requires Kubernetes clusters running directly on physical on-premises servers without a virtualization hypervisor layer (such as VMware ESXi) to minimize hardware overhead and achieve sub-millisecond hardware device access. What Google Cloud solution meets this requirement?",
+  "correct": "B",
+  "clave_len": 176,
+  "explanation": "GKE on Bare Metal (Anthos on Bare Metal) installs Kubernetes directly on physical servers without requiring a hypervisor. It provides direct hardware/GPU access, lower latency, reduced licensing costs, and centralized management via GKE Connect.",
+  "doc": "https://cloud.google.com/anthos/clusters/docs/bare-metal/latest",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Force all factory robots to connect over satellite internet to us-central1."
+   },
+   {
+    "letter": "B",
+    "len": 176,
+    "text": "Deploy Google Kubernetes Engine (GKE) on Bare Metal directly on physical servers with supported Linux OS distributions (RHEL, Ubuntu) connected to Google Cloud via GKE Connect."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Deploy VMware ESXi on every server with 10 nested hypervisor layers."
+   },
+   {
+    "letter": "D",
+    "len": 38,
+    "text": "Install Windows 95 on factory servers."
+   }
+  ],
+  "ratio": 2.92
+ },
+ {
+  "id": "PCA-D3-003",
+  "subtopic": "IAM Conditions for Time & IP Restrictions",
+  "caseStudy": "none",
+  "scenario": "A third-party contractor requires temporary Compute Admin access to perform emergency maintenance on production VMs during a weekend maintenance window (Saturday 00:00 to Sunday 23:59 UTC), and access must only be allowed from the contractor's corporate VPN egress IP (198.51.100.0/24). How should you implement this access control?",
+  "correct": "A",
+  "clave_len": 196,
+  "explanation": "IAM Conditions allow administrators to define conditional attribute-based access using Common Expression Language (CEL). Conditions can evaluate request timestamps, source IP ranges, resource tags, and API attributes.",
+  "doc": "https://cloud.google.com/iam/docs/conditions-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 196,
+    "text": "Grant the roles/compute.admin role with an IAM Condition using Common Expression Language (CEL) restricting request.time within the specified date range and request.ip in IP range 198.51.100.0/24."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Grant Project Owner at the Organization level."
+   },
+   {
+    "letter": "C",
+    "len": 82,
+    "text": "Grant roles/compute.admin permanently and remember to delete it on Monday morning."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Share a Google Cloud root account password with the contractor over Slack."
+   }
+  ],
+  "ratio": 2.91
+ },
+ {
+  "id": "PCA-D2-010",
+  "subtopic": "GKE Multi-Cluster Ingress & Gateway API",
+  "caseStudy": "none",
+  "scenario": "An enterprise deploys identical GKE clusters in us-east1 and europe-west1. They require a global load balancer that routes external HTTP(S) users to the nearest cluster, provides automated health-checked cross-region failover, and supports weighted traffic splitting (e.g. 10% canary to europe-west1). Which modern Kubernetes API should you deploy?",
+  "correct": "A",
+  "clave_len": 205,
+  "explanation": "The GKE Gateway API (evolution of Multi-Cluster Ingress) provides native declarative multi-cluster routing via HTTPRoute resources. GatewayClass 'gke-l7-gxlb-mc' provisions a Global External Application Load Balancer with Anycast routing, automated failover, and traffic splitting across clusters.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/deploying-multi-cluster-gateways",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 205,
+    "text": "Deploy GKE Gateway API with GatewayClass 'gke-l7-gxlb-mc' (Multi-Cluster External Application Load Balancer) and HTTPRoute resources configured with multi-cluster backend references and weight allocations."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Use Cloud DNS Round Robin without health checking."
+   },
+   {
+    "letter": "C",
+    "len": 94,
+    "text": "Install standard NGINX Ingress Controller in each cluster independently with manual DNS edits."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Kubernetes NodePort services exposed directly on public internet IPs."
+   }
+  ],
+  "ratio": 2.89
+ },
+ {
+  "id": "PCA-D2-001",
+  "subtopic": "Infrastructure as Code: Terraform State & Locking",
+  "caseStudy": "none",
+  "scenario": "An enterprise DevOps team is managing infrastructure across 50 Google Cloud projects using Terraform. Multiple team members and CI/CD pipelines run terraform apply concurrently. To prevent race conditions, state file corruption, and accidental deletion of infrastructure state, how should you architect the Terraform backend?",
+  "correct": "D",
+  "clave_len": 219,
+  "explanation": "Google Cloud Storage natively supports Terraform remote state storage with automated state locking (preventing simultaneous applies), Object Versioning (allowing recovery from state corruption), and CMEK encryption with strict IAM policies.",
+  "doc": "https://cloud.google.com/docs/terraform/best-practices-for-terraform#store-state-gcs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 82,
+    "text": "Store terraform.tfstate in a Git repository committed directly to the main branch."
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "text": "Keep state files on local developer laptops and synchronize via email attachments."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Store state in a public Cloud Storage bucket without versioning."
+   },
+   {
+    "letter": "D",
+    "len": 219,
+    "text": "Configure a GCS backend in a dedicated security project, enabling Object Versioning, Uniform Bucket-Level Access, KMS Customer-Managed Encryption Keys (CMEK), and GCS native object locking for state concurrency locking."
+   }
+  ],
+  "ratio": 2.88
+ },
+ {
+  "id": "PCA-D1-056",
+  "subtopic": "Altostrat Media: Serverless Burst Scaling on Cloud Run",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL hosts races on alternating weekends. During the 2-hour live race window, API traffic spikes from 0 to 500,000 requests/sec for live telemetry, telemetry graphing, and real-time betting odds. During weekdays, traffic drops to near zero. HRL wants a serverless compute backend that scales instantly without cold start latency spikes and incurs zero idle compute costs during off-hours. What architecture meets this need?",
+  "correct": "B",
+  "clave_len": 228,
+  "explanation": "Google Cloud Run provides instant container autoscaling up to thousands of instances within seconds. Configuring min-instances = 0 during weekdays achieves zero idle cost, while setting min-instances dynamically before live events prevents cold starts during sudden viewer surges.",
+  "doc": "https://cloud.google.com/run/docs/about-instance-autoscaling",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 84,
+    "text": "Maintain 1,000 Compute Engine instances running 24/7 in an unmanaged instance group."
+   },
+   {
+    "letter": "B",
+    "len": 228,
+    "text": "Deploy containerized microservices to Google Cloud Run, setting min-instances = 0 for off-race periods (zero cost), and pre-warming min-instances = 500 30 minutes before race start with max-instances = 5000 and concurrency = 80."
+   },
+   {
+    "letter": "C",
+    "len": 74,
+    "text": "Use Cloud Functions (1st gen) with concurrency = 1 and max instances = 10."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Run an on-premises physical server in the league headquarters connected over DSL."
+   }
+  ],
+  "ratio": 2.86
+ },
+ {
+  "id": "PCA-D3-054",
+  "subtopic": "Knightmotives Automotive: Regional EU KMS Key Architecture",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "European data protection regulations mandate that encryption keys protecting European vehicle fleet data must reside strictly in europe-west1 and must never be replicated or accessible by US cloud infrastructure. How should you configure Cloud KMS key rings and projects?",
+  "correct": "D",
+  "clave_len": 172,
+  "explanation": "Regional Cloud KMS Key Rings guarantee that cryptographic keys and HSM modules remain strictly within the specified geographic region (europe-west1), fulfilling GDPR and European sovereign data residency mandates.",
+  "doc": "https://cloud.google.com/kms/docs/locations",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Disable encryption on all European storage buckets."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Create a global multi-region KMS key in us-central1."
+   },
+   {
+    "letter": "C",
+    "len": 78,
+    "text": "Share a single symmetric key file across all worldwide regions via public FTP."
+   },
+   {
+    "letter": "D",
+    "len": 172,
+    "text": "Create a dedicated regional Cloud KMS Key Ring in location 'europe-west1' inside a dedicated EU project, bound to regional EU BigQuery and Cloud Storage resources via CMEK."
+   }
+  ],
+  "ratio": 2.85
+ },
+ {
+  "id": "PCA-D1-043",
+  "subtopic": "EHR Healthcare: Cloud SQL HA & Private Service Access",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare is hosting a relational patient billing service on Cloud SQL for PostgreSQL. The database must have zero public IP exposure, enforce SSL/TLS encryption for all client connections, and provide automated failover with an RTO under 60 seconds during a zonal datacenter disruption. How should you configure Cloud SQL?",
+  "correct": "D",
+  "clave_len": 214,
+  "explanation": "Regional High Availability Cloud SQL places synchronous standby replicas in a different availability zone within the region, providing automated failover (<60s RTO). Private Service Access keeps the database entirely within private VPC RFC 1918 space without public IPs.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/high-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 109,
+    "text": "Provision a single Zonal Cloud SQL instance with an external public IP and create an authorized network CIDR."
+   },
+   {
+    "letter": "B",
+    "len": 81,
+    "text": "Deploy PostgreSQL on a single e2-micro Compute Engine VM using an ephemeral disk."
+   },
+   {
+    "letter": "C",
+    "len": 39,
+    "text": "Store database tables in Google Sheets."
+   },
+   {
+    "letter": "D",
+    "len": 214,
+    "text": "Provision a Regional Cloud SQL instance with High Availability (Enterprise Plus with standby instance in a secondary zone), configure Private Service Access (Private IP in VPC), and require client SSL certificates."
+   }
+  ],
+  "ratio": 2.8
+ },
+ {
+  "id": "PCA-D1-032",
+  "subtopic": "Knightmotives Automotive: Real-Time Engine Overheat Alerting with Dataflow",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "When a connected tractor experiences an engine temperature spike (>105°C) sustained for more than 60 seconds, knightmotives_automotive must trigger an immediate in-cab safety alert and notify the nearest dealer with replacement parts. Telemetry streams arrive via Pub/Sub. How should you design the stream processing logic to detect sustained temperature spikes?",
+  "correct": "B",
+  "clave_len": 243,
+  "explanation": "Apache Beam on Cloud Dataflow provides stateful stream processing and event-time windowing to track temporal conditions (e.g. sustained high temperature for 60s) per key (vehicle_id), triggering low-latency downstream actions.",
+  "doc": "https://beam.apache.org/documentation/programming-guide/#state-and-timers",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 100,
+    "text": "Send every individual reading to Cloud Functions and store temporary state in local /tmp disk files."
+   },
+   {
+    "letter": "B",
+    "len": 243,
+    "text": "Use Cloud Dataflow with stateful processing (StateSpec and TimerSpec) or fixed 60-second event-time tumbling windows grouped by vehicle_id, evaluating if all readings exceed 105°C, and emitting alert events to an Emergency Alert Pub/Sub topic."
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "Schedule a Cloud Scheduler job to run a BigQuery query every 10 minutes."
+   },
+   {
+    "letter": "D",
+    "len": 89,
+    "text": "Write an infinite while-loop in a bash script running on a Compute Engine micro instance."
+   }
+  ],
+  "ratio": 2.79
+ },
+ {
+  "id": "PCA-D2-026",
+  "subtopic": "Knightmotives Automotive: Bigtable Dual-Cluster Routing & App Profiles",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive requires continuous 99.999% availability for ingesting real-time vehicle telemetry into Cloud Bigtable. If a single Google Cloud zone or cluster experiences planned maintenance or unplanned downtime, vehicle ingestion streams must automatically fail over to an alternate cluster with zero manual intervention and sub-second failover. How should you configure Bigtable?",
+  "correct": "D",
+  "clave_len": 187,
+  "explanation": "Replicating Cloud Bigtable across 2+ clusters combined with an App Profile using Multi-Cluster Routing (any-cluster routing) automatically directs read and write requests to the nearest healthy cluster, providing an SLA of up to 99.999% with automatic instant failover.",
+  "doc": "https://cloud.google.com/bigtable/docs/app-profiles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 88,
+    "text": "Configure a Single-Cluster App Profile and write custom client failover logic in Python."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Migrate all telemetry data to Cloud SQL."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Deploy a single Bigtable cluster and rely on daily Cloud Storage backups."
+   },
+   {
+    "letter": "D",
+    "len": 187,
+    "text": "Create a Bigtable instance with at least two replicated clusters in different zones/regions, and configure an Application Profile with Multi-Cluster Routing (any-cluster routing) enabled."
+   }
+  ],
+  "ratio": 2.79
+ }
+]

@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D4-033",
+  "options": {
+   "A": "Provision a BigQuery BI Engine reservation in the analytics project so the 50TB sales table is held in in-memory acceleration capacity and every recurring aggregation is answered out of RAM instead of rereading the Capacitor blocks from managed storage on each execution.",
+   "B": "Recreate the sales table partitioned by ingestion time and clustered by region and product_category, so BigQuery prunes blocks at read time and the recurring GROUP BY aggregation reads only the sorted clustered blocks that correspond to each user's requested slice.",
+   "D": "Create a scheduled query that runs hourly, recomputes SELECT region, product_category, SUM(revenue) over the whole 50TB table with WRITE_TRUNCATE into a small summary table clustered by region, and ask every reporting team to repoint their dashboards and ad-hoc queries at that summary table."
+  },
+  "distractors": {
+   "A": "BI Engine is an in-memory cache bounded by the size of the reservation, which is provisioned in gigabytes; a 50TB table cannot be resident, so most executions fall back to a full on-demand scan. It also caches blocks rather than precomputing an aggregate, so nothing is incrementally refreshed when the base table changes.",
+   "B": "Partition and cluster pruning only cut bytes when the query filters or joins on the pruned columns. The stated query has no WHERE clause and aggregates the entire table, so every block is still read and billed, and the aggregation is recomputed from scratch on each of the thousands of daily executions.",
+   "D": "The rollup is rebuilt from scratch on every run, so each refresh rescans the full 50TB instead of only the delta, which is the opposite of an incremental update. BigQuery also performs no automatic query rewrite to a plain table, so every dashboard must be edited by hand and results are stale between runs."
+  }
+ },
+ {
+  "id": "PCA-D4-014",
+  "options": {
+   "A": "Export the 5PB of telemetry to Cloud Storage Coldline buckets and re-expose the files as BigLake external tables, so the bytes are billed at archival object-storage rates while the BigQuery dataset holds only metadata and analysts keep querying the same table names from the same BigQuery jobs.",
+   "C": "Reduce the dataset's max_time_travel_hours from 168 down to the minimum 48 hours and let untouched telemetry partitions age past 90 days into long-term logical storage, so those partitions are billed at the $0.01/GB long-term rate instead of the $0.02/GB active rate across the estate.",
+   "D": "Cluster every telemetry table by device_id and event timestamp and rewrite repeated string columns as dictionary-friendly enumerations and switch FLOAT64 gauges to NUMERIC, driving the physical footprint well below 500TB so that the monthly BigQuery storage bill falls in proportion to the improved compression ratio achieved on disk."
+  },
+  "distractors": {
+   "A": "This does not configure a dataset storage billing model, which is what the requirement asks for; it moves the data out of BigQuery managed storage entirely, giving up compressed-storage pricing, partition and cluster pruning, DML and time travel, and adding Coldline retrieval charges plus a 90-day minimum-storage commitment on every object.",
+   "C": "Under LOGICAL billing, time travel and fail-safe bytes are not charged at all, so shrinking the window saves nothing; long-term logical pricing already applies automatically to any partition untouched for 90 days and is already reflected in the $75,000 bill. Neither action monetises the 10:1 compression ratio.",
+   "D": "Logical storage billing charges the uncompressed logical byte size of the rows, so improving compression from 10:1 to 20:1 does not move the bill by a single cent. Compression only becomes billable currency after the dataset is switched to the PHYSICAL storage billing model, which this answer never does."
+  }
+ },
+ {
+  "id": "PCA-D6-020",
+  "options": {
+   "B": "Detach the check from the autohealing policy's scope and tune it on the backend service instead, raising its timeout_sec and unhealthy_threshold so the load balancer stops sending traffic to instances that are still warming their JVM caches during the four-minute startup.",
+   "C": "Leave initial_delay_sec at 60 and relax the health check itself instead, raising check_interval_sec to 10 seconds, timeout_sec to 5 seconds and unhealthy_threshold to 3 consecutive failures so that transient probe failures no longer trigger the autohealer.",
+   "D": "Keep the 60-second initial delay and change the application so that its /healthz listener is bound only after the JVM caches, machine learning models and database connection pools have finished loading, making the probe reflect true readiness rather than process liveness."
+  },
+  "distractors": {
+   "B": "The right resource anchored at the wrong point. A backend service health check governs traffic serving only; the autohealing policy keeps its own health check and its own 60-second initial delay, so the MIG still declares the JVM unhealthy at one minute and recreates the instance. The reboot loop is untouched.",
+   "C": "Relaxing the probe buys only unhealthy_threshold multiplied by check_interval_sec, that is 30 seconds of tolerance, far short of the four-minute warm-up, and that counter only starts once initial_delay_sec expires at 60 seconds. The instance is still recreated mid-startup; only initial_delay_sec suppresses autohealing for the whole boot.",
+   "D": "An accurate readiness endpoint makes the probe fail honestly instead of passing early, and a refused connection counts as a failed autohealing probe exactly like a timeout does. With initial_delay_sec still at 60 the MIG starts probing three minutes before the application is ready and recreates the instance anyway."
+  }
+ },
+ {
+  "id": "PCA-D6-026",
+  "options": {
+   "A": "Set directedReadOptions on the client so that read-only transactions are pinned to the READ_ONLY replicas in Europe and Asia by replica type and location, while keeping strong consistency so that every catalog query still observes the newest committed version of each row it reads.",
+   "C": "Move the instance to the nam-eur-asia1 multi-region configuration and add read-only replicas in Europe and Asia, so that the 1,000,000 queries per second are answered by the geographically nearest replica instead of crossing an ocean to the read-write replicas in us-east4 on every request.",
+   "D": "Front Cloud Spanner with a regional Memorystore for Redis Cluster on each continent, warming it with a nightly batch job after the catalog import so that the read traffic is answered from cache at single-digit millisecond latency, and falling back to a strong Spanner read whenever a key is missing from the cache."
+  },
+  "distractors": {
+   "A": "Directed reads choose which replica answers, but a strong read must still be served at the latest commit timestamp, so the selected replica has to round-trip to the us-east4 Paxos leader to learn that timestamp and catch up before replying. The leader hop the scenario is trying to eliminate remains in the path.",
+   "C": "Topology alone does not change read semantics. As long as the client issues strong reads, the nearest read-only replica must still contact the us-east4 leader for the latest commit timestamp before it may serve, so the cross-ocean hop and its latency stay. A staleness bound, not extra replicas, is what unlocks local serving.",
+   "D": "This answers a different question: it bypasses Spanner rather than making its regional replicas serve the traffic, and every cache miss or cold key still takes a strong read through the us-east4 leader. It also adds a separate invalidation path, a second consistency model and a per-region system to operate."
+  }
+ },
+ {
+  "id": "PCA-D3-009",
+  "options": {
+   "B": "Apply the constraints/storage.publicAccessPrevention and constraints/iam.allowedPolicyMemberDomains organization policies to Project A and grant BigQuery and Cloud Storage roles only to cleared program members through IAM conditions.",
+   "C": "Turn on Private Google Access, route *.googleapis.com to the restricted VIP 199.36.153.4/30 via Cloud DNS, and add egress firewall rules denying all internet traffic from Project A's subnets, so the APIs answer only in the authorized VPC.",
+   "D": "Encrypt the BigQuery datasets and Cloud Storage buckets in Project A with Customer-Managed Encryption Keys backed by Cloud HSM, and restrict the Cloud KMS CryptoKey Decrypter role to the program's service accounts in a separate key project."
+  },
+  "distractors": {
+   "B": "These controls decide who may be granted access, not where authorized calls may originate or where their results may be written. A cleared engineer can still run a BigQuery copy job or a gsutil copy into a bucket in another project, which is precisely the exfiltration path the requirement asks to block at the API layer.",
+   "C": "This is the network companion to a perimeter, not the perimeter itself. The restricted VIP and firewall rules constrain the path packets take, but each call still terminates at the same storage.googleapis.com endpoint, so an authorized identity inside the VPC can still copy a table or an object to a project outside the boundary.",
+   "D": "CMEK controls key custody, not the API surface. BigQuery and Cloud Storage decrypt transparently for any caller the service already accepts, so a copy job into a dataset outside Project A succeeds and the destination simply re-encrypts with its own key. Nothing here confines access to the authorized VPC network."
+  }
+ },
+ {
+  "id": "PCA-D3-055",
+  "options": {
+   "A": "Attach the Cloud Armor preconfigured WAF rules built on the OWASP ModSecurity Core Rule Set (sqli-v33-stable, xss-v33-stable, lfi-v33-stable and rce-v33-stable) at sensitivity level 1 to the tournament security policy, so every inbound request is evaluated against the known attack signatures.",
+   "B": "Add a Cloud Armor rate-limiting rule in throttle mode to the tournament policy with conform_action=allow, exceed_action=deny(429), enforce_on_key=IP and a threshold of 100 requests per minute per source address, banning any address that crosses it for 600 seconds.",
+   "C": "Enable Cloud CDN with cache mode CACHE_ALL_STATIC on the tournament backend service and add a negative caching policy for 404 and 403 responses, so the flood is absorbed at the edge from cache and only a small fraction of the requests reaches the game backends."
+  },
+  "distractors": {
+   "A": "The Core Rule Set matches known injection, cross-site scripting and traversal signatures inside a request body or URL. A flood of ordinary GETs with rotating paths and user-agents matches none of them, and the rules are static, so nothing learns the service's traffic baseline or produces a mitigation rule for the operations team.",
+   "B": "The attack rotates source addresses continuously, so with enforce_on_key=IP each individual client stays far below 100 requests per minute and the rule never fires while the aggregate flood passes straight through. It also has to be authored and tuned by hand, which is exactly the manual work the team has no time for.",
+   "C": "The attack deliberately varies the URL path on every request, so each one produces a distinct cache key and a cache miss that is forwarded to the origin, and the tournament's live game endpoints are dynamic and uncacheable in any case. Caching neither identifies the attack pattern nor generates a mitigation rule."
+  }
+ },
+ {
+  "id": "PCA-D6-013",
+  "options": {
+   "B": "Deploy a third-party DDoS scrubbing virtual appliance in a hub VPC as the single ingress point, and use custom routes so all inbound traffic is inspected and SYN floods dropped there before clean packets are forwarded to the application backends.",
+   "C": "Attach a Cloud Armor security policy to the existing backend service combining rate-limiting rules with the preconfigured OWASP WAF signatures, throttling and then banning any source address whose request rate exceeds the configured requests-per-minute threshold during the attack.",
+   "D": "Configure the managed instance group autoscaler with a very high maximum replica count and larger machine types so the fleet scales out under the attack, and raise the per-VM connection tracking and file descriptor limits so each backend absorbs a greater packet rate."
+  },
+  "distractors": {
+   "B": "The scrubbing appliance runs on a finite number of VMs inside the customer's own VPC, so the full 500 Gbps has to enter the VPC and reach it before anything is dropped. Its throughput and the single ingress route become the exact bottleneck the attacker aims at; volumetric absorption needs Google's edge capacity, not customer instances.",
+   "C": "Cloud Armor policies are evaluated against Layer 7 requests after the TCP handshake completes, so they never see a SYN flood or spoofed UDP amplification packets, which never establish a connection. Rate limiting and WAF signatures address application-layer abuse; Layer 3/4 volumetric absorption comes from Anycast edge capacity.",
+   "D": "This tries to out-buy an attacker who chooses the size of the bill: 500 Gbps of spoofed packets consume network and kernel resources on every instance added, the cost scales with the flood, and nothing is filtered. The malicious traffic still reaches the VPC, which the requirement explicitly forbids."
+  }
+ },
+ {
+  "id": "PCA-D4-006",
+  "options": {
+   "B": "Classify the outage as a single exceptional event, file an exemption so that its 150,000 failed requests are excluded from the rolling 30-day window, recomputing availability over the remaining 99,850,000 requests as a clean 100%, and confirm that the full 100,000-failure budget is therefore still untouched before allowing the planned feature releases to continue on their existing schedule.",
+   "C": "Configure Cloud Monitoring burn-rate alerting on the 99.9% availability SLO, paging the on-call engineer at a 14.4x fast-burn rate over a one-hour window and at a 6x rate over a six-hour window, and treat that alerting change as the team's response while the release train continues unchanged.",
+   "D": "Compute the 30-day budget as 100,000 failures, note the 150% overrun, and respond by deploying a second regional replica behind a global load balancer with automatic failover, funding the additional capacity from the platform budget while the feature release cadence is left exactly as it is."
+  },
+  "distractors": {
+   "B": "The arithmetic is right and the policy is inverted. An error budget measures what users actually experienced, so excluding the outage that consumed it makes the SLI stop describing reality and deletes the only signal that would have triggered reliability work. Google SRE practice spends the budget and freezes releases rather than exempting incidents.",
+   "C": "Burn-rate alerting is the correct instrumentation and the wrong response. It shortens the time to notice the next exhaustion but does nothing about a budget that is already 150% spent, and it omits the policy consequence entirely: halting non-critical feature deployments and redirecting engineering effort toward reliability.",
+   "D": "It reads the arithmetic correctly and then skips the policy. Multi-region redundancy is chosen before the outage has been understood, and more importantly the release freeze is never applied, so new features keep landing on a service that has already overspent its budget by 50%, which is what the policy exists to prevent."
+  }
+ },
+ {
+  "id": "PCA-D3-037",
+  "options": {
+   "A": "Enforce Binary Authorization on the cluster with an attestor-backed policy so that only container images signed by the CI pipeline and scanned by Artifact Analysis may be admitted, blocking any unauthorized binary at deployment time.",
+   "B": "Enable Event Threat Detection in Security Command Center so it scans the cluster's Cloud Audit Logs, VPC Flow Logs and Cloud DNS logs and raises findings whenever suspicious activity appears in the GKE control plane or its network traffic.",
+   "C": "Apply the restricted Pod Security Standard to the namespace together with a seccomp profile and Workload Identity, removing privileged mode, host namespace sharing and node service-account credentials from every workload running in the cluster."
+  },
+  "distractors": {
+   "A": "Binary Authorization is an admission controller: it validates image provenance when the pod is created and then stops looking. This pod was deployed from an approved image and compromised afterwards through an application vulnerability, so nothing is presented that the policy would reject and the reverse shell runs unobserved.",
+   "B": "Event Threat Detection consumes control-plane and network logs, so it sees Kubernetes API calls, IAM grants and DNS lookups. A reverse shell executed inside a container's own namespace produces no audit log entry at all; catching it requires the node-level kernel instrumentation that Container Threat Detection provides.",
+   "C": "These are preventive hardening controls that shrink what a compromised pod can reach, but none of them reports anything. The scenario asks which service detects the behaviour in real time, and a blocked syscall or a rejected privileged mount generates no security finding for the response team to triage."
+  }
+ },
+ {
+  "id": "PCA-D4-031",
+  "options": {
+   "A": "Turn on Looker Studio data extracts for each dashboard, materialising the aggregated result set into Looker Studio's own storage on a nightly refresh schedule, and raise the report cache freshness setting to 12 hours so the morning page loads are answered from the extract rather than from BigQuery.",
+   "B": "Purchase a BigQuery Enterprise edition slot reservation on a one-year commitment and assign the analytics project to it, replacing on-demand per-byte charges with a fixed pool of slot capacity that the 500 executives and sales managers share throughout the morning reporting window.",
+   "D": "Replicate the aggregated dashboard tables nightly into a Cloud SQL for PostgreSQL instance with covering indexes on the filter columns, and repoint all 500 Looker Studio reports at that instance so the morning dashboard queries never touch BigQuery at all."
+  },
+  "distractors": {
+   "A": "A Looker Studio extract is capped at 100 MB and only covers the fields, filters and date range chosen when it is built, so every drill-down, date change or new filter falls straight through to BigQuery at on-demand rates. It also does nothing about the twenty heavy aggregations issued on each dashboard load.",
+   "B": "A slot commitment caps the bill but not the latency: the same twenty aggregations are recomputed from Capacitor storage on every load, so the ten-second render remains, and the reservation must be sized for the concentrated morning peak, which puts the fixed cost close to the $10,000 it replaced. Nothing is cached.",
+   "D": "It fixes the bill by leaving the warehouse and pays for it everywhere else: a single Cloud SQL instance must now serve 500 concurrent users running twenty aggregations each, the nightly copy makes every figure a day stale, and any query outside the pre-aggregated shape has no source table to read at all."
+  }
+ },
+ {
+  "id": "PCA-D4-040",
+  "options": {
+   "A": "Keep the reservation at 100GB and configure BI Engine preferred tables so that only the reporting tables are eligible for acceleration, leaving every other table in the project to regular BigQuery slots and freeing the remaining memory.",
+   "B": "Create a Cloud Monitoring alerting policy on bi_engine/ram_used_bytes that notifies the data engineering team whenever utilisation crosses 80% of the reservation, and add a billing budget alert scoped to the BI Engine SKU.",
+   "D": "Delete the BI Engine reservation entirely and let the morning reporting queries fall back to ordinary on-demand BigQuery execution, removing the $3,000 monthly BI Engine line item from the analytics project's bill in full."
+  },
+  "distractors": {
+   "A": "Preferred tables control which tables BI Engine is allowed to cache, not how much capacity is provisioned. BI Engine is billed per GB-hour of reservation size, so with the reservation still at 100GB the $3,000 monthly charge is unchanged and the 88GB of idle memory keeps billing.",
+   "B": "Observability is not a cost action. The alert restates the same 12GB peak that Cloud Monitoring already reports, and neither it nor a budget notification changes the provisioned reservation, so the unused capacity continues to bill at the full $3,000 every month.",
+   "D": "This is right-sizing taken one step too far. The metric shows a genuine 12GB working set being served from memory, so removing the reservation sends those queries back to full scans, trading a fixed $3,000 for on-demand scan charges and losing the sub-second response the reservation was bought for."
+  }
+ },
+ {
+  "id": "PCA-D4-022",
+  "options": {
+   "A": "Create a logical view over the shards using SELECT * FROM `project.dataset.log_table_*` with a _TABLE_SUFFIX BETWEEN predicate, and point every analyst and scheduled job at that single view so their queries no longer name individual daily tables or build wildcard patterns by hand.",
+   "C": "Apply clustering to each of the 3,650 daily tables on the most frequently filtered columns and rely on automatic re-clustering, so BigQuery prunes blocks inside every shard whenever a multi-year wildcard query runs across the dataset.",
+   "D": "Export the 3,650 shards to Cloud Storage as Parquet files under a hive-style gs://bucket/dt=YYYY-MM-DD/ prefix and expose them as one partitioned external table with hive partition key detection and a schema defined at table creation."
+  },
+  "distractors": {
+   "A": "A view hides the wildcard, it does not remove it. Every query still resolves 3,650 table references at planning time, so the metadata expansion and the slow plan remain, the dataset stays against the table-count limits, and a schema change still has to be applied to all 3,650 physical tables individually.",
+   "C": "Clustering is scoped to one table, so it optimises inside each daily shard while the query still enumerates and opens 3,650 of them. The wildcard metadata expansion, the table-count limits and the need to repeat every schema change 3,650 times are untouched, because those all come from the sharding layout itself.",
+   "D": "The partition layout is right and the storage engine is wrong. An external table gives up BigQuery managed storage: no DML, no time travel, no clustering and no streaming inserts, and multi-year scans re-read Parquet from Cloud Storage on every query, landing slower than the native time-partitioned table the refactoring should produce."
+  }
+ },
+ {
+  "id": "PCA-D2-041",
+  "options": {
+   "A": "Persistent Disk Asynchronous Replication from us-central1-a to us-central1-b, with the secondary disk continuously receiving changed blocks and a documented stop-replication and attach procedure for failover.",
+   "B": "Zonal SSD Persistent Disk in us-central1-a with an hourly snapshot schedule, restoring the most recent snapshot onto a new disk attached to the standby VM in us-central1-b when the primary zone fails.",
+   "C": "A multi-writer Persistent Disk attached simultaneously to the primary VM in us-central1-a and the standby VM in us-central1-b, so both instances hold the block device open and the standby can take over immediately."
+  },
+  "distractors": {
+   "A": "Asynchronous replication ships blocks on a lag, so its published recovery point objective is measured in minutes rather than zero, and failover requires terminating replication and creating a disk from the replica before it can be attached. The scenario demands RPO = 0 and a usable disk within 60 seconds.",
+   "B": "A snapshot schedule sets the recovery point objective to the snapshot interval, so up to an hour of committed transactions is lost, and creating a disk from a snapshot and attaching it takes far longer than the 60-second target. Snapshots are a backup mechanism, not synchronous block replication.",
+   "C": "Multi-writer mode shares one disk between instances, but that disk is still a single zonal resource that disappears with its zone, so there is no second copy to fail over to. Multi-writer attachments are also restricted to instances in the same zone, so this configuration cannot even be created."
+  }
+ },
+ {
+  "id": "PCA-D3-048",
+  "options": {
+   "A": "Load the notes into a Cloud Healthcare API FHIR store as DocumentReference resources and run the store-level de-identify operation with a FhirConfig and DicomConfig that strip identifying resource elements and DICOM tags, writing the results into a second FHIR store for the clinical NLP training pipeline.",
+   "B": "Run every clinical note through the Healthcare Natural Language API, whose entity extraction returns medical concepts, relations and their character offsets mapped to standard clinical vocabularies, and feed those annotations straight into the NLP model training corpus.",
+   "C": "Load the notes into BigQuery, tag the note_text column with a policy taxonomy tag and apply a dynamic data masking rule using the SHA256 masking routine, so that any principal without the Fine-Grained Reader role receives a masked value for that column."
+  },
+  "distractors": {
+   "A": "The de-identify operation acts on structured resource fields inside a store: FhirConfig strips identifiers from FHIR elements and DicomConfig from DICOM tags, and with no TextConfig supplied the narrative text is left exactly as dictated. The identifiers here are embedded in free-text sentences, which needs infoType inspection and transformation.",
+   "B": "The Healthcare Natural Language API is an extraction service: it labels medical concepts and returns their offsets, but it produces no transformed copy of the note. Nothing is masked, so the text the pipeline carries forward still contains the patient's name, date of birth and address, and its model targets clinical terminology rather than identifiers.",
+   "C": "Column-level security and dynamic data masking operate on a whole column value: the note is either fully readable or replaced wholesale by a hash. There is no way to keep 'presented with acute bronchitis' while masking the name and the date inside the same string, so the training corpus is either unredacted or destroyed."
+  }
+ },
+ {
+  "id": "PCA-D6-014",
+  "options": {
+   "A": "Run gcloud alloydb clusters switchover against the europe-west1 secondary cluster so the direction of replication is reversed and the us-central1 cluster is demoted to secondary once the roles have been exchanged.",
+   "B": "Restore the most recent automated backup of the us-central1 cluster into a new AlloyDB cluster in europe-west1 using continuous backup and point-in-time recovery, then repoint the application's connection strings at the restored primary instance.",
+   "D": "Add read pool instances to the europe-west1 secondary cluster and repoint the application's write traffic at the read pool endpoint, which forwards the transactions back to the primary cluster in us-central1."
+  },
+  "distractors": {
+   "A": "Switchover is the planned, zero-data-loss role exchange and it requires every region involved to be online with both instances healthy, because it drains and reverses replication. During a major us-central1 outage the primary cannot be demoted, so the command fails; unplanned failover is exactly what promote exists for.",
+   "B": "It recovers data the secondary cluster already holds. Promotion completes in seconds, whereas a backup restore provisions a new cluster and replays write-ahead logs for minutes or hours, discards everything written since the backup, and depends on backups that live in the region that is down.",
+   "D": "A secondary cluster's instances are read-only until the cluster is promoted, and read pool instances never accept writes under any configuration. AlloyDB also has no write-forwarding path, so every INSERT or UPDATE returns a read-only transaction error while the us-central1 primary is unreachable."
+  }
+ },
+ {
+  "id": "PCA-D6-006",
+  "options": {
+   "A": "Configure an application profile that uses cluster group routing naming both us-central1-b and us-east1-c, so that requests are confined to the named group and reads and writes for the same row always converge on a consistent view of that row.",
+   "B": "Call generateConsistencyToken on the table after each write and poll checkConsistency with the returned token until it reports true, so that the client only issues the follow-up read once replication of that write to both clusters has been confirmed.",
+   "D": "Delete the us-east1-c cluster so the instance runs on a single cluster in us-central1-b, removing replication lag entirely, restoring support for single-row read-modify-write transactions, and guaranteeing that every read observes the most recently written value for any row key in the table."
+  },
+  "distractors": {
+   "A": "Cluster group routing narrows which clusters may answer, but with more than one cluster in the group a read can still land on the cluster the write has not replicated to yet, and like multi-cluster routing it forbids single-row transactions. Only a group of exactly one cluster, which is single-cluster routing, gives read-your-writes.",
+   "B": "The consistency token API reports whether all writes made before the token was generated have replicated table-wide; it is an operational check used before cutting traffic over, not a per-request mechanism. Polling it after each write adds seconds of latency per operation and still leaves the read routed to an arbitrary cluster.",
+   "D": "It buys consistency by discarding the reason replication was configured: a single-cluster instance drops from the 99.999% multi-cluster availability SLA to 99.9% and loses regional failover completely. Bigtable solves this with a Single-Cluster Routing app profile, which keeps the replica while making critical reads strongly consistent."
+  }
+ },
+ {
+  "id": "PCA-D6-016",
+  "options": {
+   "A": "Tune the Horizontal Pod Autoscaler with a lower CPU target utilisation and a shortened scaleUp stabilizationWindowSeconds so replicas are created the instant the flash sale begins, and shorten the Cluster Autoscaler's scan interval so node groups are re-evaluated far more frequently during the surge.",
+   "C": "Enable GKE Node Auto-Provisioning together with Image Streaming on the node pools, set the cluster autoscaler profile to optimize-utilization, and add a Spot VM node pool as burst capacity so that new node shapes are created on demand and containers start before their images have fully downloaded.",
+   "D": "Deploy the Vertical Pod Autoscaler in Auto mode on the ticketing Deployment and cut each pod's CPU and memory requests down to the recommender's observed p50 usage figures, so that many more user pods fit onto the nodes that already exist and the kube-scheduler can place the whole surge without ever waiting for the Cluster Autoscaler."
+  },
+  "distractors": {
+   "A": "The Horizontal Pod Autoscaler creates pod objects instantly, but the bottleneck stated in the scenario is node capacity: the new replicas go straight to Pending because there is nowhere to schedule them, and a faster autoscaler scan interval does not shorten the 90 seconds a Compute Engine VM needs to boot, register and pull images.",
+   "C": "Each of these shortens a part of the node lifecycle without removing it: node auto-provisioning still has to create a VM, and Image Streaming only helps once that VM has joined the cluster. The optimize-utilization profile makes matters worse by packing nodes tightly and reclaiming spare capacity, which is the opposite of pre-warming.",
+   "D": "Smaller requests raise the density of the nodes that already exist, but the cluster is sized for steady state, so a ten-thousand-user burst still exhausts allocatable CPU and the surplus pods go Pending. VPA in Auto mode also evicts and recreates running pods to apply new requests, adding disruption in the middle of the sale."
+  }
+ },
+ {
+  "id": "PCA-D3-040",
+  "options": {
+   "A": "Configure Cloud DLP DateShiftConfig with lowerBoundDays set to -365 and upperBoundDays set to 365, leaving the cryptoKey and context fields unset so that every visit date in the trial dataset receives an independent random shift within the required range.",
+   "C": "Apply CryptoDeterministicConfig with an AES-SIV wrapped Cloud KMS key to the visit_date column, so each distinct date is replaced by a stable surrogate token and an identical date always maps to the identical token across every record in the trial dataset.",
+   "D": "Use a FixedSizeBucketingConfig that generalises every visit timestamp to the calendar month in which it falls and discards the day component, so exact dates never leave the trial environment while the sequence of monthly buckets still reflects the order of each patient's successive visits."
+  },
+  "distractors": {
+   "A": "Without a crypto key and a context field, the shift is drawn independently for every value, so two visits belonging to the same patient move by different offsets and the interval between them changes. The plus or minus 365 day range requirement is satisfied and the longitudinal requirement is destroyed.",
+   "C": "Deterministic tokenisation preserves equality, not ordering or distance: the surrogate is an opaque ciphertext, so subtracting two tokens is meaningless and the analysts can no longer compute the number of days between visits at all. Referential integrity is the wrong invariant; the requirement is to preserve interval arithmetic.",
+   "D": "Bucketing to a month coarsens the value and therefore destroys the interval: two visits eleven days apart may land in the same bucket or in adjacent ones depending on where the month boundary falls. The requirement is that the difference between visits stays mathematically exact, which no generalisation can guarantee."
+  }
+ },
+ {
+  "id": "PCA-D3-030",
+  "options": {
+   "A": "Apply a Cloud Storage retention policy with a bucket lock to the archive buckets and add an Object Lifecycle Management rule that deletes any object carrying the erased customer's identifier as a label after 30 days, so the GDPR deadline is met automatically while the WORM guarantee on every other object is preserved and each deletion is recorded in Cloud Audit Logs for the supervisory authority.",
+   "C": "Run a Dataflow batch pipeline over the Archive-tier backups that restores each object to Standard class, reads it, filters out every record belonging to the erased customer and writes a replacement object in its place, scheduling the job with autoscaling worker pools sized to sustain the required read throughput so that it completes inside the thirty-day window across the whole 100 petabyte estate.",
+   "D": "Encrypt all archive buckets with a single Customer-Managed Encryption Key in Cloud KMS and, on each erasure request, rotate that key so a new primary version is created and everything written from that point on uses fresh key material that the erased customer's records were never protected by, satisfying the thirty-day deadline without rewriting archives."
+  },
+  "distractors": {
+   "A": "A locked retention policy is precisely what prevents the deletion: lifecycle rules cannot remove an object before its retention period expires, and a bucket lock cannot be shortened or removed once applied. Even if it could, one customer's rows are interleaved with everyone else's inside multi-terabyte archive objects, so object-level deletion cannot target a single person.",
+   "C": "This is the approach the scenario has already ruled out, restated as a pipeline. Reading and rewriting 100 PB out of Archive incurs full retrieval charges and takes far longer than thirty days, and replacing archive objects breaks the WORM guarantee those backups exist to provide, because the record can no longer be shown to be unaltered.",
+   "D": "Key rotation creates a new primary version and deliberately leaves every earlier version enabled so that already-encrypted data stays readable, so nothing at all becomes unreadable. Destroying the shared key version instead would render every customer's archives unrecoverable at once. Crypto-shredding needs one key per customer so a destruction is scoped to that person."
+  }
+ },
+ {
+  "id": "PCA-D4-052",
+  "options": {
+   "A": "Configure a Cloud Monitoring uptime check that queries the Bigtable serving endpoint every 60 seconds from several global probe locations, and define the SLO as the percentage of probes that return a telemetry row within 50 milliseconds of the request being issued.",
+   "B": "Build the SLO on the Dataflow job's built-in system_lag and data_watermark_age metrics, alerting whenever the pipeline's output watermark falls more than 50 milliseconds behind wall clock and treating that watermark gap as the telemetry processing latency indicator.",
+   "D": "Create a log-based distribution metric that extracts the Bigtable MutateRow server latency from Cloud Audit Logs and define the SLI as the fraction of telemetry write operations completing in under 50 milliseconds during each live broadcast window."
+  },
+  "distractors": {
+   "A": "An uptime check measures the availability and response time of the query path, not the freshness of the data behind it: a probe can return a row in 10 milliseconds while that row is five seconds stale. It never observes event-time to queryable-time latency, and one probe a minute cannot substantiate a 99.9% target.",
+   "B": "System lag and watermark age describe the pipeline's internal backlog measured from when Dataflow received the element, so they exclude the GPS-to-ingestion hop and the Bigtable write that the end-to-end budget must cover. They are also per-stage aggregates rather than a per-message distribution, so no percentile can be derived.",
+   "D": "This times a single hop of the chain. The SLO is defined from message generation to queryable, so it must include network transit, Pub/Sub delivery, Dataflow enrichment and the write; a fast MutateRow says nothing about a message that sat in a subscription backlog. Bigtable data-plane calls are also not written to Audit Logs by default."
+  }
+ },
+ {
+  "id": "PCA-D5-001",
+  "options": {
+   "A": "Shard the pipeline into 100 topics by hashing order_id modulo 100, give each topic one subscription consumed by exactly one single-threaded subscriber process, and rely on a single consumer draining each topic's backlog serially to keep every order's events in their published sequence.",
+   "B": "Publish every event with the ordering_key attribute set to the order_id and leave the subscription at its default settings, since Pub/Sub buffers messages that share an ordering key at the publisher and hands that buffer to the subscriber as one contiguous batch in publish sequence.",
+   "D": "Publish the events unordered and reorder them downstream in a Cloud Dataflow streaming pipeline, keying by order_id and applying an event-time window with thirty seconds of allowed lateness, then sorting each key's buffered events by their embedded publish timestamp in a stateful DoFn so the order's status transitions are emitted in sequence once the window closes."
+  },
+  "distractors": {
+   "A": "Without message ordering enabled, Pub/Sub does not guarantee publish order on a subscription even to a single consumer: redelivery after a nack or an expired ack deadline, and flow-control batching, can hand that consumer an older event after a newer one. Sharding also caps parallelism at 100 and needs rebalancing by hand.",
+   "B": "The ordering key alone changes nothing about delivery. Ordered delivery is a property of the subscription: unless enable_message_ordering is set when the subscription is created, and it cannot be changed afterwards, Pub/Sub is free to deliver keyed messages out of sequence, so OrderShipped can still arrive before PaymentProcessed.",
+   "D": "It can produce a correctly sorted output, but only by holding every order's events until the window closes, adding the whole window plus the allowed lateness to end-to-end latency, and anything arriving past the lateness bound is dropped or emitted late and out of order. The requirement is ordered delivery to subscribers, which Pub/Sub provides natively."
+  }
+ },
+ {
+  "id": "PCA-D5-010",
+  "options": {
+   "A": "Attach a SpikeArrest policy with rate = 100ps to the proxy request flow, and a second SpikeArrest policy with rate = 10000pm scoped to the free-tier developer app, using that second policy to hold monthly consumption at the contracted ceiling.",
+   "C": "Attach a Quota policy with count = 100, interval = 1 and timeUnit = second to protect the catalog database, plus a ResponseCache policy on the catalog endpoint so that repeated product lookups are served from the Apigee cache instead of reaching the backend.",
+   "D": "Attach a ConcurrentRateLimit policy capping the proxy at 100 simultaneous connections to the catalog target server, and configure the backend database with read replicas that scale out automatically whenever sustained CPU utilisation crosses the alerting threshold."
+  },
+  "distractors": {
+   "A": "SpikeArrest smooths the instantaneous arrival rate: it converts its configured rate into a per-second or per-minute interval and never accumulates a running total, so it cannot express a monthly allowance. Rendered as a rate it would throttle a developer sending a legitimate short burst and would not stop one who paces requests evenly.",
+   "C": "A Quota counter is distributed across message processors and synchronised asynchronously, so it enforces a total over an interval rather than pacing arrivals within it: a hundred requests can all land inside the same fifty milliseconds and still satisfy the quota, which is precisely the CPU spike the database cannot survive.",
+   "D": "ConcurrentRateLimit caps simultaneous in-flight connections, not requests per second: a hundred fast requests can complete and be replaced continuously, driving throughput far beyond the 100 req/s the database tolerates. It also leaves the free-tier monthly allowance entirely unenforced, which is the second half of the requirement."
+  }
+ },
+ {
+  "id": "PCA-D4-051",
+  "options": {
+   "A": "Raise the Cache-Control max-age on the .ts segments to 24 hours and set the Cloud CDN cache mode to FORCE_CACHE_ALL with a high default TTL, so that each edge POP retains every segment far longer and stops refetching it from the Cloud Storage origin bucket.",
+   "C": "Move the segment origin to a dual-region Cloud Storage bucket with turbo replication enabled, so that each continent's edge POPs fetch from a nearby replica and the origin fill traffic is spread across two regions instead of concentrating on a single bucket location.",
+   "D": "Insert a fleet of managed nginx caching proxies in front of the bucket and make them the load balancer's origin, sized by an autoscaler on egress bandwidth, so the proxies serve repeated segment requests and only cold segments are ever read from Cloud Storage."
+  },
+  "distractors": {
+   "A": "A TTL only helps once an object is already in a given cache, and the cost here is the first fill: with 100 independent edge POPs a live segment is still fetched from the origin up to 100 times in the few seconds it is relevant. Live segments also age out within seconds, so a 24-hour TTL caches content nobody requests again.",
+   "C": "Replication changes where the fill requests land, not how many of them there are: the same 100 cache misses per segment still reach a bucket, so origin egress and the Cloud Storage request rate barely move, and turbo replication adds a replication charge on top. Collapsing the misses into one fetch is what removes the egress.",
+   "D": "It rebuilds origin shielding out of VMs the team then has to operate: the proxy fleet must be provisioned for the peak fill traffic of 30 million viewers, its egress is billed like the bucket's, and the autoscaler reacts in minutes while a live race's segment demand changes every few seconds."
+  }
+ },
+ {
+  "id": "PCA-D6-015",
+  "options": {
+   "A": "Add a bucket retention policy with a 30-day retention period together with an Object Lifecycle rule using the DaysSinceNoncurrentTime condition, and use them to roll the configuration files back to the state they held before the rogue script ran.",
+   "C": "Use Storage Transfer Service to copy the objects back from the bucket's replica in the second region, since dual-region replication maintains an independent copy of every object that the rogue script's writes never reached.",
+   "D": "Open a support case asking Google Cloud to roll the bucket back to its state before the incident, since Cloud Storage retains recently overwritten object data internally and can restore a bucket to an earlier point in time on request."
+  },
+  "distractors": {
+   "A": "A retention policy prevents future deletions and lifecycle rules only decide when objects are removed or change class; neither one stores an earlier copy of an object, and applying a policy now cannot reach back to content already overwritten. Lifecycle rules can delete noncurrent versions, never restore them.",
+   "C": "Replication copies the current state of the bucket, overwrite included: the 0-byte objects propagate to the replica within seconds and destroy the good copies there too. Geo-replication protects against losing a region, not against a client writing bad data, and it keeps no earlier generation to transfer back.",
+   "D": "Cloud Storage offers no point-in-time bucket rollback, and support cannot recover data that the customer's own configuration did not retain. Recovering an overwritten object depends entirely on a feature enabled beforehand, which in this bucket is Object Versioning and the noncurrent generations it keeps."
+  }
+ },
+ {
+  "id": "PCA-D4-032",
+  "options": {
+   "A": "Raise only timeout_sec from 1 second to 10 seconds while leaving check_interval_sec at 1 and unhealthy_threshold at 1, so that a probe which is slow to answer during a garbage collection pause is given far longer before it is judged to have failed.",
+   "B": "Leave the health check exactly as configured and enable outlier detection on the backend service with consecutiveErrors set to 5 and a 30-second base ejection time, together with a connection draining timeout of 300 seconds on that backend service.",
+   "C": "Leave the health check thresholds untouched and remove the pauses instead, switching the JVM to the ZGC low-latency collector, enlarging the heap and adding backends so that no single instance ever stalls for longer than the 1-second probe timeout."
+  },
+  "distractors": {
+   "A": "A health check's timeout_sec must be less than or equal to its check_interval_sec, so a 10-second timeout on a 1-second interval is rejected outright, and even if it were accepted a single failed probe would still eject the backend. Absorbing a transient pause requires consecutive failures, which is what unhealthy_threshold controls.",
+   "B": "Outlier detection ejects endpoints on observed request errors and only applies to proxy load balancers with a suitable locality policy; it runs alongside the health check rather than replacing it, so the unchanged one-second, one-failure probe keeps removing backends during garbage collection pauses. Draining only governs how existing connections finish.",
+   "C": "Tuning the collector shortens pauses but cannot guarantee that none ever exceeds one second, and a probe configured to eject after a single failure leaves no margin for a slow response, a lost packet or a scheduling delay. Adding backends while the herd is already cascading simply enlarges the pool the overload sweeps through."
+  }
+ }
+]

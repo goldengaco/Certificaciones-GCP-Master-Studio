@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D5-011",
+  "options": {
+   "A": "Deploy Anthos Service Mesh with Google-managed Mesh CA and apply a PeerAuthentication policy with 'mode: PERMISSIVE' in every application namespace, so sidecars accept mTLS from migrated workloads while legacy clients keep connecting over plaintext TCP.",
+   "B": "Install Anthos Service Mesh and enforce an Istio AuthorizationPolicy in the istio-system namespace with an ALLOW rule matching source principals under the cluster.local trust domain, relying on the mesh default transport settings for pod-to-pod encryption.",
+   "D": "Deploy cert-manager with a self-managed private CA issuing 90-day X.509 certificates mounted into pods as Kubernetes Secrets, and terminate TLS at the Istio ingress gateway so all traffic is encrypted before it reaches the application pods."
+  },
+  "distractors": {
+   "A": "PERMISSIVE mode makes the sidecar accept both mTLS and plaintext on the same port, so unencrypted TCP is never rejected; only 'mode: STRICT' satisfies the Zero-Trust mandate.",
+   "B": "AuthorizationPolicy governs who may call what (authorization); it does not set the transport security mode, which stays PERMISSIVE by default, so plaintext connections are still accepted.",
+   "D": "This only encrypts north-south traffic terminating at the ingress gateway; east-west pod-to-pod traffic stays plaintext, and rotating certificates mounted as Secrets requires restarting the pods."
+  }
+ },
+ {
+  "id": "PCA-D3-032",
+  "options": {
+   "A": "Apply the boolean Organization Policy constraint 'constraints/compute.skipDefaultNetworkCreation' so that new projects are created without the default VPC network and its auto-assigned public addresses.",
+   "B": "Create a hierarchical firewall policy at the organization node denying all ingress from 0.0.0.0/0 and all egress to the internet, so any external IP attached to a Compute Engine instance is unreachable.",
+   "C": "Apply the Organization Policy list constraint 'constraints/compute.vmCanIpForward' set to 'Deny All' so that no Compute Engine instance may forward packets or advertise a public address to the internet."
+  },
+  "distractors": {
+   "A": "It only suppresses creation of the default VPC in new projects; instances built on a custom VPC can still be provisioned with an external IP address, so the requirement is not enforced.",
+   "B": "Firewall rules filter packets but do not stop provisioning: the VM is still created with a public IP, the exposure is one rule edit away, and the policy requirement is about assignment, not traffic.",
+   "C": "vmCanIpForward controls the canIpForward capability (IP forwarding for router/NAT appliances); it has no effect on whether an instance may be assigned an external IP address."
+  }
+ },
+ {
+  "id": "PCA-D3-020",
+  "options": {
+   "A": "Create hierarchical VPC firewall rules matching the cluster's node network tags that allow TCP 8080 and deny TCP 5432 between the node subnet IP ranges, filtering frontend, backend and database traffic at the VPC dataplane.",
+   "B": "Define Kubernetes RBAC Roles and RoleBindings restricting which tenant service accounts may read the database Service object, so the kube-apiserver authorizes every pod-to-pod connection on TCP 5432 before it is forwarded.",
+   "D": "Apply the Kubernetes NetworkPolicy manifests with podSelector and ingress rules to the existing cluster without enabling Dataplane V2 or the network policy add-on, relying on the kube-proxy iptables chains to drop frontend traffic to TCP 5432."
+  },
+  "distractors": {
+   "A": "VPC firewall rules and network tags apply to the node VM NICs, so they cannot distinguish pods that share a node and a namespace; intra-node pod traffic never reaches the VPC dataplane.",
+   "B": "RBAC authorizes calls to the Kubernetes API server; it is not in the network datapath, so a frontend pod can still open a TCP socket straight to the database pod IP on port 5432.",
+   "D": "Without an enforcement engine (Dataplane V2/Cilium or the Calico add-on), the API server accepts the NetworkPolicy objects but nothing implements them; kube-proxy does not enforce NetworkPolicy."
+  }
+ },
+ {
+  "id": "PCA-D4-002",
+  "options": {
+   "A": "Run a Cloud Build pipeline that executes 'kubectl set image' followed by 'kubectl rollout status', with manual approval gates between the 10%, 50% and 100% stages and an on-call operator running 'kubectl rollout undo' when 5xx errors are reported.",
+   "B": "Configure a Cloud Deploy delivery pipeline with the standard deployment strategy across dev, staging and prod targets, using a deploy verification job to run smoke tests after each promotion and requiring manual approval before the production rollout.",
+   "C": "Use Config Sync to reconcile the rendered manifests from a Git repository into the GKE fleet, changing the image tag through a pull request and rolling back by reverting the commit when Cloud Monitoring reports elevated 5xx error rates."
+  },
+  "distractors": {
+   "A": "The rollback is human-triggered, so it cannot fire automatically at the 1% error threshold; kubectl also shifts replica counts, not request percentages, so the 10/50/100 split is approximate.",
+   "B": "The standard strategy replaces the whole workload in one step, so there is no 10/50/100 traffic progression and verification runs after 100% of users are already on the new release.",
+   "C": "Config Sync reconciles the desired state to 100% of the fleet at once: there is no weighted traffic progression, and the Git revert is a manual action gated on a human reading the alert."
+  }
+ },
+ {
+  "id": "PCA-D4-050",
+  "options": {
+   "A": "Run the Cloud Healthcare API DICOM deidentify operation with the ATTRIBUTE_CONFIDENTIALITY_BASIC_PROFILE tag filter profile, which clears PatientName, PatientID and PatientBirthDate from every instance, then export the anonymized studies to the university partner's Cloud Storage bucket.",
+   "B": "Export the 1,000,000 DICOM objects to a Cloud Storage bucket and run a Sensitive Data Protection (Cloud DLP) inspection and de-identification job over that bucket with PERSON_NAME and DATE_OF_BIRTH infoType detectors, replacing every finding with a cryptographic hash before sharing.",
+   "C": "Keep the studies in the DICOM store and grant the university's Google group the roles/healthcare.dicomViewer role inside a VPC Service Controls perimeter with an access level restricted to the partner's IP ranges, auditing every retrieval through Data Access audit logs."
+  },
+  "distractors": {
+   "A": "The basic profile only rewrites DICOM metadata attributes; it never touches pixel data, so patient names burned into the image pixels are exported to the research partner intact.",
+   "B": "A DLP storage job does not parse the DICOM container format: the files are scanned as unsupported binary, so neither the metadata tags nor the burned-in pixel text are detected or redacted.",
+   "C": "Perimeters and IAM control who can reach the data, not what the data contains; the partner still receives fully identifiable PHI, which is exactly what the de-identification requirement forbids."
+  }
+ },
+ {
+  "id": "PCA-D3-045",
+  "options": {
+   "A": "Configure an Apigee X VerifyAPIKey policy on every protected proxy so that each dealer presents its consumer key in the 'apikey' query parameter, and attach a Quota policy of 10,000 requests per dealer per day to the parts catalog API product.",
+   "C": "Configure the Apigee X OAuthV2 policy with the 'authorization_code' grant type, redirecting each dealer's software to a consent login page to obtain an authorization code, exchanging that code for an access token, and attaching a Quota policy per developer app.",
+   "D": "Attach a single SpikeArrest policy at rate = 50ps to the shared target endpoint of the dealer environment, and authenticate callers with a Cloud Armor rate-limit rule that matches each dealer's source IP address at the load balancer edge."
+  },
+  "distractors": {
+   "A": "A consumer API key is a static, non-expiring credential: it does not implement the mandated OAuth 2.0 client-credentials exchange that issues short-lived access tokens from client_id and client_secret.",
+   "C": "authorization_code requires an interactive resource owner to approve a consent screen; dealer server-to-server software has no human in the loop, so client_credentials is the only usable grant type here.",
+   "D": "SpikeArrest on the shared target endpoint is one bucket for the whole environment, and Cloud Armor limits by source IP, so dealers behind a shared NAT are throttled together instead of per dealer."
+  }
+ },
+ {
+  "id": "PCA-D6-005",
+  "options": {
+   "A": "The Anycast IP keeps advertising us-central1, so US requests continue to reach the failed backend service until an operator sets that backend's capacity scaler to 0.0 or detaches the unhealthy instance group from the backend service.",
+   "B": "Cloud DNS detects the regional outage through its health checks and rewrites the A record to point at the europe-west1 forwarding rule address, so US clients fail over once their resolver's TTL expires, typically within five minutes.",
+   "D": "Google's edge proxies return HTTP 503 to US users for the duration of the outage, because a Global External Application Load Balancer only spills traffic between backends inside the same region; cross-region overflow requires a second load balancer."
+  },
+  "distractors": {
+   "A": "Failover is not an operator action: the global load balancer removes backends that fail health checks from rotation automatically, without any capacity-scaler or backend-service edit.",
+   "B": "A Global External Application Load Balancer publishes one Anycast VIP for both regional backend groups, so no DNS record changes and failover is never bounded by resolver TTL caching.",
+   "D": "Cross-region overflow is native to the global load balancer: the GFE forwards requests over Google's backbone to the next healthy region rather than returning 503 to the client."
+  }
+ },
+ {
+  "id": "PCA-D4-028",
+  "options": {
+   "A": "Recreate the bucket in the multi-region 'us' location, which stores redundant copies of every object in at least two geographically separated regions and raises the availability SLA to 99.95% for the mission-critical transaction logs.",
+   "B": "Keep the standard dual-region bucket and schedule a Storage Transfer Service job every 15 minutes that copies newly written objects into a second bucket in us-east1, filtered by last modification time so only new logs are moved.",
+   "D": "Enable Pub/Sub notifications for Cloud Storage on the OBJECT_FINALIZE event and trigger a Cloud Run function that copies each new transaction log object into a bucket in us-east1 within seconds of the original write completing."
+  },
+  "distractors": {
+   "A": "Multi-region replication is asynchronous with no RPO commitment: the same multi-hour replication tail applies, and Turbo Replication (the only SLA-backed 15-minute option) is available on dual-region buckets only.",
+   "B": "The minimum repeat interval for a Storage Transfer Service schedule is one hour, so a 15-minute cadence cannot be configured and the RPO target is missed by a factor of four.",
+   "D": "This is a best-effort copy with no SLA and no reconciliation: a function invocation that exhausts its retries leaves an object unreplicated and unnoticed, so 100% coverage cannot be asserted."
+  }
+ },
+ {
+  "id": "PCA-D5-022",
+  "options": {
+   "A": "Build a single container image holding the application, the OpenTelemetry Collector and the Envoy binaries, started by an s6-overlay or supervisord process supervisor that restarts any child process that exits, and deploy that one image as the Cloud Run service.",
+   "B": "Deploy the OpenTelemetry Collector and the Envoy proxy as two additional standalone Cloud Run services, and have the application container forward its metrics and request logs to their HTTPS endpoints, authenticating with an ID token minted from the runtime service account.",
+   "D": "Run the OpenTelemetry Collector as a Cloud Run sidecar and place Envoy outside the service as a regional internal Application Load Balancer fronting a Serverless NEG, so every request is logged and routed before it is dispatched to a Cloud Run instance."
+  },
+  "distractors": {
+   "A": "One container means one PID 1: Cloud Run's startup and liveness probes and its per-container CPU/memory limits apply to the whole image, so a collector that dies inside the supervisor is invisible to the platform.",
+   "B": "Separate services have independent lifecycles and autoscaling, so they are not in the same instance: the required localhost path and shared instance lifecycle become billable cross-service network round trips.",
+   "D": "An internal load balancer is a shared hop in front of the service, not a container inside the instance, so it cannot do per-instance local request logging over localhost or share the instance lifecycle."
+  }
+ },
+ {
+  "id": "PCA-D1-065",
+  "options": {
+   "B": "Configure Object Lifecycle Management to transition every new master recording to Archive storage one day after creation and to delete it at 3650 days, paying the $0.0012/GB/month Archive rate for the full 10 PB from day one.",
+   "C": "Set a lifecycle rule transitioning objects to Nearline at 30 days and to Coldline at 90 days, with a Delete action at 1825 days so the archive stays capped at the five most recent racing seasons of 4K master recordings.",
+   "D": "Create separate Coldline and Archive buckets and run monthly Storage Transfer Service jobs that move masters older than 270 and 365 days into them, deleting each object from the source bucket once the transfer has been verified."
+  },
+  "distractors": {
+   "B": "Broadcasters read these masters constantly during the 9-month season: Archive charges per-GB retrieval fees plus a 365-day minimum storage duration, so promo-reel access costs far exceed the storage saved.",
+   "C": "Deleting at 1825 days (5 years) violates the 10-year historical rights retention requirement; the footage would be destroyed halfway through the mandated retention period.",
+   "D": "Copying between buckets changes every object's URI, breaking broadcaster references and rights catalogs, and each move is a billed rewrite plus early-deletion charge, whereas in-place class transitions are free."
+  }
+ },
+ {
+  "id": "PCA-D5-019",
+  "options": {
+   "B": "Deploy the container as a Cloud Run Service with the request timeout raised to its 60-minute maximum and CPU always allocated, exposing a /run endpoint that Cloud Scheduler invokes nightly with an OIDC token and holds open for 45 minutes.",
+   "C": "Refactor the script into a Cloud Run function (2nd gen) triggered by a Cloud Scheduler job that publishes to a Pub/Sub topic, letting the event-driven runtime scale to zero between the nightly backup and report generation executions.",
+   "D": "Provision a Spot e2-standard-4 instance from an instance template with the script in the startup-script metadata, and use Compute Engine instance schedules to start it at 01:00 and stop it at 02:00 every night automatically."
+  },
+  "distractors": {
+   "B": "It still forces the batch code to wrap itself in an HTTP listener and hold one request open for 45 minutes; any client or proxy disconnect kills the run with no completion or retry semantics.",
+   "C": "Event-driven (Pub/Sub-triggered) functions are capped at a 540-second timeout even in 2nd gen, so a 45-minute job is terminated after 9 minutes; only HTTP functions reach 60 minutes.",
+   "D": "A Spot VM can be preempted with 30 seconds' notice mid-backup and the fixed 02:00 stop truncates any run that overruns, with no retry, task tracking or completion status."
+  }
+ },
+ {
+  "id": "PCA-D5-027",
+  "options": {
+   "A": "Set a garbage collection policy of max_age = '2592000s' at the table level so that every column family inherits the 30-day expiry, and rely on Bigtable's default cell versioning behaviour to retain only the three newest values per column qualifier.",
+   "C": "Schedule a nightly Dataflow job that scans the whole table with a timestamp range filter and issues DeleteFromColumn mutations for every impression cell older than 30 days, trimming each qualifier down to its three newest versions in the same pass.",
+   "D": "Enable Bigtable managed backups on the impression table with a 30-day backup retention period and a daily backup schedule, keeping three backup copies per table so that expired impression data drops out of the retention window automatically."
+  },
+  "distractors": {
+   "A": "Garbage collection policies are configured per column family, not per table, and Bigtable's default is to keep an unlimited number of cell versions, so nothing caps versions at three.",
+   "C": "A nightly full scan of 100 TB consumes the cluster's entire node throughput and generates a mutation storm, duplicating work the storage engine already performs for free during compaction.",
+   "D": "Backup retention governs how long backup copies survive, not the cells in the live table: the 100 TB of impression data older than 30 days is never expunged from the table itself."
+  }
+ },
+ {
+  "id": "PCA-D6-030",
+  "options": {
+   "A": "Expose each cluster behind its own regional external Application Load Balancer and configure a Cloud DNS geolocation routing policy with health checks across the three regional IP addresses, so clients resolve to the nearest healthy region.",
+   "B": "Enable Multi Cluster Services (MCS) on the GKE fleet and export the matchmaking Service with a ServiceExport, so the ClusterSetIP resolves healthy endpoints across all three clusters and mobile API requests reach any surviving region.",
+   "C": "Attach standalone zonal network endpoint groups from all three clusters to one Global External Application Load Balancer backend service, and shift the per-region backend weights from a Cloud Build job when a region is declared down."
+  },
+  "distractors": {
+   "A": "DNS failover is bounded by record TTL and by resolver and mobile-client caching, so recovery takes minutes rather than the seconds the requirement demands.",
+   "B": "MCS provides east-west service discovery between clusters inside the fleet's VPC; it creates no internet-facing ingress, so external mobile API requests have nothing to reach.",
+   "C": "Changing backend weights from a job is an operator-triggered action, so failover is not automatic, and standalone NEGs must be reconciled by hand as node pools scale or roll."
+  }
+ },
+ {
+  "id": "PCA-D2-027",
+  "options": {
+   "A": "Provision the Apigee X instance with Service Networking VPC Peering to the customer VPC and expose the runtime by attaching an external IP address directly to the Apigee ingress, restricting access with VPC firewall rules that allow TCP 443 only from the 5,000 dealer source ranges.",
+   "C": "Create a Private Service Connect endpoint in the customer VPC that targets the Apigee service attachment, publish that endpoint's address in Cloud DNS so dealer software resolves it from the internet, and attach a Cloud Armor security policy directly to the PSC forwarding rule.",
+   "D": "Connect the Google-managed Apigee tenant VPC to the customer VPC with an HA VPN tunnel for backend microservice calls, and expose the runtime through a regional external Application Load Balancer using a hybrid connectivity NEG pointing at the Apigee instance IP with Cloud Armor attached."
+  },
+  "distractors": {
+   "A": "The Apigee X runtime lives in a Google-managed tenant project where the customer can neither attach external IPs nor write firewall rules; external exposure must go through a customer-owned load balancer.",
+   "C": "A PSC endpoint is an internal RFC 1918 address reachable only from inside the VPC and its peers, so it cannot serve 5,000 dealers over the internet, and Cloud Armor attaches to backend services, not to forwarding rules.",
+   "D": "Customers cannot create VPN gateways or tunnels inside the Google-managed tenant VPC; connectivity to Apigee X is established only through Service Networking peering or Private Service Connect."
+  }
+ },
+ {
+  "id": "PCA-D6-011",
+  "options": {
+   "A": "Yes, Cloud NAT allocates a pool of NAT gateway VMs per zone, so you must size that pool with --min-ports-per-vm and place a second gateway in another zone; otherwise a zonal failure of the NAT instance group stops all outbound updates.",
+   "B": "No, provided you switch the gateway to manual NAT IP assignment with dynamic port allocation, because with automatic IP allocation the single reserved external address becomes the failure domain and outbound updates stop once its ports are exhausted.",
+   "C": "Yes, partially: the Cloud NAT control plane is regional, so you should create one Cloud NAT gateway per zone on separate Cloud Routers and spread the 1,000 instances across those subnets, so a zone outage removes only a third of the outbound capacity."
+  },
+  "distractors": {
+   "A": "Cloud NAT has no gateway VMs and no instance group to size or spread across zones; the NAT function runs in the Andromeda host dataplane next to each instance, so there is nothing to make redundant.",
+   "B": "Port or IP exhaustion is a capacity limit that surfaces as NAT allocation errors, not a single point of failure, and automatic IP allocation adds addresses as demand grows rather than pinning one.",
+   "C": "A Cloud NAT gateway is already regional and covers subnet ranges, not zones; two gateways cannot serve the same subnet range for the same NAT purpose, so this configuration is rejected."
+  }
+ },
+ {
+  "id": "PCA-D3-023",
+  "options": {
+   "A": "Create a Cloud Armor security policy with the pre-configured sqli-v33-stable and xss-v33-stable expressions at sensitivity level 4 and an action of deny(403) from the start, then remove individual signature IDs with opt_out_rule_ids as shoppers report blocked checkouts.",
+   "B": "Enable Cloud Armor Adaptive Protection on the backend security policy so its machine learning model baselines normal shopper behaviour and proposes rules, reviewing the generated findings in Security Command Center before promoting any of them to a deny action.",
+   "C": "Attach the pre-configured sqli-v33-stable and xss-v33-stable WAF rules to the load balancer as an edge security policy in preview mode, inspect the enforcedAction field of the request logs in Cloud Logging for 24 hours, then switch the rules to deny."
+  },
+  "distractors": {
+   "A": "Enforcing before tuning blocks legitimate customers during the whole tuning period, which is precisely what the requirement forbids; false positives are found from lost revenue instead of from preview logs.",
+   "B": "Adaptive Protection detects volumetric Layer 7 DDoS anomalies, not SQLi or XSS payload signatures; OWASP Top 10 coverage comes from the pre-configured WAF rule sets, not from the ML baseline.",
+   "C": "Edge security policies match only on origin.ip, origin.asn, region code, headers, method, path, query and scheme; they cannot evaluate pre-configured WAF expressions, so the policy is rejected."
+  }
+ },
+ {
+  "id": "PCA-D3-024",
+  "options": {
+   "A": "Security Command Center Standard tier, which includes Security Health Analytics misconfiguration scanning and Web Security Scanner, exporting findings to a Pub/Sub topic so the SOC can correlate them inside its own SIEM.",
+   "B": "Aggregate Cloud Audit Logs and VPC Flow Logs from all 200 projects into a central BigQuery log sink and build log-based metrics with Cloud Monitoring alerting policies for failed SSH attempts and unusual outbound traffic volumes.",
+   "C": "Deploy Cloud IDS with packet mirroring policies in every VPC so that Palo Alto threat signatures inspect north-south and east-west traffic, raising findings for command-and-control callbacks and connections to cryptomining pools."
+  },
+  "distractors": {
+   "A": "The Standard tier ships posture and misconfiguration scanning only; Event Threat Detection, VM Threat Detection and Container Threat Detection are Premium-tier services and are simply absent here.",
+   "B": "This rebuilds the plumbing but not the detections: there is no Google threat-intelligence feed of known C2 addresses and no hypervisor memory inspection, and every rule must be written and maintained by the SOC.",
+   "C": "Cloud IDS inspects mirrored network traffic only, so it is blind to anomalous IAM service account usage and to in-guest cryptomining that generates no distinctive network signature."
+  }
+ },
+ {
+  "id": "PCA-D4-054",
+  "options": {
+   "A": "Create authorized views over the soil, moisture and yield tables in a dedicated dataset, grant each of the 50 companies' Google groups roles/bigquery.dataViewer on that dataset plus roles/bigquery.jobUser in the publisher project, and attribute query spend with billing labels.",
+   "C": "Use BigQuery Data Transfer Service dataset copies to replicate the curated soil, moisture and yield tables into each of the 50 subscriber projects on a nightly schedule, running each copy under a dedicated service account and deleting the copied dataset when a subscription lapses.",
+   "D": "Deploy a Cloud Run API in front of BigQuery that authenticates each of the 50 companies with an API key, runs parameterized queries against the soil and yield tables on their behalf, meters per-company usage for invoicing, and streams paginated JSON result pages to their analytics tools."
+  },
+  "distractors": {
+   "A": "Granting jobUser in the publisher project makes subscribers run their jobs on the publisher's slots and bill, and every subscriber query is visible to the publisher, breaking the subscriber privacy requirement.",
+   "C": "It duplicates petabytes 50 times with up to 24 hours of staleness, and once a copy lands in a subscriber's project the publisher cannot revoke it: the data is already theirs.",
+   "D": "Subscribers receive extracted JSON pages instead of a queryable dataset, so they cannot join the data with their own BigQuery tables, and the sharing is no longer zero-copy or in place."
+  }
+ },
+ {
+  "id": "PCA-D3-021",
+  "options": {
+   "A": "Create a PodSecurityPolicy object setting runAsNonRoot, allowPrivilegeEscalation false and hostPID, hostNetwork and hostIPC to false, then bind it to every tenant service account with an RBAC ClusterRole granting 'use' on that policy.",
+   "B": "Label every tenant namespace with 'pod-security.kubernetes.io/enforce: baseline' and 'pod-security.kubernetes.io/warn: restricted' so the built-in admission controller rejects host namespace usage and warns about remaining hardening gaps.",
+   "C": "Set runAsNonRoot: true and allowPrivilegeEscalation: false in the securityContext of every Deployment template, and enforce those fields with a conftest policy check in the CI pipeline before any manifest is merged."
+  },
+  "distractors": {
+   "A": "PodSecurityPolicy was removed in Kubernetes 1.25, so the API no longer exists on current GKE clusters and the object cannot be created or bound at all.",
+   "B": "The baseline level blocks host namespaces and privileged containers but does not require runAsNonRoot or forbid allowPrivilegeEscalation; those are restricted-level controls, and 'warn' only prints a message.",
+   "C": "A CI check is advisory and bypassable: anyone with RBAC to create pods can apply a manifest straight to the API server, so enforcement has to happen at admission time in the cluster."
+  }
+ },
+ {
+  "id": "PCA-D4-023",
+  "options": {
+   "A": "Take a consistent backup with 'mysqldump --single-transaction --master-data', upload the 10TB dump to Cloud Storage, import it into Cloud SQL for MySQL with the import API, and cut the application over once the import job reports success.",
+   "C": "Configure Datastream to read the on-premises MySQL binlog, land the change events in Cloud Storage, and run a Dataflow template that merges them into Cloud SQL for MySQL, cutting the application over once the unprocessed backlog reaches zero.",
+   "D": "Use Migrate to Virtual Machines to replicate the on-premises MySQL server's disks into Compute Engine, boot the migrated VM in Google Cloud after a final delta sync, and repoint the application at the migrated database instance."
+  },
+  "distractors": {
+   "A": "Dumping, transferring and importing 10TB takes many hours during which writes must be frozen, so the outage is orders of magnitude larger than the 15-minute cutover budget.",
+   "C": "Datastream targets analytics sinks (BigQuery, Cloud Storage); the merge job reconstructs rows without transactional ordering guarantees, so the Cloud SQL copy is not a consistent OLTP replica to promote.",
+   "D": "The target is a lifted, self-managed MySQL VM, not the managed Cloud SQL instance the migration requires, and the final disk sync plus boot of a 10TB server exceeds the 15-minute window."
+  }
+ },
+ {
+  "id": "PCA-D3-041",
+  "options": {
+   "B": "Keep the bucket private with uniform bucket-level access and grant the 'allAuthenticatedUsers' principal roles/storage.objectViewer, so only players signed in with a Google account can download, rotating the object names every hour to expire old links.",
+   "C": "Grant each purchasing player's Google identity roles/storage.objectViewer on the object with an IAM Condition on request.time that limits the binding to a one-hour window, and remove the binding from a Cloud Run function once the download completes.",
+   "D": "Front the bucket with Cloud CDN and a Global External Application Load Balancer backend bucket, and issue Cloud CDN signed cookies scoped to the /expansions/ path with a one-hour expiry, leaving the origin bucket readable by allUsers so the CDN can fetch objects."
+  },
+  "distractors": {
+   "B": "allAuthenticatedUsers means any Google account on the internet, not paying players, so a forum post with the object name is enough to leech the 5GB pack; renaming is not an expiry mechanism.",
+   "C": "It requires a Google identity per player and an IAM binding per purchase, but an allow policy is capped at roughly 1,500 principals and 100 conditional bindings, so it cannot scale to a consumer game audience.",
+   "D": "Leaving the origin readable by allUsers lets anyone bypass the CDN and fetch the object directly from the storage.googleapis.com URL, so the signed cookies protect nothing."
+  }
+ },
+ {
+  "id": "PCA-D3-047",
+  "options": {
+   "A": "Store each patient's choices as FHIR Consent resources in the same FHIR store and have the research pipeline read the relevant Consent resource before every request, filtering out records whose provision.type is 'deny' in application code.",
+   "C": "Stream the FHIR resources into BigQuery, tag the oncology and psychiatric columns with Data Catalog policy tags, and enforce column-level access control so that each research pipeline reads only the data categories it is entitled to.",
+   "D": "Run the Cloud Healthcare API deidentify operation before every research export, redacting psychiatric resource types and direct identifiers into a destination FHIR store so that no record a patient might object to ever leaves the clinical environment."
+  },
+  "distractors": {
+   "A": "Enforcement lives in the client, so any other pipeline or direct API caller holding FHIR read access bypasses it entirely; consent has to be enforced by the store at access time.",
+   "C": "Policy tags bind access to columns and principals, not to patients, so they cannot express one patient allowing oncology sharing while another denies psychiatric sharing on the same column.",
+   "D": "A blanket redaction applies one rule to every patient, destroying data that patients did consent to share, and it is a batch export step rather than a real-time per-request consent check."
+  }
+ },
+ {
+  "id": "PCA-D4-018",
+  "options": {
+   "A": "You must enable the physical storage billing model on the dataset and then run ALTER TABLE ... SET OPTIONS to flag each partition as archived; BigQuery applies the 50% long-term discount only to partitions that carry that explicit flag.",
+   "B": "Storage pricing drops by 50% after 90 consecutive days without modification, but queries against long-term partitions are billed at a higher on-demand analysis rate and are queued behind active-storage jobs, so audit tables should be copied back first.",
+   "D": "Pricing drops by 50% after 90 days, but any query that reads a table resets its long-term storage clock back to zero, so the compliance team's quarterly audit queries keep every audit table billed permanently at the active storage rate."
+  },
+  "distractors": {
+   "A": "No such flag or DDL exists: the transition to long-term storage is automatic and evaluated per table or per partition, and the physical billing model is an unrelated pricing choice.",
+   "B": "Long-term storage changes the storage price only; query pricing, performance, availability and scheduling are identical to active storage, so copying tables back would only restart the 90-day clock.",
+   "D": "Only modifications reset the clock (loads, DML, streaming inserts, copies into the table); reading or querying a table has no effect on its long-term storage eligibility."
+  }
+ },
+ {
+  "id": "PCA-D6-028",
+  "options": {
+   "A": "Spanner's managed autoscaler detects the sustained CPU utilization and adds processing units to the instance; the extra compute absorbs the surge because every node can serve any row of the table directly from the shared distributed storage layer.",
+   "B": "Spanner detects the hot range and automatically rewrites the table's primary key, hashing the leading column into a shard prefix so that new writes for the surging product category are distributed uniformly across the whole key space.",
+   "C": "A database administrator must pre-create split points for the hot key range before the sale and add read-only replicas so that the surge in reads for that product category is served outside the read-write quorum until traffic subsides."
+  },
+  "distractors": {
+   "A": "A split is served by exactly one server at a time, so adding processing units alone does not relieve a hot split; throughput stays capped until Spanner subdivides that range into smaller splits.",
+   "B": "Spanner never alters your schema or primary key; hashing or adding a shard prefix is a design-time decision the developer makes, not a runtime action the service performs.",
+   "C": "Pre-splitting is an optional, proactive tool for anticipated events (and split points expire), so it does not describe how Spanner reacts to a surge already in progress; read-only replicas exist only in multi-region configurations."
+  }
+ },
+ {
+  "id": "PCA-D5-008",
+  "options": {
+   "A": "Apply SlidingWindows of 1 minute every 30 seconds with a processing-time trigger of AfterProcessingTime.pastFirstElementInPane().plusDelayOf(15 minutes) and discardingFiredPanes(), emitting each pane once the delay has elapsed.",
+   "B": "Apply FixedWindows of 1 minute with withAllowedLateness(Duration.standardMinutes(15)) and keep the default trigger and default accumulation mode, so each window emits when the watermark passes its end and again as late readings arrive.",
+   "C": "Use GlobalWindows with Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane().plusDelayOf(1 minute)) and accumulatingFiredPanes(), keeping every speed reading in state and recomputing violations each minute of wall-clock time."
+  },
+  "distractors": {
+   "A": "discardingFiredPanes() means a late firing carries only the late elements, so downstream receives isolated fragments instead of a corrected window total, and sliding windows double-count each reading.",
+   "B": "The default accumulation mode is discarding, so late panes emit only the newly arrived readings rather than the recomputed window result, and there is no early firing before the watermark.",
+   "C": "A global window with a processing-time trigger has no event-time boundaries, so a reading that arrives 10 minutes late is counted in the current wall-clock pane instead of the minute it belongs to."
+  }
+ }
+]

@@ -1,0 +1,540 @@
+[
+  {
+    "id": "ACE-D3-011",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "subtopic": "GKE Workload Deployment via Declarative Manifests",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Deploying Kubernetes Application Workloads Using Declarative Manifests",
+    "scenario": "Your team has authored a declarative Kubernetes manifest file named frontend-app.yaml containing Deployment and Service specifications. You need to deploy and manage the lifecycle of these containerized resources on an active Google Kubernetes Engine (GKE) Standard cluster from your local terminal with minimal operational overhead. Which command should you execute?",
+    "conceptos": [
+      "GKE Workloads",
+      "kubectl apply",
+      "Kubernetes Deployment",
+      "Declarative Management"
+    ],
+    "keywords": [
+      "kubectl apply",
+      "gke",
+      "kubernetes",
+      "manifest",
+      "deployment",
+      "service"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run gcloud container clusters update cluster-1 --manifest=frontend-app.yaml."
+      },
+      {
+        "letter": "B",
+        "text": "Run kubectl apply -f frontend-app.yaml against your active cluster context."
+      },
+      {
+        "letter": "C",
+        "text": "Run kubectl create -f frontend-app.yaml and avoid declarative object tracking."
+      },
+      {
+        "letter": "D",
+        "text": "Run gcloud compute instances create-from-container using frontend-app.yaml."
+      }
+    ],
+    "correct": "B",
+    "explanation": "The standard and recommended method for deploying declarative Kubernetes resources to a GKE cluster is `kubectl apply -f <manifest>`, which creates or updates resources in-place while maintaining declarative configuration state in the cluster. `gcloud container clusters update` manages cluster-level properties (like autoscaling or release channels), not application workloads. `kubectl create` is imperative and fails if objects exist, while `create-from-container` is for standalone Compute Engine VMs.",
+    "distractors": {
+      "A": "gcloud container clusters update modifies cluster control plane settings and node pool configurations, not application-level Kubernetes workloads.",
+      "C": "kubectl create performs imperative object creation that errors if objects already exist and does not support declarative in-place schema reconciliations.",
+      "D": "gcloud compute instances create-from-container provisions individual Compute Engine VMs running a container, not multi-resource manifests in GKE clusters."
+    },
+    "gcloudCommand": "kubectl apply -f frontend-app.yaml",
+    "architectureComponents": [
+      "GKE Standard Cluster",
+      "Kubernetes Deployment",
+      "Kubernetes Service"
+    ],
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/deploying-workloads-overview"
+  },
+  {
+    "id": "ACE-D3-012",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "subtopic": "Artifact Registry Docker Repository Creation",
+    "difficulty": "easy",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 80,
+    "caseStudy": null,
+    "title": "Creating Artifact Registry Repositories for Docker Container Images",
+    "scenario": "Your organization is migrating container image storage from deprecated Container Registry to Artifact Registry. You need to create a regional repository named backend-containers in us-central1 optimized for storing standard OCI container images with fine-grained IAM controls. Which Google Cloud CLI command should you run?",
+    "conceptos": [
+      "Artifact Registry",
+      "Docker Repositories",
+      "OCI Artifacts",
+      "gcloud artifacts"
+    ],
+    "keywords": [
+      "artifact registry",
+      "docker",
+      "repository",
+      "us-central1",
+      "gcloud artifacts"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud artifacts repositories create backend-containers --repository-format=docker --location=us-central1"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud container images repositories create backend-containers --format=docker --location=us-central1"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud storage buckets create gs://us-central1-docker.pkg.dev/backend-containers --location=us-central1"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud compute images create backend-containers --source-format=docker --storage-location=us-central1"
+      }
+    ],
+    "correct": "A",
+    "explanation": "The command `gcloud artifacts repositories create <NAME> --repository-format=docker --location=<REGION>` creates an OCI-compliant Artifact Registry repository in the specified region. `gcloud container images` does not have a repository creation subcommand. Cloud Storage buckets and Compute Engine images are separate services that do not provide native Docker registry protocols.",
+    "distractors": {
+      "B": "gcloud container images manages Container Registry image tags and vulnerability summaries, but lacks a repositories create subcommand.",
+      "C": "gcloud storage buckets create provisions object storage buckets rather than native OCI-compliant Artifact Registry package repositories.",
+      "D": "gcloud compute images create provisions bootable VM disk images for Compute Engine, not container image repositories."
+    },
+    "gcloudCommand": "gcloud artifacts repositories create backend-containers --repository-format=docker --location=us-central1",
+    "architectureComponents": [
+      "Artifact Registry",
+      "Docker Repository",
+      "Cloud Run",
+      "GKE"
+    ],
+    "officialDocUrl": "https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images"
+  },
+  {
+    "id": "ACE-D3-013",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.5",
+    "subsectionName": "Deploying and implementing networking resources",
+    "subtopic": "Cloud NAT Gateway Deployment with Cloud Router",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 100,
+    "caseStudy": null,
+    "title": "Deploying Managed Cloud NAT Gateways for Secure Outbound Egress",
+    "scenario": "You administer a custom VPC network with private subnets hosting Compute Engine instances without external IP addresses. The backend instances require secure outbound internet connectivity to download operating system security patches while strictly blocking all unsolicited inbound connections from the internet. You must deploy Cloud NAT in region us-east1. Which two steps should you execute? (Choose 2.)",
+    "conceptos": [
+      "Cloud NAT",
+      "Cloud Router",
+      "Outbound Connectivity",
+      "Private Subnets"
+    ],
+    "keywords": [
+      "cloud nat",
+      "cloud router",
+      "private subnet",
+      "egress",
+      "nat gateway"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create an egress VPC firewall rule allowing all outbound TCP and UDP traffic to destination 0.0.0.0/0."
+      },
+      {
+        "letter": "B",
+        "text": "Create a Cloud Router named nat-router in region us-east1 on the custom VPC network using gcloud compute routers create."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy a custom Compute Engine instance running an iptables NAT proxy in each subnet with external IP addresses enabled."
+      },
+      {
+        "letter": "D",
+        "text": "Create a Cloud NAT gateway named nat-gw attached to nat-router in us-east1 using gcloud compute routers nats create."
+      },
+      {
+        "letter": "E",
+        "text": "Configure Private Google Access on all subnets in us-east1 to enable outbound internet gateway routing."
+      }
+    ],
+    "correct": [
+      "B",
+      "D"
+    ],
+    "explanation": "Deploying Google Cloud NAT requires two distinct actions: (1) creating a regional Cloud Router in the VPC (`gcloud compute routers create`) to establish the control plane, and (2) configuring the Cloud NAT service on that router (`gcloud compute routers nats create`). Egress firewall rules do not perform address translation. Custom proxy VMs introduce maintenance overhead and failure points. Private Google Access only connects to Google APIs, not the public internet.",
+    "distractors": {
+      "A": "VPC firewall rules perform stateful packet filtering but cannot perform network address translation for VMs lacking public IPs.",
+      "C": "Custom VM-based NAT proxies introduce maintenance overhead, single points of failure, and bottleneck risks compared to managed Cloud NAT.",
+      "E": "Private Google Access only enables private routing to Google APIs and services (*.googleapis.com), not outbound public internet access."
+    },
+    "gcloudCommand": "gcloud compute routers create nat-router --network=custom-vpc --region=us-east1; gcloud compute routers nats create nat-gw --router=nat-router --region=us-east1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges",
+    "architectureComponents": [
+      "VPC Network",
+      "Cloud Router",
+      "Cloud NAT Gateway",
+      "Compute Engine VMs"
+    ],
+    "officialDocUrl": "https://cloud.google.com/nat/docs/gcloud-quickstart"
+  },
+  {
+    "id": "ACE-D3-014",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud SQL SQL Dump Import",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Importing Relational SQL Dump Files into Cloud SQL Instances",
+    "scenario": "Your team maintains a database migration pipeline. A 20 GB compressed MySQL dump file db-backup.sql.gz is stored in Cloud Storage bucket gs://corp-db-dumps/. You need to import this data into database app_db on an existing Cloud SQL instance named prod-mysql-1 using the Google Cloud CLI with minimal manual steps. Which command should you execute?",
+    "conceptos": [
+      "Cloud SQL",
+      "gcloud sql import",
+      "Cloud Storage Dump",
+      "Database Migration"
+    ],
+    "keywords": [
+      "cloud sql",
+      "mysql",
+      "import",
+      "cloud storage",
+      "gcloud sql import"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud sql instances restore-backup prod-mysql-1 --source=gs://corp-db-dumps/db-backup.sql.gz"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud sql databases import-file prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud sql import sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db"
+      },
+      {
+        "letter": "D",
+        "text": "bq load --source_format=CSV corp_db.app_table gs://corp-db-dumps/db-backup.sql.gz --autodetect"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The command `gcloud sql import sql <INSTANCE> <GCS_URI> --database=<DB_NAME>` asynchronously imports SQL dump files directly from Cloud Storage into a Cloud SQL database. `restore-backup` restores native Cloud SQL automated backups via backup IDs. `databases import-file` is not a valid gcloud command. `bq load` is for loading analytical data into BigQuery tables.",
+    "distractors": {
+      "A": "gcloud sql instances restore-backup is used to restore automated Cloud SQL backups by ID, not to import external SQL files from Cloud Storage.",
+      "B": "gcloud sql databases import-file is not a valid gcloud command; the correct command group is gcloud sql import sql.",
+      "D": "bq load is the BigQuery CLI tool used for loading structured data into BigQuery tables, not relational databases in Cloud SQL."
+    },
+    "gcloudCommand": "gcloud sql import sql prod-mysql-1 gs://corp-db-dumps/db-backup.sql.gz --database=app_db",
+    "architectureComponents": [
+      "Cloud SQL MySQL",
+      "Cloud Storage Bucket",
+      "Database Migration"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/import-export/importing"
+  },
+  {
+    "id": "ACE-D3-015",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "subtopic": "App Engine Application Deployment and Traffic Promotion",
+    "difficulty": "easy",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 80,
+    "caseStudy": null,
+    "title": "Deploying Applications to App Engine Standard with Immediate Traffic Routing",
+    "scenario": "You have developed a Node.js web application with an app.yaml configuration file targeting the App Engine standard environment in your local source directory. You need to deploy the application to project retail-app-prod and ensure the newly deployed version immediately receives 100% of incoming production traffic. Which command should you execute?",
+    "conceptos": [
+      "App Engine Standard",
+      "gcloud app deploy",
+      "Traffic Promotion",
+      "app.yaml"
+    ],
+    "keywords": [
+      "app engine",
+      "app.yaml",
+      "gcloud app deploy",
+      "promote",
+      "traffic split"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run gcloud run deploy retail-app-prod --app-yaml=app.yaml --platform=managed in your directory."
+      },
+      {
+        "letter": "B",
+        "text": "Run gcloud app deploy app.yaml --project=retail-app-prod --promote from your local directory."
+      },
+      {
+        "letter": "C",
+        "text": "Run gcloud compute instances create-from-app app.yaml --project=retail-app-prod --target-pool."
+      },
+      {
+        "letter": "D",
+        "text": "Run gsutil cp -r . gs://retail-app-prod-appengine/ && gcloud app versions start latest-v1."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Running `gcloud app deploy app.yaml --project=<PROJECT> --promote` deploys the application source code to App Engine and immediately routes 100% of incoming traffic to the newly created version (`--promote` is the default behavior). `gcloud run deploy` does not accept `app.yaml` files. `create-from-app` is a non-existent command. Copying raw files to Cloud Storage via `gsutil cp` does not initiate App Engine builds or runtime staging.",
+    "distractors": {
+      "A": "gcloud run deploy is used for deploying container images to Cloud Run and does not parse App Engine app.yaml configuration files.",
+      "C": "gcloud compute instances create-from-app is an invalid command; Compute Engine does not deploy App Engine descriptors.",
+      "D": "Copying files to Cloud Storage via gsutil cp does not trigger App Engine buildpack compilation or version deployment."
+    },
+    "gcloudCommand": "gcloud app deploy app.yaml --project=retail-app-prod --promote",
+    "architectureComponents": [
+      "App Engine Standard",
+      "Cloud Build",
+      "Traffic Split"
+    ],
+    "officialDocUrl": "https://cloud.google.com/appengine/docs/standard/nodejs/deploying-web-app"
+  },
+  {
+    "id": "ACE-D3-016",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "subtopic": "GKE Spot Node Pool Creation",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Creating Spot VM Node Pools in Existing GKE Clusters",
+    "scenario": "You manage an existing GKE Standard cluster named analytics-cluster in region us-central1. To run fault-tolerant batch processing workloads at significant cost savings, you need to provision a dedicated node pool named batch-pool containing 5 e2-standard-4 Spot VMs labeled with app=batch-worker. Which command should you execute?",
+    "conceptos": [
+      "GKE Node Pools",
+      "Spot VMs",
+      "Preemptible Nodes",
+      "gcloud container node-pools"
+    ],
+    "keywords": [
+      "gke",
+      "node pool",
+      "spot vms",
+      "preemptible",
+      "gcloud container node-pools"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud compute instance-groups managed create batch-pool --cluster=analytics-cluster --region=us-central1 --size=5 --preemptible --node-labels=app=batch-worker --template=e2-standard-4"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud container clusters update analytics-cluster --region=us-central1 --add-node-pool=batch-pool --machine-type=e2-standard-4 --num-nodes=5 --preemptible --labels=app=batch-worker"
+      },
+      {
+        "letter": "D",
+        "text": "kubectl create nodepool batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --replicas=5 --spot-instances --labels=app=batch-worker --validate=true"
+      }
+    ],
+    "correct": "A",
+    "explanation": "The command `gcloud container node-pools create <POOL_NAME> --cluster=<CLUSTER> --region=<REGION> --machine-type=<TYPE> --num-nodes=<N> --spot --node-labels=<KEY=VAL>` creates a new node pool attached to an existing GKE cluster using Spot VMs. `gcloud compute instance-groups` creates standalone Compute Engine MIGs not managed by GKE. `clusters update` does not support adding node pools. `kubectl` cannot provision cloud compute infrastructure directly.",
+    "distractors": {
+      "B": "Standalone Compute Engine Managed Instance Groups are not managed by the GKE control plane as integrated Kubernetes node pools.",
+      "C": "gcloud container clusters update modifies cluster-level properties; provisioning new node pools requires gcloud container node-pools create.",
+      "D": "kubectl manages in-cluster Kubernetes objects and cannot invoke cloud provider infrastructure APIs to provision physical VM node pools."
+    },
+    "gcloudCommand": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker",
+    "architectureComponents": [
+      "GKE Standard Cluster",
+      "Spot VMs",
+      "Kubernetes Node Pool"
+    ],
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/node-pools"
+  },
+  {
+    "id": "ACE-D3-017",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.5",
+    "subsectionName": "Deploying and implementing networking resources",
+    "subtopic": "Application Load Balancer Backend Configuration",
+    "difficulty": "hard",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 110,
+    "caseStudy": null,
+    "title": "Configuring Global Application Load Balancer Backend Services and Health Checks",
+    "scenario": "You are configuring a Global External Application Load Balancer to distribute traffic across a Managed Instance Group (MIG) named web-mig-us located in region us-central1. You have already provisioned the MIG. You need to establish an HTTP health check and configure a global backend service that routes traffic to this MIG. Which two steps should you execute? (Choose 2.)",
+    "conceptos": [
+      "Application Load Balancer",
+      "Backend Services",
+      "Health Checks",
+      "Managed Instance Groups"
+    ],
+    "keywords": [
+      "load balancer",
+      "backend service",
+      "health check",
+      "managed instance group",
+      "global"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create an HTTP health check named web-health-check on port 80 using gcloud compute health-checks create http."
+      },
+      {
+        "letter": "B",
+        "text": "Create a regional forwarding rule named web-fwd-rule pointing directly to the web-mig-us backend instances."
+      },
+      {
+        "letter": "C",
+        "text": "Create a global backend service with web-health-check attached and add web-mig-us as its backend endpoint."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a Cloud Armor security policy and configure it as the direct proxy target for the web-mig-us MIG."
+      },
+      {
+        "letter": "E",
+        "text": "Configure a target pool named web-pool on port 80 and register all individual VM instance IP addresses."
+      }
+    ],
+    "correct": [
+      "A",
+      "C"
+    ],
+    "explanation": "Configuring the backend tier of a Global External Application Load Balancer requires: (1) creating a health check (`gcloud compute health-checks create http`) to monitor backend instance health, and (2) creating a global backend service (`gcloud compute backend-services create --global`) that references the health check and attaching the Managed Instance Group (`backend-services add-backend`). Forwarding rules point to target proxies, not directly to backend instances. Target pools are for legacy Network Load Balancers. Cloud Armor policies attach to backend services, not as standalone routing proxies.",
+    "distractors": {
+      "B": "Forwarding rules in Application Load Balancers route traffic to target HTTP(S) proxies and URL maps, never directly to instance groups.",
+      "D": "Cloud Armor policies attach to backend services for security filtering; they do not function as direct traffic routing proxies.",
+      "E": "Target pools are legacy backend mechanisms used exclusively with external passthrough Network Load Balancers."
+    },
+    "gcloudCommand": "gcloud compute health-checks create http web-health-check --port=80; gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --global; gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --global",
+    "architectureComponents": [
+      "External Application Load Balancer",
+      "Backend Service",
+      "Health Check",
+      "MIG"
+    ],
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/https/setup-global-ext-https-compute"
+  },
+  {
+    "id": "ACE-D3-018",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "BigQuery Table Partitioning and Clustering Creation",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Creating Partitioned and Clustered Tables in BigQuery via bq CLI",
+    "scenario": "You need to deploy a high-volume financial transactions table named transactions inside an existing BigQuery dataset corp_finance. To optimize query performance and control costs, the table must be partitioned daily on the transaction_time TIMESTAMP column, clustered by merchant_id and customer_id, and created with schema ./schema.json. Which command should you execute?",
+    "conceptos": [
+      "BigQuery",
+      "Table Partitioning",
+      "Clustering",
+      "bq mk"
+    ],
+    "keywords": [
+      "bigquery",
+      "partitioning",
+      "clustering",
+      "bq mk",
+      "time_partitioning_field"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "bq mk --table --schema=./schema.json --range_partitioning=transaction_time,1,100,1 --cluster_by=merchant_id corp_finance.transactions"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud bigquery tables create transactions --dataset=corp_finance --partition-by=transaction_time --cluster-by=merchant_id,customer_id"
+      },
+      {
+        "letter": "C",
+        "text": "bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json"
+      },
+      {
+        "letter": "D",
+        "text": "bq load --source_format=CSV --time_partitioning_type=DAY --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The command `bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id <DATASET.TABLE> <SCHEMA_FILE>` creates a BigQuery table with timestamp-based partitioning and multi-column clustering. `--range_partitioning` is for integer ranges. `gcloud bigquery` is not a valid CLI command group. `bq load` ingests data records rather than creating empty table definitions from schemas.",
+    "distractors": {
+      "A": "--range_partitioning partitions tables by integer ranges rather than TIMESTAMP or DATE fields and uses non-standard clustering flags.",
+      "B": "gcloud bigquery is not a standard Google Cloud CLI command group; BigQuery schemas and tables are managed via the bq CLI or SQL DDL.",
+      "D": "bq load is used to load data rows from data files into tables, rather than creating an empty schema definition with partition metadata."
+    },
+    "gcloudCommand": "bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json",
+    "architectureComponents": [
+      "BigQuery Dataset",
+      "Partitioned Table",
+      "Clustered Table"
+    ],
+    "officialDocUrl": "https://cloud.google.com/bigquery/docs/creating-partitioned-tables"
+  }
+]

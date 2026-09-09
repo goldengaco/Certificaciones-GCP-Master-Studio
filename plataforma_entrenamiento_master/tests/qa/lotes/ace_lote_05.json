@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D5-026",
+  "subtopic": "Cloud IAM Google Groups Architecture Best Practices",
+  "scenario": "An enterprise onboarding and offboarding process experiences frequent developer turnover. Granting and revoking individual IAM role bindings across 50 project IAM policies directly on user email addresses has led to administrative errors and dangling permissions. What is Google Cloud's recommended best practice for scalable IAM administration?",
+  "correct": "D",
+  "clave_len": 174,
+  "explanation": "Google Cloud IAM best practice mandates binding IAM roles to Google Groups (e.g. `developers@corp.com`, `data-analysts@corp.com`) rather than individual user accounts. Membership in groups is managed via Cloud Identity/Workspace, allowing instant access revocation upon employee offboarding.",
+  "doc": "https://cloud.google.com/iam/docs/understanding-roles#google-groups",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Write a nightly cron script that deletes and recreates all IAM policies."
+   },
+   {
+    "letter": "B",
+    "len": 86,
+    "text": "Grant primitive roles/editor directly to individual developer personal Gmail accounts."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Share a single service account JSON key among all developers."
+   },
+   {
+    "letter": "D",
+    "len": 174,
+    "text": "Assign IAM roles exclusively to Google Groups in Google Workspace/Cloud Identity, and manage individual permissions by adding or removing users from the corresponding groups."
+   }
+  ],
+  "ratio": 2.38
+ },
+ {
+  "id": "ACE-D5-045",
+  "subtopic": "Organization Policy Resource Location Constraint",
+  "scenario": "To comply with European General Data Protection Regulation (GDPR) data sovereignty laws, corporate compliance mandates that developers across all projects in the organization can ONLY provision cloud resources (VMs, Buckets, Databases) inside European regions (`in:europe-locations`). Any attempt to create resources in US or Asia regions must be blocked automatically. Which Organization Policy constraint should you enforce?",
+  "correct": "C",
+  "clave_len": 115,
+  "explanation": "The `gcp.resourceLocations` Organization Policy constraint restricts the physical geographic locations where resource creation (Compute Engine, GCS, Cloud SQL, BigQuery) is permitted, preventing resource provisioning outside allowed regions (e.g. `in:europe-locations`).",
+  "doc": "https://cloud.google.com/resource-manager/docs/organization-policy/defining-locations",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "Create a VPC firewall rule blocking US IP addresses."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Revoke Owner roles from all project administrators."
+   },
+   {
+    "letter": "C",
+    "len": 115,
+    "text": "Enforce the Organization Policy constraint 'gcp.resourceLocations' with allowedValues set to 'in:europe-locations'."
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "Delete all subnets in US regions manually."
+   }
+  ],
+  "ratio": 2.38
+ },
+ {
+  "id": "ACE-D4-004",
+  "subtopic": "BigQuery Dry-Run Query Analysis & FinOps",
+  "scenario": "A data scientist is about to execute a complex SQL query on a multi-terabyte dataset in BigQuery. Before running the query, the scientist wants to verify the SQL syntax and know the exact number of bytes that will be scanned and billed, without incurring any query analysis charges. How should they execute the query?",
+  "correct": "D",
+  "clave_len": 121,
+  "explanation": "BigQuery dry-run queries validate SQL query syntax and calculate the exact number of bytes scanned without executing the query, creating jobs, or consuming on-demand query quota/budget.",
+  "doc": "https://cloud.google.com/bigquery/docs/estimate-costs#dry-run",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 37,
+    "text": "Run the query with LIMIT 10 appended."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Run the query on a Cloud SQL database instead."
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "Export the data to Cloud Storage and check the file size in the console."
+   },
+   {
+    "letter": "D",
+    "len": 121,
+    "text": "Execute the query using the bq CLI with the --dry_run flag (e.g. bq query --dry_run --use_legacy_sql=false 'SELECT ...')."
+   }
+  ],
+  "ratio": 2.34
+ },
+ {
+  "id": "ACE-D5-020",
+  "subtopic": "Cloud Storage Signed URLs & Delegated Access",
+  "scenario": "You have private video files stored in Cloud Storage bucket `gs://premium-course-videos` that must remain inaccessible to the public. When an authenticated student purchases a video lesson, your backend server must generate a secure, temporary download link that expires in exactly 15 minutes, allowing the student's browser to download the file directly from Google Cloud. What mechanism should you use?",
+  "correct": "A",
+  "clave_len": 127,
+  "explanation": "Cloud Storage Signed URLs provide cryptographic delegation of read/write access for a limited time window (e.g. 15 minutes). The client can fetch the object directly from Cloud Storage without routing heavy media streaming bandwidth through backend application servers.",
+  "doc": "https://cloud.google.com/storage/docs/access-control/signed-urls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 127,
+    "text": "Generate a Cloud Storage Signed URL with a 15-minute expiration using a service account with Storage Object Viewer permissions."
+   },
+   {
+    "letter": "B",
+    "len": 37,
+    "text": "Make the Cloud Storage bucket public."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Grant roles/storage.objectViewer to allUsers in IAM."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Stream the video binary data through an e2-micro VM in a custom Flask app."
+   }
+  ],
+  "ratio": 2.34
+ },
+ {
+  "id": "ACE-D5-030",
+  "subtopic": "Private Service Connect Deployment & Security",
+  "scenario": "You have Compute Engine instances in a strictly private VPC subnet with no internet access and no external IP addresses. The VMs need to securely communicate with Google APIs (Cloud Storage, BigQuery) and a third-party SaaS provider hosted on GCP without traversing public IP endpoints or setting up complex routing tables. Which technology should you deploy?",
+  "correct": "D",
+  "clave_len": 117,
+  "explanation": "Private Service Connect (PSC) allows private consumption of Google APIs and producer services using private internal IP addresses within your VPC, avoiding internet routing, complex VPC peering CIDR overlaps, and external IP vulnerabilities.",
+  "doc": "https://cloud.google.com/vpc/docs/private-service-connect",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 55,
+    "text": "Deploy an unmanaged Squid proxy VM with an external IP."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Assign public IPv4 addresses to all VMs and open firewall port 443."
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Cloud DNS public forwarding."
+   },
+   {
+    "letter": "D",
+    "len": 117,
+    "text": "Private Service Connect (PSC) endpoints (via forwarding rules with target-google-apis-bundle or service attachments)."
+   }
+  ],
+  "ratio": 2.34
+ },
+ {
+  "id": "ACE-D3-049",
+  "subtopic": "Cloud Tasks Queue Deployment",
+  "scenario": "Your web application processes order notifications by sending webhooks to external third-party merchant servers. Some merchant servers can only handle up to 10 requests per second. To prevent overwhelming external merchant systems, you need to deploy an asynchronous task queue that dispatches HTTP tasks at a strictly controlled rate of 10 tasks/second. What service and command should you use?",
+  "correct": "B",
+  "clave_len": 133,
+  "explanation": "Google Cloud Tasks provides managed task execution with granular rate limiting and backoff controls. Using `gcloud tasks queues create` with `--max-dispatches-per-second=10` strictly throttles outbound execution rates to protect downstream third-party systems.",
+  "doc": "https://cloud.google.com/tasks/docs/configuring-queues",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "gcloud logging sinks create webhook-sink --rate=10"
+   },
+   {
+    "letter": "B",
+    "len": 133,
+    "text": "gcloud tasks queues create merchant-webhook-queue --location=us-central1 --max-dispatches-per-second=10 --max-concurrent-dispatches=5"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "gcloud pubsub topics create merchant-webhook-topic --max-rate=10"
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "gcloud compute instances create webhook-proxy --rate-limit=10"
+   }
+  ],
+  "ratio": 2.28
+ },
+ {
+  "id": "ACE-D3-051",
+  "subtopic": "Cloud Memorystore Redis Deployment",
+  "scenario": "You are deploying a session caching tier for an e-commerce platform in region `us-east1`. The cache requires 10 GB of memory, Redis 7.0, and High Availability with automatic regional failover to a standby replica in a secondary zone. Which command creates this instance?",
+  "correct": "B",
+  "clave_len": 164,
+  "explanation": "Deploying a High Availability Redis instance in Cloud Memorystore requires specifying `--tier=STANDARD` (which includes cross-zone replication and automated failover) along with primary `--zone` and `--alternative-zone`.",
+  "doc": "https://cloud.google.com/memorystore/docs/redis/creating-managing-instances",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 71,
+    "text": "gcloud sql instances create session-cache-ha --database-version=REDIS_7"
+   },
+   {
+    "letter": "B",
+    "len": 164,
+    "text": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=STANDARD --redis-version=redis_7_0 --zone=us-east1-b --alternative-zone=us-east1-c"
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "gcloud compute instances create session-cache-ha --redis=true"
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "gcloud redis instances create session-cache-ha --size=10 --region=us-east1 --tier=BASIC"
+   }
+  ],
+  "ratio": 2.25
+ },
+ {
+  "id": "ACE-D5-005",
+  "subtopic": "Cloud Audit Logs Data Access Configuration",
+  "scenario": "By default, Google Cloud enables Admin Activity logs for all services at no charge, but Data Access logs (Data Read, Data Write, Admin Read) for Cloud Storage and BigQuery are disabled. An enterprise compliance framework mandates logging every single read and write access to Cloud Storage objects across the project. How do you enable these logs?",
+  "correct": "C",
+  "clave_len": 141,
+  "explanation": "Cloud Audit Logs Data Access logs are configured via the project's IAM Audit Config (`auditConfigs`). Enabling `DATA_READ` and `DATA_WRITE` for `storage.googleapis.com` generates audit records for every `objects.get`, `objects.create`, and `objects.delete` API operation.",
+  "doc": "https://cloud.google.com/logging/docs/audit/configure-data-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Create a VPC egress firewall rule on port 443 with logging enabled."
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Grant roles/logging.admin to all storage users."
+   },
+   {
+    "letter": "C",
+    "len": 141,
+    "text": "Update the project's IAM Audit Config in Cloud Console or via gcloud to enable DATA_READ and DATA_WRITE log types for storage.googleapis.com."
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Deploy a Cloud Function that polls bucket object metadata every 10 seconds."
+   }
+  ],
+  "ratio": 2.24
+ },
+ {
+  "id": "ACE-D5-018",
+  "subtopic": "Cloud IAM Service Account Impersonation",
+  "scenario": "To eliminate static JSON keys on developer workstations, an administrator wants a developer (`developer@corp.com`) to run deployment scripts by temporarily impersonating a deployment service account `deployer@corp.iam.gserviceaccount.com`. Which IAM role must be granted to the developer on the service account?",
+  "correct": "B",
+  "clave_len": 126,
+  "explanation": "Granting `roles/iam.serviceAccountTokenCreator` on a specific service account allows a user to generate short-lived OAuth access tokens and OIDC ID tokens to impersonate that service account (e.g. via `gcloud --impersonate-service-account`), eliminating the need for downloadable JSON keys.",
+  "doc": "https://cloud.google.com/iam/docs/service-account-permissions#token-creator-role",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Grant roles/iam.serviceAccountKeyAdmin to the developer."
+   },
+   {
+    "letter": "B",
+    "len": 126,
+    "text": "Grant roles/iam.serviceAccountTokenCreator to developer@corp.com on the service account deployer@corp.iam.gserviceaccount.com."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Grant roles/owner to developer@corp.com at the project level."
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Create and download a service account JSON key file."
+   }
+  ],
+  "ratio": 2.24
+ },
+ {
+  "id": "ACE-D4-039",
+  "subtopic": "Compute Engine MIG Rolling Restart Operations",
+  "scenario": "You have modified an application configuration file inside a shared NFS mount accessed by a Managed Instance Group `worker-mig` in `us-central1`. To force all worker VMs to reload the configuration, you need to perform a rolling reboot of all instances in the group without taking the entire group offline at once. Which command executes the rolling restart?",
+  "correct": "D",
+  "clave_len": 113,
+  "explanation": "`gcloud compute instance-groups managed rolling-action restart <MIG_NAME> --max-unavailable=<N>` performs a controlled, rolling reboot of all member instances in the MIG, restarting VMs in small batches while maintaining minimum required serving capacity.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups#restart",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "gcloud compute instances reset-all --group=worker-mig"
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "kubectl rollout restart daemonset worker-mig"
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "gcloud compute instance-groups managed delete worker-mig"
+   },
+   {
+    "letter": "D",
+    "len": 113,
+    "text": "gcloud compute instance-groups managed rolling-action restart worker-mig --region=us-central1 --max-unavailable=1"
+   }
+  ],
+  "ratio": 2.22
+ },
+ {
+  "id": "ACE-D4-005",
+  "subtopic": "Cloud Logging Advanced Query Filters",
+  "scenario": "Your production web service is returning HTTP 500 errors. You need to view all log entries in Cloud Logging from Compute Engine instances in project `prod-app` that contain a `severity` of `ERROR` or `CRITICAL` within the last 1 hour, filtering on resource type `gce_instance`. Which query filter expression should you enter in Cloud Logging Explorer?",
+  "correct": "C",
+  "clave_len": 90,
+  "explanation": "Cloud Logging Query Language uses structured key-value expressions. Filtering by `resource.type=\"gce_instance\"` and `severity>=(ERROR)` queries all error and emergency severity logs generated by Compute Engine VM guest agents and platform services.",
+  "doc": "https://cloud.google.com/logging/docs/view/logging-query-language",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 28,
+    "text": "logName=\"all\" AND error=true"
+   },
+   {
+    "letter": "B",
+    "len": 49,
+    "text": "SELECT * FROM logs WHERE type='vm' AND status=500"
+   },
+   {
+    "letter": "C",
+    "len": 90,
+    "text": "resource.type=\"gce_instance\" AND severity>=(ERROR) AND timestamp >= \"2026-08-20T20:00:00Z\""
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "gcloud compute instances list --filter='errors'"
+   }
+  ],
+  "ratio": 2.18
+ },
+ {
+  "id": "ACE-D3-012",
+  "subtopic": "Artifact Registry Repository Deployment",
+  "scenario": "Your company is migrating from legacy Container Registry (`gcr.io`) to Google Artifact Registry. You need to create a regional Docker container repository named `backend-containers` in region `us-central1`. Which gcloud command creates this repository?",
+  "correct": "C",
+  "clave_len": 160,
+  "explanation": "`gcloud artifacts repositories create` is the command to provision new Artifact Registry repositories, requiring `--repository-format=docker` (or npm, maven, python) and `--location=<region>`.",
+  "doc": "https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 71,
+    "text": "gcloud storage buckets create gs://us-docker.pkg.dev/backend-containers"
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "gcloud container images repositories create backend-containers --region=us-central1"
+   },
+   {
+    "letter": "C",
+    "len": 160,
+    "text": "gcloud artifacts repositories create backend-containers --repository-format=docker --location=us-central1 --description='Docker repository for backend services'"
+   },
+   {
+    "letter": "D",
+    "len": 67,
+    "text": "gcloud compute repositories create backend-containers --type=DOCKER"
+   }
+  ],
+  "ratio": 2.17
+ },
+ {
+  "id": "ACE-D3-023",
+  "subtopic": "Cloud Build Git Triggers Deployment",
+  "scenario": "You are setting up automated continuous integration. Whenever a developer pushes a commit to the `main` branch of a connected GitHub repository `corp-app`, Cloud Build must automatically execute a build pipeline defined in `cloudbuild.yaml` in the root repository directory. Which command creates this trigger?",
+  "correct": "C",
+  "clave_len": 134,
+  "explanation": "`gcloud builds triggers create github` creates an automated CI trigger that listens to Git webhook events from a connected GitHub repository and initiates a build based on branch patterns and `cloudbuild.yaml`.",
+  "doc": "https://cloud.google.com/build/docs/automating-builds/create-manage-triggers",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "gsutil notification create -t build-topic -e OBJECT_FINALIZE gs://my-repo"
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "gcloud container clusters update --enable-git-sync=corp-app"
+   },
+   {
+    "letter": "C",
+    "len": 134,
+    "text": "gcloud builds triggers create github --repo-name=corp-app --repo-owner=my-org --branch-pattern='^main$' --build-config=cloudbuild.yaml"
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "gcloud compute triggers create github --repo=corp-app"
+   }
+  ],
+  "ratio": 2.17
+ },
+ {
+  "id": "ACE-D5-015",
+  "subtopic": "Cloud KMS Key Rotation Policies",
+  "scenario": "Corporate compliance policy requires that cryptographic keys used to encrypt databases in Cloud KMS must be automatically rotated every 90 days. Which command creates a CryptoKey with an automated 90-day rotation schedule?",
+  "correct": "C",
+  "clave_len": 162,
+  "explanation": "`gcloud kms keys create <KEY_NAME> --rotation-period=<DURATION> --next-rotation-time=<TIMESTAMP>` configures Cloud KMS to automatically generate a new primary key version on schedule, ensuring seamless cryptographic hygiene without breaking decryption of data encrypted with older versions.",
+  "doc": "https://cloud.google.com/kms/docs/rotate-key",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "gcloud compute disks update --rotate-keys=90d"
+   },
+   {
+    "letter": "B",
+    "len": 145,
+    "text": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption && set a calendar reminder to click Rotate Key"
+   },
+   {
+    "letter": "C",
+    "len": 162,
+    "text": "gcloud kms keys create db-crypto-key --keyring=db-ring --location=us-central1 --purpose=encryption --rotation-period=90d --next-rotation-time=2026-11-20T00:00:00Z"
+   },
+   {
+    "letter": "D",
+    "len": 35,
+    "text": "bq update --kms_rotation=90d db-key"
+   }
+  ],
+  "ratio": 2.16
+ },
+ {
+  "id": "ACE-D3-047",
+  "subtopic": "VPC Flow Logs Deployment",
+  "scenario": "A security operations team requires continuous network traffic metadata capture (source/destination IP, port, protocol, packet count, latency) for all connections traversing subnet `db-subnet` in `us-central1` to perform network security forensics. What command enables VPC Flow Logs on the subnet?",
+  "correct": "C",
+  "clave_len": 145,
+  "explanation": "VPC Flow Logs are enabled on subnets via `gcloud compute networks subnets update <SUBNET> --enable-flow-logs`. Specifying `--logging-sample-rate=1.0` and `--logging-metadata=include-all` captures 100% of network flow 5-tuples and rich VM metadata into Cloud Logging.",
+  "doc": "https://cloud.google.com/vpc/docs/using-flow-logs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "gcloud compute instances update-all --enable-packet-capture"
+   },
+   {
+    "letter": "B",
+    "len": 69,
+    "text": "gcloud logging sinks create db-flow-sink vpc.googleapis.com/db-subnet"
+   },
+   {
+    "letter": "C",
+    "len": 145,
+    "text": "gcloud compute networks subnets update db-subnet --region=us-central1 --enable-flow-logs --logging-sample-rate=1.0 --logging-metadata=include-all"
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "gcloud compute firewall-rules create log-all --network=prod-vpc --action=LOG"
+   }
+  ],
+  "ratio": 2.13
+ },
+ {
+  "id": "ACE-D4-058",
+  "subtopic": "Cloud SQL Maintenance Reschedule Operations",
+  "scenario": "Google Cloud scheduled an automated maintenance update for your production Cloud SQL MySQL instance during an unexpected peak sales window next Tuesday at 03:00 UTC. You need to reschedule this upcoming maintenance event to defer it by 1 week. Which gcloud command reschedules the maintenance?",
+  "correct": "A",
+  "clave_len": 129,
+  "explanation": "`gcloud sql maintenance-events reschedule <INSTANCE_NAME> --reschedule-type=SPECIFIC_TIME --schedule-time=<TIME>` allows administrators to reschedule or defer upcoming Cloud SQL system maintenance updates to an approved business window.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/maintenance#rescheduling-maintenance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 129,
+    "text": "gcloud sql maintenance-events reschedule prod-mysql-instance --reschedule-type=SPECIFIC_TIME --schedule-time=2026-09-01T03:00:00Z"
+   },
+   {
+    "letter": "B",
+    "len": 49,
+    "text": "bq update --defer-maintenance prod-mysql-instance"
+   },
+   {
+    "letter": "C",
+    "len": 69,
+    "text": "gcloud compute instances set-maintenance prod-mysql-instance --cancel"
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "gcloud sql instances restart prod-mysql-instance --no-maintenance"
+   }
+  ],
+  "ratio": 2.11
+ },
+ {
+  "id": "ACE-D5-047",
+  "subtopic": "Cloud Functions Security & IAM Roles",
+  "scenario": "You have deployed a secure, private backend Cloud Function (2nd gen) `process-order` that requires authentication (`--no-allow-unauthenticated`). An external service account `order-client-sa@corp.iam.gserviceaccount.com` needs permission to invoke this function via authenticated HTTPS requests. Which IAM role should you grant to `order-client-sa` on the Cloud Function?",
+  "correct": "D",
+  "clave_len": 100,
+  "explanation": "Invoking secured Cloud Functions requires `roles/cloudfunctions.invoker` (and `roles/run.invoker` on the underlying Cloud Run service for 2nd gen functions). The calling service account presents a signed Google OIDC ID token to authenticate and invoke the function.",
+  "doc": "https://cloud.google.com/functions/docs/securing/managing-access-iam",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Grant roles/cloudfunctions.admin at the project level."
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "Grant roles/owner at the project level."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Deploy the function with --allow-unauthenticated."
+   },
+   {
+    "letter": "D",
+    "len": 100,
+    "text": "Grant roles/cloudfunctions.invoker (and roles/run.invoker for Gen 2) on the Cloud Function resource."
+   }
+  ],
+  "ratio": 2.11
+ }
+]

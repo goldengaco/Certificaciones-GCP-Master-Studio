@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D4-056",
+  "subtopic": "Cloud Storage KMS Encryption Key Operations",
+  "scenario": "A security team has created a new Cloud KMS encryption key version `key-v2` in key ring `vault-ring`. You need to configure Cloud Storage bucket `gs://finance-records-vault` to encrypt all future uploaded objects using this specific Cloud KMS key by default. Which command sets the default KMS key?",
+  "correct": "B",
+  "clave_len": 158,
+  "explanation": "`gcloud storage buckets update <BUCKET> --default-encryption-key=<KMS_KEY_RESOURCE_ID>` sets Customer-Managed Encryption Keys (CMEK) as the default encryption mechanism for all future objects uploaded to the bucket.",
+  "doc": "https://cloud.google.com/storage/docs/encryption/customer-managed-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 71,
+    "text": "gcloud compute disks update gs://finance-records-vault --kms-key=key-v2"
+   },
+   {
+    "letter": "B",
+    "len": 158,
+    "text": "gcloud storage buckets update gs://finance-records-vault --default-encryption-key=projects/my-proj/locations/us-central1/keyRings/vault-ring/cryptoKeys/key-v2"
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "bq update --kms_key=key-v2 finance-records-vault"
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "gsutil set-kms-key gs://finance-records-vault --key=key-v2"
+   }
+  ],
+  "ratio": 2.68
+ },
+ {
+  "id": "ACE-D3-061",
+  "subtopic": "Kubernetes Secret Deployment",
+  "scenario": "You need to create a Kubernetes Generic Secret named `api-tokens` in namespace `prod` containing two key-value pairs: `api-key=SecretTokenXYZ123` and `jwt-secret=SuperSecretSigningKey987`. Which kubectl command deploys this secret directly from the CLI?",
+  "correct": "B",
+  "clave_len": 153,
+  "explanation": "`kubectl create secret generic <NAME> --from-literal=<KEY>=<VALUE>` creates a Kubernetes Secret object directly from CLI arguments, base64-encoding the values into the Kubernetes etcd cluster store.",
+  "doc": "https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "gsutil cp api-tokens.txt gs://k8s-secrets-prod/"
+   },
+   {
+    "letter": "B",
+    "len": 153,
+    "text": "kubectl create secret generic api-tokens --namespace=prod --from-literal=api-key='SecretTokenXYZ123' --from-literal=jwt-secret='SuperSecretSigningKey987'"
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "gcloud compute instances create api-tokens --secret-values='api-key=XYZ'"
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "kubectl apply secret api-tokens --key=SecretTokenXYZ123"
+   }
+  ],
+  "ratio": 2.64
+ },
+ {
+  "id": "ACE-D3-026",
+  "subtopic": "VPC Firewall Rules for GCP Health Check Probes",
+  "scenario": "You have deployed a backend Managed Instance Group on private subnets behind a Google Cloud Load Balancer. The Load Balancer health check reports all instances as `UNHEALTHY`. You discover that the VPC firewall rules are blocking Google health check probe IP ranges. Which firewall rule must you create to allow health checks?",
+  "correct": "A",
+  "clave_len": 169,
+  "explanation": "Google Cloud Load Balancer health checking systems probe instances from well-known IP ranges: `35.191.0.0/16` and `130.211.0.0/22` (and `209.85.152.0/22`, `209.85.204.0/22` for legacy LBs). An ingress firewall rule must explicitly allow these CIDR blocks to reach the backend VM instances.",
+  "doc": "https://cloud.google.com/load-balancing/docs/health-checks#firewall_rules",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 169,
+    "text": "Create an ingress firewall rule allowing TCP traffic on your application port from source IP ranges 35.191.0.0/16 and 130.211.0.0/22 targeting your backend network tags."
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Create an egress firewall rule allowing port 80 to 8.8.8.8."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Assign public IP addresses to all backend Compute Engine instances."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Create an ingress firewall rule allowing all traffic from 0.0.0.0/0."
+   }
+  ],
+  "ratio": 2.61
+ },
+ {
+  "id": "ACE-D4-027",
+  "subtopic": "Compute Engine MIG Instance Recreate Operations",
+  "scenario": "A specific VM `web-mig-4x8z` inside Managed Instance Group `web-mig` has corrupted OS files in its root filesystem. You need Compute Engine to immediately terminate this specific VM and recreate a brand-new instance from the group's instance template. Which command performs this recreation?",
+  "correct": "B",
+  "clave_len": 111,
+  "explanation": "`gcloud compute instance-groups managed recreate-instances <MIG_NAME> --instances=<INSTANCE_LIST>` instructs the MIG control plane to stop, delete, and recreate the specified member VM instances from the current instance template.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/recreating-instances-in-migs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "gcloud compute instance-groups managed delete web-mig"
+   },
+   {
+    "letter": "B",
+    "len": 111,
+    "text": "gcloud compute instance-groups managed recreate-instances web-mig --region=us-central1 --instances=web-mig-4x8z"
+   },
+   {
+    "letter": "C",
+    "len": 31,
+    "text": "kubectl delete pod web-mig-4x8z"
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "gcloud compute instances delete web-mig-4x8z"
+   }
+  ],
+  "ratio": 2.6
+ },
+ {
+  "id": "ACE-D5-012",
+  "subtopic": "VPC Firewall Rules with Target Service Accounts",
+  "scenario": "You have an e-commerce backend microservice running on Compute Engine instances. Multiple VMs in different subnets belong to the microservice. You need to allow inbound TCP traffic on port 8080 ONLY to VMs that run as the service account `backend-sa@corp.iam.gserviceaccount.com`, regardless of what network tags are added to the VMs. Which firewall rule configuration achieves this?",
+  "correct": "B",
+  "clave_len": 161,
+  "explanation": "Target Service Accounts in VPC firewall rules bind traffic permissions strictly to the cryptographically verified IAM identity running on the VM instance (`--target-service-accounts`), preventing developers from bypassing firewall rules by arbitrarily modifying network tags.",
+  "doc": "https://cloud.google.com/vpc/docs/firewalls#service-accounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Grant roles/compute.admin to the backend service account."
+   },
+   {
+    "letter": "B",
+    "len": 161,
+    "text": "Create an ingress firewall rule specifying --target-service-accounts=backend-sa@corp.iam.gserviceaccount.com, --allow=tcp:8080, and appropriate source IP ranges."
+   },
+   {
+    "letter": "C",
+    "len": 69,
+    "text": "Allow all traffic from 0.0.0.0/0 on port 8080 without target filters."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Create an ingress firewall rule specifying --target-tags=all."
+   }
+  ],
+  "ratio": 2.58
+ },
+ {
+  "id": "ACE-D3-072",
+  "subtopic": "Kubernetes Service Types: ClusterIP vs NodePort vs LoadBalancer",
+  "scenario": "You are configuring the Service manifest for a backend microservice running on GKE that will be exposed to external traffic via a Google Cloud L7 Ingress controller. What `type` of Kubernetes Service is standard and optimal when using GKE Ingress with container-native load balancing?",
+  "correct": "A",
+  "clave_len": 101,
+  "explanation": "In GKE, the standard best practice when using GKE Ingress is `type: ClusterIP` paired with Network Endpoint Groups (`cloud.google.com/neg: '{\"ingress\": true}'`). The Google Cloud Load Balancer routes traffic directly to individual Pod IPs (container-native routing), bypassing intermediate node kube-proxy hops.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/container-native-load-balancing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 101,
+    "text": "type: ClusterIP (using Network Endpoint Groups / NEG annotation for direct container-native routing)."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "type: ExternalName with a public DNS host."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "type: LoadBalancer with an external IP on every microservice."
+   },
+   {
+    "letter": "D",
+    "len": 15,
+    "text": "type: hostPort."
+   }
+  ],
+  "ratio": 2.57
+ },
+ {
+  "id": "ACE-D3-074",
+  "subtopic": "Serverless VPC Access Connector Deployment",
+  "scenario": "You are deploying a legacy Cloud Functions (1st gen) service that needs to query an internal Redis cache running on private IP `10.0.0.5` inside VPC network `corp-vpc`. You need to deploy a Serverless VPC Access connector named `serverless-conn` in region `us-central1` using IP range `10.8.0.0/28`. Which command provisions the connector?",
+  "correct": "A",
+  "clave_len": 165,
+  "explanation": "`gcloud compute networks vpc-access connectors create <NAME> --region=<REGION> --network=<NETWORK> --range=<CIDR>` creates a Serverless VPC Access connector, allowing serverless runtimes (Cloud Functions, Cloud Run, App Engine) to route private traffic into a VPC network.",
+  "doc": "https://cloud.google.com/vpc/docs/configure-serverless-vpc-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 165,
+    "text": "gcloud compute networks vpc-access connectors create serverless-conn --region=us-central1 --network=corp-vpc --range=10.8.0.0/28 --min-instances=2 --max-instances=10"
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "gcloud compute routers create serverless-conn --network=corp-vpc"
+   },
+   {
+    "letter": "C",
+    "len": 77,
+    "text": "gcloud compute instances create serverless-conn --image-family=serverless-vpc"
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "gsutil notification create -f vpc gs://serverless-conn"
+   }
+  ],
+  "ratio": 2.54
+ },
+ {
+  "id": "ACE-D3-063",
+  "subtopic": "Cloud Armor Security Policy Rule Deployment",
+  "scenario": "You have created a Cloud Armor security policy named `block-malicious-traffic`. You need to add a priority rule (priority 1000) that immediately denies all HTTP traffic originating from the malicious IP subnet `198.51.100.0/24` with an HTTP 403 Forbidden response. Which command deploys this rule?",
+  "correct": "C",
+  "clave_len": 187,
+  "explanation": "`gcloud compute security-policies rules create <PRIORITY> --security-policy=<POLICY> --src-ip-ranges=<CIDR> --action=deny-403` adds an IP blocking rule to a Cloud Armor policy to filter requests at Google's global edge before reaching backend servers.",
+  "doc": "https://cloud.google.com/armor/docs/configure-security-policies",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "bq query 'DELETE FROM traffic WHERE ip LIKE \"198.51.100.%\"'"
+   },
+   {
+    "letter": "B",
+    "len": 98,
+    "text": "gcloud compute firewall-rules create block-malicious --action=DENY --source-ranges=198.51.100.0/24"
+   },
+   {
+    "letter": "C",
+    "len": 187,
+    "text": "gcloud compute security-policies rules create 1000 --security-policy=block-malicious-traffic --src-ip-ranges=198.51.100.0/24 --action=deny-403 --description='Block known malicious subnet'"
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "gcloud compute networks subnets update --block-ip=198.51.100.0/24"
+   }
+  ],
+  "ratio": 2.53
+ },
+ {
+  "id": "ACE-D3-019",
+  "subtopic": "GKE Ingress & Managed Certificates",
+  "scenario": "You are exposing a web application on GKE using an Ingress object. You want Google to automatically provision, configure, and auto-renew a free public SSL/TLS certificate for domain `app.example.com` without managing certbot scripts or storing TLS secrets manually. Which Kubernetes objects should you deploy?",
+  "correct": "C",
+  "clave_len": 184,
+  "explanation": "GKE provides the `ManagedCertificate` custom resource definition (CRD). When an Ingress is annotated with `networking.gke.io/managed-certificates: <CERT_NAME>`, Google Cloud Load Balancing automatically provisions and auto-renews public Google-managed SSL certificates for the specified domains.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "Deploy an Nginx sidecar container running Certbot in every Pod."
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "Configure Cloud DNS to inject SSL keys into DNS TXT records."
+   },
+   {
+    "letter": "C",
+    "len": 184,
+    "text": "Deploy a ManagedCertificate custom resource defining domain 'app.example.com' and annotate the Kubernetes Ingress object with 'networking.gke.io/managed-certificates: my-managed-cert'."
+   },
+   {
+    "letter": "D",
+    "len": 97,
+    "text": "Generate a self-signed certificate and store it in a Kubernetes Secret of type kubernetes.io/tls."
+   }
+  ],
+  "ratio": 2.51
+ },
+ {
+  "id": "ACE-D4-050",
+  "subtopic": "Compute Engine Network Throughput & Egress Drops",
+  "scenario": "A high-throughput file ingestion VM running on an `e2-standard-4` machine type (which has a 10 Gbps network egress cap) is experiencing dropped network packets and slow transfer rates when sending data to external endpoints. What Cloud Monitoring metric reveals whether the VM is hitting its maximum egress bandwidth bandwidth limits?",
+  "correct": "B",
+  "clave_len": 102,
+  "explanation": "Compute Engine network bandwidth is capped per VM based on vCPU count. Monitoring `compute.googleapis.com/instance/network/sent_bytes_count` and `instance/network/dropped_packets_count` identifies egress bandwidth throttling when throughput hits the machine type's network limits.",
+  "doc": "https://cloud.google.com/compute/docs/network-bandwidth",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "logging.googleapis.com/byte_count."
+   },
+   {
+    "letter": "B",
+    "len": 102,
+    "text": "compute.googleapis.com/instance/network/sent_bytes_count (and instance/network/dropped_packets_count)."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "storage.googleapis.com/storage/object_count."
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "bigquery.googleapis.com/query/scanned_bytes."
+   }
+  ],
+  "ratio": 2.51
+ },
+ {
+  "id": "ACE-D5-035",
+  "subtopic": "Cloud Audit Logs Security Incident Investigation",
+  "scenario": "A security incident responder is investigating an unauthorized modification to project IAM policies that occurred yesterday. Which Cloud Logging filter expression will return all Cloud Audit Log entries recording IAM policy changes (`SetIamPolicy`) across the project?",
+  "correct": "D",
+  "clave_len": 113,
+  "explanation": "Administrative IAM policy changes are recorded in the Admin Activity audit log (`cloudaudit.googleapis.com/activity`) with `protoPayload.methodName=\"SetIamPolicy\"` (or `google.iam.admin.v1.CreateRole`). This records the caller identity, timestamp, and the exact delta between policy versions.",
+  "doc": "https://cloud.google.com/logging/docs/audit",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "gcloud compute instances list --filter='iam'"
+   },
+   {
+    "letter": "B",
+    "len": 45,
+    "text": "SELECT * FROM iam_table WHERE action='modify'"
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "resource.type=\"gce_instance\" AND severity=DEBUG"
+   },
+   {
+    "letter": "D",
+    "len": 113,
+    "text": "logName=\"projects/corp-prod/logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName=\"SetIamPolicy\""
+   }
+  ],
+  "ratio": 2.49
+ },
+ {
+  "id": "ACE-D5-034",
+  "subtopic": "Cloud Armor IP Whitelisting Rules",
+  "scenario": "You have an administrative dashboard exposed through an External HTTPS Load Balancer. To secure the dashboard, you need to configure a Cloud Armor security policy `admin-waf` such that ONLY traffic from corporate headquarters CIDR `203.0.113.0/24` is allowed (priority 1000), and all other traffic from the public internet is denied with HTTP 403 (default rule 2147483647). Which sequence of commands configures this policy?",
+  "correct": "C",
+  "clave_len": 128,
+  "explanation": "Creating a Cloud Armor IP Whitelist policy involves creating the policy (`gcloud compute security-policies create`), modifying the default rule (priority 2147483647) to `deny-403`, and adding a higher-priority rule (priority 1000) allowing source IP range `203.0.113.0/24` with action `allow`.",
+  "doc": "https://cloud.google.com/armor/docs/configure-security-policies#ip-lists",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Deploy an unmanaged proxy VM in the subnet."
+   },
+   {
+    "letter": "B",
+    "len": 71,
+    "text": "Create an ingress firewall rule in default VPC allowing 203.0.113.0/24."
+   },
+   {
+    "letter": "C",
+    "len": 128,
+    "text": "Create policy admin-waf, update default rule to deny-403, and add a rule at priority 1000 allowing src-ip-ranges 203.0.113.0/24."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Grant roles/owner to 203.0.113.0/24 in IAM."
+   }
+  ],
+  "ratio": 2.45
+ },
+ {
+  "id": "ACE-D3-037",
+  "subtopic": "Cloud Run Direct VPC Egress & Serverless VPC Access",
+  "scenario": "You have deployed a backend service on Cloud Run. The container needs to connect directly to a private Cloud SQL instance and private Compute Engine VMs inside VPC `prod-vpc` subnet `backend-sub` without sending traffic through the public internet. Which configuration should you apply to the Cloud Run service?",
+  "correct": "A",
+  "clave_len": 140,
+  "explanation": "Cloud Run supports Direct VPC Egress (or Serverless VPC Access connectors), allowing serverless container instances to route outbound traffic directly into a VPC subnet (`--network` and `--subnet`) to securely reach private IP addresses without leaving the Google network.",
+  "doc": "https://cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 140,
+    "text": "Deploy the Cloud Run service with Direct VPC Egress configured to subnet backend-sub with --vpc-egress=all-traffic (or private-ranges-only)."
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Assign a public IP address to the private Cloud SQL instance."
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Create an open firewall rule on port 0-65535 on 0.0.0.0/0."
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Deploy an unmanaged Squid Proxy VM on a public subnet."
+   }
+  ],
+  "ratio": 2.43
+ },
+ {
+  "id": "ACE-D5-032",
+  "subtopic": "Cloud IAM Resource-Level Hierarchy & Scoping",
+  "scenario": "You have 10 Cloud Storage buckets in project `corp-storage-prod`. A contractor needs read and write access to ONLY ONE specific bucket `gs://contractor-workspace`, and must NOT have access to any of the other 9 buckets in the project. At what level in the Google Cloud resource hierarchy should you bind the IAM role?",
+  "correct": "C",
+  "clave_len": 72,
+  "explanation": "Google Cloud IAM policies inherit downwards: Org -> Folder -> Project -> Resource. Binding IAM roles at the specific Resource level (the individual bucket `gs://contractor-workspace`) grants permissions exclusively to that single resource without granting access to other buckets in the project.",
+  "doc": "https://cloud.google.com/iam/docs/resource-hierarchy-access-control",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "At the Project level for corp-storage-prod."
+   },
+   {
+    "letter": "B",
+    "len": 26,
+    "text": "At the Organization level."
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "At the Cloud Storage Bucket resource level on gs://contractor-workspace."
+   },
+   {
+    "letter": "D",
+    "len": 20,
+    "text": "At the Folder level."
+   }
+  ],
+  "ratio": 2.43
+ },
+ {
+  "id": "ACE-D5-036",
+  "subtopic": "Cloud KMS Key Destruction Lifecycle",
+  "scenario": "A compromised key version in Cloud KMS must be destroyed. To prevent immediate irreversible data loss in case the key is still decrypting archived backups, Cloud KMS enforces a 24-hour destruction schedule (`DESTROY_SCHEDULED` state) before permanent cryptographic destruction. Which command schedules the key version for destruction?",
+  "correct": "C",
+  "clave_len": 95,
+  "explanation": "`gcloud kms keys versions destroy <VERSION> --key=<KEY> --keyring=<RING> --location=<LOC>` transitions the key version into the `DESTROY_SCHEDULED` state with a 24-hour recovery window before the cryptographic key material is irreversibly destroyed.",
+  "doc": "https://cloud.google.com/kms/docs/destroy-restore-key",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "gcloud kms keys delete customer-key --force"
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "gcloud compute disks delete customer-key"
+   },
+   {
+    "letter": "C",
+    "len": 95,
+    "text": "gcloud kms keys versions destroy 3 --key=customer-key --keyring=app-ring --location=us-central1"
+   },
+   {
+    "letter": "D",
+    "len": 35,
+    "text": "bq update --delete_kms customer-key"
+   }
+  ],
+  "ratio": 2.42
+ },
+ {
+  "id": "ACE-D3-073",
+  "subtopic": "App Engine Multi-Service Routing with dispatch.yaml",
+  "scenario": "You have an App Engine application with two services: `default` (serving main website traffic) and `mobile-api` (serving mobile endpoints). You need incoming requests to `example.com/api/*` to be routed automatically to the `mobile-api` service, while all other requests route to `default`. Which file and command deploys this routing rule?",
+  "correct": "D",
+  "clave_len": 123,
+  "explanation": "App Engine uses `dispatch.yaml` to configure path and domain routing across multiple microservices. Running `gcloud app deploy dispatch.yaml` registers the URL routing rules at the App Engine routing layer.",
+  "doc": "https://cloud.google.com/appengine/docs/standard/nodejs/reference/dispatch-yaml",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Create a VPC route in Cloud Router for /api/*."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Configure Cloud DNS with a path-based CNAME record."
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "Write a bash script running in cron to redirect traffic."
+   },
+   {
+    "letter": "D",
+    "len": 123,
+    "text": "Create a dispatch.yaml file mapping '*/api/*' to service 'mobile-api', and deploy it using gcloud app deploy dispatch.yaml."
+   }
+  ],
+  "ratio": 2.41
+ },
+ {
+  "id": "ACE-D4-036",
+  "subtopic": "GKE Node Pool Manual Resize Operations",
+  "scenario": "You have an active GKE Standard node pool `worker-pool` currently running with 3 nodes in region `us-central1`. Due to an anticipated marketing promotion, you need to manually scale the node pool to 10 nodes immediately without waiting for autoscaler triggers. Which gcloud command resizes the node pool?",
+  "correct": "D",
+  "clave_len": 105,
+  "explanation": "`gcloud container clusters resize <CLUSTER_NAME> --node-pool=<POOL_NAME> --num-nodes=<COUNT>` manually scales the number of VM worker nodes in the specified GKE node pool.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/resizing-a-cluster",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "kubectl scale node-pool worker-pool --nodes=10"
+   },
+   {
+    "letter": "B",
+    "len": 32,
+    "text": "bq update --nodes=10 worker-pool"
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "gcloud compute instances resize worker-pool --size=10"
+   },
+   {
+    "letter": "D",
+    "len": 105,
+    "text": "gcloud container clusters resize prod-cluster --node-pool=worker-pool --num-nodes=10 --region=us-central1"
+   }
+  ],
+  "ratio": 2.4
+ }
+]

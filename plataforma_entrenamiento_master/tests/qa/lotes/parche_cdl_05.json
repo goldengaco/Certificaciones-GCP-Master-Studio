@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D2-083",
+  "options": {
+   "A": "(1) Predicción por lotes (Batch Prediction en Vertex AI); (2) Predicción en línea (Online Prediction en Vertex AI Endpoints)",
+   "B": "(1) Predicción en línea en un endpoint dedicado de Vertex AI; (2) Predicción en línea sobre ese mismo endpoint invocado en bucle cada semana",
+   "C": "(1) Predicción por lotes lanzada en cada pago con tarjeta; (2) Predicción por lotes semanal sobre la tabla de clientes en BigQuery"
+  },
+  "distractors": {
+   "A": "Invierte la asignación: la predicción por lotes es asíncrona y tarda minutos u horas, por lo que nunca responde en los 50 ms del pago con tarjeta.",
+   "B": "Un endpoint en línea siempre activo puede servir el pago, pero puntuar 10 millones de clientes de una vez satura el endpoint y factura cómputo permanente.",
+   "C": "La predicción por lotes solo acepta trabajos sobre datos ya almacenados y no expone un extremo HTTP síncrono para la aprobación instantánea."
+  }
+ },
+ {
+  "id": "CDL-D2-079",
+  "options": {
+   "A": "Migrando ambas canalizaciones a clústeres de Cloud Dataproc con Apache Spark, donde el código por lotes y el de streaming siguen siendo dos aplicaciones distintas que hay que mantener y desplegar por caminos separados.",
+   "B": "Sustituyendo la capa por lotes por Pub/Sub e inserciones en streaming hacia BigQuery, de modo que la empresa deja de procesar el histórico y conserva únicamente la lógica de tiempo real dentro del almacén analítico.",
+   "D": "Ejecutando consultas programadas de BigQuery para el histórico y suscripciones de BigQuery para el flujo continuo, manteniendo dos definiciones separadas de la misma transformación de negocio en dos motores distintos."
+  },
+  "distractors": {
+   "A": "Dataproc ejecuta ambos tipos de carga, pero Spark Batch y Spark Streaming siguen siendo dos bases de código: no aporta el modelo unificado que define la arquitectura Kappa.",
+   "B": "Elimina la capa por lotes en lugar de unificarla: se pierde la capacidad de reprocesar datos históricos, que es justamente lo que la arquitectura Lambda aportaba.",
+   "D": "Sigue habiendo dos artefactos y dos rutas de ejecución que mantener sincronizadas; la unificación consiste en un único pipeline portable, no en dos consultas paralelas."
+  }
+ },
+ {
+  "id": "CDL-D2-013",
+  "options": {
+   "A": "Asignar Cloud Spanner a la aplicación departamental de nómina de 50 GB para garantizar la consistencia estricta de los recibos, y asignar Cloud SQL a la plataforma de banca digital global apoyándose en réplicas de lectura repartidas por los cuatro continentes.",
+   "B": "Asignar Cloud SQL a la aplicación de nómina y asignar Cloud Bigtable a la plataforma de banca digital global por su escalabilidad de petabytes, aceptando su modelo de consistencia por fila para registrar las transferencias entre cuentas.",
+   "C": "Asignar Firestore en Modo Nativo a la aplicación departamental de nómina por su modelo sin servidor, y asignar AlloyDB para PostgreSQL a la plataforma bancaria global replicando la instancia primaria en los cuatro continentes."
+  },
+  "distractors": {
+   "A": "Invierte la matriz: Spanner queda sobredimensionado y caro para 50 GB, y Cloud SQL no escala las escrituras a millones de transacciones por segundo, porque sus réplicas solo sirven lecturas.",
+   "B": "Bigtable es NoSQL de clave-valor sin transacciones ACID entre filas: una transferencia bancaria que debita una cuenta y acredita otra no puede garantizarse atómicamente.",
+   "C": "AlloyDB admite réplicas de lectura entre regiones, pero mantiene una única instancia primaria de escritura regional: no ofrece escrituras distribuidas globalmente con consistencia externa."
+  }
+ },
+ {
+  "id": "CDL-D2-053",
+  "options": {
+   "A": "Mantener el modelo de precios bajo demanda y establecer una cuota personalizada de bytes escaneados por proyecto y por día para frenar las consultas más pesadas de los analistas de datos.",
+   "B": "Configurar un presupuesto de Cloud Billing con alertas al 50, al 90 y al 100 por ciento del gasto previsto de analítica para que Finanzas reciba un aviso cuando BigQuery lo supere.",
+   "C": "Migrar las tablas al almacenamiento a largo plazo de BigQuery y apoyarse en el nivel gratuito de un terabyte de consultas al mes para que el gasto de cómputo quede cubierto por esa franquicia."
+  },
+  "distractors": {
+   "A": "La cuota personalizada acota el gasto máximo diario y corta las consultas al alcanzarla, pero el importe real sigue variando con los bytes escaneados: no produce un coste mensual constante.",
+   "B": "Un presupuesto notifica el gasto, no lo limita ni lo fija: la factura de BigQuery sigue dependiendo del volumen escaneado por los analistas cada mes.",
+   "C": "El descuento de almacenamiento a largo plazo abarata los datos en reposo y el nivel gratuito solo cubre un terabyte: el cómputo de las consultas pesadas se sigue facturando por bytes."
+  }
+ },
+ {
+  "id": "CDL-D2-080",
+  "options": {
+   "A": "Aplica automáticamente la clase Coldline a la zona cruda y la clase Standard a la zona curada, de modo que la separación de zonas se traduce directamente en un ahorro sobre la factura de Cloud Storage.",
+   "B": "Corrige y normaliza automáticamente los registros defectuosos de la zona cruda antes de publicarlos en la zona curada, evitando que el equipo de datos tenga que construir canalizaciones de transformación.",
+   "D": "Genera un catálogo unificado de metadatos y linaje de todos los activos, y ese catálogo es el mecanismo que impide técnicamente que los analistas de negocio consulten las tablas de la zona cruda."
+  },
+  "distractors": {
+   "A": "Las zonas de Dataplex son una construcción lógica de gobernanza sobre activos existentes; las transiciones de clase de almacenamiento las gestiona Object Lifecycle Management, no la zona.",
+   "B": "Dataplex perfila y evalúa la calidad de los datos, pero no transforma ni limpia registros: la curación sigue exigiendo canalizaciones de Dataflow o consultas de BigQuery.",
+   "D": "El catálogo describe y hace descubribles los activos, pero no aplica control de acceso; el aislamiento real proviene de las políticas de IAM asociadas a cada zona."
+  }
+ },
+ {
+  "id": "CDL-D4-001",
+  "options": {
+   "A": "Google es responsable del sistema operativo invitado, de aplicar los parches de seguridad de la máquina virtual y del tiempo de ejecución de la aplicación; el cliente solo se ocupa de sus datos y de las cuentas de usuario, igual que sucede en un servicio de software como servicio.",
+   "B": "Google es responsable de toda la pila, incluidos el hipervisor, el sistema operativo invitado, las reglas de firewall de la VPC, el código de la aplicación y las concesiones de IAM; el cliente únicamente decide en qué región y zona se despliega la carga de trabajo.",
+   "C": "El cliente es responsable de todo lo que ocurre por encima y por debajo de la máquina virtual, incluidos el mantenimiento del hardware del centro de datos, la seguridad perimetral de las instalaciones y la actualización del hipervisor, y Google solo factura el consumo."
+  },
+  "distractors": {
+   "A": "Describe el reparto propio de SaaS o PaaS: en IaaS con Compute Engine el sistema operativo invitado y sus parches son responsabilidad exclusiva del cliente.",
+   "B": "En ningún modelo de nube el proveedor asume la configuración de IAM ni las reglas de firewall del cliente; la responsabilidad se comparte, nunca se transfiere por completo.",
+   "C": "El hardware, las instalaciones y la capa del hipervisor son siempre responsabilidad de Google en IaaS: el cliente ni siquiera tiene acceso a esos componentes."
+  }
+ },
+ {
+  "id": "CDL-D4-026",
+  "options": {
+   "A": "Utilizar los informes de facturación de la consola de Cloud Billing, agrupando el gasto por proyecto, servicio y SKU desde la interfaz gráfica.",
+   "C": "Configurar presupuestos de Cloud Billing con alertas por umbral y notificaciones a Pub/Sub para cada centro de costos de la organización.",
+   "D": "Descargar cada mes desde la consola de facturación la tabla de costos y el informe de precios en CSV para abrirlos en una hoja de cálculo."
+  },
+  "distractors": {
+   "A": "Los informes de la consola permiten agrupar y filtrar el gasto, pero no ofrecen granularidad horaria por etiqueta ni son una fuente SQL sobre la que construir tableros en Looker Studio.",
+   "C": "Los presupuestos vigilan y avisan del gasto, pero no generan el conjunto de datos detallado con el desglose de CUDs y SUDs que el equipo de FinOps necesita analizar.",
+   "D": "La descarga CSV es puntual y ya viene agregada por mes: no es un flujo continuo ni permite el análisis hora por hora ni los tableros interactivos."
+  }
+ },
+ {
+  "id": "CDL-D1-021",
+  "options": {
+   "A": "Al contratar Google Cloud, la responsabilidad de la seguridad se transfiere íntegramente al proveedor, de modo que la aseguradora deja de gestionar identidades, permisos y configuración de red porque las certificaciones ISO 27001 y SOC 2 ya cubren contractualmente esas capas.",
+   "B": "Los datos de la aseguradora se cifran en reposo con claves gestionadas por el cliente, y ese cifrado basta por sí solo para impedir cualquier acceso indebido, por lo que no son necesarios controles adicionales de identidad, registro de auditoría ni segmentación de red.",
+   "C": "La seguridad de un centro de datos corporativo propio es siempre superior porque su perímetro es más pequeño, y Google Cloud solo alcanza ese nivel cuando el cliente contrata un enlace de Cloud Interconnect dedicado que evita por completo la Internet pública."
+  },
+  "distractors": {
+   "A": "Confunde certificaciones con responsabilidad compartida: las auditorías acreditan a Google, pero el cliente sigue siendo responsable de IAM, de la configuración y de sus datos.",
+   "B": "El cifrado protege un vector concreto, el acceso al medio de almacenamiento; una credencial legítima comprometida sigue leyendo los datos ya descifrados por el servicio.",
+   "C": "La superficie de ataque no se reduce por el tamaño del perímetro, e Interconnect es un servicio de conectividad privada, no un control de seguridad de la plataforma."
+  }
+ },
+ {
+  "id": "CDL-D3-076",
+  "options": {
+   "A": "Cloud Run (el servicio de contenedores sin servidor de Google Cloud para APIs HTTP)",
+   "B": "Identity Platform (el servicio de autenticación de usuarios finales de Google Cloud)",
+   "D": "Apigee X (la plataforma de gestión de APIs de Google Cloud para exponer servicios)"
+  },
+  "distractors": {
+   "A": "Cloud Run ejecuta el backend en contenedores, pero no aporta SDKs de cliente móvil, autenticación social, Crashlytics ni notificaciones push.",
+   "B": "Identity Platform cubre solo la autenticación de usuarios; no incluye base de datos en tiempo real, informes de fallos ni mensajería push.",
+   "D": "Apigee gestiona, protege y monetiza las APIs del backend, pero no ofrece el SDK móvil ni los servicios de aplicación que pide el equipo."
+  }
+ },
+ {
+  "id": "CDL-D2-072",
+  "options": {
+   "B": "Conservación del mismo dimensionamiento de nodos que tenían en Teradata, ya que BigQuery exige reservar por adelantado un clúster de tamaño fijo mediante un contrato anual antes de poder ejecutar la primera consulta.",
+   "C": "Sustitución obligatoria de todo el SQL existente por código en Java o Python sobre Apache Beam, ya que BigQuery no admite dialectos SQL estándar ni las funciones analíticas del almacén de datos anterior del banco.",
+   "D": "Reducción inmediata del coste de la red WAN de la sede corporativa y cifrado de las copias de seguridad en cinta, que pasan a custodiarse en el mismo centro de datos donde reside el almacén analítico."
+  },
+  "distractors": {
+   "B": "BigQuery es serverless y por defecto factura bajo demanda; las reservas de slots son opcionales y elásticas, no un clúster fijo obligatorio con compromiso anual.",
+   "C": "BigQuery admite GoogleSQL, compatible con ANSI, y ofrece herramientas de traducción de SQL heredado: la migración no obliga a reescribir la analítica en Beam.",
+   "D": "Menciona beneficios de conectividad y respaldo ajenos a la pregunta: no aborda la eliminación del aprovisionamiento de hardware, la elasticidad ni el TCO."
+  }
+ },
+ {
+  "id": "CDL-D1-002",
+  "options": {
+   "A": "Únicamente los costos de capital del ciclo de renovación: compra de servidores, cabinas de almacenamiento, equipamiento de red y licencias perpetuas, amortizados a cinco años.",
+   "C": "Exclusivamente la factura mensual de Google Cloud proyectada a tres años con la Calculadora de Precios, comparada con el precio de lista de la renovación del hardware local.",
+   "D": "Solamente los costos indirectos de operación: electricidad, refrigeración, espacio en rack y salarios del equipo de administración de sistemas, sin contabilizar hardware ni licencias."
+  },
+  "distractors": {
+   "A": "Reduce el TCO al gasto de capital y deja fuera los costos operativos recurrentes (energía, refrigeración, personal, inactividad) que suelen dominar el coste real.",
+   "C": "Compara solo precios de adquisición y omite los costos indirectos del centro de datos propio, que es precisamente donde aparece la diferencia económica de la nube.",
+   "D": "Es la mitad complementaria del cálculo anterior: el TCO integra los costos directos e indirectos a la vez, no uno de los dos grupos por separado."
+  }
+ },
+ {
+  "id": "CDL-D2-044",
+  "options": {
+   "A": "Google Cloud exige que todo prompt que contenga datos personales pase antes por Sensitive Data Protection, porque de lo contrario las entradas se incorporan automáticamente al conjunto de entrenamiento del modelo base.",
+   "B": "Los prompts del banco pasan a ser propiedad conjunta de Google y del cliente durante el periodo de retención de registros, y Google puede reutilizarlos para mejorar el servicio siempre que estén previamente anonimizados.",
+   "D": "El compromiso solo aplica si el banco despliega el modelo tras un perímetro de VPC Service Controls; al usar las APIs públicas de Gemini los prompts sí se emplean para reentrenar los modelos fundacionales."
+  },
+  "distractors": {
+   "A": "La inspección con Sensitive Data Protection es una buena práctica opcional del cliente; el compromiso contractual de no entrenar con sus datos no depende de que se active.",
+   "B": "No existe propiedad conjunta de los datos: el cliente conserva la propiedad exclusiva y Google no reutiliza sus entradas para mejorar los modelos, ni siquiera anonimizadas.",
+   "D": "VPC Service Controls añade aislamiento de red frente a la exfiltración, pero la garantía de gobernanza de datos aplica al servicio con independencia de esa configuración."
+  }
+ },
+ {
+  "id": "CDL-D2-077",
+  "options": {
+   "A": "Realizar un ajuste fino (Fine-Tuning) del modelo fundacional con el histórico de pólizas de la aseguradora para que aprenda de forma permanente el estilo de redacción contractual.",
+   "B": "Reducir a cero la temperatura y el valor de top-p del modelo para que las respuestas sean deterministas y devuelvan siempre la misma redacción ante la misma consulta del asegurado.",
+   "D": "Activar en su umbral más estricto los filtros de seguridad de IA responsable de Vertex AI para que bloqueen toda respuesta que mencione coberturas inexistentes en la póliza."
+  },
+  "distractors": {
+   "A": "El ajuste fino adapta el estilo y la jerga del modelo, pero no vincula cada respuesta a un documento verificable: el modelo puede seguir inventando coberturas.",
+   "B": "Bajar la temperatura reduce la aleatoriedad y hace la respuesta reproducible, pero no aporta una fuente de verdad: el modelo sigue generando desde su conocimiento paramétrico.",
+   "D": "Los filtros de seguridad bloquean contenido dañino por categorías predefinidas; no verifican la exactitud factual de la respuesta frente a los contratos de la empresa."
+  }
+ },
+ {
+  "id": "CDL-D4-066",
+  "options": {
+   "B": "Explorador de registros (Logs Explorer) con consultas guardadas en Cloud Logging",
+   "C": "Informes de Looker Studio conectados al conjunto de facturación en BigQuery",
+   "D": "Cloud Trace y Cloud Profiler para el análisis de latencia de la aplicación"
+  },
+  "distractors": {
+   "B": "El Explorador de registros consulta y filtra entradas de texto, no representa series temporales de métricas en un panel para la sala de control.",
+   "C": "Looker Studio visualiza datos analíticos y de facturación desde BigQuery, no la telemetría operativa en tiempo real que recopila Cloud Monitoring.",
+   "D": "Trace y Profiler analizan trazas distribuidas y el consumo de CPU por función; no construyen paneles de infraestructura para un NOC."
+  }
+ },
+ {
+  "id": "CDL-D2-047",
+  "options": {
+   "A": "Storage Transfer Service (un servicio administrado que copia los datos por la red hacia Cloud Storage con reanudación automática y verificación de integridad de cada objeto transferido).",
+   "B": "Cloud Interconnect Dedicado (un enlace físico de 10 Gbps contratado hasta el punto de presencia de Google más cercano a la ubicación remota del centro de investigación geológica).",
+   "D": "Ejecutar `gcloud storage cp` con transferencias paralelas y composición de objetos desde varias estaciones de trabajo del centro de investigación para aprovechar al máximo el enlace."
+  },
+  "distractors": {
+   "A": "Es una transferencia en línea: sigue limitada por los 10 Mbps del enlace del centro de investigación, por lo que no reduce los doce años estimados.",
+   "B": "Aportaría ancho de banda, pero exige obra civil y presencia en un punto de presencia de Google, inviable en la ubicación remota y con plazos de meses.",
+   "D": "El paralelismo aprovecha mejor el enlace disponible, pero no aumenta los 10 Mbps contratados: el cuello de botella es el ancho de banda, no el cliente."
+  }
+ },
+ {
+  "id": "CDL-D2-010",
+  "options": {
+   "A": "Crear una réplica de lectura de Cloud SQL en una zona distinta de la misma región y promoverla manualmente a instancia principal en cuanto el equipo detecte el corte de energía en la zona primaria.",
+   "B": "Programar copias de seguridad automáticas cada hora con recuperación a un momento dado (PITR) y restaurar manualmente la instancia en otra zona si la zona primaria queda fuera de servicio.",
+   "D": "Configurar una réplica en cascada en otra región y una entrada de Cloud DNS con comprobación de estado que redirija la aplicación hacia el servidor secundario en caso de fallo zonal."
+  },
+  "distractors": {
+   "A": "La réplica de lectura usa replicación asíncrona y su promoción es una acción manual: hay pérdida de transacciones y no es una conmutación automática.",
+   "B": "La restauración desde una copia tarda minutos u horas y pierde las transacciones posteriores al último punto recuperable: no es conmutación por error.",
+   "D": "La replicación entre regiones es asíncrona y Cloud DNS no ejecuta el failover de una base de datos: cambiar el nombre no promueve la réplica ni evita perder datos."
+  }
+ },
+ {
+  "id": "CDL-D4-003",
+  "options": {
+   "A": "Asignarle el rol primitivo `roles/editor` sobre el proyecto, que le permite ejecutar consultas y además crear y modificar cualquier otro recurso, para no tener que revisar sus permisos más adelante.",
+   "B": "Asignarle el rol predefinido `roles/bigquery.admin` a nivel de la carpeta de marketing, ya que es un rol granular de BigQuery y no un rol primitivo aplicado sobre toda la organización.",
+   "C": "Concederle `roles/viewer` en el proyecto y además compartir el dataset mediante acceso público de solo lectura, para que pueda ejecutar sus consultas sin configurar permisos recurso por recurso."
+  },
+  "distractors": {
+   "A": "`roles/editor` es un rol primitivo de alcance amplio sobre todos los servicios del proyecto: permite crear y borrar recursos ajenos a la tarea del analista.",
+   "B": "Es predefinido, pero `bigquery.admin` concede administración total (crear y eliminar datasets) y además se aplica en un alcance superior al dataset requerido.",
+   "C": "`roles/viewer` es un rol primitivo de todo el proyecto y el acceso público expone el dataset fuera de la organización, lo contrario del menor privilegio."
+  }
+ },
+ {
+  "id": "CDL-D3-002",
+  "options": {
+   "A": "Permite reservar nodos de inquilino único (sole-tenant) donde la aplicación heredada se ejecuta aislada en hardware físico dedicado, facturándose por el nodo completo en lugar de por la máquina virtual.",
+   "C": "Permite contratar descuentos por uso comprometido a uno o tres años sobre la familia de máquinas predefinida de 8 vCPUs y 32 GB, rebajando su precio de lista hasta un 55 por ciento.",
+   "D": "Permite que el escalado automático del grupo de instancias administrado añada y retire réplicas de la máquina predefinida según la carga, ajustando el gasto al consumo real de la aplicación."
+  },
+  "distractors": {
+   "A": "Los nodos de inquilino único resuelven el aislamiento físico y el licenciamiento por núcleo, pero se facturan por el nodo entero y no ajustan vCPU y RAM al requisito exacto.",
+   "C": "El descuento abarata el precio, pero se sigue pagando por 8 vCPUs y 32 GB: no elimina las 2 vCPUs y los 5 GB desperdiciados que plantea el escenario.",
+   "D": "El autoescalado ajusta el número de instancias, no la proporción de vCPU y memoria dentro de cada una, y la aplicación heredada no escala horizontalmente."
+  }
+ },
+ {
+  "id": "CDL-D3-063",
+  "options": {
+   "A": "Significa que el centro de datos opera con energía libre de carbono durante casi el 100 por ciento de las horas del día, ya que el PUE mide la proporción de electricidad renovable contratada por Google.",
+   "C": "Significa que el centro de datos consume aproximadamente un litro de agua por cada kilovatio-hora de cómputo, ya que el PUE relaciona el gasto hídrico de la refrigeración con la carga de TI.",
+   "D": "Significa que la infraestructura auxiliar de refrigeración y distribución eléctrica consume prácticamente lo mismo que los servidores, porque un PUE de 1.10 reparte el consumo casi a partes iguales."
+  },
+  "distractors": {
+   "A": "Confunde el PUE con el porcentaje de energía libre de carbono (CFE): el PUE mide la eficiencia del uso de la electricidad, no su origen renovable.",
+   "C": "Esa relación es la WUE (Water Usage Effectiveness); el PUE es un cociente entre dos consumos eléctricos y no contabiliza el agua de refrigeración.",
+   "D": "Invierte la lectura del cociente: un PUE de 1.10 indica que lo auxiliar añade solo un 10 por ciento sobre el consumo de TI, no la mitad del total."
+  }
+ },
+ {
+  "id": "CDL-D1-024",
+  "options": {
+   "B": "'Cloud-Native' es la política corporativa que obliga a evaluar primero las opciones en la nube para cualquier iniciativa nueva, mientras que 'Cloud-First' designa el patrón arquitectónico de microservicios, contenedores y servicios administrados que aprovecha la elasticidad de la plataforma.",
+   "C": "'Cloud-First' consiste en trasladar las máquinas virtuales existentes tal cual mediante lift-and-shift, mientras que 'Cloud-Native' consiste en rehospedar esas mismas máquinas en instancias de mayor tamaño y con discos persistentes más rápidos dentro de Compute Engine.",
+   "D": "'Cloud-First' designa una arquitectura híbrida que conserva la carga crítica en el centro de datos propio, y 'Cloud-Native' designa una estrategia multinube que reparte la misma aplicación entre varios proveedores de nube para no depender de uno solo."
+  },
+  "distractors": {
+   "B": "Intercambia las definiciones: la política de prioridad en el aprovisionamiento es Cloud-First, y el patrón de diseño de aplicaciones es Cloud-Native.",
+   "C": "Describe dos variantes de migración de infraestructura (rehost y replatform); ninguna de las dos es una política de decisión ni un patrón de diseño de aplicaciones.",
+   "D": "Confunde ambos términos con modelos de despliegue (híbrido y multinube), que responden a dónde se ejecuta la carga y no a la prioridad de decisión ni al diseño."
+  }
+ },
+ {
+  "id": "CDL-D3-013",
+  "options": {
+   "A": "Reduce automáticamente la factura de infraestructura, porque repartir el monolito en servicios pequeños disminuye el cómputo total que consume la plataforma de comercio electrónico.",
+   "C": "Simplifica la operación al eliminar la necesidad de orquestación, descubrimiento de servicios y observabilidad distribuida, ya que cada servicio se despliega y se supervisa de forma aislada.",
+   "D": "Garantiza que cada compra siga siendo una única transacción ACID, porque todos los microservicios continúan escribiendo sobre la misma base de datos central del monolito original."
+  },
+  "distractors": {
+   "A": "Los microservicios no reducen el cómputo total: la comunicación entre servicios suele aumentarlo. El beneficio buscado es la autonomía de despliegue y el aislamiento de fallos.",
+   "C": "La descomposición traslada complejidad a la capa de operación: exige orquestación, descubrimiento de servicios y trazas distribuidas, en lugar de eliminarlos.",
+   "D": "El patrón correcto es una base de datos por servicio; compartir la base central mantiene exactamente el acoplamiento que la descomposición pretende eliminar."
+  }
+ },
+ {
+  "id": "CDL-D4-021",
+  "options": {
+   "B": "Nodo de Organización (Organization) -> Proyectos (Projects) -> Carpetas (Folders) -> Recursos individuales (Resources como VMs, tablas, buckets)",
+   "C": "Cuenta de Facturación (Billing Account) -> Nodo de Organización -> Carpetas (Folders) -> Proyectos (Projects) -> Recursos individuales (VMs, buckets)",
+   "D": "Dominio de Cloud Identity -> Red VPC compartida -> Proyectos (Projects) -> Carpetas (Folders) -> Recursos individuales (Resources como VMs y buckets)"
+  },
+  "distractors": {
+   "B": "Invierte dos niveles: las carpetas se sitúan por encima de los proyectos y un proyecto no puede contener carpetas dentro de la jerarquía de recursos.",
+   "C": "La cuenta de facturación se vincula a los proyectos pero no forma parte del árbol de herencia de políticas de IAM: no es un nodo de la jerarquía.",
+   "D": "La red VPC es un recurso que vive dentro de un proyecto, no un nivel jerárquico, y además vuelve a colocar las carpetas por debajo de los proyectos."
+  }
+ },
+ {
+  "id": "CDL-D2-023",
+  "options": {
+   "B": "Porque BigQuery aplica automáticamente el precio de almacenamiento a largo plazo a las tablas que no se modifican durante 90 días, y ese descuento del 50 por ciento sobre el almacenamiento es lo que abarata la consulta mensual de 50 terabytes.",
+   "C": "Porque BigQuery guarda en su caché de resultados las consultas durante 24 horas sin coste alguno, de modo que la consulta masiva de 50 terabytes solo se factura la primera vez que el científico de datos la ejecuta cada mes.",
+   "D": "Porque BigQuery mantiene un conjunto de slots reservados asignados de forma permanente al proyecto, de manera que la empresa paga una tarifa mensual plana y la consulta masiva no genera ningún cargo adicional de cómputo."
+  },
+  "distractors": {
+   "B": "El descuento de almacenamiento a largo plazo existe, pero solo afecta a los datos en reposo: no explica el coste del cómputo, que es el componente dominante de la consulta mensual.",
+   "C": "La caché de resultados solo evita el cobro de una consulta idéntica repetida en 24 horas; una ejecución única al mes se factura íntegra cada vez.",
+   "D": "Describe el modelo de capacidad reservada, que factura los slots durante todo el mes aunque estén ociosos: aquí lo económico es no pagar cómputo entre consultas."
+  }
+ },
+ {
+  "id": "CDL-D2-065",
+  "options": {
+   "B": "Form Parser preentrenado de Document AI sin etiquetar",
+   "C": "Custom Document Classifier en Document AI Workbench",
+   "D": "Document OCR (procesador de reconocimiento de texto)"
+  },
+  "distractors": {
+   "B": "El Form Parser extrae pares clave-valor genéricos de formularios, no los campos farmacológicos propios del laboratorio.",
+   "C": "El clasificador personalizado asigna un tipo a cada documento, pero no extrae los campos de su contenido.",
+   "D": "El OCR devuelve el texto y su posición en la página, sin estructurar las entidades del reporte clínico."
+  }
+ },
+ {
+  "id": "CDL-D4-080",
+  "options": {
+   "A": "Métricas basadas en registros (Log-Based Metrics) de tipo contador en Cloud Logging",
+   "B": "Enrutadores de registros (Log Sinks) de Cloud Logging hacia un tema de Pub/Sub",
+   "D": "Registros de Auditoría de Acceso a Datos (Data Access Logs) en Cloud Audit Logs"
+  },
+  "distractors": {
+   "A": "Una métrica basada en registros convierte las coincidencias en una serie temporal agregada por ventana; por sí sola no notifica ni identifica la línea concreta.",
+   "B": "El sink exporta la entrada a otro destino, pero no genera la notificación: haría falta construir un consumidor que la envíe.",
+   "D": "Los audit logs son la fuente que contiene la evidencia del 403, no el mecanismo que dispara la notificación en tiempo real."
+  }
+ }
+]

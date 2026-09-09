@@ -1,0 +1,288 @@
+[
+ {
+  "id": "PCA-D1-034",
+  "options": {
+   "A": "Run a BigQuery transformation that applies SHA256 with a salt column to the operator identifiers and rounds the latitude and longitude to two decimal places before publishing the researcher-facing dataset.",
+   "C": "Grant the researchers access to the raw dataset through a VPC Service Controls perimeter with an ingress rule limited to their project, auditing every query they run with Data Access logs and a usage dashboard.",
+   "D": "Publish a BigQuery authorized view that omits the operator name column and exposes the GPS coordinates through the ST_SNAPTOGRID function, granting the researchers read access only to that view."
+  },
+  "distractors": {
+   "A": "Dos decimales equivalen a algo mas de un kilometro, no a la rejilla de 5 km exigida: la generalizacion geografica no cumple el requisito de privacidad del escenario.",
+   "C": "Controla quien accede pero entrega los datos sin transformar: el requisito es que las identidades salgan seudonimizadas y las coordenadas generalizadas, no solo auditadas.",
+   "D": "Omitir la columna impide correlacionar registros del mismo operador, que es justo lo que la seudonimizacion determinista si permite, y el ID de empleado sigue en claro."
+  }
+ },
+ {
+  "id": "PCA-D3-005",
+  "options": {
+   "A": "Enforce the Organization Policy boolean constraint 'constraints/iam.disableServiceAccountKeyUpload' at the Organization level.",
+   "C": "Enforce the list constraint 'constraints/iam.allowedPolicyMemberDomains' at the Organization node, restricting bindings to the corporate domain.",
+   "D": "Enforce the list constraint 'constraints/iam.serviceAccountKeyExpiryHours' at the Organization level, capping every new key at 24 hours."
+  },
+  "distractors": {
+   "A": "Bloquea subir claves publicas externas a una cuenta de servicio, pero deja intacta la creacion de claves privadas descargables, que es el riesgo del escenario.",
+   "C": "Limita a que dominios se pueden conceder roles, no impide que un desarrollador del propio dominio genere y descargue una clave JSON de cuenta de servicio.",
+   "D": "Acorta la vida de las claves pero sigue permitiendo crearlas y descargarlas; el mandato es que no exista ninguna clave privada de usuario en ningun momento."
+  }
+ },
+ {
+  "id": "PCA-D1-036",
+  "options": {
+   "A": "Store the firmware images and certificates in a multi-region Cloud Storage bucket in the 'us' location, relying on Google's built-in geo-redundancy across the region's data centers to survive the loss of any single region.",
+   "B": "Create a single-region bucket in us-central1 and a Storage Transfer Service job that runs every hour copying the new and changed objects into a second bucket in us-east1 with checksum verification enabled.",
+   "C": "Create a Dual-Region Cloud Storage bucket spanning us-central1 and us-east1 and rely on its default asynchronous replication, monitoring the replication metrics to confirm that both regions hold every object."
+  },
+  "distractors": {
+   "A": "La multirregion replica de forma asincrona sin compromiso de tiempo: Google garantiza durabilidad, no un RPO verificable de 15 minutos, y no se eligen las regiones del par.",
+   "B": "El periodo minimo de un trabajo programado de Storage Transfer es de una hora: el RPO real llega a 60 minutos, cuatro veces peor que el objetivo del plan de continuidad.",
+   "C": "Usa el bucket correcto pero sin Turbo Replication: la replica por defecto suele tardar de minutos a horas y no tiene el SLA de 15 minutos que respalda el RPO."
+  }
+ },
+ {
+  "id": "PCA-D2-009",
+  "options": {
+   "A": "Provision Compute Engine instances and install upstream Kubernetes with kubeadm, using the cluster autoscaler add-on and unattended upgrades so the team only manages the workload manifests once running.",
+   "B": "GKE Standard with node auto-provisioning, node auto-upgrade and node auto-repair enabled on custom Compute Engine node pools, letting Google keep the nodes patched while the team picks the machine types.",
+   "D": "Deploy the microservices to Cloud Run with per-service concurrency and CPU limits, paying only for the requests served and letting Google manage every layer of infrastructure with no cluster to operate."
+  },
+  "distractors": {
+   "A": "El equipo sigue siendo responsable del plano de control, del parcheo del sistema operativo y del dimensionado de las VM, justo el trabajo que el escenario quiere delegar.",
+   "B": "Automatiza el mantenimiento, pero la facturacion sigue siendo por nodo aprovisionado y no por los recursos que piden los pods, y hay que elegir y dimensionar las maquinas.",
+   "D": "Elimina Kubernetes por completo: el escenario pide explicitamente un modo de GKE, y las cargas que dependan de la API de Kubernetes no tendrian donde ejecutarse."
+  }
+ },
+ {
+  "id": "PCA-D2-011",
+  "options": {
+   "A": "Cloud Spanner instances are provisioned only in whole nodes, so the team should share a single one-node instance between development and staging and separate the environments by database name.",
+   "B": "Run the Cloud Spanner emulator in a container on a Compute Engine instance for development and staging, pointing the applications at it with the SPANNER_EMULATOR_HOST variable to avoid any billing.",
+   "D": "Use a small Cloud SQL for PostgreSQL instance for development and staging and switch the connection string to Cloud Spanner in production, since both speak PostgreSQL through the Spanner interface."
+  },
+  "distractors": {
+   "A": "Es falso que Spanner solo admita nodos enteros: existen las Processing Units en incrementos de 100, y compartir el nodo sigue costando la tarifa completa que se quiere evitar.",
+   "B": "El emulador no persiste datos, no implementa todo el motor de consultas ni ofrece SLA: sirve para pruebas locales, no como entorno de staging compartido por el equipo.",
+   "D": "Cambia de motor entre entornos: el dialecto, los limites de transaccion y el diseno de claves de Spanner no se validan en staging y los fallos aparecen en produccion."
+  }
+ },
+ {
+  "id": "PCA-D2-016",
+  "options": {
+   "A": "Deploy a Slurm cluster with the HPC Toolkit on Compute Engine, keeping a hundred-node partition always available so the 10,000 alignment jobs are queued and scheduled without waiting for provisioning.",
+   "B": "Run each alignment as a Kubernetes Job on a GKE cluster with a Spot node pool and cluster autoscaling, mounting the inputs with the Cloud Storage FUSE CSI driver and relying on the Job backoff limit.",
+   "D": "Trigger a Cloud Run function per alignment from a Pub/Sub topic, allocating 4 vCPUs and the maximum timeout so each invocation downloads the 5GB input, processes it and writes the result back."
+  },
+  "distractors": {
+   "A": "Mantener el cluster encendido incumple el requisito de escalar a cero, y el equipo sigue operando el planificador Slurm en vez de usar un servicio gestionado sin infraestructura.",
+   "B": "Funciona, pero obliga a operar un cluster de Kubernetes: el escenario pide lotes sin gestion de cluster, y el plano de control de GKE se factura aunque no haya trabajos pendientes.",
+   "D": "Las funciones no se pueden ejecutar sobre Spot VM ni encolar como array de tareas con reintentos y dependencias: se pierden el ahorro y la planificacion que pide el laboratorio."
+  }
+ },
+ {
+  "id": "PCA-D1-061",
+  "options": {
+   "B": "Put a Global External Application Load Balancer in front of both providers, defining the Cloud CDN backend bucket as the primary backend service and an internet network endpoint group pointing at the third-party CDN as the failover backend.",
+   "C": "Publish both CDN hostnames as weighted round robin records in Cloud DNS with an 86,400-second TTL, letting the video player retry the second hostname whenever a segment request against the first one times out.",
+   "D": "Embed a multi-CDN selection library in the video player that measures the throughput of the first segments from each provider and switches manifests whenever the primary falls below a quality threshold during playback."
+  },
+  "distractors": {
+   "B": "El propio balanceador vive en el borde de Google: si esos POP se degradan en un pais, la ruta de conmutacion hacia el CDN externo se degrada exactamente con ellos.",
+   "C": "El reparto por peso no reacciona a la salud del endpoint, y un TTL de un dia deja a los resolvers sirviendo el CDN degradado muchisimo mas alla de los 10 segundos exigidos.",
+   "D": "La decision vive en cada cliente ya instalado: los reproductores antiguos no se actualizan, no hay control central por pais y la degradacion se percibe tras varios segmentos."
+  }
+ },
+ {
+  "id": "PCA-D2-028",
+  "options": {
+   "B": "Disable the cluster's public endpoint so the control plane is reachable only from the VPC, relying on VPC firewall rules to filter which subnets reach it.",
+   "C": "Define Kubernetes RBAC ClusterRoleBindings granting kubectl permissions only to the administrator group, leaving the API endpoint reachable from any routable network.",
+   "D": "Reach the control plane through an IAP TCP forwarding tunnel to a bastion inside the VPC, granting roles/iap.tunnelResourceAccessor to the cluster administrators."
+  },
+  "distractors": {
+   "B": "El endpoint privado admite cualquier origen del VPC y de las redes conectadas; las reglas de firewall de VPC no filtran el acceso al plano de control, que es un endpoint gestionado.",
+   "C": "RBAC decide que puede hacer un usuario ya autenticado, no desde que red se conecta: el filtrado por bloque CIDR que exige la auditoria sigue sin existir.",
+   "D": "Protege el camino de los administradores pero no restringe el endpoint: cualquier otro origen del VPC o de la red on-premises sigue pudiendo hablar con el API server."
+  }
+ },
+ {
+  "id": "PCA-D1-039",
+  "options": {
+   "A": "Land the HL7v2 messages, FHIR bundles and DICOM files in Cloud Storage and parse them with Dataflow templates into BigQuery tables, exposing a search API on Cloud Run over the resulting normalized schema.",
+   "B": "Deploy a Cloud Healthcare API FHIR store as the single repository and convert the incoming HL7v2 messages and DICOM studies into FHIR resources with a Dataflow pipeline before writing them into that store.",
+   "C": "Ingest the clinical feeds with Document AI custom extractors that turn the HL7v2 messages and the radiology reports into structured JSON, storing the output in Firestore for the patient portal to query."
+  },
+  "distractors": {
+   "A": "Hay que construir y mantener los analizadores de los tres estandares y la busqueda FHIR: el escenario pide una plataforma gestionada que ya los implemente con auditoria integrada.",
+   "B": "Forzar todo a FHIR pierde el pixel de los estudios DICOM, que necesitan su propio store con WADO-RS: el escenario exige conservar las tres modalidades de forma nativa.",
+   "C": "Document AI extrae informacion de documentos, pero no implementa los protocolos MLLP, FHIR REST ni DICOMweb ni aporta el marco HIPAA con auditoria de los almacenes clinicos."
+  }
+ },
+ {
+  "id": "PCA-D1-045",
+  "options": {
+   "A": "Enable GKE Dataplane V2 network policies restricting which namespaces may open connections to the billing namespace, relying on Google's automatic encryption of traffic between nodes inside the VPC.",
+   "B": "Have every microservice terminate TLS itself with certificates pulled from Secret Manager at start-up, implementing the caller allow-list inside the billing API by checking the certificate subject.",
+   "C": "Install Cloud Service Mesh with the default PERMISSIVE PeerAuthentication mode so sidecars accept both plaintext and mTLS during the migration, adding AuthorizationPolicy resources for billing."
+  },
+  "distractors": {
+   "A": "Las network policies filtran en capa 3 y 4 por etiqueta de pod: no verifican identidad criptografica SPIFFE ni permiten reglas por ruta o metodo HTTP en capa 7.",
+   "B": "La rotacion y distribucion de certificados quedan en manos de cada equipo, y la autorizacion dispersa en el codigo no es una politica central verificable como exige Zero-Trust.",
+   "C": "En modo PERMISSIVE el sidecar sigue aceptando trafico en claro: cualquier pod sin proxy puede llamar al API de facturacion sin presentar identidad, asi que el mTLS no es obligatorio."
+  }
+ },
+ {
+  "id": "PCA-D1-058",
+  "options": {
+   "A": "Stream the telemetry into BigQuery with the Storage Write API and let the broadcast graphics engine query the last seconds through a BI Engine reservation with materialized views refreshed on every insert.",
+   "B": "Write the 40,000 points per second into Cloud SQL for MySQL with a composite primary key of aircraft_id and timestamp, serving the visualization from cross-zone read replicas placed near the broadcast trucks.",
+   "D": "Write each telemetry sample into Cloud Firestore in Native mode with one document per aircraft and second, letting the graphics engine and the mobile apps subscribe with real-time onSnapshot listeners."
+  },
+  "distractors": {
+   "A": "BigQuery es analitico: incluso acelerado con BI Engine las consultas tardan cientos de milisegundos, un orden de magnitud por encima de los 10 ms que exige el render en directo.",
+   "B": "Una unica instancia primaria no absorbe 40.000 escrituras por segundo sostenidas, y el indice B-tree se fragmenta con la insercion monotona por marca de tiempo.",
+   "D": "Firestore admite aproximadamente una escritura por segundo y documento y factura por operacion: 2.000 escrituras por segundo y avion desbordan el limite y el coste."
+  }
+ },
+ {
+  "id": "PCA-D1-038",
+  "options": {
+   "B": "Deploy a Private GKE Cluster with private nodes and Shielded GKE Nodes enabled, and give the node pool a dedicated service account with narrowly scoped roles so that every pod on the node inherits those permissions through the metadata server.",
+   "C": "Deploy a Standard GKE cluster with public node IP addresses protected by Cloud Armor and firewall rules, enable Workload Identity for pod authentication and turn on Shielded GKE Nodes with Secure Boot and integrity monitoring on every node pool in the cluster.",
+   "D": "Deploy a Private GKE Cluster with Shielded GKE Nodes and store the Google service account JSON keys in Secret Manager, mounting them into the pods at start-up with the Secret Manager CSI driver so that no key is ever baked into a container image layer."
+  },
+  "distractors": {
+   "B": "Sin Workload Identity todos los pods del nodo comparten la identidad de la cuenta de servicio del nodo: no hay separacion por carga y el token se obtiene del metadata server.",
+   "C": "Mantiene los nodos con IP publica, que es exactamente la superficie de ataque que el control HIPAA obliga a eliminar; el firewall no convierte un nodo publico en privado.",
+   "D": "La clave JSON de larga duracion sigue existiendo y llega al contenedor: el escenario exige que los pods se autentiquen sin ninguna clave estatica, lo que solo da Workload Identity."
+  }
+ },
+ {
+  "id": "PCA-D1-030",
+  "options": {
+   "A": "Install the gcloud CLI on each of the 50 SFTP servers and schedule a nightly 'gcloud storage rsync -r' from the log directory into the destination bucket, logging the output for the operations team to review.",
+   "C": "Order Transfer Appliances for each regional datacenter, copy the 100TB of CSV logs onto them and ship them to Google for ingestion into the multi-region bucket, repeating the shipment for each incremental delta.",
+   "D": "Publish the log files over HTTPS on each server and create a Storage Transfer Service job of type URL list, pointing it at a manifest TSV enumerating the URL, size and MD5 of every file that must be copied."
+  },
+  "distractors": {
+   "A": "Un rsync por servidor no reparte la carga ni limita el ancho de banda de forma centralizada, y no hay plano de gestion que reintente y reporte el progreso de los 100 TB.",
+   "C": "El appliance resuelve la carga inicial pero no las sincronizaciones incrementales: cada delta exigiria un nuevo envio fisico con dias de latencia entre corte y corte.",
+   "D": "La lista de URL obliga a exponer los servidores y a regenerar el manifiesto completo en cada ciclo: no detecta por si sola los ficheros nuevos ni los modificados."
+  }
+ },
+ {
+  "id": "PCA-D1-054",
+  "options": {
+   "A": "Create one Pub/Sub topic per patient so that each subscription has a single consumer processing that patient's status updates one after another as the laboratory publishes them.",
+   "C": "Publish the updates with a status timestamp attribute and have the subscriber discard any message whose timestamp is older than the last status recorded for that laboratory order.",
+   "D": "Create one Cloud Tasks queue per laboratory order with maxConcurrentDispatches set to one, enqueuing every status update so that the queue dispatches them strictly one after another."
+  },
+  "distractors": {
+   "A": "Sin ordering key Pub/Sub puede reentregar y desordenar los mensajes aunque haya un unico consumidor: el orden no lo da el numero de suscriptores sino la clave.",
+   "C": "Descartar por marca de tiempo evita sobrescribir el estado final, pero pierde definitivamente los estados intermedios que llegan tarde en vez de procesarlos en orden.",
+   "D": "La concurrencia uno serializa la ejecucion pero no garantiza el orden de despacho, y un reintento reordena la secuencia clinica que se quiere preservar."
+  }
+ },
+ {
+  "id": "PCA-D1-029",
+  "options": {
+   "B": "Wrap the parsing step in a try/catch inside the Dataflow pipeline, log the corrupted payloads to Cloud Logging with a severity of ERROR and continue processing the next element of the bundle.",
+   "C": "Increase the subscription's acknowledgement deadline to ten minutes and set an exponential retry policy with a long maximum backoff so the corrupted packets are retried less often while valid ones flow.",
+   "D": "Reduce the subscription's message retention duration to the ten-minute minimum so that any packet the pipeline cannot parse expires quickly and stops being redelivered to the Dataflow workers."
+  },
+  "distractors": {
+   "B": "El registro deja el paquete corrupto solo como texto en un log de retencion limitada: no queda el binario original recuperable para diagnosticar el fallo de hardware.",
+   "C": "Un paquete que nunca se podra analizar se reintenta indefinidamente: sigue ocupando la suscripcion y retrasando la entrega en vez de apartarse del camino de proceso.",
+   "D": "Acortar la retencion tambien descarta los paquetes validos que sufran un retraso, y los corruptos se pierden sin quedar disponibles para el analisis forense posterior."
+  }
+ },
+ {
+  "id": "PCA-D2-018",
+  "options": {
+   "A": "Run a Cloud Run job every six hours that lists the S3 bucket with boto3, compares object ETags against a Firestore manifest and copies the new or modified objects into Cloud Storage over HTTPS.",
+   "B": "Query the video metadata in place with BigQuery Omni running in the AWS region and keep only the aggregated results in Google Cloud, avoiding any copy of the 10TB of daily assets across clouds.",
+   "D": "Configure S3 event notifications into an SQS queue, bridge it to Pub/Sub with a Lambda function and have a Cloud Run service copy each new object into the destination bucket as notifications arrive."
+  },
+  "distractors": {
+   "A": "Hay que operar, escalar y vigilar el codigo de copia y su manifiesto propio, cuando el servicio gestionado ya hace el delta, los reintentos y la validacion de checksums.",
+   "B": "BigQuery Omni consulta datos estructurados en su sitio, pero Vertex AI necesita los ficheros de video en Cloud Storage: el escenario pide replicar los activos, no consultarlos.",
+   "D": "Encadena tres servicios y una Lambda que hay que mantener en AWS para reproducir lo que un trabajo programado de Storage Transfer hace de forma nativa cada seis horas."
+  }
+ },
+ {
+  "id": "PCA-D1-031",
+  "options": {
+   "A": "Export the curated regional equipment health metrics to Cloud Storage in Parquet every night and grant the 5,000 dealer Google accounts roles/storage.objectViewer on the bucket prefix matching their region.",
+   "B": "Create authorized views in a shared BigQuery dataset and grant each of the 5,000 dealer organizations roles/bigquery.dataViewer directly on that dataset so they can query the views from their own projects.",
+   "D": "Use BigQuery Data Transfer Service to copy the curated dataset into each dealer's own project on a daily schedule so that they can query it locally without ever touching the production project."
+  },
+  "distractors": {
+   "A": "Mueve una copia de los datos fuera del control de knightmotives: revocar el acceso no recupera lo ya descargado y los concesionarios no consultan desde BigQuery.",
+   "B": "Gestionar 5.000 concesiones individuales de IAM sobre el dataset choca con el limite de tamano de la politica y no ofrece catalogo, suscripcion ni revocacion centralizada.",
+   "D": "Replica los datos 5.000 veces, que es justo el movimiento de petabytes que el escenario descarta, y una vez copiados ya no se puede revocar el acceso a lo entregado."
+  }
+ },
+ {
+  "id": "PCA-D1-035",
+  "options": {
+   "A": "Have Looker Studio query a BigQuery external table over the raw JSON telemetry in Cloud Storage, refreshing the dashboard extract every five minutes for the 2,000 fleet managers.",
+   "C": "Rely on the Looker Studio data freshness cache set to twelve hours so the 2,000 concurrent managers share one cached result set instead of issuing separate BigQuery queries.",
+   "D": "Buy a BigQuery slot reservation with autoscaling for the analytics project so dashboard queries run on committed capacity with a predictable cost instead of on-demand pricing."
+  },
+  "distractors": {
+   "A": "Las tablas externas no se pueden acelerar con BI Engine ni materializar: cada refresco vuelve a leer el JSON completo desde Cloud Storage y no baja del segundo.",
+   "C": "Un cache de doce horas contradice el requisito de estado en vivo de la flota, y cualquier filtro nuevo del usuario falla el cache y va a BigQuery a precio completo.",
+   "D": "Las reservas fijan el coste pero no la latencia: sin BI Engine ni vistas materializadas las consultas siguen escaneando la tabla y no rinden por debajo del segundo."
+  }
+ },
+ {
+  "id": "PCA-D3-007",
+  "options": {
+   "B": "Grant the developer the roles/iam.serviceAccountUser role on the target Service Account resource.",
+   "C": "Grant the developer roles/iam.workloadIdentityUser on the target Service Account resource.",
+   "D": "Grant the developer roles/iam.serviceAccountOpenIdTokenCreator on the target Service Account."
+  },
+  "distractors": {
+   "B": "serviceAccountUser permite adjuntar la cuenta a un recurso que se crea, pero no acunar tokens de corta duracion para suplantarla desde la CLI de gcloud.",
+   "C": "workloadIdentityUser vincula identidades externas federadas (KSA o proveedor OIDC) con la cuenta; una identidad de usuario corporativa no la usa para impersonar.",
+   "D": "Ese rol solo emite tokens de identidad OIDC para autenticarse ante servicios; escribir en BigQuery exige un token de acceso OAuth2, que emite el Token Creator."
+  }
+ },
+ {
+  "id": "PCA-D1-067",
+  "options": {
+   "A": "Maintain a fantasy_scores table in Cloud Spanner and run SELECT user_id, SUM(points) ... GROUP BY user_id ORDER BY 2 DESC LIMIT 100 after every lap, caching the resulting list in the mobile backend.",
+   "B": "Stream the scoring events into BigQuery and expose the global ranking through a materialized view over the points table, letting the mobile backend read the top ranks and each fan's position per lap.",
+   "D": "Keep one Cloud Firestore document per fan with the accumulated points and query the ranking with an ordered index on the points field, reading the top entries from the mobile SDK directly."
+  },
+  "distractors": {
+   "A": "La agregacion recorre las filas de 5 millones de participantes en cada vuelta: la consulta tarda segundos y solo devuelve el top 100, no la posicion individual de cada fan.",
+   "B": "Las vistas materializadas de BigQuery se refrescan de forma diferida y la latencia de consulta se mide en cientos de milisegundos: no hay respuesta sub-milisegundo.",
+   "D": "Firestore ordena por indice pero no sabe devolver la posicion de un documento en el ranking sin contar todos los anteriores, que es lo que pide la app en cada vuelta."
+  }
+ },
+ {
+  "id": "PCA-D1-059",
+  "options": {
+   "A": "Push the race position updates through a Pub/Sub topic with one subscription per device, letting the client pull the newest messages when the app resumes.",
+   "B": "Deploy Apache Cassandra on a multi-zone Compute Engine cluster and have the app open a WebSocket to a Cloud Run gateway that fans out the row changes.",
+   "D": "Store the race positions and votes in Cloud SQL for PostgreSQL and have every mobile client poll a Cloud Run endpoint twice per second for the latest race state."
+  },
+  "distractors": {
+   "A": "Pub/Sub no ofrece SDK movil con persistencia offline: en los tuneles del estadio la app se queda sin datos y las suscripciones por dispositivo agotan la cuota del proyecto.",
+   "B": "Obliga a construir y operar la capa de tiempo real y el cache offline del cliente, que los SDK moviles de Firestore ya traen resueltos de fabrica.",
+   "D": "Millones de clientes sondeando dos veces por segundo saturan la unica instancia primaria, y el sondeo no es una notificacion push en tiempo real."
+  }
+ },
+ {
+  "id": "PCA-D2-042",
+  "options": {
+   "A": "Configure the update_policy with type = 'OPPORTUNISTIC', minimal_action = 'REPLACE', max_surge_fixed = 20, and max_unavailable_fixed = 0.",
+   "B": "Configure the update_policy with type = 'PROACTIVE', minimal_action = 'REPLACE', max_surge_fixed = 0, and max_unavailable_fixed = 20.",
+   "C": "Declare a second version block with target_size.fixed = 20 in the instance group and leave update_policy at its default values."
+  },
+  "distractors": {
+   "A": "En modo OPPORTUNISTIC el MIG no aplica la plantilla nueva por si solo: solo la usa si crea instancias por otro motivo, asi que el despliegue nunca progresa.",
+   "B": "Con surge 0 el grupo debe apagar 20 instancias antes de crear las nuevas: la capacidad cae al 80 % durante todo el despliegue, incumpliendo el 100 % exigido.",
+   "C": "Un canary por versiones deja permanentemente 20 instancias con la plantilla nueva y 80 con la antigua: nunca completa la actualizacion de los 100 nodos."
+  }
+ }
+]

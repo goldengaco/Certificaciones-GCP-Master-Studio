@@ -1,0 +1,49 @@
+# BRIEFING — 2026-08-29T22:10:00Z
+
+## Mission
+Investigate and draft complete psychometric rewrite for Batch 6 (ACE-D3-011 through ACE-D3-035, total 25 items) for GCP Associate Cloud Engineer.
+
+## 🔒 My Identity
+- Archetype: explorer
+- Roles: investigation, analysis, psychometric drafting, synthesis
+- Working directory: C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer
+- Original parent: 498175c1-318e-4b99-af98-052015d3e785
+- Milestone: Batch 6 psychometric drafting (ACE-D3-011..035)
+
+## 🔒 Key Constraints
+- Read-only investigation — do NOT modify cert_ace.js directly; output proposal to draft_batch6.json
+- Strictly adhere to Contrato del Banco (R1-R6)
+- 4 multi-select questions (16% of 25) with 5 options each
+- FNV-1a key hashing distribution for correct answers
+- Length delta <= 25% across all options per question
+- Windows 11 / pwsh execution standards
+
+## Current Parent
+- Conversation ID: 498175c1-318e-4b99-af98-052015d3e785
+- Updated: 2026-08-29T22:10:00Z
+
+## Investigation State
+- **Explored paths**: data/cert_ace.js, data/taxonomia.js, 	ests/qa/test_fidelidad_banco.js, 	ests/qa/medir_lote.js, 	ests/qa/adversario.js.
+- **Key findings**:
+  - Original Batch 6 items suffered from 84.0% length bias (a=84.0%, b=84.0%), 24/25 items with length delta >25% (up to 82.6%), unpopulated taxonomy sections/subsections, 0% multi-selects, and non-credible distractors.
+  - Drafted 25 complete items strictly adhering to R1-R6.
+  - Designated 4 multi-select items (ACE-D3-013, ACE-D3-017, ACE-D3-023, ACE-D3-030) with 5 options, expectedSelectCount: 2, and explicit selection prompts ("Choose 2.").
+  - Distributed single-select keys using FNV-1a hash (A: 19.0%, B: 33.3%, C: 28.6%, D: 19.0%).
+  - Length delta across all options in each item is <= 25% (range: 2.6% - 16.1%).
+  - Draft passes all 240 checks in validate_draft.js (0 errors).
+  - Adversary heuristics: H1: 16.7%, H2: 32.1%, H5: 14.3%, H6: 23.8%, H7: 13.1%, H8: 25.0%, H9: 28.6%, H10: 23.8%, CONJUNTO = 11.5% (all well below 45.0%).
+- **Unexplored areas**: Batches 7-12 (ACE-D3-036..075, ACE-D4, ACE-D5).
+
+## Key Decisions Made
+- Mapped ACE-D3-011..035 to ACE-3 sections and subsections (ACE-3.1, ACE-3.2, ACE-3.3, ACE-3.4, ACE-3.5, ACE-3.6) according to taxonomia.js.
+- Balanced option lengths symmetrically so that correct answers are not systematically the longest or shortest.
+- Verified all officialDocUrl links against authorized Google Cloud and Kubernetes documentation domains.
+- Fully validated with standalone validator script (240/240 tests passed, 0 failures).
+
+## Artifact Index
+- C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer\base_batch6.json — Pre-rewrite baseline metrics
+- C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer\raw_original_batch6.json — Original 25 items from cert_ace.js
+- C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer\draft_batch6.json — 25 rewritten question objects
+- C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer\validate_draft.js — Self-contained validation test suite
+- C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer\handoff.md — 5-component handoff report
+- C:\DevWork\Certificaciones-GCP-Master-Studio\.agents\batch6_explorer\progress.md — Progress heartbeat

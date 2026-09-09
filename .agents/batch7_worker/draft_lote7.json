@@ -1,0 +1,1205 @@
+[
+  {
+    "id": "ACE-D3-036",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Storage Transfer Service",
+      "Cloud Storage",
+      "Recurring transfer schedule",
+      "Checksum validation"
+    ],
+    "title": "Scheduling a Recurring 100 TB Amazon S3 to Cloud Storage Transfer",
+    "scenario": "You must copy 100 TB of media from s3://media-source-bucket into gs://media-target-bucket and then keep the two in sync with a run every 24 hours. The nightly delta is under 400 GB, the source stays online in AWS, and integrity must be proven by checksum. You want the least operational effort and no servers to patch. Which service should you deploy?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ship a Transfer Appliance to the AWS colocation site, load the objects, and return it to Google for ingest."
+      },
+      {
+        "letter": "B",
+        "text": "Schedule a BigQuery Data Transfer Service run that pulls the S3 prefix every 24 hours into a managed dataset."
+      },
+      {
+        "letter": "C",
+        "text": "Create a Storage Transfer Service job using gcloud transfer jobs create plus --schedule-repeats-every=24h."
+      },
+      {
+        "letter": "D",
+        "text": "Schedule a Dataflow batch pipeline that reads the S3 prefix nightly and writes the objects to the bucket."
+      }
+    ],
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Storage Transfer Service is a fully managed, agentless service for cloud-to-cloud transfers. It moves data over Google's network, validates every object with checksums, transfers only changed objects on later runs, and supports a repeating schedule, so no compute has to be provisioned or maintained.",
+    "distractors": {
+      "A": "A Transfer Appliance is a one-time offline shipment; it cannot run a 24-hour recurring sync and the source data already sits in a reachable cloud bucket.",
+      "B": "The BigQuery Data Transfer Service loads S3 files into BigQuery tables, so the 100 TB of media objects never land in the target Cloud Storage bucket.",
+      "D": "A Dataflow pipeline works but you own the code, the worker fleet and the checksum logic, which is far more operational effort than a managed transfer job."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage-transfer/docs/overview",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-037",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "conceptos": [
+      "Cloud Run",
+      "Direct VPC egress",
+      "Private services access",
+      "Cloud SQL private IP"
+    ],
+    "title": "Reaching a Private Cloud SQL Instance and Private VMs from Cloud Run",
+    "scenario": "A Cloud Run service must reach a Cloud SQL instance and several Compute Engine VMs in subnet backend-sub of prod-vpc. Company policy forbids any public IP on the database and forbids the traffic from leaving Google's network. The service handles 400 requests per second, so a connector that caps throughput is unacceptable. Which two actions should you take? (Choose 2.)",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy the Cloud Run service with Direct VPC egress on subnet backend-sub and --vpc-egress=private-ranges-only."
+      },
+      {
+        "letter": "B",
+        "text": "Deploy the Cloud Run service with --add-cloudsql-instances so the built-in connector opens the database socket."
+      },
+      {
+        "letter": "C",
+        "text": "Enable Private Google Access on subnet backend-sub and add a Cloud NAT gateway in prod-vpc for the container."
+      },
+      {
+        "letter": "D",
+        "text": "Place the service and prod-vpc in one VPC Service Controls perimeter and grant roles/compute.networkUser on it."
+      },
+      {
+        "letter": "E",
+        "text": "Configure private services access in prod-vpc and give the Cloud SQL instance a private IP from that range."
+      }
+    ],
+    "correct": [
+      "A",
+      "E"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "Direct VPC egress attaches the Cloud Run service straight to a subnet, so it can send traffic to internal addresses in prod-vpc and scales without the throughput ceiling of a Serverless VPC Access connector. A Cloud SQL instance only receives an internal address once a private services access peering range exists in that VPC.",
+    "distractors": {
+      "B": "The Cloud SQL connector reaches the instance over its public endpoint by default, and it does nothing for the Compute Engine VMs the service must also reach.",
+      "C": "Private Google Access and Cloud NAT govern egress to Google APIs and the internet; neither gives a serverless container a route to RFC 1918 addresses inside the VPC.",
+      "D": "A VPC Service Controls perimeter restricts API access at the boundary; it establishes no network path from the container to a private database address."
+    },
+    "officialDocUrl": "https://cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+    "difficulty": "hard",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-038",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
+      "Horizontal Pod Autoscaler",
+      "kubectl autoscale",
+      "GKE",
+      "CPU target utilization"
+    ],
+    "title": "Autoscaling a GKE Deployment Between Three and Twenty-Five Pods",
+    "scenario": "The payment-gateway Deployment in a GKE cluster runs three replicas. During flash sales its average CPU utilisation passes 75% within a minute and requests start timing out. The node pool already has spare capacity. You must keep the replica count between 3 and 25 and let Kubernetes react without any operator action. Which command deploys this policy?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud container clusters update payment-gateway --enable-autoscaling --min-nodes=3 --max-nodes=25"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud compute instance-groups managed set-autoscaling payment-gateway --target-cpu-utilization=0.75"
+      },
+      {
+        "letter": "C",
+        "text": "kubectl scale deployment payment-gateway --replicas=25 before each scheduled flash sale window"
+      },
+      {
+        "letter": "D",
+        "text": "kubectl autoscale deployment payment-gateway --min=3 --max=25 --cpu-percent=75 for the flash sales"
+      }
+    ],
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "kubectl autoscale creates a HorizontalPodAutoscaler that reads CPU metrics for the Deployment's pods and changes the replica count between the configured minimum and maximum to hold average utilisation near the target percentage.",
+    "distractors": {
+      "A": "Cluster autoscaling changes the number of nodes, not pods; the Deployment stays at three replicas no matter how many nodes exist.",
+      "B": "MIG autoscaling operates on the underlying instance group and is not aware of the Deployment, so pod replicas never change.",
+      "C": "Scaling manually before each sale pins the cost at 25 replicas around the clock and still fails on an unannounced traffic spike."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/horizontal-pod-autoscaling",
+    "difficulty": "easy",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-039",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.5",
+    "subsectionName": "Deploying and implementing networking resources",
+    "conceptos": [
+      "Cloud DNS",
+      "Managed zone",
+      "Resource record set",
+      "TTL"
+    ],
+    "title": "Publishing an A Record with a Five-Minute TTL in Cloud DNS",
+    "scenario": "The public managed zone corp-public-zone already serves corp.com. A new load balancer is live at 34.120.50.80 and api.corp.com must resolve to it. No record for that name exists yet. Because a cutover is planned for next week, resolvers must not cache the answer longer than 300 seconds. Which single gcloud command publishes the record?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud dns record-sets update api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=CNAME --ttl=300 --rrdatas=34.120.50.80"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=\"34.120.50.80\""
+      },
+      {
+        "letter": "D",
+        "text": "gcloud dns record-sets transaction add 34.120.50.80 --name=api.corp.com. --ttl=300 --type=A --zone=corp-public-zone"
+      }
+    ],
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "gcloud dns record-sets create adds a new record set to a managed zone in one call, taking the name, record type, TTL in seconds and the record data.",
+    "distractors": {
+      "A": "record-sets update replaces the data of a record set that already exists; with no api.corp.com A record in the zone the call fails.",
+      "B": "A CNAME record must point at another domain name, so an IPv4 literal is rejected and the name would not resolve to the load balancer.",
+      "D": "transaction add only stages a change inside a transaction that must first be started and afterwards executed, so this alone publishes nothing."
+    },
+    "officialDocUrl": "https://cloud.google.com/dns/docs/records",
+    "difficulty": "easy",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-040",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "conceptos": [
+      "Eventarc",
+      "Cloud Audit Logs trigger",
+      "Event filters",
+      "Cloud Run"
+    ],
+    "title": "Triggering a Cloud Run Auditor on SetIamPolicy Audit Log Events",
+    "scenario": "The audit-logger service runs on Cloud Run in us-central1. Compliance requires that every SetIamPolicy call in the project reach that service within 60 seconds, and that no other audit event be delivered, because the service bills per invocation. Admin Activity logs are already written. Which Eventarc trigger filter set should you create?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Event filters type=google.cloud.audit.log.v1.written, serviceName='iam.googleapis.com', methodName=SetIamPolicy."
+      },
+      {
+        "letter": "B",
+        "text": "Event filter type=google.cloud.pubsub.topic.v1.messagePublished with --transport-topic=iam-events on the project."
+      },
+      {
+        "letter": "C",
+        "text": "Event filters type=google.cloud.audit.log.v1.written and methodName=SetIamPolicy, with no serviceName filter set."
+      },
+      {
+        "letter": "D",
+        "text": "Event filters type=google.cloud.audit.log.v1.written, serviceName=iam.googleapis.com and methodName set to '*'."
+      }
+    ],
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "An Eventarc Cloud Audit Logs trigger requires the event type google.cloud.audit.log.v1.written together with the serviceName and methodName filters that identify the logged operation, which narrows delivery to exactly the SetIamPolicy calls.",
+    "distractors": {
+      "B": "A Pub/Sub message trigger only fires on messages you publish yourself; nothing routes IAM audit entries into that topic, so the service is never invoked.",
+      "C": "Audit log triggers reject a filter set without serviceName, so the trigger cannot be created and no events are delivered.",
+      "D": "The methodName filter matches an exact value and does not accept a wildcard, so the trigger creation fails validation."
+    },
+    "officialDocUrl": "https://cloud.google.com/eventarc/standard/docs/run/route-trigger-cloud-audit-logs",
+    "difficulty": "hard",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-041",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Cloud Logging sink",
+      "BigQuery",
+      "Writer identity",
+      "Log filter"
+    ],
+    "title": "Streaming IAM Admin Activity Logs into a BigQuery Dataset",
+    "scenario": "Security requires every IAM administrative activity entry in project corp-prod-101 to be queryable in the BigQuery dataset audit_analytics within five minutes of the event, for a seven-year retention window. The dataset already exists in the same project and no sink has been created yet. Which two actions should you take? (Choose 2.)",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create a sink to a Cloud Storage bucket filtered on protoPayload.serviceName=\"iam.googleapis.com\" for archive."
+      },
+      {
+        "letter": "B",
+        "text": "Create a sink to bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics with that same filter."
+      },
+      {
+        "letter": "C",
+        "text": "Create a sink to a Pub/Sub topic and attach a BigQuery subscription that writes rows into the audit_analytics dataset."
+      },
+      {
+        "letter": "D",
+        "text": "Grant the writer identity returned by the sink roles/bigquery.dataEditor on the audit_analytics dataset."
+      },
+      {
+        "letter": "E",
+        "text": "Turn on Data Access audit logs for the IAM API in the project audit configuration before creating the sink."
+      }
+    ],
+    "correct": [
+      "B",
+      "D"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "A log sink with a BigQuery destination streams matching entries into dataset tables as they arrive. Each sink is created with its own writer identity service account, and that principal must be granted permission to write to the destination or every entry is dropped.",
+    "distractors": {
+      "A": "Cloud Storage sinks write hourly batched files that are not queryable in BigQuery, so the five-minute query requirement is missed.",
+      "C": "Routing through Pub/Sub adds a second service and its subscription to operate and pay for, when the sink can address the dataset directly.",
+      "E": "SetIamPolicy is an Admin Activity entry, which is always written and cannot be disabled; enabling Data Access logs only adds unrelated volume and cost."
+    },
+    "officialDocUrl": "https://cloud.google.com/logging/docs/export/configure_export_v2",
+    "difficulty": "hard",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-042",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Cloud SQL",
+      "Cross-region read replica",
+      "PostgreSQL",
+      "Disaster recovery"
+    ],
+    "title": "Adding a Cross-Region Cloud SQL Read Replica in europe-west1",
+    "scenario": "The Cloud SQL for PostgreSQL instance db-master-uscentral1 runs in us-central1. European users report read latency above 300 ms, and the DR plan demands a promotable copy outside the primary region. The primary cannot take any downtime during the change. Which command deploys the replica db-replica-eu?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud sql instances create db-replica-eu --master-instance-name=db-master-uscentral1 --region=europe-west1"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud sql instances create db-replica-eu --master-instance-name=db-master-uscentral1 --region=us-central1"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud sql instances clone db-master-uscentral1 db-replica-eu --point-in-time=2026-08-30T02:00:00.000Z"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud sql instances patch db-master-uscentral1 --availability-type=REGIONAL --secondary-zone=europe-west1-b"
+      }
+    ],
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Creating an instance with --master-instance-name makes it a read replica of that primary, and passing a different --region places the replica in another region, where it serves local reads and can later be promoted to a standalone instance.",
+    "distractors": {
+      "B": "A replica created in us-central1 replicates correctly but leaves European reads crossing the Atlantic and offers no protection against a regional outage.",
+      "C": "A clone is a point-in-time copy that stops receiving changes the moment it is created, so it drifts from the primary and serves stale reads.",
+      "D": "Regional high availability keeps the standby in a second zone of the same region; the secondary zone cannot be in another region and the standby serves no reads."
+    },
+    "officialDocUrl": "https://cloud.google.com/sql/docs/postgres/replication/create-replica",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-043",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "conceptos": [
+      "Managed instance groups",
+      "Stateful policy",
+      "Stateful IP addresses",
+      "Persistent Disk"
+    ],
+    "title": "Preserving Disks and Internal IPs in an Elasticsearch Managed Instance Group",
+    "scenario": "Three Elasticsearch nodes run in the MIG es-mig. Each node must come back with the same data disk and the same internal address after auto-healing and after a rolling update, because peer discovery is configured with static addresses and a rebuild costs four hours of reindexing. Which two actions should you take? (Choose 2.)",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Set a stateful policy on the group with --stateful-disk device-name=es-data,auto-delete=never for the data disk."
+      },
+      {
+        "letter": "B",
+        "text": "Create per-instance configurations with --stateful-internal-ip so each node keeps its address when it is recreated."
+      },
+      {
+        "letter": "C",
+        "text": "Declare the data disk in the instance template so that every instance the group creates receives that same disk."
+      },
+      {
+        "letter": "D",
+        "text": "Reserve three static internal addresses and hold the group at a fixed size of three with autoscaling switched off."
+      },
+      {
+        "letter": "E",
+        "text": "Enable auto-healing with an HTTP health check so an unhealthy node is recreated from the group instance template."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "A stateful policy tells the MIG to detach and reattach a named disk instead of deleting it when an instance is recreated, and stateful internal IP configuration makes the group reassign the same internal address to the recreated instance, which together keep node identity stable across updates and repairs.",
+    "distractors": {
+      "C": "A disk declared only in the template is recreated empty with each new instance, so the four hours of indexed data are lost on the first repair.",
+      "D": "Reserving addresses does not bind one to a specific instance name, and freezing the size does not stop auto-healing from recreating a node with a new address.",
+      "E": "Auto-healing is what recreates the instance in the first place; without a stateful policy it is precisely the event that discards the disk and the address."
+    },
+    "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/stateful-migs",
+    "difficulty": "hard",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-044",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "conceptos": [
+      "Cloud Run",
+      "Minimum instances",
+      "Cold start",
+      "Instance autoscaling"
+    ],
+    "title": "Eliminating Cloud Run Cold Starts on a Payment Verification API",
+    "scenario": "The payment-api Cloud Run service must answer in under 50 ms at the 99th percentile. Traffic drops to zero between 02:00 and 05:00, and the first request after each idle period takes 900 ms because the container starts from scratch. Finance has approved paying for two always-on instances. Which command configures this?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud run services update payment-api --region=us-central1 --max-instances=2 to keep two containers"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud run services update payment-api --region=us-central1 --no-cpu-throttling for the idle window"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud run services update payment-api --region=us-central1 --min-instances=2 for the service"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud run services update payment-api --region=us-central1 --cpu-boost on container startup"
+      }
+    ],
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The minimum instances setting keeps that many container instances running and warm even when the service receives no traffic, so an arriving request is served by an already initialised container instead of paying the start-up cost.",
+    "distractors": {
+      "A": "Maximum instances is a ceiling on scale-out; it never keeps an instance alive, so the service still scales to zero overnight.",
+      "B": "Always-allocated CPU changes billing and background work for existing instances but does not prevent the service from scaling to zero.",
+      "D": "Startup CPU boost shortens the cold start rather than removing it, which still leaves the first request far above the 50 ms target."
+    },
+    "officialDocUrl": "https://cloud.google.com/run/docs/configuring/min-instances",
+    "difficulty": "easy",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-045",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
+      "PodDisruptionBudget",
+      "GKE node upgrades",
+      "Voluntary disruption",
+      "High availability"
+    ],
+    "title": "Guaranteeing Three Available Replicas During GKE Node Upgrades",
+    "scenario": "A web Deployment runs five replicas in a GKE cluster with node auto-upgrade enabled. Capacity planning shows that fewer than three serving replicas breaks the 99.9% availability target. Node drains during upgrades currently evict several pods at once. You must cap voluntary evictions without changing the replica count. Which resource should you deploy?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "A HorizontalPodAutoscaler for the web Deployment with minReplicas set to 3 and maxReplicas set to 10."
+      },
+      {
+        "letter": "B",
+        "text": "A topologySpreadConstraint on kubernetes.io/hostname so the five replicas land on five separate cluster nodes."
+      },
+      {
+        "letter": "C",
+        "text": "A Deployment rolling update strategy with maxUnavailable set to 2, so at most two of the five pods restart."
+      },
+      {
+        "letter": "D",
+        "text": "A PodDisruptionBudget with minAvailable set to 3 and a selector matching the web Deployment pod labels."
+      }
+    ],
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "A PodDisruptionBudget constrains voluntary disruptions such as node drains during upgrades: the eviction API refuses to evict a pod when doing so would drop the number of available matching pods below minAvailable, so the drain waits instead.",
+    "distractors": {
+      "A": "An autoscaler adds replicas in response to load; it places no limit on how many pods a node drain evicts at the same moment.",
+      "B": "Spreading pods over nodes reduces the blast radius of one node failing but does not stop the upgrade from draining several nodes in sequence.",
+      "C": "The rolling update strategy only governs disruptions the Deployment controller itself causes, and it is ignored by node drains."
+    },
+    "officialDocUrl": "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-046",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "gcloud storage rsync",
+      "Cloud Storage",
+      "Incremental synchronization",
+      "Object deletion"
+    ],
+    "title": "Mirroring an On-Premises Asset Directory to Cloud Storage Nightly",
+    "scenario": "The directory /var/www/assets holds 50 GB of catalogue images on an on-premises host, of which under 200 MB change daily. A nightly cron job must make gs://corp-product-assets an exact mirror: unchanged files must not be re-uploaded over the 100 Mbps link, and files deleted locally must disappear from the bucket. Which command accomplishes this?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud storage cp --recursive /var/www/assets gs://corp-product-assets, letting the service skip identical objects."
+      },
+      {
+        "letter": "B",
+        "text": "gcloud storage rsync --recursive --delete-unmatched-destination-objects /var/www/assets/ gs://corp-product-assets."
+      },
+      {
+        "letter": "C",
+        "text": "Install a Storage Transfer Service agent pool on the host and run a daily transfer job for that source directory."
+      },
+      {
+        "letter": "D",
+        "text": "gcloud storage rsync --recursive /var/www/assets gs://corp-product-assets, leaving destination-only objects alone."
+      }
+    ],
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "gcloud storage rsync compares names, sizes and checksums and copies only objects that are new or changed. Adding --delete-unmatched-destination-objects removes objects that no longer exist at the source, which makes the bucket an exact mirror of the directory.",
+    "distractors": {
+      "A": "The cp command has no delete behaviour and by default re-uploads every file it is given, saturating the 100 Mbps link with 50 GB each night.",
+      "C": "An agent pool transfer works but requires installing and maintaining agent software on the host, which a single cron command already avoids.",
+      "D": "Without the delete flag rsync uploads the changed files correctly but leaves deleted images in the bucket, so it is not an exact mirror."
+    },
+    "officialDocUrl": "https://cloud.google.com/sdk/gcloud/reference/storage/rsync",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-047",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.5",
+    "subsectionName": "Deploying and implementing networking resources",
+    "conceptos": [
+      "VPC Flow Logs",
+      "Subnet configuration",
+      "Sampling rate",
+      "Network forensics"
+    ],
+    "title": "Capturing Every Flow on a Database Subnet for Forensics",
+    "scenario": "A security team must reconstruct, after the fact, every connection that crossed subnet db-subnet in us-central1, including source and destination address, port, protocol and byte counts. Their forensic standard rejects any sampling, and the budget does not cover deploying and running collector instances. Which command enables the capture?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute networks subnets update db-subnet --region=us-central1 --enable-flow-logs --logging-sample-rate=0.1"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud compute firewall-rules update allow-db-ingress --enable-logging --logging-metadata=include-all"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud compute networks subnets update db-subnet --region=us-central1 --enable-flow-logs --logging-sample-rate=1.0"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud compute packet-mirrorings create db-mirror --region=us-central1 --mirrored-subnets=db-subnet --collector-ilb=fwd"
+      }
+    ],
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "VPC Flow Logs are enabled per subnet and record connection metadata for the flows they sample. A sample rate of 1.0 keeps every sampled flow, which satisfies a forensic requirement that no connection be omitted.",
+    "distractors": {
+      "A": "A sample rate of 0.1 discards ninety percent of the flow records, so most connections are missing from the forensic record.",
+      "B": "Firewall Rules Logging records only connections evaluated by that one rule, so traffic matched by any other rule in the subnet is never captured.",
+      "D": "Packet Mirroring copies full payloads to collector instances behind an internal load balancer, which is exactly the compute cost the budget excludes."
+    },
+    "officialDocUrl": "https://cloud.google.com/vpc/docs/flow-logs",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-048",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
+      "Kubernetes NetworkPolicy",
+      "GKE network policy enforcement",
+      "Pod isolation",
+      "Ingress rules"
+    ],
+    "title": "Restricting Database Pod Ingress to the Backend API in GKE",
+    "scenario": "In namespace prod of a GKE cluster with network policy enforcement enabled, pods labelled app=database must accept TCP connections on port 5432 only from pods labelled app=backend-api. Every other pod in the cluster must be refused, and an auditor will verify the rule from inside the cluster, so node-level controls are out of scope. Which manifest should you apply?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "A NetworkPolicy in prod selecting app: backend-api with an egress rule allowing TCP 5432 to pods app: database."
+      },
+      {
+        "letter": "B",
+        "text": "A NetworkPolicy in prod matching app: database with an ingress rule opening TCP 5432 from pods app: backend-api."
+      },
+      {
+        "letter": "C",
+        "text": "A VPC firewall rule allowing TCP 5432 from the backend node pool tag and denying every other source on that port."
+      },
+      {
+        "letter": "D",
+        "text": "A NetworkPolicy in prod selecting app: database with an ingress rule listing TCP port 5432 and no from selector."
+      }
+    ],
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "A NetworkPolicy applies to the pods matched by its podSelector, and an ingress rule combining a from podSelector with a port allows only that source to reach that port. Selecting the database pods for ingress isolates them and permits the backend API alone.",
+    "distractors": {
+      "A": "An egress policy on the backend pods restricts what those pods may send, and leaves every other pod in the namespace free to connect to the database.",
+      "C": "Node pool firewall tags cannot distinguish pods, so any pod scheduled onto a backend node passes the rule and the auditor's in-cluster test fails.",
+      "D": "An ingress rule with ports but no from selector admits traffic from every pod on port 5432, which is the opposite of the required isolation."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-049",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "conceptos": [
+      "Cloud Tasks",
+      "Queue rate limits",
+      "HTTP targets",
+      "Asynchronous dispatch"
+    ],
+    "title": "Capping Outbound Webhook Dispatch at Ten Requests per Second",
+    "scenario": "Your order service posts webhooks to merchant endpoints that return HTTP 429 above 10 requests per second. Order bursts reach 800 events per minute and no event may be dropped; late delivery is acceptable, rejection is not. You need a managed queue that dispatches HTTP tasks at a fixed ceiling of ten per second with retries. Which command should you run?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud tasks queues create merchant-webhooks --location=us-central1 --max-concurrent-dispatches=10 --max-attempts=5"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud scheduler jobs create http merchant-webhooks --location=us-central1 --schedule='* * * * *' --uri=https://m/hook"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud pubsub subscriptions create merchant-hooks --topic=orders --push-endpoint=https://merchant.example.com/hook"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud tasks queues create merchant-webhooks --location=us-central1 --max-dispatches-per-second=10 --max-attempts=5"
+      }
+    ],
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "A Cloud Tasks queue enforces a dispatch rate limit expressed in tasks per second, holding tasks in the queue and retrying failures, which keeps the outbound request rate at the merchant's documented ceiling without losing events.",
+    "distractors": {
+      "A": "Maximum concurrent dispatches limits requests in flight, not requests per second; ten fast handlers can easily exceed ten dispatches each second.",
+      "C": "A Pub/Sub push subscription delivers as fast as it can and its flow control is not a fixed requests-per-second cap, so merchants keep returning 429.",
+      "B": "Cloud Scheduler fires a job on a time schedule with a minimum granularity of one minute and carries no per-order task payload or backlog."
+    },
+    "officialDocUrl": "https://cloud.google.com/tasks/docs/configuring-queues",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-050",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Cloud Storage ACLs",
+      "Default object ACL",
+      "Fine-grained access control",
+      "allUsers"
+    ],
+    "title": "Making Newly Uploaded Objects Public in a Fine-Grained Bucket",
+    "scenario": "Bucket gs://static-web-assets-pub uses fine-grained access control. Objects uploaded from now on must be readable by allUsers without a post-upload step, but a set of existing objects under /internal must stay private, so a bucket-wide grant that exposes all current content is not acceptable. Which command configures this?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Grant allUsers roles/storage.objectViewer on the bucket with gcloud storage buckets add-iam-policy-binding."
+      },
+      {
+        "letter": "B",
+        "text": "Enable uniform bucket-level access on the bucket so one bucket policy governs every object stored inside it."
+      },
+      {
+        "letter": "C",
+        "text": "Set the bucket default object ACL with gsutil defacl set public-read gs://static-web-assets-pub for uploads."
+      },
+      {
+        "letter": "D",
+        "text": "Apply gsutil acl ch -u AllUsers:R on the existing object prefix so the uploaded assets become world readable."
+      }
+    ],
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The default object ACL of a bucket is applied to every object written afterwards when the upload does not specify its own ACL. Setting it to public-read makes new objects world readable while leaving the ACLs of objects already stored untouched.",
+    "distractors": {
+      "A": "A bucket-level IAM binding for allUsers applies to every object in the bucket, which immediately exposes the objects under /internal that must stay private.",
+      "B": "Uniform bucket-level access disables object ACLs entirely and forces one bucket-wide policy, removing the per-object distinction the requirement depends on.",
+      "D": "Changing ACLs on existing objects does nothing for future uploads, so every new asset still needs a manual post-upload command."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage/docs/access-control/lists",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-051",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Memorystore for Redis",
+      "Standard tier",
+      "Automatic failover",
+      "Alternative zone"
+    ],
+    "title": "Provisioning a Highly Available Memorystore Redis Session Cache",
+    "scenario": "A session cache in us-east1 needs 10 GB of memory on Redis 7.0. The service level objective allows at most a few minutes of cache unavailability per year, so the cache must fail over automatically to a replica in a second zone without the application changing its endpoint. Which command creates this instance?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud redis instances create session-cache --size=10 --region=us-east1 --tier=BASIC --redis-version=redis_7_0"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud redis instances create session-cache --size=10 --region=us-east1 --tier=STANDARD --redis-version=redis_7_0"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud redis instances create session-cache --size=10 --region=us-east1 --tier=STANDARD --redis-version=redis_6_x"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud compute instances create session-cache --machine-type=e2-highmem-2 --zone=us-east1-b --image-family=debian-12"
+      }
+    ],
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The Standard tier of Memorystore for Redis provisions a replica in a second zone of the region and fails over to it automatically, keeping the same instance endpoint, while the Redis version is selected with --redis-version.",
+    "distractors": {
+      "A": "The Basic tier is a single node with no replica, so a zonal failure takes the cache down and the whole dataset is lost.",
+      "C": "This instance is highly available but pins Redis 6.x, which does not meet the stated requirement for the Redis 7.0 feature set.",
+      "D": "A self-managed Redis on one Compute Engine VM has no managed replica or automatic failover, and you own patching and monitoring."
+    },
+    "officialDocUrl": "https://cloud.google.com/memorystore/docs/redis/redis-tiers",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-052",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
+      "Resource requests and limits",
+      "Pod scheduling",
+      "CPU throttling",
+      "OOMKilled"
+    ],
+    "title": "Setting Container Requests and Limits for a Burstable GKE Workload",
+    "scenario": "A container must be scheduled only onto a node that can reserve 500m CPU and 1 GiB of memory for it. Under load it may burst, but the platform team requires it to be CPU throttled above 2 vCPUs and terminated once it reaches 4 GiB of memory, so that a leak cannot starve the other pods sharing the node. How should the container resources be defined?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Set resources.requests to cpu 500m and memory 1Gi, and resources.limits to cpu 2 and memory 4Gi on this container."
+      },
+      {
+        "letter": "B",
+        "text": "Set resources.requests to cpu 2 and memory 4Gi, and resources.limits to cpu 500m and memory 1Gi on the container."
+      },
+      {
+        "letter": "C",
+        "text": "Create a ResourceQuota in the namespace with requests.cpu 500m, requests.memory 1Gi, limits.cpu 2, limits.memory 4Gi."
+      },
+      {
+        "letter": "D",
+        "text": "Configure a VerticalPodAutoscaler in Auto mode with minAllowed cpu 500m memory 1Gi and maxAllowed cpu 2 memory 4Gi."
+      }
+    ],
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Requests are what the scheduler reserves on a node, and limits are the ceiling the kubelet enforces at runtime: CPU above the limit is throttled and a container that reaches its memory limit is terminated with OOMKilled.",
+    "distractors": {
+      "B": "Inverting the values is rejected because a limit lower than the request is invalid, and it would also cap the container below what it needs to start.",
+      "C": "A ResourceQuota bounds the aggregate consumption of the whole namespace and does not throttle or terminate this individual container.",
+      "D": "A VerticalPodAutoscaler recommends and rewrites requests over time, restarting pods to apply them, rather than enforcing a hard runtime ceiling."
+    },
+    "officialDocUrl": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-053",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Cloud Storage CORS",
+      "Signed URLs",
+      "Browser uploads",
+      "Bucket configuration"
+    ],
+    "title": "Unblocking Browser Uploads to Cloud Storage with a CORS Policy",
+    "scenario": "Browsers on https://app.example.com upload avatars straight to gs://user-avatars-vault with signed URLs. Every PUT is blocked by the browser before it leaves, with a CORS preflight error. The signed URLs are valid and the fix must not change who can read the bucket. You have written cors-policy.json allowing that one origin. Which command applies it?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud storage objects update gs://user-avatars-vault/** --custom-metadata=access-control-allow-origin=app"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud storage buckets update gs://user-avatars-vault --cors-file=cors-policy.json to publish that policy"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud storage buckets update gs://user-avatars-vault --uniform-bucket-level-access for the avatar bucket"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud storage sign-url gs://user-avatars-vault/avatar.png --http-verb=PUT --duration=1h for each upload"
+      }
+    ],
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "CORS is configured on the bucket, not on individual objects. Applying a CORS configuration file with the allowed origin, methods and headers makes Cloud Storage answer the browser preflight request so the PUT is permitted.",
+    "distractors": {
+      "A": "Custom object metadata is stored and returned as arbitrary key-value data; it is not the CORS configuration the preflight response is built from.",
+      "C": "Uniform bucket-level access changes how permissions are evaluated and has no effect on the preflight response, so the browser still blocks the upload.",
+      "D": "The signed URLs already work; regenerating them does not add the response headers the browser requires before it will send the request."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage/docs/using-cors",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-054",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Cloud Bigtable",
+      "Cluster replication",
+      "Multi-cluster routing",
+      "Availability SLA"
+    ],
+    "title": "Adding a European Bigtable Cluster for Cross-Region Replication",
+    "scenario": "The Bigtable instance ad-bidding-engine has one SSD cluster in us-central1-b. European bidders need reads served locally under 10 ms, and the contract requires the 99.999% availability SLA, which is only offered when an instance replicates across regions. You must add a four-node cluster in europe-west1-b without recreating the instance. Which command deploys it?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud bigtable clusters create cluster-eu --instance=ad-bidding-engine --zone=us-central1-c --num-nodes=4 --storage-type=SSD"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud bigtable instances update ad-bidding-engine --cluster=cluster-eu --cluster-zone=europe-west1-b --cluster-num-nodes=4"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud bigtable clusters create cluster-eu --instance=ad-bidding-engine --zone=europe-west1-b --num-nodes=4 --storage-type=HDD"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud bigtable clusters create cluster-eu --instance=ad-bidding-engine --zone=europe-west1-b --num-nodes=4 --storage-type=SSD"
+      }
+    ],
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Adding a cluster to an existing Bigtable instance with gcloud bigtable clusters create starts replication between the clusters automatically, and placing that cluster in a second region is what makes the instance eligible for the 99.999% availability SLA with multi-cluster routing.",
+    "distractors": {
+      "A": "A second cluster in us-central1-c replicates but keeps both copies in one region, so European reads still cross the Atlantic and the SLA stays 99.99%.",
+      "B": "gcloud bigtable instances update changes instance-level properties such as the display name; a cluster is added through the clusters command group.",
+      "C": "All clusters in a Bigtable instance must use the same storage type as the existing SSD cluster, and HDD read latency is far above the 10 ms target."
+    },
+    "officialDocUrl": "https://cloud.google.com/bigtable/docs/replication-overview",
+    "difficulty": "hard",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-055",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Pub/Sub notifications for Cloud Storage",
+      "OBJECT_FINALIZE",
+      "Event-driven ingestion",
+      "Cloud Storage"
+    ],
+    "title": "Publishing a Pub/Sub Message When an Invoice Lands in a Bucket",
+    "scenario": "An ingestion pipeline must react within seconds each time a new invoice file is written to gs://incoming-invoices-vault. The message must carry the object metadata and be published to the existing topic projects/corp-finance/topics/invoice-events. Metadata edits on files already stored must not trigger the pipeline. Which command establishes this?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud storage buckets notifications create gs://incoming-invoices-vault --topic=invoice-events --event-types=OBJECT_FINALIZE"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud storage buckets notifications create gs://incoming-invoices-vault --topic=invoice-events --event-types=OBJECT_METADATA_UPDATE"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud eventarc triggers create invoice-events --destination-run-service=invoice-processor --event-filters=type=finalized"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud logging sinks create invoice-sink pubsub.googleapis.com/projects/corp-finance/topics/invoice-events --log-filter=gcs"
+      }
+    ],
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "A Pub/Sub notification configuration on a bucket publishes a message containing the object metadata to the chosen topic. The OBJECT_FINALIZE event type fires when a new object is successfully written, and restricting the configuration to it excludes later metadata changes.",
+    "distractors": {
+      "B": "OBJECT_METADATA_UPDATE fires when metadata of an existing object changes, which is precisely the event the pipeline must ignore, and it misses new uploads.",
+      "C": "An Eventarc trigger delivers the event to a Cloud Run service instead of publishing into the invoice-events topic the pipeline already consumes.",
+      "D": "A logging sink forwards audit log entries describing the API call rather than the object metadata message the pipeline expects, and needs Data Access logs enabled."
+    },
+    "officialDocUrl": "https://cloud.google.com/storage/docs/pubsub-notifications",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-056",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
+      "BackendConfig CRD",
+      "GKE Ingress",
+      "Cloud Armor",
+      "Health checks"
+    ],
+    "title": "Attaching a Custom Health Check and Cloud Armor Policy to a GKE Ingress Backend",
+    "scenario": "A GKE Service is exposed through an Ingress-managed external Application Load Balancer. The backend service must use the health check path /api/v1/healthz, a 60-second backend timeout, and the existing Cloud Armor policy waf-policy. The settings must survive Ingress reconciliation, so changes made directly with gcloud are unacceptable. Which two actions should you take? (Choose 2.)",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create a BackendConfig resource declaring the healthCheck path, timeoutSec 60 and the securityPolicy waf-policy."
+      },
+      {
+        "letter": "B",
+        "text": "Annotate the Kubernetes Service with cloud.google.com/backend-config naming that BackendConfig as the default."
+      },
+      {
+        "letter": "C",
+        "text": "Create a FrontendConfig resource carrying the health check path and the Cloud Armor policy, referenced by the Ingress."
+      },
+      {
+        "letter": "D",
+        "text": "Attach waf-policy to the generated backend service with gcloud compute backend-services update after each deploy."
+      },
+      {
+        "letter": "E",
+        "text": "Annotate the Ingress with ingress.kubernetes.io/health-check-path and cloud.google.com/armor-config for the backend."
+      }
+    ],
+    "correct": [
+      "A",
+      "B"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "explanation": "The BackendConfig custom resource is where GKE Ingress reads backend service settings such as health check parameters, timeoutSec and the Cloud Armor security policy, and it only takes effect once the Service carries the cloud.google.com/backend-config annotation that binds it to the resource.",
+    "distractors": {
+      "C": "FrontendConfig configures load balancer frontend behaviour such as SSL policy and HTTP-to-HTTPS redirects, not backend health checks or Cloud Armor.",
+      "D": "The Ingress controller reconciles the backend service it owns and overwrites out-of-band gcloud changes, which the requirement explicitly rules out.",
+      "E": "Those annotation keys are not part of the GKE Ingress feature set, so the controller ignores them and the defaults remain in place."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features",
+    "difficulty": "hard",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-057",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "conceptos": [
+      "Node auto-provisioning",
+      "Cluster autoscaler",
+      "GKE Standard",
+      "Machine families"
+    ],
+    "title": "Letting GKE Create Node Pools for Unpredictable Workload Shapes",
+    "scenario": "A multi-tenant GKE Standard cluster receives jobs that request high-memory, compute-optimised or GPU nodes, and the mix changes weekly. Pods currently stay Pending for hours until an operator builds a matching node pool. You must let the cluster create suitably shaped node pools on demand within CPU and memory ceilings you set. Which feature should you enable?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cluster autoscaler on the existing default pool with gcloud container clusters update --enable-autoscaling --max-nodes=100."
+      },
+      {
+        "letter": "B",
+        "text": "Node auto-provisioning on the cluster with gcloud container clusters update --enable-autoprovisioning and resource limits."
+      },
+      {
+        "letter": "C",
+        "text": "A HorizontalPodAutoscaler per tenant with kubectl autoscale deployment --min=1 --max=50 --cpu-percent=70 for each job."
+      },
+      {
+        "letter": "D",
+        "text": "The optimize-utilization autoscaling profile with gcloud container clusters update --autoscaling-profile on the cluster."
+      }
+    ],
+    "correct": "B",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Node auto-provisioning extends the cluster autoscaler so it can create and delete node pools whose machine type, accelerators and size match the requests of pending pods, bounded by the CPU, memory and GPU limits configured for the cluster.",
+    "distractors": {
+      "A": "The cluster autoscaler only adds nodes of the machine type already defined in an existing pool, so a GPU request stays Pending until someone builds that pool.",
+      "C": "A HorizontalPodAutoscaler adds more pod replicas; it cannot make a node of a shape that does not exist anywhere in the cluster.",
+      "D": "The optimize-utilization profile makes the autoscaler remove underused nodes faster and creates no new node pool shapes."
+    },
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-058",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "conceptos": [
+      "Cloud SQL",
+      "Point-in-time recovery",
+      "Binary logging",
+      "Instance clone"
+    ],
+    "title": "Recovering a Cloud SQL Database to a Timestamp Two Minutes Before Corruption",
+    "scenario": "A migration script corrupted data in the Cloud SQL instance customer-db at 14:32:00 UTC on 20 August 2026. Automated backups and point-in-time recovery are enabled and the last nightly backup ran at 03:00 UTC. The live instance must keep serving traffic, and the clean data is needed in a separate instance customer-db-restored. Which command should you run?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:30:00Z"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud sql backups restore 1755697200 --restore-instance=customer-db --backup-instance=customer-db"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:32:00Z"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud sql export sql customer-db gs://corp-backups/customer-db.sql --database=customer"
+      }
+    ],
+    "correct": "A",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Cloning an instance with --point-in-time uses the automated backup plus the transaction logs to build a new instance whose state matches the requested timestamp, leaving the source instance running and untouched.",
+    "distractors": {
+      "B": "Restoring a backup onto customer-db overwrites the live instance, causing downtime, and the 03:00 backup loses more than eleven hours of valid transactions.",
+      "C": "The timestamp is the moment the corrupting script committed, so the restored instance contains exactly the damage you are trying to undo.",
+      "D": "An export copies the current, already corrupted contents to a file and offers no way to select an earlier point in time."
+    },
+    "officialDocUrl": "https://cloud.google.com/sql/docs/postgres/backup-recovery/pitr",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-059",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.6",
+    "subsectionName": "Implementing resources through infrastructure as code",
+    "conceptos": [
+      "Terraform",
+      "Remote state backend",
+      "State locking",
+      "Cloud Storage versioning"
+    ],
+    "title": "Protecting Shared Terraform State from Concurrent Applies",
+    "scenario": "Six engineers and a Cloud Build pipeline all run terraform apply against project prod-core. Two simultaneous applies last week corrupted the state file and cost a day of manual recovery. State must be locked for the duration of every apply, recoverable to a previous revision, and the team will not run extra infrastructure to host it. Which configuration should you use?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Keep the gcs backend and serialise runs by allowing only one concurrent Cloud Build trigger for the repository."
+      },
+      {
+        "letter": "B",
+        "text": "Keep the local backend and commit the terraform.tfstate file to the shared Git repository after each apply."
+      },
+      {
+        "letter": "C",
+        "text": "Configure the Terraform gcs backend on a Cloud Storage bucket with object versioning turned on for the state."
+      },
+      {
+        "letter": "D",
+        "text": "Store the state file in Secret Manager and have each run read the newest secret version before it applies."
+      }
+    ],
+    "correct": "C",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "The Terraform gcs backend stores state in a Cloud Storage bucket and acquires a lock on it for the duration of operations that write state, so a second apply waits instead of overwriting. Enabling object versioning on the bucket keeps previous revisions of the state for recovery.",
+    "distractors": {
+      "B": "A local state file in Git has no locking at all, and two engineers applying at once produce a merge conflict after the infrastructure has already diverged.",
+      "D": "Secret Manager versions a blob but offers no lock, so two runs can both read the same version and write conflicting successors.",
+      "A": "Limiting build concurrency serialises pipeline runs but leaves the six engineers free to apply from their workstations at the same moment."
+    },
+    "officialDocUrl": "https://cloud.google.com/docs/terraform/resource-management/store-state",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "ACE-D3-060",
+    "certId": "ace",
+    "domainId": "ACE-D3",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.6",
+    "subsectionName": "Implementing resources through infrastructure as code",
+    "conceptos": [
+      "Cloud Build service account",
+      "IAM roles",
+      "Terraform",
+      "Least privilege"
+    ],
+    "title": "Granting Cloud Build the Roles Terraform Needs in a Production Project",
+    "scenario": "A Cloud Build pipeline runs terraform apply in project prod-core to create Compute Engine instances and Cloud Storage buckets. Builds fail with permission denied on compute.instances.create. The pipeline must succeed unattended tonight, and security will not accept granting roles/owner or roles/editor on the project. Which grant resolves this?",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Grant roles/compute.admin and roles/storage.admin to the Compute Engine default service account in prod-core."
+      },
+      {
+        "letter": "B",
+        "text": "Grant roles/compute.viewer and roles/storage.objectAdmin to the Cloud Build service account in prod-core."
+      },
+      {
+        "letter": "C",
+        "text": "Grant roles/cloudbuild.builds.editor and roles/iam.serviceAccountUser to the Cloud Build service account."
+      },
+      {
+        "letter": "D",
+        "text": "Grant roles/compute.admin and roles/storage.admin to the Cloud Build service account in project prod-core."
+      }
+    ],
+    "correct": "D",
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "explanation": "Builds act with the identity of the Cloud Build service account, so that principal is the one that needs create permissions on the resources Terraform manages. roles/compute.admin and roles/storage.admin cover those resource types without the project-wide scope of editor or owner.",
+    "distractors": {
+      "A": "The Compute Engine default service account is not the identity running the build, so the pipeline still fails with the same permission denied error.",
+      "B": "roles/compute.viewer is read-only, so compute.instances.create is still denied and the unattended build fails again tonight.",
+      "C": "Those roles let a principal launch builds and impersonate service accounts, but neither grants permission to create Compute Engine or Cloud Storage resources."
+    },
+    "officialDocUrl": "https://cloud.google.com/build/docs/cloud-build-service-account",
+    "difficulty": "medium",
+    "blockId": "BLOCK-4"
+  }
+]

@@ -1,0 +1,546 @@
+[
+ {
+  "id": "CDL-IA-025",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Aprendizaje supervisado, no supervisado y por refuerzo",
+  "conceptos": [
+   "Unsupervised Learning",
+   "Clustering",
+   "Datos sin etiquetar"
+  ],
+  "keywords": [
+   "aprendizaje no supervisado",
+   "agrupamiento",
+   "datos sin etiquetar",
+   "segmentación de clientes"
+  ],
+  "difficulty": "foundational",
+  "bloomsLevel": "understand",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "Descubrir grupos de clientes cuando nadie sabe cuántos hay",
+  "scenario": "Una cadena de tiendas guarda tres años de tickets de compra, pero nunca ha clasificado a sus clientes por perfil. El equipo de marketing no sabe cuántos perfiles existen ni cómo llamarlos: quiere que los datos revelen agrupaciones naturales para diseñar campañas. ¿Qué tipo de aprendizaje automático corresponde a esta necesidad?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Aprendizaje supervisado, entrenando un clasificador con los tickets de compra y el segmento de cada cliente."
+   },
+   {
+    "letter": "B",
+    "text": "Aprendizaje por refuerzo, con un agente que reciba una recompensa por cada campaña de marketing aceptada."
+   },
+   {
+    "letter": "C",
+    "text": "Aprendizaje no supervisado, aplicando agrupamiento a los tickets para que emerjan perfiles de cliente."
+   },
+   {
+    "letter": "D",
+    "text": "Aprendizaje supervisado de regresión, prediciendo el gasto futuro de cada cliente según su historial."
+   }
+  ],
+  "correct": "C",
+  "explanation": "El aprendizaje no supervisado trabaja con datos sin etiquetar y busca estructura oculta: el agrupamiento (clustering) forma conjuntos de clientes con comportamiento de compra parecido sin que nadie haya definido antes las categorías. Es el tipo de aprendizaje indicado cuando la pregunta de negocio es '¿qué grupos hay aquí?' y no '¿a qué grupo conocido pertenece este cliente?'.",
+  "distractors": {
+   "A": "El aprendizaje supervisado necesita ejemplos ya etiquetados con la respuesta correcta, y aquí no existe ningún segmento asignado previamente que sirva de etiqueta.",
+   "B": "El aprendizaje por refuerzo optimiza decisiones secuenciales mediante ensayo y recompensa; no descubre agrupaciones en un histórico de datos ya cerrado.",
+   "D": "Predecir el gasto futuro es una tarea supervisada de regresión que responde a otra pregunta: da una cifra por cliente, no revela cuántos perfiles distintos existen."
+  },
+  "officialDocUrl": "https://cloud.google.com/learn/what-is-machine-learning",
+  "blockId": "BLOCK-3"
+ },
+ {
+  "id": "CDL-IA-026",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Calidad y etiquetado de los datos como base del proyecto de IA",
+  "conceptos": [
+   "Calidad del dato",
+   "Etiquetado",
+   "Preparación de datos"
+  ],
+  "keywords": [
+   "calidad de datos",
+   "etiquetado inconsistente",
+   "preparación de datos",
+   "elección de algoritmo"
+  ],
+  "difficulty": "foundational",
+  "bloomsLevel": "apply",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "Un modelo de incidencias que acierta poco pese a cambiar de algoritmo",
+  "scenario": "Un fabricante entrenó un modelo para clasificar incidencias de fábrica en tres categorías y obtiene una precisión baja. Al revisarlo se descubre que las incidencias históricas fueron etiquetadas por cinco turnos distintos, con criterios diferentes, y que muchas están sin categoría. El equipo propone probar un algoritmo más potente. ¿Cuál es la recomendación correcta?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Unificar el criterio de etiquetado y reetiquetar todo el histórico antes de cambiar de algoritmo."
+   },
+   {
+    "letter": "B",
+    "text": "Cambiar a un modelo mayor en Vertex AI, porque más parámetros compensan la confusión de etiquetas."
+   },
+   {
+    "letter": "C",
+    "text": "Aumentar las épocas de entrenamiento y los recursos de cómputo hasta que suba la precisión."
+   },
+   {
+    "letter": "D",
+    "text": "Añadir muchas más incidencias al conjunto, manteniendo el criterio de etiquetado de cada turno."
+   }
+  ],
+  "correct": "A",
+  "explanation": "En un proyecto de IA la calidad de los datos determina el techo del resultado: si las mismas incidencias están etiquetadas con criterios distintos, el modelo recibe señales contradictorias y ningún algoritmo puede resolver esa ambigüedad. Definir un criterio único de etiquetado y sanear el histórico es el paso que de verdad mueve la precisión.",
+  "distractors": {
+   "B": "Un modelo con más parámetros aprende mejor patrones reales, pero también aprende con más fidelidad el ruido de unas etiquetas contradictorias; el error de origen sigue ahí.",
+   "C": "Entrenar más tiempo sobre datos mal etiquetados solo ajusta el modelo a ese ruido y suele empeorar su comportamiento con incidencias nuevas.",
+   "D": "Más volumen con el mismo criterio inconsistente multiplica las contradicciones: el problema no es la cantidad de ejemplos sino su coherencia."
+  },
+  "officialDocUrl": "https://cloud.google.com/architecture/ml-on-gcp-best-practices",
+  "blockId": "BLOCK-3"
+ },
+ {
+  "id": "CDL-IA-027",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Embeddings y representación del significado",
+  "conceptos": [
+   "Embeddings",
+   "Similitud semántica",
+   "Vector Search"
+  ],
+  "keywords": [
+   "embedding",
+   "similitud semántica",
+   "vector",
+   "catálogo de productos"
+  ],
+  "difficulty": "intermediate",
+  "bloomsLevel": "understand",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "Explicar a dirección qué aporta un embedding",
+  "scenario": "El comité de dirección de un comercio electrónico pregunta qué es un embedding, después de que el equipo técnico lo mencionara al proponer un buscador nuevo para el catálogo. Quieren una explicación en términos de valor de negocio, no una fórmula. ¿Cuál es la descripción correcta?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Una copia comprimida del catálogo que reduce el coste de almacenar las fichas de producto en la nube."
+   },
+   {
+    "letter": "B",
+    "text": "Una clave de cifrado aplicada a las fichas de producto para que el buscador respete la privacidad."
+   },
+   {
+    "letter": "C",
+    "text": "Una regla de negocio que define qué sinónimos del catálogo trata el buscador como equivalentes."
+   },
+   {
+    "letter": "D",
+    "text": "Una representación numérica del significado: lo parecido queda cerca y permite buscar por sentido."
+   }
+  ],
+  "correct": "D",
+  "explanation": "Un embedding traduce un texto, una imagen o un producto a un vector de números que captura su significado. Elementos con sentido parecido quedan próximos en ese espacio, y esa proximidad es lo que permite buscar por intención ('abrigo para lluvia') en lugar de por coincidencia literal de palabras, además de sostener recomendaciones y agrupaciones.",
+  "distractors": {
+   "A": "Un embedding no sustituye ni comprime el catálogo original: es información adicional que se calcula y se almacena aparte para poder comparar significados.",
+   "B": "El cifrado protege el contenido y es reversible con la clave; un embedding no oculta datos, su finalidad es medir parecido semántico.",
+   "C": "Las listas de sinónimos son reglas escritas a mano; el embedding aprende las relaciones a partir de los datos y captura parecidos que nadie ha enumerado."
+  },
+  "officialDocUrl": "https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-text-embeddings",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "CDL-IA-028",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Agentes de IA frente a chatbots basados en reglas",
+  "conceptos": [
+   "Agentes de IA",
+   "Chatbot de reglas",
+   "Uso de herramientas"
+  ],
+  "keywords": [
+   "agente de IA",
+   "árbol de decisión",
+   "llamada a herramientas",
+   "atención al cliente"
+  ],
+  "difficulty": "intermediate",
+  "bloomsLevel": "understand",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "Del árbol de respuestas a un agente que resuelve el trámite",
+  "scenario": "Una compañía de viajes tiene un chatbot con un árbol de respuestas fijas: si el cliente pide algo fuera del guion, deriva a un agente humano. Quiere sustituirlo por un agente de IA capaz de resolver el cambio de vuelo de principio a fin. ¿Cuál es la diferencia esencial que justifica el cambio?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "El agente responde con más rapidez que el chatbot porque su modelo corre sobre aceleradores dedicados."
+   },
+   {
+    "letter": "B",
+    "text": "El agente razona sobre el objetivo y llama a los sistemas de reserva y pago para cerrar el trámite."
+   },
+   {
+    "letter": "C",
+    "text": "El agente admite voz y texto, mientras que un chatbot de reglas solo acepta mensajes escritos."
+   },
+   {
+    "letter": "D",
+    "text": "El agente traduce la conversación a varios idiomas, cosa que un chatbot de reglas no ofrece."
+   }
+  ],
+  "correct": "B",
+  "explanation": "Un chatbot de reglas recorre un árbol de decisión escrito de antemano y se queda bloqueado ante cualquier petición no prevista. Un agente de IA interpreta el objetivo del usuario, decide qué pasos dar y usa herramientas conectadas (consultar disponibilidad, cambiar la reserva, cobrar la diferencia) hasta cerrar la tarea; esa capacidad de actuar es la diferencia de fondo.",
+  "distractors": {
+   "A": "La latencia depende de la infraestructura, y un chatbot de reglas suele responder incluso más rápido; la velocidad no es lo que aporta el agente.",
+   "C": "Un chatbot de reglas también admite voz si se le añade transcripción; el canal de entrada es independiente de que exista o no capacidad de razonar.",
+   "D": "La traducción se puede añadir a cualquiera de los dos con un servicio de traducción; sigue sin permitir al chatbot salir de su guion."
+  },
+  "officialDocUrl": "https://cloud.google.com/products/agent-builder",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "CDL-IA-029",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Gemini en Google Workspace",
+  "conceptos": [
+   "Gemini for Workspace",
+   "Productividad",
+   "Usuarios de negocio"
+  ],
+  "keywords": [
+   "Gemini para Workspace",
+   "Google Docs",
+   "Gmail",
+   "usuarios no técnicos"
+  ],
+  "difficulty": "foundational",
+  "bloomsLevel": "apply",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "IA para el equipo comercial que no toca la consola de Cloud",
+  "scenario": "El área comercial de una empresa redacta propuestas en Google Docs, resume correos en Gmail y prepara presentaciones en Slides. Dirección quiere darles asistencia de IA dentro de esas mismas herramientas, sin que nadie entre en la consola de Google Cloud ni escriba código. ¿Qué opción responde a esa necesidad?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Gemini para Google Workspace, que ayuda a redactar y resumir dentro de Docs, Gmail, Slides y Meet."
+   },
+   {
+    "letter": "B",
+    "text": "Gemini Code Assist, para que el equipo genere el código de las propuestas y lo despliegue."
+   },
+   {
+    "letter": "C",
+    "text": "Vertex AI Workbench, con cuadernos gestionados donde el equipo escriba las instrucciones."
+   },
+   {
+    "letter": "D",
+    "text": "Un modelo de Model Garden ajustado con las propuestas y expuesto como extremo de predicción propio."
+   }
+  ],
+  "correct": "A",
+  "explanation": "Gemini para Google Workspace lleva la asistencia de IA a las aplicaciones ofimáticas que el usuario de negocio ya utiliza: redactar en Docs, resumir hilos en Gmail, generar imágenes en Slides o tomar notas en Meet. No requiere consola, ni cuadernos, ni desarrollo, que es exactamente la condición del enunciado.",
+  "distractors": {
+   "B": "Gemini Code Assist ayuda a desarrolladores a escribir y revisar código en el IDE; no tiene relación con redactar propuestas comerciales.",
+   "C": "Vertex AI Workbench es un entorno de cuadernos para perfiles de ciencia de datos: obliga a entrar en la consola y a trabajar con código.",
+   "D": "Ajustar un modelo y exponerlo como extremo propio es un proyecto técnico de Google Cloud, muy por encima de lo que pide un equipo comercial."
+  },
+  "officialDocUrl": "https://workspace.google.com/solutions/ai/",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "CDL-IA-030",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Elección del tamaño de modelo: coste y latencia",
+  "conceptos": [
+   "Gemini Flash",
+   "Latencia",
+   "Coste por consulta"
+  ],
+  "keywords": [
+   "latencia",
+   "coste por consulta",
+   "modelo ligero",
+   "clasificación de correos"
+  ],
+  "difficulty": "intermediate",
+  "bloomsLevel": "apply",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "Clasificar dos millones de correos al mes sin disparar la factura",
+  "scenario": "Un portal clasifica cada correo entrante en una de seis categorías y lo enruta al departamento correspondiente. Son dos millones de mensajes al mes y la respuesta debe llegar en menos de un segundo. Una prueba con el modelo más grande de la familia Gemini acierta, pero el coste y el tiempo de respuesta resultan excesivos. ¿Qué conviene hacer?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Mantener el modelo grande y compensar el gasto reduciendo a tres las categorías de enrutamiento."
+   },
+   {
+    "letter": "B",
+    "text": "Mantener el modelo grande y asumir la latencia: un modelo menor no clasifica con fiabilidad."
+   },
+   {
+    "letter": "C",
+    "text": "Probar un modelo ligero de la familia, como Gemini Flash, y medir si su acierto es suficiente."
+   },
+   {
+    "letter": "D",
+    "text": "Mantener el modelo grande y añadir aceleradores al servicio para bajar el coste unitario por correo."
+   }
+  ],
+  "correct": "C",
+  "explanation": "Los modelos grandes se justifican en tareas de razonamiento complejo; una clasificación en seis categorías es una tarea acotada que un modelo ligero como Gemini Flash suele resolver con acierto equivalente, menor latencia y un coste por consulta muy inferior. El criterio profesional es dimensionar el modelo a la dificultad real de la tarea y comprobarlo midiendo.",
+  "distractors": {
+   "A": "Recortar categorías degrada el enrutamiento para ahorrar dinero: cambia el requisito de negocio en lugar de resolver el problema de coste.",
+   "B": "Los modelos ligeros rinden bien en clasificación de texto acotada; darlo por imposible sin medirlo descarta la opción más barata.",
+   "D": "En un modelo gestionado por consumo el precio va por tokens procesados, no se factura infraestructura que el cliente pueda dimensionar."
+  },
+  "officialDocUrl": "https://cloud.google.com/vertex-ai/generative-ai/docs/models",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "CDL-IA-031",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Cuándo no conviene usar inteligencia artificial",
+  "conceptos": [
+   "Regla determinista",
+   "Trazabilidad",
+   "Criterio de adopción"
+  ],
+  "keywords": [
+   "regla determinista",
+   "cálculo fiscal",
+   "resultado exacto",
+   "auditoría"
+  ],
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "Un cálculo de impuestos que alguien quiere resolver con un modelo",
+  "scenario": "Una empresa calcula la retención fiscal de cada nómina aplicando tramos publicados por la administración. Un responsable propone sustituir ese cálculo por un modelo de aprendizaje automático entrenado con las nóminas de años anteriores. ¿Cuál es la valoración correcta de la propuesta?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Es adecuada, porque el modelo detectará en el histórico los tramos mal aplicados y los corregirá."
+   },
+   {
+    "letter": "B",
+    "text": "Es adecuada si se entrena con bastantes nóminas y se valida cada año contra la tabla de tramos."
+   },
+   {
+    "letter": "C",
+    "text": "Es adecuada, ya que el modelo se adapta solo a los cambios de tramos sin mantener la lógica del cálculo."
+   },
+   {
+    "letter": "D",
+    "text": "No procede: la regla es exacta y auditable, y un modelo solo la aproxima con menos trazabilidad."
+   }
+  ],
+  "correct": "D",
+  "explanation": "La IA aporta valor cuando la regla no se puede escribir con precisión o los patrones son demasiado complejos para enumerarlos. Aquí ocurre lo contrario: la norma fiscal es pública, determinista y debe reproducirse exactamente ante una auditoría. Un modelo introduce aproximación y dificulta justificar cada importe, sin ninguna ventaja a cambio.",
+  "distractors": {
+   "A": "Un modelo entrenado con el histórico aprende a imitar esos cálculos, errores incluidos; no dispone de la norma correcta con la que corregirlos.",
+   "B": "Validar cada año contra la tabla evidencia que la tabla ya resuelve el problema: mantener además un modelo añade coste y riesgo sin aportar nada.",
+   "C": "El modelo no conoce un cambio normativo hasta que existen nóminas nuevas con el que reentrenar, así que llega tarde y aplica tramos caducados."
+  },
+  "officialDocUrl": "https://cloud.google.com/responsible-ai",
+  "blockId": "BLOCK-3"
+ },
+ {
+  "id": "CDL-IA-032",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Propiedad intelectual y contenido generado por IA",
+  "conceptos": [
+   "Indemnización de PI",
+   "Contenido generado",
+   "Riesgo legal"
+  ],
+  "keywords": [
+   "propiedad intelectual",
+   "indemnización",
+   "derechos de autor",
+   "contenido generado"
+  ],
+  "difficulty": "advanced",
+  "bloomsLevel": "understand",
+  "timeEstimateSeconds": 90,
+  "caseStudy": "none",
+  "title": "El departamento legal pregunta por los derechos de las imágenes generadas",
+  "scenario": "Una agencia va a usar IA generativa de Google Cloud para producir textos e imágenes de campaña. El departamento legal quiere saber qué protección tiene la empresa si un tercero reclama derechos de autor sobre el contenido generado. ¿Qué respuesta refleja la posición de Google Cloud?",
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Google registra a nombre del cliente el contenido generado, así que ningún tercero puede reclamarlo."
+   },
+   {
+    "letter": "B",
+    "text": "Google indemniza por los datos de entrenamiento y por el resultado, si se cumplen condiciones."
+   },
+   {
+    "letter": "C",
+    "text": "El riesgo recae en el cliente, porque el proveedor de nube no responde de lo que se genere."
+   },
+   {
+    "letter": "D",
+    "text": "El contenido generado pasa a ser de Google y el cliente recibe una licencia limitada a su campaña."
+   }
+  ],
+  "correct": "B",
+  "explanation": "Google Cloud ofrece una indemnización de propiedad intelectual con dos ramas para su IA generativa: cubre las reclamaciones sobre los datos usados para entrenar los modelos y también sobre el contenido que el servicio genera, siempre que el cliente respete las condiciones de uso, como no desactivar los filtros ni aportar material sobre el que no tiene derechos.",
+  "distractors": {
+   "A": "Google no tramita registros de propiedad intelectual en nombre del cliente, y ningún registro impediría por sí mismo que un tercero presentara una reclamación.",
+   "C": "Es una idea extendida pero incorrecta: Google asumió públicamente el compromiso de indemnizar precisamente para despejar esta duda de los clientes.",
+   "D": "El cliente conserva sus derechos sobre las entradas y los resultados; Google no reclama la propiedad del contenido que el cliente genera."
+  },
+  "officialDocUrl": "https://cloud.google.com/blog/products/ai-machine-learning/protecting-customers-with-generative-ai-indemnification",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "CDL-IA-033",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Métricas de negocio para evaluar un proyecto de IA",
+  "conceptos": [
+   "Indicadores de negocio",
+   "Retorno de la inversión",
+   "Métricas de modelo"
+  ],
+  "keywords": [
+   "indicador de negocio",
+   "tiempo de resolución",
+   "coste por caso",
+   "medir el resultado"
+  ],
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "title": "Demostrar al comité que el asistente de soporte funcionó",
+  "scenario": "Tras seis meses con un asistente de IA en el servicio de soporte, el comité de dirección pide pruebas de que la inversión mereció la pena. El equipo técnico presenta la exactitud del modelo y su latencia media. ¿Qué dos indicadores debe añadir para responder en términos de negocio? (Elige 2.)",
+  "isMultiSelect": true,
+  "expectedSelectCount": 2,
+  "options": [
+   {
+    "letter": "A",
+    "text": "El tiempo medio de resolución de un caso de soporte antes y después de desplegar el asistente."
+   },
+   {
+    "letter": "B",
+    "text": "El número de peticiones por segundo que el extremo de predicción atiende en hora punta."
+   },
+   {
+    "letter": "C",
+    "text": "El coste total por caso atendido, sumando la factura del servicio de IA y las horas del equipo."
+   },
+   {
+    "letter": "D",
+    "text": "El tamaño del modelo elegido y el número de versiones registradas durante los seis meses de uso."
+   }
+  ],
+  "correct": [
+   "A",
+   "C"
+  ],
+  "explanation": "La exactitud y la latencia describen el comportamiento del modelo, no el valor entregado. El comité necesita indicadores del proceso de negocio: cuánto se ha acortado la resolución de un caso frente a la referencia anterior y cuánto cuesta ahora atender cada caso incluyendo el gasto del servicio y el tiempo del equipo. Comparados con la situación previa, son la evidencia del retorno.",
+  "distractors": {
+   "B": "Las peticiones por segundo son una métrica de capacidad técnica: dicen si la infraestructura aguanta, no si el soporte mejoró para el cliente.",
+   "D": "El tamaño del modelo y el recuento de versiones documentan el trabajo de ingeniería; ninguno se traduce en un resultado observable del negocio."
+  },
+  "officialDocUrl": "https://cloud.google.com/architecture/ml-on-gcp-best-practices",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "CDL-IA-034",
+  "certId": "cdl",
+  "domainId": "CDL-D3",
+  "domainName": "3. Innovación con inteligencia artificial de Google Cloud",
+  "subsectionId": "CDL-3",
+  "subtopic": "Humano en el circuito según el nivel de riesgo",
+  "conceptos": [
+   "Human-in-the-Loop",
+   "Nivel de riesgo",
+   "Revisión humana"
+  ],
+  "keywords": [
+   "humano en el circuito",
+   "riesgo alto",
+   "umbral de confianza",
+   "revisión manual"
+  ],
+  "difficulty": "advanced",
+  "bloomsLevel": "apply",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "title": "Decidir qué extrae la máquina y qué firma una persona",
+  "scenario": "Un banco automatiza el alta de préstamos: un modelo extrae los datos de las nóminas aportadas y otro propone aprobar o denegar la solicitud. La denegación tiene consecuencias serias para el solicitante y está regulada. ¿Qué dos decisiones de diseño aplican correctamente el principio de humano en el circuito? (Elige 2.)",
+  "isMultiSelect": true,
+  "expectedSelectCount": 2,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Registrar todas las decisiones automáticas y revisar una muestra al cierre del trimestre, ya con el préstamo."
+   },
+   {
+    "letter": "B",
+    "text": "Enviar toda propuesta de denegación a un analista, que decide y firma la resolución final del expediente."
+   },
+   {
+    "letter": "C",
+    "text": "Pedir al modelo que explique cada denegación y dar ese texto al solicitante como motivación oficial."
+   },
+   {
+    "letter": "D",
+    "text": "Mandar a revisión humana la extracción de datos cuya confianza quede por debajo de un umbral acordado."
+   }
+  ],
+  "correct": [
+   "B",
+   "D"
+  ],
+  "explanation": "La intervención humana se gradúa según el daño que puede causar la decisión. Una denegación de préstamo afecta seriamente a la persona y está regulada, así que la resolución debe recaer en un analista responsable. En la extracción de datos basta con derivar a revisión los casos de baja confianza, que es el patrón de humano en el circuito de Document AI: se revisa lo dudoso, no todo.",
+  "distractors": {
+   "A": "Auditar una muestra a posteriori sirve para vigilar la calidad, pero llega cuando el préstamo ya se denegó: no evita el perjuicio al solicitante.",
+   "C": "Una explicación generada por el modelo no sustituye el criterio de una persona responsable y puede describir motivos que no son los reales."
+  },
+  "officialDocUrl": "https://cloud.google.com/document-ai/docs/hitl",
+  "blockId": "BLOCK-6"
+ }
+]

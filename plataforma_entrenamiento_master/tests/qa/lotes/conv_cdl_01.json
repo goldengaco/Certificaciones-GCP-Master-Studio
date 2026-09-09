@@ -1,0 +1,254 @@
+[
+ {
+  "id": "CDL-D1-011",
+  "scenario": "El Director de Tecnología (CTO) de una startup desea migrar a la nube pero le preocupa quedar atrapado con tecnologías propietarias que impidan mover sus cargas de trabajo en el futuro. Quiere minimizar el vendor lock-in tanto en el software que construye como en la forma en que gestiona esas cargas entre entornos. ¿Qué dos elementos de la estrategia de Google Cloud debe aprovechar? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Google Cloud ofrece condiciones contractuales de salida sin penalización y descuentos por compromiso, de modo que el cliente puede rescindir el acuerdo comercial en cualquier momento sin coste.",
+   "B": "Google Cloud replica automáticamente todas las cargas de trabajo del cliente en AWS y Azure, de modo que la misma aplicación puede ejecutarse indistintamente en cualquiera de los tres proveedores.",
+   "C": "Google Cloud recomienda desarrollar exclusivamente sobre servicios propietarios como BigQuery y Spanner, y exportar los datos a ficheros CSV el día que se decida cambiar de proveedor de nube.",
+   "E": "Adoptar Anthos para desplegar y administrar las mismas cargas de trabajo en contenedores de forma consistente en Google Cloud, en su centro de datos local y en otras nubes."
+  },
+  "distractors": {
+   "A": "La flexibilidad contractual para rescindir el acuerdo no resuelve el bloqueo técnico: la aplicación seguiría dependiendo de APIs propietarias imposibles de portar.",
+   "B": "Google Cloud no replica automáticamente cargas de trabajo hacia AWS o Azure; esa portabilidad automática entre proveedores no existe como servicio gestionado.",
+   "C": "Construir exclusivamente sobre servicios propietarios y exportar CSV al final aumenta el vendor lock-in en vez de prevenirlo, contradiciendo el objetivo del CTO."
+  },
+  "explanation": "Google Cloud reduce el vendor lock-in en dos frentes: construye sus servicios sobre estándares abiertos y tecnologías de código abierto (Kubernetes, TensorFlow, Apache Beam), y ofrece Anthos para que el cliente gestione las mismas cargas de trabajo en contenedores de forma consistente dentro de Google Cloud, on-premises o en otras nubes. Ambos son necesarios: el primero da la base portable, el segundo la capacidad operativa de moverse entre entornos."
+ },
+ {
+  "id": "CDL-D2-020",
+  "scenario": "Una compañía maneja tres tipos de información: (1) Tablas SQL con esquemas rígidos de clientes, (2) Documentos de registro en formato JSON con esquemas dinámicos, y (3) Archivos de audio y video de llamadas de soporte. El equipo de datos necesita clasificar correctamente estos tres tipos y elegir el servicio de Google Cloud más adecuado para almacenar a bajo costo los archivos de audio y video no estructurados. ¿Qué dos afirmaciones debe seleccionar el equipo? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "(1) Semi-estructurados, (2) No estructurados, (3) Estructurados",
+   "B": "(1) No estructurados, (2) Estructurados, (3) Semi-estructurados",
+   "C": "Todos son considerados datos idénticos sin ninguna distinción en la nube",
+   "E": "Cloud Storage almacena a bajo costo los archivos de audio y video no estructurados."
+  },
+  "distractors": {
+   "A": "Invierte el orden: coloca las tablas SQL como semi-estructuradas y los archivos de audio/video como estructurados, cuando es justo al revés.",
+   "B": "Invierte el orden: coloca las tablas SQL como no estructuradas y el JSON dinámico como estructurado, cuando es justo al revés.",
+   "C": "Ignora las diferencias reales de esquema y formato entre tablas relacionales, documentos JSON y archivos binarios, que sí determinan cómo se almacenan y consultan."
+  },
+  "explanation": "La clasificación correcta es (1) Estructurados, (2) Semi-estructurados, (3) No estructurados, según el rigor de su esquema. Dado que los archivos de audio y video son no estructurados y de gran volumen, Cloud Storage es el servicio adecuado para almacenarlos a bajo costo; ambas afirmaciones son necesarias para resolver la tarea completa de clasificar y decidir dónde almacenar."
+ },
+ {
+  "id": "CDL-D3-051",
+  "scenario": "Un equipo web despliega un portal de comercio electrónico detrás de Cloud Load Balancing. En el pasado, los certificados SSL expiraban por descuido humano, haciendo que los navegadores mostraran advertencias de seguridad a los clientes. Desean que Google Cloud aprovisione, configure y renueve automáticamente los certificados SSL/TLS para sus dominios de forma gratuita. ¿Qué dos acciones deben completar para que el certificado se aprovisione y active correctamente? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Certificados SSL autoadministrados (self-managed) subidos al balanceador de carga",
+   "B": "Certificate Authority Service (CAS) con una CA privada de la empresa",
+   "C": "Política SSL (SSL Policy) con perfil MODERN y TLS 1.2 como versión mínima",
+   "E": "Apuntar el DNS del dominio a la IP del balanceador de carga para validar la propiedad."
+  },
+  "distractors": {
+   "A": "Un certificado self-managed exige que el equipo lo compre, suba y renueve manualmente antes de que expire, justo el error humano que quieren eliminar.",
+   "B": "Certificate Authority Service crea una CA privada para PKI interna (por ejemplo TLS mutuo entre servicios); no emite certificados públicos de confianza para navegadores.",
+   "C": "Una SSL Policy solo controla qué versiones de TLS y conjuntos de cifrado acepta el balanceador; no aprovisiona ni renueva certificados."
+  },
+  "explanation": "Los Google-Managed SSL Certificates se aprovisionan y renuevan automáticamente y sin costo, pero antes de emitir el certificado Google debe validar que el dominio apunta realmente al balanceador de carga; por eso el DNS del dominio debe señalar la IP del balanceador. Sin ambos pasos —activar el certificado administrado y apuntar el DNS— la validación y la activación no se completan."
+ },
+ {
+  "id": "CDL-D4-084",
+  "scenario": "Un oficial de seguridad busca una solución que escanee continuamente la infraestructura de Google Cloud para detectar automáticamente errores de configuración comunes como: buckets de Cloud Storage públicos abiertos a todo el mundo, puertos de administración SSH (puerto 22) o RDP (puerto 3389) abiertos a Internet en reglas de firewall, o llaves de Service Account con más de 90 días sin rotación. El proyecto todavía no tiene ningún producto de seguridad centralizado activado. ¿Qué dos pasos debe completar para obtener este escaneo continuo? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Event Threat Detection (en Security Command Center Premium)",
+   "B": "Web Security Scanner (en Security Command Center Standard)",
+   "D": "Cloud Asset Inventory (con feeds de cambios y exportación)",
+   "E": "Tener Security Command Center activo en el proyecto, para que SHA opere."
+  },
+  "distractors": {
+   "A": "Event Threat Detection identifica amenazas activas en los registros (como minería de criptomonedas), no errores estáticos de configuración como buckets o firewalls.",
+   "B": "Web Security Scanner analiza vulnerabilidades web (XSS, uso de bibliotecas desactualizadas) en URLs públicas de la aplicación, no configuraciones de IAM, firewall o buckets.",
+   "D": "Cloud Asset Inventory inventaría y exporta metadatos de activos y sus cambios, pero no evalúa por sí mismo si una configuración es insegura."
+  },
+  "explanation": "Security Health Analytics realiza el escaneo continuo de malas configuraciones descrito, pero es un módulo que opera dentro de Security Command Center: el proyecto u organización debe tener el servicio activo (al menos en nivel Standard) para que SHA pueda ejecutarse. Los dos pasos son necesarios en ese orden: activar el servicio y luego contar con el módulo de escaneo."
+ },
+ {
+  "id": "CDL-D1-002",
+  "scenario": "Un minorista multinacional está evaluando el Costo Total de Propiedad (TCO) de migrar su plataforma de comercio electrónico a Google Cloud en comparación con renovar su centro de datos local. ¿Qué dos elementos son necesarios para que la comparación de TCO refleje con precisión el valor económico real de cada opción? (Elige 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Únicamente los costos de capital del ciclo de renovación: compra de servidores, cabinas de almacenamiento, equipamiento de red y licencias perpetuas, amortizados a cinco años.",
+   "C": "Exclusivamente la factura mensual de Google Cloud proyectada a tres años con la Calculadora de Precios, comparada con el precio de lista de la renovación del hardware local.",
+   "D": "Solamente los costos indirectos de operación: electricidad, refrigeración, espacio en rack y salarios del equipo de administración de sistemas, sin contabilizar hardware ni licencias.",
+   "E": "Proyectar ambos escenarios, nube y renovación local, sobre el mismo horizonte temporal (típicamente de 3 a 5 años), en vez de comparar el gasto de un único año."
+  },
+  "distractors": {
+   "A": "Contempla solo el gasto de capital de la renovación local (hardware y licencias) e ignora los costos indirectos de operación de ambas opciones.",
+   "C": "Compara únicamente el precio de lista de la renovación contra la factura de Google Cloud, sin considerar los costos indirectos actuales del centro de datos local.",
+   "D": "Contempla solo los costos indirectos de operación e ignora por completo el gasto en hardware, almacenamiento y licencias de ambas opciones."
+  },
+  "explanation": "Un TCO preciso exige incluir tanto los costos directos (hardware, almacenamiento, redes) como los indirectos (energía, refrigeración, personal, inactividad), y además comparar ambos escenarios sobre el mismo horizonte temporal; comparar un año de nube contra cinco de amortización local (o viceversa) distorsiona el resultado aunque los rubros de costo estén completos."
+ },
+ {
+  "id": "CDL-D2-010",
+  "scenario": "Una aplicación de facturación empresarial en Cloud SQL no puede permitirse tiempos de inactividad si una zona del centro de datos sufre un corte de energía, y el equipo necesita que la aplicación siga funcionando tras la conmutación sin reconfiguración manual. ¿Qué dos acciones deben tomar? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Crear una réplica de lectura de Cloud SQL en una zona distinta de la misma región y promoverla manualmente a instancia principal en cuanto el equipo detecte el corte de energía en la zona primaria.",
+   "B": "Programar copias de seguridad automáticas cada hora con recuperación a un momento dado (PITR) y restaurar manualmente la instancia en otra zona si la zona primaria queda fuera de servicio.",
+   "D": "Configurar una réplica en cascada en otra región y una entrada de Cloud DNS con comprobación de estado que redirija la aplicación hacia el servidor secundario en caso de fallo zonal.",
+   "E": "Configurar la aplicación para conectarse mediante el nombre de conexión de instancia de Cloud SQL, que permanece igual tras la conmutación sin reconfigurar la cadena de conexión."
+  },
+  "distractors": {
+   "A": "La promoción de la réplica es manual: exige que un humano detecte el corte de energía y actúe, introduciendo tiempo de inactividad antes de la conmutación.",
+   "B": "Las copias de seguridad con PITR permiten restaurar a un punto anterior, pero la restauración es manual y puede perder hasta una hora de transacciones.",
+   "D": "La réplica en cascada cruza regiones (mayor latencia que dentro de la misma región) y el DNS con comprobación de estado no ofrece conmutación sincrónica sin pérdida de datos."
+  },
+  "explanation": "La Alta Disponibilidad (HA) de Cloud SQL aprovisiona automáticamente una instancia standby en otra zona con replicación síncrona, logrando la conmutación sin pérdida de datos. Pero ese failover solo es transparente para la aplicación si esta se conecta mediante el nombre de conexión de instancia (o la IP privada estable), que Cloud SQL preserva tras la conmutación; de lo contrario la aplicación seguiría apuntando a un endpoint caído."
+ },
+ {
+  "id": "CDL-D3-070",
+  "scenario": "Una empresa construye una arquitectura basada en eventos donde más de 90 fuentes de eventos de Google Cloud (creación de objetos en Cloud Storage, registros en Cloud Audit Logs, eventos de Pub/Sub) deben entregarse de forma estandarizada (CloudEvents) a microservicios en Cloud Run, además de eventos personalizados que la propia aplicación de la empresa genera y necesita publicar hacia esos mismos microservicios. ¿Qué dos elementos deben usarse para lograrlo? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Compute Engine Sole-Tenant Nodes",
+   "B": "Cloud Storage Archive",
+   "C": "Cloud Interconnect Dedicated",
+   "E": "Un tema de Pub/Sub para el disparador de Eventarc"
+  },
+  "distractors": {
+   "A": "Compute Engine Sole-Tenant Nodes reserva hardware físico dedicado para cumplimiento o licenciamiento; no tiene relación con enrutar eventos entre servicios.",
+   "B": "Cloud Storage Archive es una clase de almacenamiento de bajo costo para datos que casi nunca se acceden; no enruta ni entrega eventos.",
+   "C": "Cloud Interconnect Dedicated es un enlace de red física entre la red on-premises y Google Cloud; no tiene función alguna en el enrutamiento de eventos."
+  },
+  "explanation": "Eventarc enruta eventos de más de 90 fuentes nativas de Google Cloud hacia destinos serverless usando el estándar CloudEvents. Para eventos personalizados que la propia aplicación genera, el patrón estándar es publicarlos como CloudEvents en un tema de Pub/Sub, que Eventarc usa como origen del disparador; se necesitan ambos elementos para cubrir tanto las fuentes nativas como las personalizadas."
+ },
+ {
+  "id": "CDL-D4-013",
+  "scenario": "El Director de Seguridad de la Información (CISO) necesita un panel centralizado a nivel de toda la organización que: (1) Descubra automáticamente activos de infraestructura y malas configuraciones de seguridad (como buckets públicos accidentales o puertos abiertos al mundo), (2) Detecte amenazas en tiempo real (como minería de criptomonedas o credenciales filtradas), y (3) Mida el cumplimiento con estándares como CIS, PCI-DSS e ISO 27001. ¿Qué dos elementos necesita el CISO para obtener toda esta visibilidad, incluidos los informes de cumplimiento normativo? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "B": "Cloud Logging con alertas",
+   "C": "Cloud Asset Inventory (CAI)",
+   "D": "Google Security Operations",
+   "E": "Nivel Premium de SCC"
+  },
+  "distractors": {
+   "B": "Cloud Logging con alertas registra y notifica sobre eventos puntuales, pero no evalúa configuraciones de forma estructurada ni mide cumplimiento normativo.",
+   "C": "Cloud Asset Inventory inventaría activos y sus cambios en el tiempo, pero no detecta vulnerabilidades, amenazas activas ni genera informes de cumplimiento.",
+   "D": "Google Security Operations es una plataforma SIEM/SOAR para investigación de amenazas con telemetría propia; no gestiona la postura de configuración de los recursos de Google Cloud ni sus informes de cumplimiento nativos."
+  },
+  "explanation": "Security Command Center centraliza el descubrimiento de activos, malas configuraciones y amenazas activas en toda la organización, pero los informes de cumplimiento normativo (CIS, PCI-DSS, ISO 27001) y la detección de amenazas en tiempo real solo están disponibles en el nivel Premium; el nivel Standard no los incluye, por lo que el CISO necesita ambos: la plataforma y el nivel Premium."
+ },
+ {
+  "id": "CDL-D1-014",
+  "scenario": "Una empresa de retail compite con nuevos actores nativos digitales que lanzan funcionalidades comerciales en días. En su infraestructura local, aprovisionar un nuevo entorno de pruebas toma 8 semanas, y además el equipo de desarrollo necesita poder destruir esos entornos cuando ya no los use para no seguir pagando por ellos. ¿Qué dos capacidades de Google Cloud resuelven este cuello de botella? (Elige 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Traslada la gestión del hardware a Google, aunque cada entorno de pruebas sigue requiriendo el mismo ciclo de aprobación y compra.",
+   "C": "Permite reservar capacidad con descuentos por uso comprometido (CUD) para que el equipo siempre tenga servidores libres disponibles.",
+   "D": "Ofrece un catálogo de imágenes preconfiguradas que el equipo de infraestructura clona manualmente ante cada solicitud de entorno.",
+   "E": "Permite destruir el entorno de pruebas en cuanto deja de usarse, de modo que el equipo solo paga por los recursos mientras los está utilizando de verdad."
+  },
+  "distractors": {
+   "A": "Aunque Google gestiona el hardware, si cada entorno de pruebas sigue el mismo ciclo de aprobación y compra, el cuello de botella de las 8 semanas no desaparece.",
+   "C": "Los descuentos por uso comprometido (CUD) reducen el costo de capacidad reservada, pero no aceleran el tiempo de aprovisionamiento de un entorno nuevo.",
+   "D": "Clonar manualmente un catálogo de imágenes preconfiguradas sigue dependiendo de que una persona ejecute el proceso, sin la automatización necesaria para bajar de semanas a minutos."
+  },
+  "explanation": "La infraestructura programable de Google Cloud permite aprovisionar entornos completos en minutos mediante APIs y plantillas, y del mismo modo destruirlos apenas dejan de usarse, de forma que el equipo solo paga por el tiempo real de uso. Ambas capacidades —crear rápido y destruir cuando ya no se necesita— son las que eliminan el cuello de botella de las 8 semanas y el gasto ocioso."
+ },
+ {
+  "id": "CDL-D2-077",
+  "scenario": "Una empresa de seguros utiliza un modelo de lenguaje en Vertex AI para responder dudas de pólizas a los asegurados. En las pruebas iniciales, el modelo a veces 'inventa' coberturas que no existen en el contrato (alucinación), y el equipo también necesita que las respuestas citen el documento contractual exacto del que provienen para que un humano pueda auditarlas. ¿Qué dos técnicas y capacidades de Google Cloud deben aplicarse? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Realizar un ajuste fino (Fine-Tuning) del modelo de Vertex AI con el histórico de pólizas y documentos de la empresa, como técnica para que aprenda el estilo de redacción.",
+   "B": "Como técnica de Vertex AI, reducir a cero la temperatura y el top-p del modelo para que las respuestas de la empresa sean deterministas y repitan la misma redacción, sin mirar documentos reales.",
+   "D": "Como técnica de la empresa, activar el umbral más estricto de los filtros de seguridad de IA de Vertex AI para que el modelo bloquee respuestas con coberturas inexistentes.",
+   "E": "Configurar las respuestas de Vertex AI Search para que citen las fuentes y fragmentos exactos de los documentos contractuales usados, permitiendo su verificación humana."
+  },
+  "distractors": {
+   "A": "El ajuste fino enseña al modelo un estilo de redacción a partir de datos históricos, pero no lo ancla a un documento contractual concreto en el momento de responder, por lo que no elimina las alucinaciones.",
+   "B": "Bajar la temperatura y el top-p hace las respuestas más deterministas y repetibles, pero el modelo sigue sin consultar ningún documento real; puede repetir la misma alucinación de forma consistente.",
+   "D": "Los filtros de seguridad de IA bloquean contenido dañino o de riesgo (violencia, odio, etc.), no verifican si una cobertura de seguro mencionada existe realmente en el contrato."
+  },
+  "explanation": "El anclaje (Grounding) mediante Vertex AI Search conecta al modelo con los documentos contractuales reales de la empresa (RAG), reduciendo las alucinaciones. Para que un humano pueda auditar cada respuesta, además hay que configurar que la respuesta cite las fuentes y fragmentos exactos usados; sin esa citación, no hay forma de verificar contra qué documento se generó la respuesta."
+ },
+ {
+  "id": "CDL-D3-008",
+  "scenario": "Una startup ha empaquetado su API web en un contenedor Docker en cualquier lenguaje (Node.js, Go o Python). Quieren un servicio que reciba peticiones HTTPS, escale automáticamente de 0 a cientos de instancias durante el día, vuelva a escalar a 0 en la noche sin cobrar nada cuando no haya tráfico, y que además permita desplegar una nueva revisión del contenedor recibiendo gradualmente el tráfico para reducir el riesgo del despliegue. ¿Qué dos capacidades deben usar? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "A": "Cloud Storage Coldline",
+   "B": "Cloud Interconnect Dedicated",
+   "D": "Compute Engine con VMs de tamaño fijo encendidas 24/7",
+   "E": "Usar el traffic splitting de Cloud Run entre revisiones."
+  },
+  "distractors": {
+   "A": "Cloud Storage Coldline es una clase de almacenamiento de objetos de bajo costo para datos de acceso infrecuente; no ejecuta contenedores ni atiende peticiones HTTPS.",
+   "B": "Cloud Interconnect Dedicated es un enlace de red física dedicado hacia Google Cloud; no tiene relación con ejecutar o escalar contenedores.",
+   "D": "Unas VMs de tamaño fijo encendidas 24/7 siguen cobrando aunque no haya tráfico nocturno, justo lo contrario de escalar a cero costo."
+  },
+  "explanation": "Cloud Run ejecuta contenedores serverless que escalan de 0 a cientos de instancias según el tráfico y vuelven a 0 sin costo en reposo. Para desplegar una nueva revisión con bajo riesgo, Cloud Run también permite dividir el tráfico gradualmente entre la revisión anterior y la nueva (traffic splitting), en vez de enviar el 100% del tráfico de inmediato; ambas capacidades pertenecen al mismo servicio y se usan juntas."
+ },
+ {
+  "id": "CDL-D4-066",
+  "scenario": "Un equipo de operaciones de TI necesita una pantalla de monitoreo en su sala de control (NOC) que muestre en tiempo real el tráfico de red, el uso de CPU de las máquinas virtuales, los errores HTTP por segundo y la latencia de las consultas de BigQuery, y que además avise automáticamente al equipo de guardia cuando la latencia de BigQuery supere un umbral crítico. ¿Qué dos herramientas nativas de Google Cloud deben combinar? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "B": "Explorador de registros (Logs Explorer) con consultas guardadas en Cloud Logging",
+   "C": "Informes de Looker Studio conectados al conjunto de facturación en BigQuery",
+   "D": "Cloud Trace y Cloud Profiler para el análisis de latencia de la aplicación",
+   "E": "Una política de alertas en Cloud Monitoring que notifique al superar el umbral de latencia."
+  },
+  "distractors": {
+   "B": "El Explorador de registros muestra y filtra entradas de log individuales; no está pensado para construir paneles visuales de métricas en tiempo real ni para alertar por umbrales de latencia.",
+   "C": "Looker Studio conectado al conjunto de facturación en BigQuery visualiza costos, no telemetría operativa en tiempo real como CPU, tráfico de red o latencia de consultas.",
+   "D": "Cloud Trace y Cloud Profiler analizan la latencia y el rendimiento del código de la aplicación en detalle, pero no están diseñados como paneles de monitoreo operativo en tiempo real ni generan alertas por umbral."
+  },
+  "explanation": "Cloud Monitoring permite construir paneles personalizados con la telemetría operativa (red, CPU, errores HTTP, latencia de BigQuery) en tiempo real. Para que el equipo de guardia sea notificado automáticamente cuando la latencia supere un umbral, además hace falta configurar una política de alertas en Cloud Monitoring; el panel visualiza y la política de alertas notifica, ambas son necesarias para el caso descrito."
+ }
+]

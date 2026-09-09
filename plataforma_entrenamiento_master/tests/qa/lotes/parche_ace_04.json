@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D4-056",
+  "options": {
+   "A": "gcloud storage objects update gs://finance-records-vault/** --encryption-key=projects/my-proj/locations/us-central1/keyRings/vault-ring/cryptoKeys/key-v2",
+   "C": "gcloud storage buckets update gs://finance-records-vault --default-encryption-key=projects/my-proj/locations/global/keyRings/vault-ring/cryptoKeys/key-v2",
+   "D": "gcloud storage buckets create gs://finance-records-vault --location=us-central1 --default-encryption-key=projects/my-proj/locations/us-central1/keyRings/vault-ring/cryptoKeys/key-v2"
+  },
+  "distractors": {
+   "A": "Rewrites the objects that are already in the bucket under the CMEK, but never touches bucket metadata: encryption.defaultKmsKeyName stays empty, so every future upload is encrypted with a Google-managed key again.",
+   "C": "Right command, wrong key resource: Cloud KMS key rings are location-scoped and vault-ring was created in us-central1, so the locations/global path names a key that does not exist and the update fails with NOT_FOUND.",
+   "D": "Assumes the default CMEK can only be chosen when the bucket is created. gs://finance-records-vault already exists, so the create call fails with HTTP 409; default encryption is a mutable bucket property set with buckets update."
+  }
+ },
+ {
+  "id": "ACE-D3-061",
+  "options": {
+   "A": "kubectl create configmap api-tokens --namespace=prod --from-literal=api-key='SecretTokenXYZ123' --from-literal=jwt-secret='SuperSecretSigningKey987'",
+   "C": "kubectl create secret docker-registry api-tokens -n prod --docker-server=gcr.io --docker-username=api-key --docker-password=SecretTokenXYZ123",
+   "D": "kubectl create secret generic api-tokens --namespace=prod --from-file=api-key=SecretTokenXYZ123 --from-file=jwt-secret=SuperSecretSigningKey987"
+  },
+  "distractors": {
+   "A": "Creates a ConfigMap instead of a Secret: the values land in a plain-text object that is not a Secret, so any Pod referencing them through secretKeyRef on api-tokens fails to start with a missing-Secret error.",
+   "C": "Wrong secret subtype: docker-registry emits a kubernetes.io/dockerconfigjson Secret whose single key is .dockerconfigjson (registry credentials); it cannot carry the two arbitrary key-value pairs, and jwt-secret is lost entirely.",
+   "D": "--from-file expects a path whose file contents become the value, so kubectl treats the literal token strings as filenames and aborts with 'error reading SecretTokenXYZ123: no such file or directory'; --from-literal is the flag for inline values."
+  }
+ },
+ {
+  "id": "ACE-D3-026",
+  "options": {
+   "B": "Create an ingress firewall rule allowing TCP traffic on your application port from source IP ranges 35.235.240.0/20 and 199.36.153.8/32 targeting your backend network tags.",
+   "C": "Create an egress firewall rule allowing TCP traffic on your application port to destination ranges 35.191.0.0/16 and 130.211.0.0/22 applied to the backend instances' network tags.",
+   "D": "Create an ingress rule at priority 65534 allowing TCP on the application port from 35.191.0.0/16 and 130.211.0.0/22, leaving the existing deny rule at priority 1000 untouched."
+  },
+  "distractors": {
+   "B": "Correct rule shape, wrong prefixes: 35.235.240.0/20 is the IAP TCP forwarding range and 199.36.153.8/32 is the private.googleapis.com VIP. Probes keep arriving from 35.191.0.0/16 and 130.211.0.0/22 and are still dropped.",
+   "C": "Correct prefixes, wrong direction: a health check probe is an inbound connection to the VM and is evaluated against ingress rules. Egress is already permitted by the implied allow-egress rule, so this rule changes nothing.",
+   "D": "The allow rule can never be reached: firewall rules are evaluated from the lowest priority number upward, and the existing deny at priority 1000 matches the probe traffic long before the allow at 65534 is considered."
+  }
+ },
+ {
+  "id": "ACE-D4-027",
+  "options": {
+   "A": "gcloud compute instance-groups managed delete-instances web-mig --region=us-central1 --instances=web-mig-4x8z",
+   "C": "gcloud compute instance-groups managed abandon-instances web-mig --region=us-central1 --instances=web-mig-4x8z",
+   "D": "gcloud compute instance-groups managed rolling-action restart web-mig --region=us-central1 --max-unavailable=1"
+  },
+  "distractors": {
+   "A": "Deletes the VM and decrements the group's target size at the same time, so no replacement is instantiated from the template and the group permanently runs one instance short of its intended capacity.",
+   "C": "Abandoning only detaches the VM from the MIG and lowers the target size: the corrupted instance keeps running and billing outside the group, and no fresh instance is built from the template to replace it.",
+   "D": "Restarts every member of the group instead of the single named VM, and a restart reuses each instance's existing persistent boot disk, so the corrupted root filesystem comes straight back after the reboot."
+  }
+ },
+ {
+  "id": "ACE-D5-012",
+  "options": {
+   "A": "Create an ingress firewall rule specifying --target-tags=backend-svc, --allow=tcp:8080 and the corporate source ranges, then attach that tag to every microservice VM.",
+   "C": "Create an ingress firewall rule specifying --source-service-accounts=backend-sa@corp.iam.gserviceaccount.com, --allow=tcp:8080 and no target filter at all.",
+   "D": "Create an ingress firewall rule specifying --target-service-accounts=123456-compute@developer.gserviceaccount.com, --allow=tcp:8080 and internal source ranges."
+  },
+  "distractors": {
+   "A": "Scopes the rule by network tag, and any principal holding compute.instances.setTags can add that tag to an unrelated VM or strip it from a microservice VM; the requirement is enforcement bound to the identity regardless of tags.",
+   "C": "Filters the sender instead of the receiver: --source-service-accounts matches traffic emitted by VMs running as backend-sa, and with no target filter the rule opens tcp:8080 on every instance in the network.",
+   "D": "Right flag, wrong identity: the microservice VMs run as backend-sa@corp.iam.gserviceaccount.com, so a rule targeting the default Compute Engine service account matches other VMs and leaves port 8080 closed on the backend."
+  }
+ },
+ {
+  "id": "ACE-D3-072",
+  "options": {
+   "B": "type: NodePort (Ingress builds instance-group backends reached through kube-proxy on each node port).",
+   "C": "type: LoadBalancer (one regional external passthrough Network Load Balancer per backend microservice).",
+   "D": "type: ExternalName (a CNAME to the internal record backend.prod.svc.example.internal in Cloud DNS)."
+  },
+  "distractors": {
+   "B": "Supported by Ingress, but it is the pre-NEG data path: the load balancer targets node ports on instance groups, adding a kube-proxy hop and losing the direct-to-Pod routing and Pod readiness-based health checking of container-native load balancing.",
+   "C": "LoadBalancer Services are not supported as GKE Ingress backends; it also provisions a separate L4 passthrough load balancer with its own IP per service, which bypasses the L7 Ingress the traffic is supposed to enter through.",
+   "D": "An ExternalName Service is nothing but a DNS CNAME: it has no selector and no endpoints, so the NEG controller has no Pod IPs to register and the Ingress cannot build a backend service for it."
+  }
+ },
+ {
+  "id": "ACE-D3-074",
+  "options": {
+   "B": "gcloud compute networks vpc-access connectors create serverless-conn --region=us-central1 --network=corp-vpc --range=10.8.0.0/24 --min-instances=2 --max-instances=10",
+   "C": "gcloud compute networks vpc-access connectors create serverless-conn --region=us-east1 --network=corp-vpc --range=10.8.0.0/28 --min-instances=2 --max-instances=10",
+   "D": "gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --network=corp-vpc --ranges=google-managed-services-corp-vpc --project=my-proj"
+  },
+  "distractors": {
+   "B": "Every value is right except the mask: a Serverless VPC Access connector gets its own dedicated subnet whose primary IPv4 range must be a /28, so a /24 is rejected when the connector is created.",
+   "C": "The connector is created but lands in us-east1, and a connector can only be attached by a serverless service in the same region, so the Cloud Function deployed in us-central1 cannot use it to reach 10.0.0.5.",
+   "D": "Configures Private Services Access, the peering that lets your VPC reach Google-managed producer services such as Cloud SQL or Memorystore on private IPs. It creates no connector, so the Function still has no egress path into corp-vpc."
+  }
+ },
+ {
+  "id": "ACE-D3-063",
+  "options": {
+   "A": "gcloud compute security-policies rules create 1000 --security-policy=block-malicious-traffic --src-ip-ranges=198.51.100.0/24 --action=deny-404 --description='Block known malicious subnet'",
+   "B": "gcloud compute security-policies rules create 2147483647 --security-policy=block-malicious-traffic --src-ip-ranges=198.51.100.0/24 --action=deny-403 --description='Block malicious subnet'",
+   "D": "gcloud compute security-policies rules create 1000 --security-policy=block-malicious-traffic --expression=\"origin.region_code == 'US'\" --action=deny-403 --description='Block malicious subnet'"
+  },
+  "distractors": {
+   "A": "Blocks the subnet at the right priority but answers with HTTP 404 Not Found: the status code is part of the Cloud Armor deny action (deny-403, deny-404, deny-502), and only deny-403 returns the Forbidden response the requirement asks for.",
+   "B": "2147483647 is reserved for the policy's default rule, which already exists, so creating another rule at that priority is rejected; the default rule can only be changed with security-policies rules update.",
+   "D": "Valid custom expression, wrong matcher: origin.region_code filters on the client's geolocated country, so it denies all US traffic while requests from 198.51.100.0/24 attributed to any other country pass straight through."
+  }
+ },
+ {
+  "id": "ACE-D3-019",
+  "options": {
+   "A": "Install cert-manager, create a ClusterIssuer for the Let's Encrypt ACME HTTP-01 challenge and a Certificate for 'app.example.com', then reference the TLS Secret it produces from Ingress spec.tls.",
+   "B": "Create the certificate with gcloud compute ssl-certificates create --domains=app.example.com and reference it from the Ingress using the annotation 'kubernetes.io/ingress.allow-http: false'.",
+   "D": "Generate the key pair with openssl, store it in a kubernetes.io/tls Secret named app-tls, list that Secret under the Ingress spec.tls block, and add a CronJob that rotates it before expiry."
+  },
+  "distractors": {
+   "A": "Delivers a valid certificate but through exactly what the requirement excludes: a third-party ACME controller you install, operate and upgrade yourself, which writes the private key into a TLS Secret you own rather than letting Google provision and renew it.",
+   "B": "The certificate resource is fine, but the annotation is the wrong one: kubernetes.io/ingress.allow-http only disables the port 80 forwarding rule. Attaching an existing certificate needs ingress.gcp.kubernetes.io/pre-shared-cert, so the load balancer keeps serving its default certificate.",
+   "D": "A self-signed certificate is not trusted by any browser, and the renewal is a CronJob you have to maintain: it is manual TLS Secret management, the opposite of the Google-provisioned, auto-renewed public certificate requested."
+  }
+ },
+ {
+  "id": "ACE-D4-050",
+  "options": {
+   "A": "compute.googleapis.com/instance/network/received_bytes_count (and instance/network/received_packets_count).",
+   "C": "compute.googleapis.com/instance/disk/write_bytes_count (and instance/disk/throttled_write_bytes_count).",
+   "D": "loadbalancing.googleapis.com/https/request_bytes_count (and https/total_latencies, https/backend_request_count)."
+  },
+  "distractors": {
+   "A": "The adjacent metric in the wrong direction: these count inbound traffic delivered to the VM, while the per-VM cap being hit and the drops under investigation are on the egress side of the same interface.",
+   "C": "Measures the persistent disk path, where throughput limits come from disk size and machine type. It reveals storage throttling, not the network egress cap, and stays flat while packets are dropped on the wire.",
+   "D": "Only written for traffic that transits a Cloud Load Balancer front end; this VM sends directly to external endpoints, so no time series exists for it and the chart stays empty."
+  }
+ },
+ {
+  "id": "ACE-D5-035",
+  "options": {
+   "A": "logName=\"projects/corp-prod/logs/cloudaudit.googleapis.com%2Fdata_access\" AND protoPayload.methodName=\"SetIamPolicy\"",
+   "B": "logName=\"projects/corp-prod/logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName=\"GetIamPolicy\"",
+   "C": "protoPayload.serviceName=\"cloudresourcemanager.googleapis.com\" AND resource.type=\"project\" AND severity>=ERROR"
+  },
+  "distractors": {
+   "A": "Right method name, wrong log stream: SetIamPolicy is an administrative write and is always recorded in the activity log. The data_access log holds read operations and is disabled by default, so this filter returns no entries.",
+   "B": "Filters the read method instead of the write: GetIamPolicy only shows who inspected the policy, never who changed it, and those entries belong to the Data Access log rather than to the activity log named here.",
+   "C": "The severity floor throws away the evidence: successful Admin Activity entries, SetIamPolicy included, are written with severity NOTICE, so this query surfaces only failed or errored calls and misses the modification entirely."
+  }
+ },
+ {
+  "id": "ACE-D5-034",
+  "options": {
+   "A": "Create policy admin-waf, keep the default rule at allow, and add a rule at priority 1000 denying src-ip-ranges 0.0.0.0/0 with deny-403.",
+   "B": "Create policy admin-waf, set the default rule to deny-403, and add the allow rule for src-ip-ranges 203.0.113.0/24 at priority 2147483647.",
+   "D": "Create policy admin-waf, add a priority 1000 rule allowing src-ip-ranges 203.0.113.0/24, and attach the policy to the dashboard backend service."
+  },
+  "distractors": {
+   "A": "0.0.0.0/0 contains 203.0.113.0/24, and the deny at priority 1000 is evaluated before anything else, so headquarters is locked out of the dashboard along with the rest of the internet.",
+   "B": "2147483647 is the reserved priority of the policy's own default rule, so the allow rule cannot be created there; the whitelist entry has to sit at a lower priority number than the deny it is meant to override.",
+   "D": "Allows headquarters but never denies anyone else: a newly created Cloud Armor policy ships with a default rule at priority 2147483647 whose action is allow, so all other internet traffic still reaches the dashboard."
+  }
+ },
+ {
+  "id": "ACE-D3-037",
+  "options": {
+   "B": "Deploy the Cloud Run service with --add-cloudsql-instances=prod:us-central1:sqldb and let the built-in Cloud SQL connector open the database socket.",
+   "C": "Enable Private Google Access on subnet backend-sub and create a Cloud NAT gateway in prod-vpc so the container can route to the private addresses.",
+   "D": "Add the Cloud Run service and prod-vpc to one VPC Service Controls perimeter and grant its service account roles/compute.networkUser on backend-sub."
+  },
+  "distractors": {
+   "B": "Covers one resource only and by the wrong path: the built-in connector reaches the instance through its Cloud SQL public endpoint and nothing attaches the service to prod-vpc, so the private Compute Engine VMs stay unreachable.",
+   "C": "Both features act on traffic that already originates inside the VPC: Private Google Access lets VMs without external IPs call Google APIs, and Cloud NAT gives them outbound internet. Neither places the Cloud Run instance inside prod-vpc.",
+   "D": "VPC Service Controls is an API-level exfiltration boundary and networkUser is the IAM permission to consume a subnet; neither one creates a network path from the serverless container to a private IP address."
+  }
+ },
+ {
+  "id": "ACE-D5-032",
+  "options": {
+   "A": "At the project level on corp-storage-prod, using roles/storage.objectAdmin.",
+   "B": "At the organization level, so the binding is inherited by the target bucket.",
+   "D": "At the object prefix level on gs://contractor-workspace/uploads/*."
+  },
+  "distractors": {
+   "A": "IAM bindings are inherited downward, so a role granted on the project applies to all ten buckets it contains, giving the contractor read/write on the nine that must stay off limits.",
+   "B": "Even broader: an organization-level binding propagates to every folder, project and bucket in the organization, the widest possible grant when the requirement is a single bucket.",
+   "D": "Cloud Storage IAM has no sub-bucket granularity: the smallest resource that accepts an IAM policy is the bucket itself, so no prefix-scoped binding can be created (only legacy per-object ACLs work below bucket level)."
+  }
+ },
+ {
+  "id": "ACE-D5-036",
+  "options": {
+   "A": "gcloud kms keys versions disable 3 --key=customer-key --keyring=app-ring --location=us-central1",
+   "B": "gcloud kms keys versions destroy 3 --key=customer-key --keyring=app-ring --location=global",
+   "D": "gcloud kms keys set-primary-version customer-key --version=4 --keyring=app-ring --location=us-central1"
+  },
+  "distractors": {
+   "A": "Disabling moves the version to DISABLED, which blocks its use but leaves the key material intact and re-enablable at any moment; it never enters DESTROY_SCHEDULED, so the compromised material is never destroyed.",
+   "B": "Right command, wrong location: Cloud KMS key rings are location-scoped and app-ring lives in us-central1, so the global path resolves to no resource and the call fails with NOT_FOUND, leaving version 3 active.",
+   "D": "Promoting version 4 to primary only changes which version encrypts new data; version 3 stays ENABLED, can still decrypt everything it ever encrypted, and is never scheduled for destruction."
+  }
+ },
+ {
+  "id": "ACE-D3-073",
+  "options": {
+   "A": "Map the hostname api.example.com to the mobile-api service with gcloud app domain-mappings create and point a DNS record at it.",
+   "B": "Add a dispatch: block routing '*/api/*' to mobile-api inside the default service's app.yaml and deploy it with gcloud app deploy app.yaml.",
+   "C": "Run gcloud app services set-traffic mobile-api --splits=api=1 so that the /api/* requests are served by the mobile-api service."
+  },
+  "distractors": {
+   "A": "Domain mappings route by hostname, not by path: requests to example.com/api/* still land on the default service, and the requirement is path-based routing on the existing domain rather than a new subdomain.",
+   "B": "Right routing rule, wrong file: dispatch is not a valid app.yaml element, so the deployment either fails validation or ignores the block. Dispatch rules only take effect from dispatch.yaml, deployed on its own.",
+   "C": "Traffic splitting distributes requests between versions of a single service by weight (or cookie/IP); it has no notion of URL paths and cannot move example.com/api/* from one service to another."
+  }
+ },
+ {
+  "id": "ACE-D4-036",
+  "options": {
+   "A": "gcloud container node-pools update worker-pool --cluster=prod-cluster --region=us-central1 --num-nodes=10",
+   "B": "gcloud container clusters update prod-cluster --node-pool=worker-pool --enable-autoscaling --min-nodes=3 --max-nodes=10",
+   "C": "gcloud compute instance-groups managed resize gke-prod-cluster-worker-pool-3f2a --size=10 --region=us-central1"
+  },
+  "distractors": {
+   "A": "node-pools update changes node pool configuration (autoscaling bounds, upgrade settings, node locations) and exposes no --num-nodes flag, so gcloud rejects it as an unrecognized argument; node count is changed with clusters resize.",
+   "B": "Only installs autoscaling bounds. Nodes are added later, when unschedulable Pods appear, which is precisely the autoscaler trigger the scenario says cannot be waited for before the promotion.",
+   "C": "Resizes the node pool's underlying managed instance group behind GKE's back; the node pool controller reconciles the MIG to the size registered for the pool, so the extra nodes are removed again."
+  }
+ }
+]

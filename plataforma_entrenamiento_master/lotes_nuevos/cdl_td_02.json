@@ -1,0 +1,786 @@
+[
+  {
+    "id": "CDL-TD-013",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Alcance de zona, región y multirregión",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Qué significa cada nivel geográfico de la plataforma",
+    "scenario": "Un responsable técnico pide una explicación sencilla de qué relación hay entre zona, región y multirregión en Google Cloud, para decidir dónde colocar cada servicio. ¿Cuál es la descripción correcta?",
+    "keywords": [
+      "responsable técnico",
+      "explicación sencilla",
+      "dónde colocar",
+      "decisión de ubicación"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Una región agrupa varias zonas, y una multirregión abarca varias regiones de un mismo continente."
+      },
+      {
+        "letter": "B",
+        "text": "Una zona agrupa varias regiones, y la multirregión es simplemente el nombre comercial que recibe una zona de gran tamaño."
+      },
+      {
+        "letter": "C",
+        "text": "Zona y región son sinónimos en Google Cloud, y la multirregión designa el conjunto completo de los centros de datos del proveedor."
+      },
+      {
+        "letter": "D",
+        "text": "Una región equivale siempre a un país entero, mientras que las zonas se corresponden con las provincias que lo componen."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La jerarquía va de menor a mayor: la zona es el dominio de fallo más pequeño, la región agrupa varias zonas próximas y la multirregión abarca varias regiones. Elegir bien el nivel determina la resiliencia, la latencia y el coste del servicio.",
+    "distractors": {
+      "B": "Invierte la relación: son las regiones las que contienen zonas, y no al revés como plantea esta opción.",
+      "C": "Zona y región no son equivalentes: precisamente su diferencia es lo que permite diseñar para tolerar fallos.",
+      "D": "Las regiones no se corresponden con fronteras políticas; un mismo país puede tener varias regiones o ninguna."
+    },
+    "officialDocUrl": "https://cloud.google.com/docs/geography-and-regions",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-TD-014",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Economías de escala de un proveedor hiperescalar",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Por qué sale más barato que montarlo uno mismo",
+    "scenario": "La dirección de una empresa mediana pregunta por qué un proveedor de nube puede ofrecer infraestructura a un coste que ellos no consiguen igualar con su propio centro de datos. ¿Cuál es la explicación económica de fondo?",
+    "keywords": [
+      "empresa mediana",
+      "coste inalcanzable",
+      "centro de datos propio",
+      "pregunta de la dirección"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Las economías de escala: el proveedor reparte una inversión enorme entre millones de clientes."
+      },
+      {
+        "letter": "B",
+        "text": "Que el proveedor opera con márgenes negativos de forma permanente y compensa esas pérdidas con otras líneas de su negocio."
+      },
+      {
+        "letter": "C",
+        "text": "Que la infraestructura de nube utiliza componentes de gama baja mucho más económicos que los servidores de una empresa."
+      },
+      {
+        "letter": "D",
+        "text": "Que los precios de la nube son fijos y no dependen del consumo, lo que elimina toda la incertidumbre presupuestaria."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Un proveedor hiperescalar amortiza el diseño de hardware, la energía, la refrigeración y la operación entre una base de clientes enorme. Ese reparto de costes fijos es lo que ninguna empresa aislada puede replicar con su propio centro de datos.",
+    "distractors": {
+      "B": "El negocio de nube de los grandes proveedores es rentable; el precio no se sostiene sobre pérdidas permanentes.",
+      "C": "Los centros de datos hiperescalares usan hardware diseñado para fiabilidad y eficiencia, no componentes de gama baja.",
+      "D": "El modelo es de pago por consumo: precisamente el coste varía con el uso que haga cada cliente."
+    },
+    "officialDocUrl": "https://cloud.google.com/infrastructure",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-TD-015",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Jerarquía de recursos como instrumento de gobierno",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Separar el gasto de tres unidades de negocio",
+    "scenario": "Un grupo con tres unidades de negocio quiere que cada una vea su propio gasto y aplique sus propias reglas, manteniendo una política común en lo alto. ¿Qué estructura de Google Cloud responde a esa necesidad?",
+    "keywords": [
+      "tres unidades",
+      "gasto separado",
+      "reglas propias",
+      "política común"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Una organización en la cima, con una carpeta por unidad de negocio y los proyectos dentro de cada carpeta."
+      },
+      {
+        "letter": "B",
+        "text": "Un único proyecto compartido por las tres unidades, separando su gasto mediante nombres descriptivos en cada uno de los recursos creados."
+      },
+      {
+        "letter": "C",
+        "text": "Tres cuentas de Google Cloud completamente independientes, sin ninguna relación entre ellas ni política común posible."
+      },
+      {
+        "letter": "D",
+        "text": "Una carpeta única que contenga a la organización, y dentro de ella un proyecto por cada uno de los empleados de las unidades."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La jerarquía organización, carpeta y proyecto permite heredar políticas desde arriba y aislar responsabilidad y gasto abajo. Es el instrumento básico de gobierno en Google Cloud cuando conviven varias unidades de negocio.",
+    "distractors": {
+      "B": "Un proyecto compartido mezcla permisos y facturación; los nombres de recurso no sustituyen a una separación real.",
+      "C": "Cuentas aisladas impiden aplicar una política común y complican la visión consolidada del gasto.",
+      "D": "La carpeta va dentro de la organización, no al revés, y un proyecto por empleado sería inmanejable."
+    },
+    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-TD-016",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Migrar frente a modernizar",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Dos proyectos que suenan parecidos y no lo son",
+    "scenario": "Un director de tecnología distingue en su plan dos iniciativas: trasladar veinte servidores tal cual a la nube, y rehacer su aplicación de pedidos para que escale sola. ¿Cómo se llaman respectivamente?",
+    "keywords": [
+      "plan del director",
+      "veinte servidores",
+      "aplicación de pedidos",
+      "dos iniciativas"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La primera es una migración de tipo lift and shift y la segunda es una modernización de la aplicación."
+      },
+      {
+        "letter": "B",
+        "text": "La primera es una modernización, porque cambiar de infraestructura implica siempre rediseñar el comportamiento de la aplicación."
+      },
+      {
+        "letter": "C",
+        "text": "Las dos son migraciones idénticas, dado que ambas terminan con las cargas de trabajo ejecutándose sobre la nube pública."
+      },
+      {
+        "letter": "D",
+        "text": "Las dos son modernizaciones, ya que cualquier cambio de plataforma se considera modernización con independencia del alcance."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Migrar es mover la carga tal cual está; modernizar es rediseñarla para aprovechar lo que la nube ofrece. Distinguirlos importa porque el coste, el riesgo y el beneficio de cada uno son muy distintos.",
+    "distractors": {
+      "B": "Un traslado tal cual no rediseña nada: la aplicación sigue comportándose exactamente igual que antes.",
+      "C": "El destino coincide, pero el alcance del trabajo y el valor obtenido son completamente diferentes.",
+      "D": "Cambiar de plataforma sin tocar la aplicación no es modernizar; es solo cambiarla de sitio."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/migration-to-gcp-getting-started",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-TD-017",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Soberanía de datos y elección de región",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Los datos deben permanecer dentro de la Unión Europea",
+    "scenario": "Una empresa está obligada por normativa a que los datos de sus clientes se almacenen y procesen dentro de la Unión Europea. ¿Qué decisión de la plataforma controla directamente ese requisito?",
+    "keywords": [
+      "obligación normativa",
+      "clientes europeos",
+      "almacenar y procesar",
+      "requisito legal"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Elegir regiones situadas en la Unión Europea al crear los recursos que guardan y procesan esos datos."
+      },
+      {
+        "letter": "B",
+        "text": "Activar el cifrado en reposo, que por sí mismo garantiza que la información nunca podrá salir del territorio de la Unión Europea."
+      },
+      {
+        "letter": "C",
+        "text": "Contratar el nivel de soporte más alto, que incorpora la garantía contractual de residencia de datos dentro del continente europeo."
+      },
+      {
+        "letter": "D",
+        "text": "Usar un nombre de proyecto que identifique el país, de modo que la plataforma restrinja automáticamente dónde se guarda todo."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La residencia de los datos la determina la región donde se crean los recursos. Es una decisión de arquitectura, no un ajuste posterior: elegir región europea es lo que mantiene los datos dentro del territorio exigido.",
+    "distractors": {
+      "B": "El cifrado protege la confidencialidad, pero no determina en qué país se encuentran físicamente los datos.",
+      "C": "El nivel de soporte afecta a la atención técnica recibida, no a la ubicación geográfica de la información.",
+      "D": "El nombre de un proyecto es una etiqueta descriptiva y no impone ninguna restricción geográfica real."
+    },
+    "officialDocUrl": "https://cloud.google.com/architecture/framework/security/data-residency-sovereignty",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-TD-018",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Tecnología abierta como estrategia de negocio",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Reducir la dependencia sin renunciar a los servicios gestionados",
+    "scenario": "Un consejo teme quedar atrapado con un único proveedor. Su arquitecto propone construir sobre tecnologías de origen abierto como Kubernetes, ejecutadas de forma gestionada. ¿Qué gana la empresa con ese planteamiento?",
+    "keywords": [
+      "temor del consejo",
+      "único proveedor",
+      "propuesta del arquitecto",
+      "servicios gestionados"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Conserva la posibilidad de mover sus cargas a otro entorno sin tener que reescribirlas por completo."
+      },
+      {
+        "letter": "B",
+        "text": "Elimina de raíz cualquier coste de salida, porque las tecnologías abiertas no generan nunca cargos por transferencia de datos."
+      },
+      {
+        "letter": "C",
+        "text": "Obtiene un descuento contractual automático, ya que los proveedores aplican tarifas reducidas al software de origen abierto."
+      },
+      {
+        "letter": "D",
+        "text": "Se despreocupa de la seguridad, dado que el código abierto se audita por la comunidad y no requiere controles propios."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Construir sobre estándares abiertos preserva la portabilidad: la carga puede moverse a otro proveedor o a instalaciones propias sin rehacerla. Es la respuesta habitual al riesgo de dependencia sin renunciar a la comodidad de lo gestionado.",
+    "distractors": {
+      "B": "Mover datos entre proveedores sigue teniendo coste, con independencia de que el software sea abierto.",
+      "C": "El uso de tecnología abierta no implica ninguna tarifa reducida automática por parte del proveedor.",
+      "D": "El código abierto no exime de aplicar controles: la configuración y los accesos siguen siendo responsabilidad del cliente."
+    },
+    "officialDocUrl": "https://cloud.google.com/open-cloud",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-TD-019",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "El acuerdo de nivel de servicio como compromiso comercial",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Qué promete exactamente un compromiso de disponibilidad",
+    "scenario": "El equipo jurídico revisa el acuerdo de nivel de servicio de un producto de Google Cloud y pregunta qué obtiene la empresa si el proveedor no cumple el porcentaje comprometido. ¿Cuál es la respuesta correcta?",
+    "keywords": [
+      "equipo jurídico",
+      "porcentaje comprometido",
+      "incumplimiento",
+      "revisión del acuerdo"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Un crédito en la facturación, según la escala que el propio acuerdo deja establecida de antemano."
+      },
+      {
+        "letter": "B",
+        "text": "Una indemnización por el lucro cesante que la interrupción haya provocado en el negocio del cliente durante ese periodo."
+      },
+      {
+        "letter": "C",
+        "text": "La rescisión automática e inmediata del contrato, sin que el cliente tenga que presentar ninguna reclamación previa."
+      },
+      {
+        "letter": "D",
+        "text": "La migración gratuita de todas las cargas afectadas a otra región del proveedor, incluyendo el trabajo de ingeniería necesario."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Un acuerdo de nivel de servicio compromete un porcentaje de disponibilidad y establece créditos de facturación cuando no se alcanza. No cubre el daño económico indirecto: por eso la resiliencia sigue siendo responsabilidad de la arquitectura del cliente.",
+    "distractors": {
+      "B": "Los acuerdos de nivel de servicio no cubren el lucro cesante ni los daños indirectos del negocio del cliente.",
+      "C": "El incumplimiento activa créditos, no una rescisión automática del contrato entre las partes.",
+      "D": "El acuerdo no incluye trabajos de migración: su remedio es económico y está tasado de antemano."
+    },
+    "officialDocUrl": "https://cloud.google.com/terms/sla",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-TD-020",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Formación y certificación dentro del plan de adopción",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "La tecnología llegó antes que las personas",
+    "scenario": "Una empresa contrató servicios de nube hace seis meses, pero sus equipos siguen operando como antes porque nadie sabe usarlos. La dirección pregunta qué debería haber acompañado a la contratación. ¿Cuál es la respuesta?",
+    "keywords": [
+      "seis meses",
+      "equipos operando igual",
+      "nadie sabe usarlos",
+      "pregunta de dirección"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Un plan de formación y certificación del personal, que es parte inseparable del proyecto de adopción."
+      },
+      {
+        "letter": "B",
+        "text": "Una ampliación del presupuesto de infraestructura, para poder contratar más capacidad de cómputo y almacenamiento desde el principio."
+      },
+      {
+        "letter": "C",
+        "text": "La sustitución completa de la plantilla técnica por perfiles externos ya formados en las tecnologías de nube contratadas."
+      },
+      {
+        "letter": "D",
+        "text": "Un contrato de soporte de nivel superior que resuelva por la empresa todas las tareas que sus equipos no sepan realizar."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El pilar Learn del marco de adopción existe justamente por esto: la tecnología no genera valor si las personas no saben aprovecharla. La formación no es un extra posterior, sino parte del propio proyecto de adopción.",
+    "distractors": {
+      "B": "Más capacidad no resuelve nada si los equipos no saben utilizar la que ya tienen contratada.",
+      "C": "Sustituir la plantilla destruye el conocimiento del negocio y es innecesario cuando la brecha se cierra formando.",
+      "D": "El soporte resuelve incidencias puntuales; no puede operar la plataforma en lugar de los equipos de la empresa."
+    },
+    "officialDocUrl": "https://cloud.google.com/adoption-framework",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-TD-021",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Indicadores para medir el avance de la adopción",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 105,
+    "caseStudy": "none",
+    "title": "Cómo saber si la transformación va bien",
+    "scenario": "Un comité quiere un indicador que refleje si la transformación digital está funcionando. Alguien propone contar el número de máquinas virtuales desplegadas cada mes. ¿Por qué es una mala elección?",
+    "keywords": [
+      "indicador del comité",
+      "número de máquinas",
+      "cada mes",
+      "propuesta discutida"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Mide actividad técnica, no resultados de negocio como ingresos, satisfacción o tiempo de entrega."
+      },
+      {
+        "letter": "B",
+        "text": "Porque el número de máquinas virtuales desplegadas es un dato que la plataforma no permite consultar de forma agregada."
+      },
+      {
+        "letter": "C",
+        "text": "Porque cualquier indicador cuantitativo resulta inadecuado para seguir un proceso de transformación dentro de una organización."
+      },
+      {
+        "letter": "D",
+        "text": "Porque las máquinas virtuales quedarán obsoletas y conviene medir únicamente el número de contenedores que se ponen en marcha."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Contar recursos desplegados mide movimiento, no valor. Los indicadores útiles conectan con el negocio: tiempo hasta entregar una funcionalidad, satisfacción del cliente, ingresos habilitados o coste por transacción.",
+    "distractors": {
+      "B": "Ese dato sí se puede consultar sin dificultad; el problema es que no dice nada sobre el valor conseguido.",
+      "C": "Los indicadores cuantitativos son necesarios: lo que falla es elegir uno que no se conecta con ningún resultado.",
+      "D": "Cambiar el recurso que se cuenta no arregla el fondo: seguiría midiendo actividad en lugar de resultados."
+    },
+    "officialDocUrl": "https://cloud.google.com/transform",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-TD-022",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "El coste de no actuar",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Aplazar la decisión también tiene precio",
+    "scenario": "Una empresa lleva tres años posponiendo su plan de nube porque el proyecto parece caro. Su consultor insiste en incluir en el análisis el coste de no hacer nada. ¿Qué conceptos entran en ese cálculo?",
+    "keywords": [
+      "tres años",
+      "proyecto caro",
+      "consultor insiste",
+      "análisis pendiente"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La renovación de hardware, la oportunidad perdida y el terreno cedido frente a competidores más rápidos."
+      },
+      {
+        "letter": "B",
+        "text": "Únicamente el precio de la electricidad consumida por el centro de datos propio durante esos tres años de espera."
+      },
+      {
+        "letter": "C",
+        "text": "Nada relevante, ya que mantener la situación actual no genera ningún coste adicional para la organización."
+      },
+      {
+        "letter": "D",
+        "text": "Solo el salario del equipo de consultoría contratado para elaborar el análisis y presentarlo ante la dirección."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Comparar el coste de migrar contra cero es un error de análisis. La alternativa real es seguir renovando hardware, sostener operación propia y perder velocidad frente a quien ya se movió: eso también tiene un precio.",
+    "distractors": {
+      "B": "La electricidad es solo una fracción; falta el hardware, el personal, el espacio y la oportunidad perdida.",
+      "C": "Mantener la situación cuesta dinero cada año: renovaciones, mantenimiento y capacidad infrautilizada.",
+      "D": "El coste del análisis es marginal frente a lo que se decide con él."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-cloud-computing",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-TD-023",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Acceso a capacidades antes reservadas a grandes corporaciones",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Una empresa de veinte personas usando analítica a gran escala",
+    "scenario": "Una consultora de veinte personas procesa en horas volúmenes de datos que hace una década solo estaban al alcance de grandes corporaciones. ¿Qué efecto de la nube ilustra este caso?",
+    "keywords": [
+      "veinte personas",
+      "volúmenes de datos",
+      "hace una década",
+      "consultora pequeña"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La democratización del acceso a tecnología avanzada, sin necesidad de una inversión inicial enorme."
+      },
+      {
+        "letter": "B",
+        "text": "La consolidación del mercado, ya que solo las corporaciones de mayor tamaño consiguen rentabilizar de verdad estas capacidades."
+      },
+      {
+        "letter": "C",
+        "text": "La estandarización normativa, dado que las autoridades obligan a las empresas pequeñas a procesar sus datos en la nube pública."
+      },
+      {
+        "letter": "D",
+        "text": "La reducción del empleo técnico, porque estas plataformas sustituyen íntegramente el trabajo de los analistas de datos."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La nube pone capacidades de cómputo y analítica antes reservadas a grandes presupuestos al alcance de cualquier empresa mediante el pago por uso. Ese es uno de los efectos transformadores más citados del modelo.",
+    "distractors": {
+      "B": "El caso demuestra justo lo contrario: una empresa pequeña accediendo a capacidades antes exclusivas.",
+      "C": "No existe obligación normativa de procesar datos en nube pública para las empresas pequeñas.",
+      "D": "La plataforma amplifica el trabajo del analista; sigue haciendo falta quien formule las preguntas correctas."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-cloud-computing",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-TD-024",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Google Cloud Marketplace como acelerador",
+    "difficulty": "foundational",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Necesitan una solución de terceros funcionando esta semana",
+    "scenario": "Un equipo necesita desplegar una herramienta comercial de análisis de registros y quiere evitar el proceso de compra tradicional, la instalación manual y una negociación larga con el fabricante. ¿Qué opción de Google Cloud acelera eso?",
+    "keywords": [
+      "herramienta comercial",
+      "evitar compra tradicional",
+      "instalación manual",
+      "esta semana"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Google Cloud Marketplace, que despliega soluciones de terceros y las factura en la misma cuenta de la empresa."
+      },
+      {
+        "letter": "B",
+        "text": "Cloud Build, que compila el código fuente de la herramienta y ejecuta sus pruebas automáticas antes de cada uno de los despliegues."
+      },
+      {
+        "letter": "C",
+        "text": "Cloud Scheduler, que permite programar la ejecución periódica de tareas mediante expresiones horarias configurables por el equipo."
+      },
+      {
+        "letter": "D",
+        "text": "Cloud Storage, que almacena los instaladores descargados para que el equipo pueda distribuirlos entre sus distintos servidores."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Marketplace permite descubrir, desplegar y facturar software de terceros dentro de la propia cuenta de Google Cloud, acortando semanas de compras e instalación. Su valor es de negocio: velocidad para empezar a usar la herramienta.",
+    "distractors": {
+      "B": "Cloud Build automatiza la construcción de software propio, no la adquisición de una herramienta comercial.",
+      "C": "Cloud Scheduler programa tareas; no interviene en la compra ni en el despliegue de la solución.",
+      "D": "Guardar instaladores no evita la negociación comercial ni el trabajo de instalación manual."
+    },
+    "officialDocUrl": "https://cloud.google.com/marketplace/docs",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-TD-025",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Contenido cercano al usuario mediante la red de borde",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Servir vídeo a audiencias repartidas por el mundo",
+    "scenario": "Una plataforma de vídeo con audiencia en varios continentes quiere que el contenido más visto se sirva desde puntos cercanos a cada espectador, sin replicar toda su infraestructura en cada país. ¿Qué capacidad aborda esto?",
+    "keywords": [
+      "audiencia en continentes",
+      "contenido más visto",
+      "sin replicar todo",
+      "plataforma de vídeo"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La red de borde de Google, que almacena copias del contenido en puntos próximos al espectador."
+      },
+      {
+        "letter": "B",
+        "text": "El aumento del tamaño de las instancias de la región de origen, para que puedan atender un número mucho mayor de espectadores."
+      },
+      {
+        "letter": "C",
+        "text": "El traslado de la plataforma entera a una única región central que quede geográficamente equidistante de todas las audiencias."
+      },
+      {
+        "letter": "D",
+        "text": "La compresión del catálogo completo de vídeo a la mínima calidad posible para reducir el volumen de datos transferidos."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La red de borde acerca copias del contenido más solicitado a los usuarios, reduciendo latencia y consumo de tránsito sin duplicar la infraestructura completa en cada mercado.",
+    "distractors": {
+      "B": "Instancias mayores atienden más carga, pero la distancia física y su latencia siguen siendo las mismas.",
+      "C": "Una región equidistante deja a todo el mundo a media distancia: mejora poco y empeora a quien estaba cerca.",
+      "D": "Degradar la calidad reduce datos pero también la experiencia, y no resuelve el problema de la distancia."
+    },
+    "officialDocUrl": "https://cloud.google.com/cdn/docs/overview",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-TD-026",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "El ecosistema de socios en el plan de adopción",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Falta experiencia interna para arrancar el proyecto",
+    "scenario": "Una empresa aprueba su plan de nube pero reconoce que no tiene experiencia previa en migraciones de este tamaño y necesita arrancar pronto. ¿Qué recurso del ecosistema de Google Cloud está pensado para cubrir esa carencia?",
+    "keywords": [
+      "plan aprobado",
+      "sin experiencia previa",
+      "arrancar pronto",
+      "migración grande"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Los socios de Google Cloud, empresas certificadas que aportan experiencia en migraciones y proyectos."
+      },
+      {
+        "letter": "B",
+        "text": "El nivel gratuito de la plataforma, que permite experimentar con los servicios sin coste durante un periodo limitado de tiempo."
+      },
+      {
+        "letter": "C",
+        "text": "La calculadora de precios, que estima de antemano cuánto costará mensualmente la infraestructura que se planea desplegar."
+      },
+      {
+        "letter": "D",
+        "text": "La consola web, que reúne en una sola interfaz la administración de todos los recursos contratados por la organización."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La red de socios certificados existe precisamente para aportar experiencia y capacidad de ejecución cuando la empresa no la tiene internamente. Es parte del ecosistema y suele ser la vía más rápida para arrancar bien.",
+    "distractors": {
+      "B": "El nivel gratuito sirve para probar servicios, pero no aporta la experiencia que falta para ejecutar la migración.",
+      "C": "La calculadora ayuda a presupuestar, no a suplir la falta de experiencia en proyectos de este tamaño.",
+      "D": "La consola es la herramienta de administración; no cubre una carencia de conocimiento y capacidad."
+    },
+    "officialDocUrl": "https://cloud.google.com/partners",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-TD-027",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Pago por uso frente a compra de capacidad",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Una campaña que puede triunfar o no",
+    "scenario": "Un equipo de marketing lanzará una campaña cuyo éxito es imprevisible: podría multiplicar el tráfico por diez o no mover la aguja. Quieren estar preparados sin comprometer una inversión grande por adelantado. ¿Qué característica del modelo de nube les sirve?",
+    "keywords": [
+      "éxito imprevisible",
+      "multiplicar el tráfico",
+      "sin comprometer inversión",
+      "campaña de marketing"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "El pago por uso: si la campaña no funciona, el gasto en infraestructura tampoco llega a dispararse."
+      },
+      {
+        "letter": "B",
+        "text": "El compromiso de uso a tres años, que garantiza el mejor precio disponible siempre que se reserve la capacidad con antelación."
+      },
+      {
+        "letter": "C",
+        "text": "La compra anticipada de licencias perpetuas, que fija el coste total del proyecto desde el inicio y evita cualquier sorpresa."
+      },
+      {
+        "letter": "D",
+        "text": "El alquiler de espacio en un centro de datos externo, donde instalar los servidores propios que la campaña pueda requerir."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El pago por uso traslada el riesgo: si la demanda no llega, el coste tampoco. Es exactamente lo que necesita una iniciativa cuyo resultado es incierto, frente a comprometer capacidad por adelantado.",
+    "distractors": {
+      "B": "Un compromiso a tres años abarata el precio unitario, pero obliga a pagar aunque la campaña fracase.",
+      "C": "Las licencias perpetuas son un desembolso inicial que se pierde si la campaña no genera demanda.",
+      "D": "Alquilar espacio y comprar servidores es justo el modelo de inversión anticipada que se quería evitar."
+    },
+    "officialDocUrl": "https://cloud.google.com/pricing",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-TD-028",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Diferencia entre nube pública y alojamiento tradicional",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "El proveedor actual dice que ya ofrece nube",
+    "scenario": "El proveedor de alojamiento de una empresa afirma que su servicio ya es nube porque los servidores están en su centro de datos y se acceden por internet. ¿Qué característica falta para que lo sea realmente?",
+    "keywords": [
+      "proveedor de alojamiento",
+      "servidores remotos",
+      "acceso por internet",
+      "afirmación discutida"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "El autoservicio bajo demanda con recursos elásticos que crecen y se reducen de forma automática."
+      },
+      {
+        "letter": "B",
+        "text": "Que el proveedor disponga de un centro de datos situado en el mismo país donde la empresa cliente tiene su sede social."
+      },
+      {
+        "letter": "C",
+        "text": "Que el acceso a los servidores alojados se realice siempre a través de una conexión cifrada con certificado válido."
+      },
+      {
+        "letter": "D",
+        "text": "Que exista un contrato de mantenimiento con cobertura ininterrumpida durante las veinticuatro horas de todos los días del año."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Tener servidores remotos no es nube. Lo que define el modelo es el autoservicio bajo demanda, la elasticidad, la medición del consumo y el acceso por red. Sin elasticidad ni autoservicio, es alojamiento tradicional con otro nombre.",
+    "distractors": {
+      "B": "La ubicación del centro de datos afecta a latencia y cumplimiento, pero no define si el servicio es nube.",
+      "C": "El cifrado en tránsito es una buena práctica de seguridad, no una característica que defina el modelo.",
+      "D": "Un contrato de mantenimiento amplio es deseable, aunque no aporta autoservicio ni elasticidad."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-cloud-computing",
+    "blockId": "BLOCK-4"
+  }
+]

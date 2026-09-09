@@ -1,0 +1,331 @@
+[
+  {
+    "id": "PCA-D1-011",
+    "scenario": "Altostrat Media's containerized streaming services running on GKE need to access database credentials and third-party DRM licensing APIs. Corporate security policy prohibits storing plaintext secrets in Git, environment variables, or downloading static service account JSON private keys. Which two elements should you implement: the mechanism the pods use to reach the secrets, and the organization-level control that makes a downloadable JSON key technically impossible? (Choose 2.)",
+    "correct": [
+      "D",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Aplicar la política de organización constraints/iam.disableServiceAccountKeyCreation."
+    },
+    "distractors": {
+      "A": "Los ConfigMaps están destinados a datos de configuración no confidenciales y no proporcionan auditoría granular ni rotación de secretos.",
+      "B": "Descargar y montar archivos de claves JSON estáticas crea graves riesgos de filtración y dificulta la rotación de credenciales.",
+      "C": "Incrustar secretos en imágenes Docker expone las claves a cualquier usuario o sistema con acceso de lectura al registro de contenedores."
+    },
+    "explanation": "Secret Manager con Workload Identity resuelve el acceso al secreto sin claves estáticas, pero por sí solo no impide que otro equipo genere una clave JSON descargable. La política de organización constraints/iam.disableServiceAccountKeyCreation cierra esa vía en toda la jerarquía, de modo que la prohibición corporativa deja de depender de la disciplina de cada desarrollador."
+  },
+  {
+    "id": "PCA-D1-012",
+    "scenario": "Altostrat Media operates multiple GKE clusters across distinct cloud regions. Microservices in us-east4 must discover and communicate with services in europe-west1 with end-to-end cryptographic encryption in transit (mTLS), automatic health-based traffic routing, and unified telemetry. Which two elements should you configure: the plane that provides service discovery and mTLS, and the fleet-level prerequisite that lets discovery cross from one cluster to the other? (Choose 2.)",
+    "correct": [
+      "C",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Registrar ambos clústeres en la misma flota y habilitar Multi-Cluster Services (MCS)."
+    },
+    "distractors": {
+      "A": "Gestionar túneles VPN manuales y registros DNS estáticos no proporciona balanceo inteligente L7 por petición ni cifrado mTLS mutuo.",
+      "B": "Exponer microservicios internos mediante balanceadores públicos externos amplía la superficie de ataque y genera costes innecesarios de red.",
+      "D": "Los servicios NodePort exponen puertos estáticos en cada nodo del clúster y no resuelven el enrutamiento inteligente ni la seguridad mTLS."
+    },
+    "explanation": "Cloud Service Mesh multiclúster aporta el mTLS automático, el enrutamiento por salud y la telemetría unificada. Para que un servicio de us-east4 resuelva y alcance un servicio de europe-west1, ambos clústeres deben pertenecer a la misma flota (fleet) y exportar sus servicios mediante Multi-Cluster Services: sin ese registro no hay descubrimiento entre clústeres y la malla queda aislada por región."
+  },
+  {
+    "id": "PCA-D1-016",
+    "scenario": "Knightmotives Automotive needs to distribute cryptographically signed firmware binary updates (500 MB each) to millions of vehicles globally. The OTA distribution system must support high-speed downloads, minimize backend compute load, and ensure only authorized vehicles can download the firmware images. Which two elements must the architecture include: the high-speed authorized distribution mechanism, and the cryptographic guarantee that the binary the vehicle installs is the legitimate one? (Choose 2.)",
+    "correct": [
+      "D",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Firmar cada binario con una clave asimétrica de Cloud KMS y verificarla en el vehículo."
+    },
+    "distractors": {
+      "A": "Cloud Pub/Sub tiene un límite estricto de tamaño de mensaje de 10 MB, lo que impide transmitir binarios de firmware de 500 MB.",
+      "B": "Servidores Compute Engine sin caché de borde sufren cuellos de botella de ancho de banda durante el lanzamiento de actualizaciones masivas.",
+      "C": "Servidores FTP heredados carecen de alta disponibilidad perimetral global, cifrado moderno y autenticación granular basada en tokens."
+    },
+    "explanation": "Cloud Storage con Cloud CDN sirve los 500 MB desde el borde y las Signed URLs limitan la descarga a los vehículos autorizados sin carga de backend. Eso protege el canal, no el artefacto: firmar cada imagen con una clave asimétrica de Cloud KMS y verificar la firma en el ECU antes de aplicar la actualización es lo que impide instalar un binario manipulado obtenido por cualquier otra vía."
+  },
+  {
+    "id": "PCA-D1-024",
+    "scenario": "Knightmotives operates commercial vehicle fleets across North America, Europe, and Asia. European data protection regulations require that telemetry and GPS logs collected from vehicles in European Union member states remain strictly stored within the EU, encrypted with keys owned and managed in the EU, and never replicated or accessed outside the EU. Which two controls should you apply: the one that keeps the data and its keys created and stored inside the EU, and the one that prevents them from being accessed from outside the EU? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Encerrar los proyectos europeos en un perímetro de VPC Service Controls con nivel UE."
+    },
+    "distractors": {
+      "B": "Mover datos a discos locales elimina las capacidades analíticas de la nube y genera graves riesgos de custodia física y pérdida de datos.",
+      "C": "Una instancia multirregional global de Spanner replica datos fuera de la Unión Europea, incumpliendo la normativa de transferencia internacional.",
+      "D": "Almacenar datos de ciudadanos europeos en centros de datos de EE.UU. viola directamente los requisitos de residencia y soberanía de GDPR."
+    },
+    "explanation": "Las Organization Policies de resourceLocations limitadas a regiones europeas más CMEK en Cloud KMS garantizan que el dato y su clave se creen y residan en la UE. El requisito añade que nunca se acceda ni se replique fuera: eso lo impone un perímetro de VPC Service Controls alrededor de los proyectos europeos, que bloquea a nivel de API cualquier copia hacia un proyecto exterior y, con un access level geográfico, cualquier llamada originada fuera de la UE."
+  },
+  {
+    "id": "PCA-D1-041",
+    "scenario": "EHR Healthcare stores petabytes of patient medical data across BigQuery, Cloud Storage, and the Cloud Healthcare API. Security officers are concerned that a malicious insider with valid IAM credentials could copy sensitive patient tables to an external, unauthorized personal Google Cloud project. Which two controls should you combine: the one that blocks the API request itself and the one that closes the IAM path an insider would use to hand data to an external account? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "B": "Encrypt every patient dataset and bucket with Cloud HSM CMEK and restrict the Decrypter role to the clinical service accounts, so tables copied to another project stay unreadable without the key project.",
+      "E": "Enforce the constraints/iam.allowedPolicyMemberDomains organization policy on the healthcare projects so IAM bindings can only name principals inside the corporate Cloud Identity domain."
+    },
+    "distractors": {
+      "B": "BigQuery and Cloud Storage decrypt server-side for any authorized caller and the destination re-encrypts with its own key, so CMEK never sees the copy operation and does not stop it.",
+      "C": "Classification and alerting are detective controls that fire after the copy has already completed; nothing in this design blocks the exfiltrating API request itself.",
+      "D": "Just-in-time elevation shrinks standing privilege, but an approved analyst holds valid credentials during the window and can still copy tables to a personal project: there is no API-level boundary."
+    },
+    "explanation": "VPC Service Controls is the only control that stops the exfiltrating API call itself: a copy or export towards a project outside the perimeter is denied even with valid IAM credentials. The allowedPolicyMemberDomains organization policy covers the complementary path, preventing anyone from granting a personal or external identity a role on the patient data in the first place. Each closes a different route out of the estate."
+  },
+  {
+    "id": "PCA-D1-043",
+    "scenario": "EHR Healthcare is hosting a relational patient billing service on Cloud SQL for PostgreSQL. The database must have zero public IP exposure, enforce SSL/TLS encryption for all client connections, and provide automated failover with an RTO under 60 seconds during a zonal datacenter disruption. Which two things should you configure: the Cloud SQL instance itself and the guardrail that keeps a public IP from being reintroduced later? (Choose 2.)",
+    "correct": [
+      "D",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Enforce the constraints/sql.restrictPublicIp organization policy on the folder holding the billing project so no operator can re-enable a public IP on the instance or create a new one with it."
+    },
+    "distractors": {
+      "A": "Promover una replica de lectura es un procedimiento manual y asincrono: no cumple el RTO de 60 segundos y puede perder transacciones ya confirmadas en el primario.",
+      "B": "Mantiene una IP publica, que el escenario prohibe de forma explicita: las redes autorizadas filtran quien conecta pero el endpoint sigue publicado en internet.",
+      "C": "Cumple la alta disponibilidad y la privacidad de red, pero incumple el cifrado obligatorio: el modo permisivo deja pasar conexiones de cliente sin TLS."
+    },
+    "explanation": "A Regional HA instance (synchronous standby in a second zone) delivers the sub-60-second automated failover, Private Service Access keeps the endpoint on RFC 1918 space and requiring client certificates enforces TLS. Configuration alone is reversible: any principal with cloudsql.admin can add a public IP tomorrow. Enforcing constraints/sql.restrictPublicIp at the folder makes the zero-public-exposure requirement structural instead of a one-time setting."
+  },
+  {
+    "id": "PCA-D1-051",
+    "scenario": "EHR Healthcare operates 5 distinct business divisions (Hospitals, Clinical Labs, Insurance Services, Research, and Corporate IT). They require a Google Cloud resource hierarchy that enforces centralized network administration, strict billing segregation, organizational policy inheritance, and isolated workload projects while allowing secure internal IP connectivity across divisions. Which two elements does the design require: the hierarchy and network model, and the IAM delegation that lets each division actually deploy into its own subnet only? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Grant roles/compute.networkUser on each division's specific host-project subnet to that division's service-project principals and GKE service agents, rather than granting the role on the whole host project."
+    },
+    "distractors": {
+      "B": "Cinco organizaciones no comparten jerarquia: la herencia de politicas hay que replicarla a mano en cada una y desaparece la administracion central de red que exige el escenario.",
+      "C": "Sin carpetas no hay punto intermedio donde heredar la politica por division, y el peering en malla no es transitivo: cada VPC nueva obliga a crear enlaces con todas las demas.",
+      "D": "Las etiquetas desglosan el gasto pero no segregan la facturacion ni el IAM: cualquier rol concedido en el proyecto alcanza a la vez los recursos de las cinco divisiones."
+    },
+    "explanation": "Folders per division plus a central Shared VPC host project with divisional service projects gives policy inheritance, billing segregation and centralized network administration with private RFC 1918 connectivity. Shared VPC does nothing on its own until the host project delegates use of the network: granting roles/compute.networkUser scoped to each division's subnet is what lets a service project attach workloads there while keeping it out of the other divisions' subnets."
+  },
+  {
+    "id": "PCA-D2-003",
+    "scenario": "An enterprise central network team manages a Shared VPC Host Project with dedicated subnets for analytics (10.10.0.0/20) and web tiers (10.20.0.0/20). Developers in Service Project 'Analytics-Dev' must be able to spin up Compute Engine instances and GKE clusters in the analytics subnet, but must strictly be prevented from attaching instances to the web subnet. Which two IAM grants are required so the Analytics-Dev team can create both Compute Engine instances and GKE clusters in the analytics subnet, and only there? (Choose 2.)",
+    "correct": [
+      "C",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Additionally grant the Analytics-Dev GKE service agent roles/container.hostServiceAgentUser on the Host Project and roles/compute.networkUser on the analytics subnet, which GKE requires to manage the cluster's networking."
+    },
+    "distractors": {
+      "A": "networkUser concedido a nivel de proyecto habilita todas las subredes del host: los desarrolladores podrian crear instancias en 10.20.0.0/20, y una regla de firewall filtra trafico pero no impide adjuntar la NIC.",
+      "B": "networkAdmin permite ademas crear, modificar y borrar subredes y rutas del Host Project: el equipo puede concederse acceso al tier web y romper el control centralizado de la red.",
+      "D": "El peering de VPC exporta todas las subredes de la red par, no un subconjunto elegido, y ademas abandona el Shared VPC que el equipo central necesita para administrar la red."
+    },
+    "explanation": "Granting roles/compute.networkUser scoped to the analytics subnet lets the developers and their service accounts attach resources to 10.10.0.0/20 and nothing else. GKE adds a second requirement: the service project's GKE service agent needs roles/container.hostServiceAgentUser on the host project (plus networkUser on that same subnet) to program firewall rules, node IPs and the cluster's secondary ranges. Without it cluster creation fails even though the developers are correctly scoped."
+  },
+  {
+    "id": "PCA-D2-005",
+    "scenario": "A financial SaaS vendor hosts a core payment API on Google Cloud that must be consumed by 200 corporate bank clients. Many client VPC networks have overlapping private IP ranges (e.g. 10.0.0.0/16). The vendor wants to allow clients to access the payment service securely and privately over Google's internal network without requiring complex NAT configurations or risking IP address collisions. Which two pieces make the design work: the publishing and consumption model, and the producer-side configuration the service attachment needs to serve 200 tenants? (Choose 2.)",
+    "correct": [
+      "B",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "In the vendor VPC, dedicate one or more subnets with --purpose=PRIVATE_SERVICE_CONNECT for the service attachment's NAT, and add the 200 bank projects to the attachment's consumer accept list."
+    },
+    "distractors": {
+      "A": "BGP cannot install 200 identical 10.0.0.0/16 prefixes learned from different peers: the overlapping client ranges collide in the vendor route table, and traffic also leaves Google's backbone over IPsec.",
+      "C": "Shared VPC only spans projects inside a single organization, and it would place 200 external banks' workloads inside the vendor's own network, an untenable trust, quota and blast-radius boundary.",
+      "D": "The all-apis endpoint targets Google-managed API services only; publishing a customer-owned service requires a service attachment fronted by an internal load balancer, which this design omits."
+    },
+    "explanation": "Private Service Connect publishes the payment API through a service attachment behind an internal load balancer, and each bank creates an endpoint with an address from its own VPC, so overlapping 10.0.0.0/16 ranges never meet. The producer side must be provisioned for it: a subnet reserved with purpose PRIVATE_SERVICE_CONNECT supplies the NAT addresses that make every consumer's traffic unique to the producer, and the accept list is what authorizes those 200 consumer projects to connect at all."
+  },
+  {
+    "id": "PCA-D2-021",
+    "scenario": "VPC-A hosts internal microservices under the domain 'corp.internal'. Workloads in VPC-B (which is in a different project) must resolve hostnames in 'corp.internal' without exposing the DNS zone publicly or deploying dedicated BIND DNS virtual machines. Which two things must be configured: the Cloud DNS objects themselves and the IAM permission the peering relationship depends on? (Choose 2.)",
+    "correct": [
+      "B",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Grant roles/dns.peer on Project A to the principal that creates the peering zone in Project B, since Cloud DNS refuses to create a peering zone without that permission on the target network's project."
+    },
+    "distractors": {
+      "A": "Sincronizar manualmente una segunda zona privada via un job de Cloud Build introduce retraso y riesgo de desincronizacion; no es la solucion nativa de Cloud DNS Peering pensada para este caso.",
+      "C": "Publicar una zona publica expone las direcciones RFC 1918 de los microservicios a cualquiera con acceso a DNS publico, violando el requisito de no exponer la zona publicamente.",
+      "D": "Despliega los servidores BIND que el escenario descarta, y apuntar las VM a resolvers propios les hace perder la resolucion nativa de los nombres internos de Compute Engine."
+    },
+    "explanation": "A private zone for corp.internal authorized for VPC-A, plus a peering zone in Project B that forwards corp.internal queries to VPC-A, is the native cross-project resolution path: no public exposure and no BIND VMs. It is also a cross-project relationship, so it is gated by IAM: the identity creating the peering zone needs roles/dns.peer on the producer project. Without that grant the peering zone cannot be created and resolution keeps failing."
+  },
+  {
+    "id": "PCA-D2-028",
+    "scenario": "EHR Healthcare is auditing access to its production GKE clusters processing HIPAA workloads. While the cluster is configured as a Private GKE cluster, the Kubernetes API Server endpoint must be protected so that only authorized corporate admin jump-boxes (10.240.0.0/24) and on-premises NOC CIDR blocks (192.168.10.0/24) can execute kubectl commands, blocking all other internal and external networks. Which two configurations are required so only those CIDR blocks can run kubectl and the on-premises NOC can actually reach the private endpoint over the Interconnect? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Enable control plane global access on the cluster and advertise the control plane CIDR to on-premises through Cloud Router custom route advertisements."
+    },
+    "distractors": {
+      "B": "Deshabilitar el endpoint publico solo permite el acceso desde dentro de la VPC; no distingue entre las jump-boxes corporativas autorizadas y cualquier otra carga de trabajo de la VPC, por lo que no implementa el filtrado CIDR granular exigido.",
+      "C": "RBAC decide que puede hacer un usuario ya autenticado, no desde que red se conecta: el filtrado por bloque CIDR que exige la auditoria sigue sin existir.",
+      "D": "Un tunel IAP hacia un bastion da acceso a quien pueda llegar al bastion, pero no reemplaza el filtrado CIDR de Master Authorized Networks en el propio endpoint de la API de Kubernetes."
+    },
+    "explanation": "Master Authorized Networks is the L3/L4 filter: only the listed CIDR blocks may talk to the Kubernetes API server. That filter alone does not create reachability. The private endpoint sits in a Google-managed peered network, so traffic arriving from on-premises over the Interconnect only gets there when control plane global access is enabled and the control plane range is advertised to the on-premises routers by the Cloud Router. Both are needed: one authorizes, the other routes."
+  },
+  {
+    "id": "PCA-D2-035",
+    "scenario": "An enterprise requires strict egress security for private VMs and GKE pods without public IPs. Workloads must only be allowed to make outbound HTTPS connections to specific approved external partner domains (e.g., api.partner.com, *.github.com). Standard IP-based firewall rules are ineffective because SaaS providers use dynamic CDNs with constantly shifting IP addresses. Which two elements does the egress design need: the Layer 7 filtering service and the control that stops workloads from simply going around it? (Choose 2.)",
+    "correct": [
+      "C",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "D": "Enable Cloud NAT flow logging, export the egress records to BigQuery and alert the security team whenever a workload opens a connection to a destination outside the approved partner list.",
+      "E": "Add a default-deny egress firewall rule towards 0.0.0.0/0 and permit outbound traffic only towards the Secure Web Proxy, so no VM or pod can open a direct connection to an unapproved destination."
+    },
+    "distractors": {
+      "A": "Cloud NAT + reglas de firewall por FQDN dependen de traducir el hostname a IPs en el momento de crear la regla; como los proveedores SaaS usan CDNs con IPs que cambian constantemente, las direcciones se desactualizan y el filtrado deja de reflejar los dominios aprobados.",
+      "B": "Meter una flota de proxies Squid autogestionados vuelve a las VMs que el enunciado quiere evitar mantener: ahora hay que parchear, escalar y dar alta disponibilidad al propio proxy, en vez de usar un servicio gestionado de egress de Capa 7.",
+      "D": "Logging and alerting are detective: the connection to the unapproved destination already completed, and NAT logs record IP addresses, which is exactly what the shifting CDN ranges make meaningless."
+    },
+    "explanation": "Secure Web Proxy is the managed Layer 7 egress service: its policy rules match URL lists and domain patterns such as *.github.com, so filtering follows the hostname rather than the CDN's rotating IPs. A proxy is only effective if it cannot be bypassed, so egress from the workload subnets must be denied by default and allowed only towards the proxy; otherwise any pod can still open a direct HTTPS connection to any address it resolves."
+  },
+  {
+    "id": "PCA-D3-001",
+    "scenario": "An enterprise uses GitHub Actions for CI/CD pipelines deploying to Google Cloud. Security policy strictly forbids creating, downloading, or storing long-lived service account private key JSON files in GitHub repository secrets. Which two elements make the pipeline both keyless and safe: the federation setup and the restriction that keeps other repositories from using it? (Choose 2.)",
+    "correct": [
+      "D",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Add an attribute condition on the OIDC provider (assertion.repository_owner equals the enterprise GitHub organization) and map google.subject to assertion.repository, so tokens minted for any other repository are rejected."
+    },
+    "distractors": {
+      "A": "Sigue generando y almacenando una clave JSON de larga duracion, justo lo que la politica de seguridad prohibe expresamente.",
+      "B": "El principalSet de todo el pool sin condicion de atributo permite que cualquier repositorio del proveedor OIDC suplante la cuenta de servicio, una superficie de ataque demasiado amplia.",
+      "C": "Provider type mismatch: GitHub Actions issues signed OIDC JWTs, so the pool needs an OIDC provider configured with the issuer URI; a SAML provider expects a signed SAML assertion and rejects the token."
+    },
+    "explanation": "An OIDC Workload Identity Pool and Provider for token.actions.githubusercontent.com exchanges GitHub's signed job token for short-lived Google credentials, which removes the JSON key entirely. GitHub's issuer is shared by every repository on the platform, so the provider must also carry an attribute condition pinning the repository owner and map google.subject to assertion.repository. Otherwise anyone's public repository can request a token that satisfies the pool and impersonate the deployment service account."
+  },
+  {
+    "id": "PCA-D3-009",
+    "scenario": "An enterprise stores sensitive intellectual property in BigQuery and Cloud Storage in Project A. To satisfy national defense data protection standards, data inside Project A must be accessible only from authorized private VPC networks, and data exfiltration to any storage bucket or BigQuery dataset outside Project A must be cryptographically blocked at the API layer. Which two controls should you configure: the API-layer boundary and the network configuration that keeps the authorized VPC's traffic on the private path the boundary protects? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "C": "Create a hierarchical firewall policy denying all egress from Project A's subnets to 0.0.0.0/0, so no instance can open a connection to any external endpoint and the intellectual property cannot leave the project.",
+      "E": "Enable Private Google Access on the authorized subnets and resolve *.googleapis.com to the restricted VIP 199.36.153.4/30 with a Cloud DNS private zone, so API traffic from Project A never leaves the private path."
+    },
+    "distractors": {
+      "B": "Las politicas de organizacion y las condiciones IAM no bloquean la exfiltracion a nivel de API hacia buckets o datasets externos; solo limitan las asignaciones de roles, VPC-SC es lo que impone el perimetro criptografico exigido.",
+      "C": "Firewall rules act on packets leaving the VMs, but the exfiltration here is an API call to storage.googleapis.com or bigquery.googleapis.com, which an authorized identity can issue from a laptop or another project entirely, never crossing Project A's subnets.",
+      "D": "El cifrado con CMEK protege los datos en reposo pero no impide que un principal autorizado copie o exporte los datos hacia un proyecto externo; no bloquea la exfiltracion a traves de la API."
+    },
+    "explanation": "A VPC Service Controls perimeter around Project A restricting bigquery.googleapis.com and storage.googleapis.com is the boundary itself: a copy towards a bucket or dataset outside the perimeter is denied at the API layer even with valid credentials. The restricted VIP is its network companion: Private Google Access plus a Cloud DNS override for *.googleapis.com forces the authorized VPC's requests down the private path, so the perimeter is not reached over a public endpoint from an unmonitored network."
+  },
+  {
+    "id": "PCA-D3-010",
+    "scenario": "An enterprise has two separate VPC Service Controls perimeters: Perimeter A (protecting finance BigQuery datasets in Project A) and Perimeter B (protecting analytics Cloud Dataflow jobs in Project B). Dataflow workers in Perimeter B need to read tables from BigQuery in Perimeter A without merging the two perimeters into a single broad security domain. Which two configurations are required for the Dataflow workers to read the finance tables while the perimeters stay separate? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "B": "Copy the required finance tables into a Project B dataset every night with the BigQuery Data Transfer Service, so the Dataflow jobs read a local replica and no request ever has to cross a perimeter boundary.",
+      "E": "Grant the Project B Dataflow worker service account roles/bigquery.dataViewer on the finance dataset and roles/bigquery.jobUser in Project A, because the bridge authorizes the boundary crossing but not the API call."
+    },
+    "distractors": {
+      "B": "The nightly copy is itself a cross-perimeter transfer that Perimeter A denies, and even if it ran it would duplicate regulated finance data into the analytics domain and serve the pipeline stale tables.",
+      "C": "Los access levels solo admiten peticiones originadas FUERA de cualquier perímetro: no pueden usarse para permitir una petición que procede de un recurso protegido por otro perímetro.",
+      "D": "Fusiona los dos dominios de seguridad, justo lo que el escenario prohíbe: la carga analítica gana alcance de perímetro sobre todos los recursos de finanzas, no solo sobre las tablas pactadas."
+    },
+    "explanation": "A perimeter bridge links Perimeter A and Perimeter B so their enclosed projects can call each other's restricted services while both stay closed to the rest of the organization. The bridge only decides whether the request may cross the boundary; authorization is still IAM's job, so the Dataflow worker service account also needs roles/bigquery.dataViewer on the finance dataset and roles/bigquery.jobUser. Either one alone leaves the read failing, with a VPC-SC violation or a 403."
+  },
+  {
+    "id": "PCA-D3-027",
+    "scenario": "An enterprise security team requires automated self-healing remediation whenever a storage bucket is accidentally made public (allUsers / allAuthenticatedUsers granted storage.objectViewer). When Security Command Center detects finding 'PUBLIC_BUCKET_ACL', the system must automatically remove the public IAM binding within 30 seconds and post an alert to the SOC Slack channel. Which two elements should the design combine: the event-driven pipeline that meets the 30-second remediation window and the control that keeps the exposure from happening again? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "C": "Attach an IAM deny policy on the storage folder denying storage.buckets.setIamPolicy to every principal except the security team, so no developer can add a public binding to a corporate bucket.",
+      "E": "Enforce the constraints/storage.publicAccessPrevention organization policy across the corporate bucket fleet, so the allUsers and allAuthenticatedUsers bindings the function strips cannot be granted on any bucket again."
+    },
+    "distractors": {
+      "B": "La cadencia por lotes es el fallo: una consulta programada cada 15 minutos no puede cumplir la ventana de 30 segundos y deja el bucket legible por todo el mundo hasta un cuarto de hora.",
+      "C": "It blocks every legitimate bucket IAM change by the owning teams while still leaving the security team able to grant allUsers, and it neither remediates the finding already open nor notifies the SOC.",
+      "D": "Un job por lotes cada hora no cumple la ventana de remediacion de 30 segundos exigida; deja el bucket publico expuesto durante minutos u horas entre ejecuciones."
+    },
+    "explanation": "A Continuous Finding Export filtered on PUBLIC_BUCKET_ACL publishes to Pub/Sub the instant Security Command Center raises the finding, and the subscribing Cloud Function strips the binding and posts to Slack well inside the 30-second window. Remediation is reactive by definition, so the design pairs it with the preventive control: constraints/storage.publicAccessPrevention makes the public grant impossible organization-wide, turning the pipeline into a backstop for buckets predating the policy."
+  },
+  {
+    "id": "PCA-D3-044",
+    "scenario": "knightmotives_automotive connects 200,000 agricultural tractors via cellular modems. To prevent malicious actors from spoofing vehicle telemetry or injecting false sensor readings, each vehicle must authenticate cryptographically to the Google Cloud ingestion endpoint using hardware-backed mutual TLS (mTLS) with individual device X.509 certificates. Which two elements does the ingestion gateway need: the identity issuance and mTLS termination, and the mechanism that stops a cloned or stolen credential from staying valid? (Choose 2.)",
+    "correct": [
+      "A",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Publish CRL distribution points from the Certificate Authority Service CA pool and issue short-lived device certificates, so the ingestion gateway stops accepting the certificate of any tractor whose secure element is reported stolen or cloned."
+    },
+    "distractors": {
+      "B": "Una API key estatica (aunque rotada cada 90 dias) es un secreto compartido que viaja por la red; si se filtra o se clona desde el firmware de un tractor, cualquiera puede suplantar ese vehiculo hasta la siguiente rotacion, sin el anclaje de hardware (TPM/HSM) que exige mTLS.",
+      "C": "Un JWT firmado con una clave de KMS compartida por todos los tractores no autentica al dispositivo individual: si el firmware se extrae de una maquina, esa misma clave sirve para falsificar telemetria desde cualquier otro tractor, algo que el mTLS con certificado X.509 por dispositivo evita.",
+      "D": "Es autenticacion por red, no por dispositivo: cualquier tractor comprometido dentro del APN puede inyectar telemetria falsa a nombre de otro VIN, y el escenario exige mTLS con certificado individual."
+    },
+    "explanation": "Certificate Authority Service runs the private PKI: each tractor gets a unique X.509 certificate whose private key never leaves the hardware secure element, and the gateway validates it with mutual TLS. A PKI without revocation degrades over ten years of field hardware: publishing CRL distribution points from the CAS pool and keeping certificate lifetimes short is what lets the fleet operator invalidate a specific stolen or cloned device instead of trusting it until its certificate expires."
+  },
+  {
+    "id": "PCA-D3-054",
+    "scenario": "European data protection regulations mandate that encryption keys protecting European vehicle fleet data must reside strictly in europe-west1 and must never be replicated or accessible by US cloud infrastructure. Which two things should you configure: where the key ring lives and the guardrail that stops a resource being bound to a key outside that project? (Choose 2.)",
+    "correct": [
+      "D",
+      "E"
+    ],
+    "expectedSelectCount": 2,
+    "options": {
+      "E": "Enforce the constraints/gcp.restrictCmekCryptoKeyProjects organization policy on the European folder, so only the dedicated europe-west1 key project may supply CMEK keys to its resources."
+    },
+    "distractors": {
+      "A": "El emplazamiento 'global' replica el material de clave en varias regiones, incluidas las de Estados Unidos: la clave sale del territorio europeo aunque IAM restrinja quien la usa.",
+      "B": "Una clave en la multirregion 'europe' no puede cifrar un recurso regional de europe-west1, porque CMEK exige que la localizacion de la clave coincida con la del recurso.",
+      "C": "La clave sigue viviendo y operandose en us-central1: el dato europeo depende de infraestructura estadounidense para descifrarse, que es exactamente lo que la norma prohibe."
+    },
+    "explanation": "A regional Cloud KMS key ring in europe-west1, inside a dedicated EU project, guarantees the key material and the HSM modules never leave that region, and CMEK binds it to the regional BigQuery and Cloud Storage resources holding European fleet data. Location alone is not enforcement: anyone creating a new dataset can point it at a US key project. constraints/gcp.restrictCmekCryptoKeyProjects restricts which key projects may be used, so every new EU resource is forced onto the European key."
+  }
+]

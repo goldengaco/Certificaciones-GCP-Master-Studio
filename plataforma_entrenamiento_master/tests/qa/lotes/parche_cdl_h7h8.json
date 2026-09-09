@@ -1,0 +1,74 @@
+[
+ {
+  "id": "CDL-D4-006",
+  "options": {
+   "A": "Crear una Service Account por ingeniero (p. ej. `ingeniero@proyecto.iam.gserviceaccount.com`), con los 15 roles de IAM, y entregar la clave JSON al empleado, rotándola si cambia de departamento.",
+   "B": "Definir un rol personalizado `roles/miEmpresa.devOps15` con los 15 permisos y asignarlo al correo de cada ingeniero en los 30 proyectos, repitiendo la asignación en cada alta o cambio.",
+   "D": "Conceder el rol básico `roles/editor` a nivel de organización a los 50 ingenieros para que hereden acceso a los 30 proyectos sin necesidad de gestionar asignaciones de roles proyecto por proyecto."
+  }
+ },
+ {
+  "id": "CDL-D4-023",
+  "options": {
+   "A": "Crear roles personalizados de IAM que excluyan el permiso `compute.instances.create` en `folders/FOLDER_ID`, y asignarlos a todos los desarrolladores en cada carpeta de la organización.",
+   "C": "Configurar Cloud Asset Inventory con un feed `feed-ip-externa` en tiempo real y una función `elimina-vm-noconforme` que borre las instancias con IP externa o creadas fuera de la Unión Europea.",
+   "D": "Definir un perímetro `accessPolicies/POLICY_ID/servicePerimeters/perimetro-ue` de Controles de Servicio de VPC que abarque todos los proyectos de la organización y las regiones europeas autorizadas."
+  }
+ },
+ {
+  "id": "CDL-D3-037",
+  "options": {
+   "A": "Guardar los archivos de claves JSON de la Service Account como un Secret de Kubernetes cifrado dentro del contenedor y referenciarlo desde el Pod vía variable de entorno, rotando las credenciales cada 90 días.",
+   "C": "Asignar el rol roles/storage.objectViewer a la cuenta de servicio de los nodos de Compute Engine, de modo que cualquier Pod del clúster obtenga credenciales heredadas del servidor de metadatos para leer los archivos, sin usar claves de Service Account.",
+   "D": "Guardar los archivos de claves de la Service Account en Secret Manager y recuperarlos desde el Pod en GKE al arrancar mediante la API, de modo que las credenciales no queden escritas en la imagen del contenedor ni en el repositorio de código."
+  }
+ },
+ {
+  "id": "CDL-D4-036",
+  "options": {
+   "B": "En un sumidero (Log Sink) que la empresa exporta a un bucket `logs-archivados` de Cloud Storage, con una regla `condition.age` de ciclo de vida de 400 y 30 días, ajustando la retención fuera de Cloud Logging.",
+   "C": "En las reglas de vencimiento de tablas particionadas de BigQuery, con una expiración `partition_expiration_days` de 400 o 30 días según el registro que la empresa enruta desde Cloud Logging, simulando la retención.",
+   "D": "En las políticas de la organización (`cloudresourcemanager.googleapis.com`) de Resource Manager, sobre `folders/FOLDER_ID`, fijando para la empresa una retención mínima de registros de Cloud Logging."
+  }
+ },
+ {
+  "id": "CDL-D2-052",
+  "options": {
+   "B": "BigQuery Omni consultando in situ los datos de clientes en la instancia `cloudsql-postgres` de Cloud SQL for PostgreSQL.",
+   "C": "Datastream replicando sin parar la base operativa cloudsql-facturas por completo hacia un conjunto de datos de BigQuery para análisis histórico.",
+   "D": "Tablas externas de BigQuery sobre los ficheros que Cloud SQL exporta a gs://bucket-cloudsql/export en Cloud Storage."
+  }
+ },
+ {
+  "id": "CDL-D3-062",
+  "options": {
+   "A": "Warm Standby: una réplica de tamaño mínimo permanece encendida en `us-west1` y se escala para asumir el tráfico cuando `us-east1` falla y se declara la conmutación por error.",
+   "B": "Cold Standby: copias de seguridad automáticas en un bucket `gs://dr-backups-us-west1` de Cloud Storage multirregión que se restauran sobre infraestructura nueva al declarar el desastre.",
+   "C": "Pilot Light: la base de datos se replica de forma asíncrona a `us-west1` (región secundaria) y los servidores de aplicación permanecen apagados hasta activar el plan de DR."
+  }
+ },
+ {
+  "id": "CDL-D3-075",
+  "options": {
+   "A": "Este camino mueve las VMs de VMware vSphere hacia Compute Engine con Migrate to Virtual Machines, así el plan de recuperación ante desastres corre sobre instancias nativas de Google Cloud tras convertir los discos, en vez de operar el segundo sitio físico con las mismas herramientas VMware del centro de datos principal.",
+   "B": "Como institución financiera, este beneficio permite archivar copias de seguridad del centro de datos principal en Cloud Storage Coldline y restaurarlas al declarar el desastre, utilizando Google Cloud como sitio secundario, aunque el centro de datos físico VMware siga siendo el único sitio de recuperación real.",
+   "C": "Este camino exige refactorizar cada carga de VMware vSphere del centro de datos principal a contenedores en GKE antes de operar Google Cloud VMware Engine como sitio secundario, en vez de replicar directamente para la recuperación ante desastres."
+  }
+ },
+ {
+  "id": "CDL-D4-067",
+  "options": {
+   "A": "Registros de Auditoría de Actividad del Administrador (Admin Activity Audit Logs: ADMIN_WRITE, activados siempre).",
+   "B": "Registros de Transparencia de Acceso (Access Transparency Logs de accesstransparency.googleapis.com).",
+   "C": "Registros de Eventos del Sistema (System Event Audit Logs: system_event, generados por la infraestructura)."
+  }
+ },
+ {
+  "id": "CDL-D2-077",
+  "options": {
+   "A": "Realizar un ajuste fino (Fine-Tuning) del modelo de Vertex AI con el histórico de pólizas y documentos de la empresa, como técnica para que aprenda el estilo de redacción.",
+   "B": "Como técnica de Vertex AI, reducir a cero la temperatura y el top-p del modelo para que las respuestas de la empresa sean deterministas y repitan la misma redacción, sin mirar documentos reales.",
+   "D": "Como técnica de la empresa, activar el umbral más estricto de los filtros de seguridad de IA de Vertex AI para que el modelo bloquee respuestas con coberturas inexistentes."
+  }
+ }
+]

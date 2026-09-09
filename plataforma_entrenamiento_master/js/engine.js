@@ -18,22 +18,54 @@
    * =========================================================================
    * 1. BLOCK ROTATION ENGINE
    * =========================================================================
-   * Partitions a 300-question pool into exactly 6 disjoint blocks of 50 questions each,
-   * preserving official domain weight distributions in every single block.
+   * Reparte el banco disponible en bloques disjuntos del tamano de un examen
+   * real, preservando los pesos oficiales de dominio dentro de cada bloque.
+   *
+   * El numero de bloques NO es fijo. Antes eran seis siempre, y eso rompia el
+   * simulacro mientras el banco se reescribe: con 125 preguntas verificadas de
+   * ACE, partirlas en seis daba "simulacros" de 21 preguntas con el cronometro
+   * de 120 minutos. Un 76% sobre 21 preguntas no se parece a un 76% sobre 50, y
+   * la persona que estudia con esto cree que va lista cuando no lo esta. Ahora
+   * el reparto sale del banco que hay: dos bloques de ~62 en vez de seis de 21.
    */
   const BlockRotationEngine = {
+    /** Tamano de examen por defecto cuando el manifiesto no dice otra cosa. */
+    TAMANO_BLOQUE_POR_DEFECTO: 50,
+
+    /** Nunca mas de seis bloques: por encima de eso la rotacion no aporta. */
+    MAX_BLOQUES: 6,
+
     /**
-     * Generates 6 disjoint blocks from a question pool using seeded pseudo-random stratification.
-     * 
-     * @param {string} certId - 'cdl' | 'ace' | 'pca'
-     * @param {Record<string, number>} domainWeights - Domain weight map (e.g. { 'CDL-D1': 25, ... })
-     * @param {Array<object>} questionsPool - Array of question items (total 300)
-     * @param {number} [epochSeed=1337] - Seed for deterministic reproducible permutations
-     * @returns {Array<Array<object>>} Array of 6 block arrays (50 questions each)
+     * Cuantos bloques completos salen de un banco. Es la MISMA cuenta que usa
+     * generateEpochBlocks, y la interfaz debe llamarla en vez de escribir "6",
+     * para que el titulo ("Bloque 1 de N") y la rotacion no se contradigan.
+     *
+     * @param {number} totalPreguntas
+     * @param {number} [tamanoBloque=50]
+     * @returns {number} entre 1 y MAX_BLOQUES
      */
-    generateEpochBlocks(certId, domainWeights = {}, questionsPool = [], epochSeed = 1337) {
+    contarBloques(totalPreguntas, tamanoBloque) {
+      const total = Number(totalPreguntas) || 0;
+      const tam = Number(tamanoBloque) || this.TAMANO_BLOQUE_POR_DEFECTO;
+      if (total <= 0 || tam <= 0) return 1;
+      const n = Math.floor(total / tam);
+      return Math.max(1, Math.min(this.MAX_BLOQUES, n));
+    },
+
+    /**
+     * Genera bloques disjuntos a partir del banco, con estratificacion por
+     * dominio y barajado reproducible.
+     *
+     * @param {string} certId - 'cdl' | 'ace' | 'pca'
+     * @param {Record<string, number>} domainWeights - Pesos por dominio
+     * @param {Array<object>} questionsPool - Banco disponible
+     * @param {number} [epochSeed=1337] - Semilla para permutaciones reproducibles
+     * @param {number} [tamanoBloque=50] - Preguntas por examen segun el manifiesto
+     * @returns {Array<Array<object>>} Tantos bloques como quepan (1 a 6)
+     */
+    generateEpochBlocks(certId, domainWeights = {}, questionsPool = [], epochSeed = 1337, tamanoBloque) {
       if (!Array.isArray(questionsPool) || questionsPool.length === 0) {
-        return [[], [], [], [], [], []];
+        return [[]];
       }
 
       // Linear Congruential Pseudo-Random Generator (LCG) for reproducible shuffling
@@ -64,7 +96,7 @@
         }
       });
 
-      const BLOCKS_COUNT = 6;
+      const BLOCKS_COUNT = this.contarBloques(questionsPool.length, tamanoBloque);
       const blocks = Array.from({ length: BLOCKS_COUNT }, () => []);
 
       // Distribute stratified domain questions evenly across the 6 blocks using a rolling offset

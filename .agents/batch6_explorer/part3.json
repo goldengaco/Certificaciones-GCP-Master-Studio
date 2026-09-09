@@ -1,0 +1,600 @@
+[
+  {
+    "id": "ACE-D3-027",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.6",
+    "subsectionName": "Implementing resources through infrastructure as code",
+    "subtopic": "Cloud Deploy Continuous Delivery Pipelines",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Deploying Google Cloud Deploy Pipelines for Progressive GKE Delivery",
+    "scenario": "You are implementing a continuous delivery pipeline using Google Cloud Deploy. The pipeline definition in clouddeploy.yaml specifies progressive rollouts from a staging GKE cluster to a production GKE cluster. You need to create and register this delivery pipeline resource in region us-central1. Which command should you execute?",
+    "conceptos": [
+      "Cloud Deploy",
+      "Delivery Pipelines",
+      "GKE Continuous Delivery",
+      "gcloud deploy apply"
+    ],
+    "keywords": [
+      "cloud deploy",
+      "delivery pipeline",
+      "gke",
+      "gcloud deploy apply",
+      "progressive rollout"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud deploy apply --file=clouddeploy.yaml --region=us-central1 --project=prod-project"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud builds submit --config=clouddeploy.yaml --region=us-central1 --project=prod-project"
+      },
+      {
+        "letter": "C",
+        "text": "kubectl apply -f clouddeploy.yaml --namespace=cloud-deploy --context=gke-prod-cluster"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud container clusters apply --pipeline=clouddeploy.yaml --region=us-central1 --async"
+      }
+    ],
+    "correct": "A",
+    "explanation": "The command `gcloud deploy apply --file=clouddeploy.yaml --region=<REGION> --project=<PROJECT>` creates or updates Cloud Deploy delivery pipelines and target definitions declaratively. `gcloud builds submit` invokes Cloud Build builds. `kubectl apply` manages in-cluster Kubernetes objects, not Cloud Deploy control plane resources. `clusters apply` is an invalid command.",
+    "distractors": {
+      "B": "gcloud builds submit executes Cloud Build builds for artifact creation, not Cloud Deploy delivery pipeline registrations.",
+      "C": "kubectl apply manages in-cluster Kubernetes objects, whereas Cloud Deploy pipelines are Google Cloud managed control plane resources.",
+      "D": "gcloud container clusters apply is an invalid command; GKE clusters do not have a native --pipeline registration flag."
+    },
+    "gcloudCommand": "gcloud deploy apply --file=clouddeploy.yaml --region=us-central1 --project=prod-project",
+    "architectureComponents": [
+      "Cloud Deploy",
+      "Delivery Pipeline",
+      "GKE Staging",
+      "GKE Production"
+    ],
+    "officialDocUrl": "https://cloud.google.com/deploy/docs/create-pipeline"
+  },
+  {
+    "id": "ACE-D3-028",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud Storage Object Lifecycle Management",
+    "difficulty": "easy",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 80,
+    "caseStudy": null,
+    "title": "Applying Object Lifecycle Management Policies to Cloud Storage Buckets",
+    "scenario": "You authored a lifecycle configuration file lifecycle-30d.json that transitions Cloud Storage objects older than 30 days to Nearline storage and deletes objects older than 365 days. You need to apply this policy to an existing bucket gs://corp-archive-vault using the Google Cloud CLI. Which command should you execute?",
+    "conceptos": [
+      "Cloud Storage",
+      "Lifecycle Management",
+      "Storage Classes",
+      "gcloud storage buckets update"
+    ],
+    "keywords": [
+      "cloud storage",
+      "lifecycle",
+      "nearline",
+      "gcloud storage buckets update",
+      "lifecycle-file"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud storage objects update gs://corp-archive-vault/* --lifecycle-file=lifecycle-30d.json"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud storage buckets update gs://corp-archive-vault --lifecycle-file=lifecycle-30d.json"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud storage buckets set-lifecycle gs://corp-archive-vault --config=lifecycle-30d.json"
+      },
+      {
+        "letter": "D",
+        "text": "bq update --lifecycle_file=lifecycle-30d.json gs://corp-archive-vault --project=archive"
+      }
+    ],
+    "correct": "B",
+    "explanation": "The command `gcloud storage buckets update gs://<BUCKET_NAME> --lifecycle-file=<CONFIG_FILE>` applies an object lifecycle management rule configuration to a Cloud Storage bucket. Lifecycle policies apply at the bucket level, not to individual object wildcards (`gs://bucket/*`). `set-lifecycle` is not a valid subcommand in `gcloud storage buckets`. `bq update` is for BigQuery resources.",
+    "distractors": {
+      "A": "Lifecycle rules are applied at the bucket level, not to individual object paths or wildcard expressions.",
+      "C": "set-lifecycle is not a valid gcloud storage buckets subcommand; lifecycle configurations are set via --lifecycle-file on buckets update.",
+      "D": "bq update is the BigQuery CLI tool and cannot configure Cloud Storage bucket lifecycle configurations."
+    },
+    "gcloudCommand": "gcloud storage buckets update gs://corp-archive-vault --lifecycle-file=lifecycle-30d.json",
+    "architectureComponents": [
+      "Cloud Storage Bucket",
+      "Nearline Storage",
+      "Lifecycle Management"
+    ],
+    "officialDocUrl": "https://cloud.google.com/storage/docs/managing-lifecycles"
+  },
+  {
+    "id": "ACE-D3-029",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "subtopic": "Kubernetes ConfigMaps and Secrets as Volume Mounts",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Mounting Kubernetes ConfigMaps and Secrets as Container Volumes in Pods",
+    "scenario": "You created a Kubernetes ConfigMap named app-config and a Secret named db-credentials in namespace prod. You need a Pod to consume configuration files at mount path /etc/app/config and database credentials at /etc/app/secrets as read-only files. How should you structure the Pod specification?",
+    "conceptos": [
+      "GKE Workloads",
+      "ConfigMaps",
+      "Kubernetes Secrets",
+      "VolumeMounts"
+    ],
+    "keywords": [
+      "kubernetes",
+      "configmap",
+      "secret",
+      "volumemounts",
+      "volumes",
+      "pod"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Define hostPath volumes referencing the local worker node filesystem paths /etc/app/config and /etc/app/secrets."
+      },
+      {
+        "letter": "B",
+        "text": "Pass the raw Secret and ConfigMap key-value strings as command-line arguments in the container args definition."
+      },
+      {
+        "letter": "C",
+        "text": "Define volumes referencing the ConfigMap and Secret, and attach volumeMounts with target paths in the container."
+      },
+      {
+        "letter": "D",
+        "text": "Configure an initContainer that runs curl commands to download configurations and credentials into emptyDir volumes."
+      }
+    ],
+    "correct": "C",
+    "explanation": "To mount ConfigMaps and Secrets as directory files inside a container, you define `volumes` in the Pod spec referencing the `configMap` and `secret` names, and add matching `volumeMounts` in the container spec mapping those volumes to `/etc/app/config` and `/etc/app/secrets`. `hostPath` mounts node-local storage rather than Kubernetes objects. Passing secrets as command-line arguments exposes credentials in process tables. InitContainer downloading adds unnecessary complexity.",
+    "distractors": {
+      "A": "hostPath binds to the worker node's local filesystem, which bypasses Kubernetes Secrets and creates node-coupling dependencies.",
+      "B": "Passing secrets via container command-line arguments exposes sensitive credentials in process listings and cluster metadata.",
+      "D": "Downloading credentials via custom initContainers adds operational complexity and security risks compared to native volume mounts."
+    },
+    "gcloudCommand": "kubectl apply -f pod-spec.yaml",
+    "architectureComponents": [
+      "GKE Pod",
+      "ConfigMap",
+      "Kubernetes Secret",
+      "VolumeMount"
+    ],
+    "officialDocUrl": "https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod"
+  },
+  {
+    "id": "ACE-D3-030",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud SQL Private IP and User Management",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 100,
+    "caseStudy": null,
+    "title": "Configuring Cloud SQL Database Users and Private IP Connectivity",
+    "scenario": "You are setting up a Cloud SQL for PostgreSQL instance named app-db to communicate exclusively over Private IP with Compute Engine instances in VPC prod-vpc. You need to configure private service connectivity in the VPC and provision an application user named app_user. Which two actions should you take? (Choose 2.)",
+    "conceptos": [
+      "Cloud SQL",
+      "Private IP",
+      "Service Networking",
+      "gcloud sql users create"
+    ],
+    "keywords": [
+      "cloud sql",
+      "postgresql",
+      "private ip",
+      "private services access",
+      "gcloud sql users"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Assign static public IP addresses to all Compute Engine client VMs and allow them in Cloud SQL authorized networks."
+      },
+      {
+        "letter": "B",
+        "text": "Establish a private services access connection by peering an allocated IP range in prod-vpc to servicenetworking."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy an intermediate proxy VM inside prod-vpc to forward database client connections over an unencrypted socket."
+      },
+      {
+        "letter": "D",
+        "text": "Create an IAM service account named app_user and grant it the Cloud SQL Admin role directly on the VPC network."
+      },
+      {
+        "letter": "E",
+        "text": "Create the database user app_user with a secure password using the gcloud sql users create command for instance app-db."
+      }
+    ],
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "Configuring a private Cloud SQL instance and user authentication requires: (1) establishing Private Services Access by allocating an internal IP range in the VPC and creating a VPC network peering connection to `servicenetworking.googleapis.com`, and (2) creating the database application user (`gcloud sql users create app_user --instance=app-db --password=<PASSWORD>`). Authorized networks use public IPs. Custom proxies add unneeded management overhead. IAM Cloud SQL Admin grants administrative instance control, not database engine user credentials.",
+    "distractors": {
+      "A": "Authorized networks require public IP connectivity, which violates the requirement for private-only VPC database communication.",
+      "C": "Deploying custom intermediate proxy VMs adds unneeded management overhead, single points of failure, and latency compared to native Private Services Access.",
+      "D": "Cloud SQL Admin IAM role grants infrastructure administration permissions rather than database application user credentials."
+    },
+    "gcloudCommand": "gcloud compute addresses create google-managed-services-prod-vpc --global --purpose=VPC_PEERING --prefix-length=16 --network=prod-vpc; gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --ranges=google-managed-services-prod-vpc --network=prod-vpc; gcloud sql users create app_user --instance=app-db --password='SuperSecurePassword987!'",
+    "architectureComponents": [
+      "Cloud SQL PostgreSQL",
+      "VPC Private IP",
+      "Private Services Access",
+      "Database User"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sql/docs/postgres/create-manage-users"
+  },
+  {
+    "id": "ACE-D3-031",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud Spanner Instance, Database, and Schema Deployment",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": null,
+    "title": "Deploying Cloud Spanner Instances, Databases, and DDL Schemas via CLI",
+    "scenario": "You need to deploy a transactional database on Cloud Spanner. You must create an instance named spanner-orders in regional-us-central1 provisioned with 300 Processing Units, create a database orders_db, and define an Orders table schema with primary key OrderId. Which sequence of Google Cloud CLI commands should you run?",
+    "conceptos": [
+      "Cloud Spanner",
+      "Processing Units",
+      "gcloud spanner",
+      "DDL Schema"
+    ],
+    "keywords": [
+      "cloud spanner",
+      "processing units",
+      "gcloud spanner instances",
+      "ddl",
+      "primary key"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute instances create spanner-orders --config=regional-us-central1 --processing-units=300 && gcloud compute databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36)) PRIMARY KEY (OrderId)'"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud sql instances create spanner-orders --database-version=SPANNER --processing-units=300 && gcloud sql databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36)) PRIMARY KEY (OrderId)'"
+      },
+      {
+        "letter": "C",
+        "text": "bq mk --dataset --location=us-central1 spanner_orders && bq query --use_legacy_sql=false 'CREATE TABLE spanner_orders.orders_db (OrderId STRING(36)) PRIMARY KEY (OrderId)' --destination_table=spanner_orders.orders_db"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36)) PRIMARY KEY (OrderId)'"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Deploying Cloud Spanner resources via the CLI involves: (1) `gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300` to provision the instance, and (2) `gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36)) PRIMARY KEY (OrderId)'` to create the database with schema definitions. `gcloud compute`, `gcloud sql`, and `bq` manage VMs, relational SQL, and BigQuery data warehouses respectively.",
+    "distractors": {
+      "A": "gcloud compute manages virtual machines and network routes, not managed Cloud Spanner database clusters.",
+      "B": "gcloud sql manages Cloud SQL relational databases (MySQL, Postgres, SQL Server), not Cloud Spanner instances.",
+      "C": "bq creates BigQuery analytical datasets and tables, not transactional Cloud Spanner databases."
+    },
+    "gcloudCommand": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 --description='Orders Spanner'; gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'",
+    "architectureComponents": [
+      "Cloud Spanner Instance",
+      "Cloud Spanner Database",
+      "DDL Schema"
+    ],
+    "officialDocUrl": "https://cloud.google.com/spanner/docs/create-manage-databases"
+  },
+  {
+    "id": "ACE-D3-032",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "subtopic": "Static External IP Address Reservation and VM Attachment",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Reserving Static External IP Addresses and Assigning to Compute Engine VMs",
+    "scenario": "You manage an SFTP server hosted on Compute Engine instance sftp-gateway in zone us-east1-b. External trading partners require a permanent, unchanging public IP address to allowlist in their firewalls. You need to reserve a static external IPv4 address named sftp-static-ip in us-east1 and assign it to the VM. Which commands should you execute?",
+    "conceptos": [
+      "Compute Engine",
+      "Static External IP",
+      "gcloud compute addresses",
+      "add-access-config"
+    ],
+    "keywords": [
+      "compute engine",
+      "static ip",
+      "external ip",
+      "gcloud compute addresses",
+      "add-access-config"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Reserve the address with gcloud compute addresses create and update the VM using gcloud compute instances update --external-ip=sftp-static-ip."
+      },
+      {
+        "letter": "B",
+        "text": "Reserve the address with gcloud compute networks subnets add-ip and assign it to the VM using gcloud compute instances add-access-config."
+      },
+      {
+        "letter": "C",
+        "text": "Reserve the address with gcloud compute addresses create and assign it to the VM using gcloud compute instances add-access-config."
+      },
+      {
+        "letter": "D",
+        "text": "Create a Cloud DNS A record pointing to the ephemeral IP and enable automatic IP freezing using gcloud compute instances set-disk-auto-delete."
+      }
+    ],
+    "correct": "C",
+    "explanation": "To assign a static external IP to an existing Compute Engine VM: (1) reserve the regional static IP with `gcloud compute addresses create sftp-static-ip --region=us-east1`, and (2) attach it to the VM's network interface using `gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=<IP_ADDRESS>`. `instances update` does not configure access configs. Subnets do not manage external IPs. Cloud DNS records do not prevent ephemeral IPs from changing upon VM restart.",
+    "distractors": {
+      "A": "gcloud compute instances update does not support assigning external IP addresses to network interfaces; add-access-config is required.",
+      "B": "gcloud compute networks subnets add-ip is an invalid command; static external IPs are reserved via gcloud compute addresses create.",
+      "D": "DNS records do not prevent ephemeral external IPs from changing when instances stop and restart."
+    },
+    "gcloudCommand": "gcloud compute addresses create sftp-static-ip --region=us-east1; gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=$(gcloud compute addresses describe sftp-static-ip --region=us-east1 --format='value(address)')",
+    "architectureComponents": [
+      "Compute Engine VM",
+      "Static External IP",
+      "VPC Network Interface"
+    ],
+    "officialDocUrl": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address"
+  },
+  {
+    "id": "ACE-D3-033",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "subtopic": "GKE StatefulSets with Persistent Volume Claims",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Deploying Kubernetes StatefulSets with PersistentVolumeClaims for Clustered Databases",
+    "scenario": "You are deploying a 3-node Apache Cassandra database cluster on Google Kubernetes Engine (GKE). Each replica requires a deterministic, stable network identity (cassandra-0, cassandra-1, cassandra-2) and an independent persistent disk that automatically remounts to the same ordinal pod identity across rescheduling. Which Kubernetes controller should you deploy?",
+    "conceptos": [
+      "GKE StatefulSets",
+      "PersistentVolumeClaims",
+      "Headless Services",
+      "Clustered Workloads"
+    ],
+    "keywords": [
+      "gke",
+      "statefulset",
+      "persistentvolumeclaim",
+      "volumeclaimtemplates",
+      "cassandra"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy a Kubernetes Deployment configured with replicas: 3 and an emptyDir volume shared across all container replicas."
+      },
+      {
+        "letter": "B",
+        "text": "Deploy a Kubernetes StatefulSet configured with volumeClaimTemplates and paired with a Headless Service definition."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy a Kubernetes DaemonSet configured with hostPath persistent storage mounts on every available cluster node."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a Kubernetes ReplicaSet attached to a single ReadWriteMany PersistentVolumeClaim shared across all pods."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Kubernetes `StatefulSet` is designed specifically for stateful clustered applications requiring stable network identities (`pod-0`, `pod-1`), ordered deployment, and dedicated persistent storage per pod via `volumeClaimTemplates` that reattaches automatically upon pod restart. `Deployment` treats pods as ephemeral clones. `DaemonSet` runs pods per node without ordinal identities. `ReplicaSet` with shared storage does not provide per-node independent storage for database clusters.",
+    "distractors": {
+      "A": "Kubernetes Deployments provide ephemeral pods with random hostnames, and emptyDir volumes lose all data upon pod termination.",
+      "C": "DaemonSets run one pod per node without ordinal network identities or automated dynamic PVC binding per instance identity.",
+      "D": "ReplicaSets do not maintain persistent ordinal pod network identifiers, and shared ReadWriteMany volumes do not provide dedicated per-replica storage for Cassandra nodes."
+    },
+    "gcloudCommand": "kubectl apply -f cassandra-statefulset.yaml",
+    "architectureComponents": [
+      "GKE StatefulSet",
+      "PersistentVolumeClaim",
+      "Headless Service",
+      "Compute Engine Persistent Disk"
+    ],
+    "officialDocUrl": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/"
+  },
+  {
+    "id": "ACE-D3-034",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "subtopic": "Persistent Disk Creation and Attachment",
+    "difficulty": "easy",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Creating and Attaching Persistent Disks to Compute Engine Instances",
+    "scenario": "You administer a Compute Engine virtual machine named data-processor-vm in zone us-central1-a. The workload requires an additional 200 GB SSD persistent disk attached to the running instance to store database index files without recreating the VM. Which Google Cloud CLI commands should you execute?",
+    "conceptos": [
+      "Compute Engine",
+      "Persistent Disks",
+      "attach-disk",
+      "gcloud compute disks"
+    ],
+    "keywords": [
+      "compute engine",
+      "persistent disk",
+      "pd-ssd",
+      "attach-disk",
+      "gcloud compute disks"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud compute instances create data-processor-vm --zone=us-central1-a --add-disk=name=data-index-disk,size=200GB,type=pd-ssd && gcloud compute disks attach data-index-disk --instance=data-processor-vm"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud storage buckets create gs://data-index-disk --location=us-central1 && gcloud compute instances attach-disk data-processor-vm --disk=gs://data-index-disk --zone=us-central1-a --device-name=pd-ssd"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute instances restart data-processor-vm --add-persistent-disk=data-index-disk --zone=us-central1-a"
+      }
+    ],
+    "correct": "A",
+    "explanation": "To create and attach an additional disk to an existing Compute Engine VM: (1) `gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd` provisions the block storage volume, and (2) `gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a` attaches the disk to the running instance. `instances create` attempts to provision a new VM. Cloud Storage buckets cannot be attached as block devices via `attach-disk`. Restarting is not required to attach persistent disks.",
+    "distractors": {
+      "B": "gcloud compute instances create attempts to provision a new VM rather than attaching a disk to the existing instance.",
+      "C": "Cloud Storage buckets are object storage systems and cannot be attached as block-level persistent disks via attach-disk.",
+      "D": "gcloud compute instances restart does not accept an --add-persistent-disk flag; persistent disks are attached using attach-disk."
+    },
+    "gcloudCommand": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd; gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-a",
+    "architectureComponents": [
+      "Compute Engine VM",
+      "SSD Persistent Disk",
+      "Block Storage"
+    ],
+    "officialDocUrl": "https://cloud.google.com/compute/docs/disks/add-persistent-disk"
+  },
+  {
+    "id": "ACE-D3-035",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud SQL High Availability Failover Drills",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Executing Cloud SQL High Availability Failover Drills via CLI",
+    "scenario": "As part of quarterly disaster recovery compliance testing, you need to conduct a simulated failover drill on a highly available regional Cloud SQL for MySQL instance named prod-master-db. You must verify that the standby instance in the secondary zone assumes primary operations without data loss. Which command should you execute?",
+    "conceptos": [
+      "Cloud SQL",
+      "High Availability",
+      "Failover Drill",
+      "gcloud sql instances failover"
+    ],
+    "keywords": [
+      "cloud sql",
+      "high availability",
+      "failover",
+      "disaster recovery",
+      "gcloud sql instances failover"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute instances reset prod-master-db --zone=us-central1-a --trigger-failover"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud sql instances restart prod-master-db --force-failover --secondary-zone"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud sql instances delete prod-master-db --failover-to-standby --immediate"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud sql instances failover prod-master-db --project=corporate-prod-project"
+      }
+    ],
+    "correct": "D",
+    "explanation": "The command `gcloud sql instances failover <INSTANCE_NAME>` explicitly triggers a high availability failover drill on a regional Cloud SQL instance, switching primary serving responsibilities to the standby replica in the secondary zone to validate disaster recovery readiness. `compute instances reset` resets VM hardware. `instances restart` reboots the database engine without failing over. `instances delete` deletes the instance.",
+    "distractors": {
+      "A": "gcloud compute instances reset resets a virtual machine guest OS and does not initiate managed Cloud SQL regional HA failover.",
+      "B": "gcloud sql instances restart reboots the database instance without triggering a failover to the standby replica in the secondary zone.",
+      "C": "gcloud sql instances delete permanently deletes the database instance and its storage volumes rather than conducting a drill."
+    },
+    "gcloudCommand": "gcloud sql instances failover prod-master-db",
+    "architectureComponents": [
+      "Cloud SQL MySQL",
+      "High Availability",
+      "Regional Instance",
+      "Standby Replica"
+    ],
+    "officialDocUrl": "https://cloud.google.com/sql/docs/mysql/high-availability#testing"
+  }
+]

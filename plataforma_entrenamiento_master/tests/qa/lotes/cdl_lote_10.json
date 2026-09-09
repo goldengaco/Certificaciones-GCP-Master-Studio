@@ -1,0 +1,167 @@
+[
+ {
+  "id": "CDL-D2-016",
+  "subtopic": "Firestore: Base de Datos NoSQL de Documentos para Aplicaciones Web y Móviles",
+  "caseStudy": "none",
+  "scenario": "Una empresa de entregas a domicilio está desarrollando una aplicación móvil para sus repartidores. La app requiere almacenar perfiles y estados de pedidos en documentos JSON flexibles, sincronizar cambios en tiempo real entre el repartidor y el cliente, y permitir que la app siga funcionando sin conexión cuando no haya señal celular. ¿Qué base de datos es la ideal?",
+  "correct": "C",
+  "clave_len": 15,
+  "explanation": "Cloud Firestore es la base de datos NoSQL de documentos serverless de Google Cloud y Firebase, diseñada específicamente para aplicaciones web y móviles con soporte nativo de listeners en tiempo real y persistencia local sin conexión.",
+  "doc": "https://cloud.google.com/firestore/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 14,
+    "text": "Cloud Bigtable"
+   },
+   {
+    "letter": "B",
+    "len": 13,
+    "text": "Cloud Spanner"
+   },
+   {
+    "letter": "C",
+    "len": 15,
+    "text": "Cloud Firestore"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Filestore"
+   }
+  ],
+  "ratio": 1.25
+ },
+ {
+  "id": "CDL-D3-026",
+  "subtopic": "Cloud NAT: Salida a Internet para Descarga de Parches sin Exposición Ingress",
+  "caseStudy": "none",
+  "scenario": "Un grupo de máquinas virtuales de backend en Compute Engine no tiene direcciones IP públicas para evitar ataques directos desde Internet. Sin embargo, estas VMs necesitan descargar parches de seguridad y paquetes de software desde repositorios públicos de Linux en Internet (tráfico de salida únicamente, sin permitir conexiones entrantes no solicitadas). ¿Qué servicio administrado resuelve esto?",
+  "correct": "D",
+  "clave_len": 63,
+  "explanation": "Cloud NAT es una solución de traducción de direcciones de red administrada y definida por software que permite a las instancias de VMs sin direcciones IP públicas acceder a Internet para descargar actualizaciones y paquetes salientes, bloqueando de forma absoluta cualquier conexión entrante no solicitada desde el exterior.",
+  "doc": "https://cloud.google.com/nat/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "Asignar IPs públicas a todas las máquinas y desactivar el firewall"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Prohibir para siempre la actualización de los sistemas operativos"
+   },
+   {
+    "letter": "D",
+    "len": 63,
+    "text": "Cloud NAT (Network Address Translation totalmente administrado)"
+   }
+  ],
+  "ratio": 1.24
+ },
+ {
+  "id": "CDL-D2-041",
+  "subtopic": "Contact Center AI (CCAI): Modernización de Centros de Contacto",
+  "caseStudy": "none",
+  "scenario": "Un banco experimenta largos tiempos de espera en su centro de llamadas telefónicas. Quieren implementar agentes virtuales basados en IA conversacional que resuelvan dudas frecuentes de los clientes de manera natural por voz o chat, y asistan a los operadores humanos en tiempo real recomendando respuestas durante llamadas complejas. ¿Qué solución integral de Google Cloud deben implementar?",
+  "correct": "C",
+  "clave_len": 57,
+  "explanation": "Contact Center AI (CCAI) combina tecnologías conversacionales (Dialogflow CX), asistencia a agentes humanos en tiempo real (Agent Assist) e inteligencia de conversaciones (Insights) para mejorar la experiencia del cliente y la eficiencia operativa de los centros de atención.",
+  "doc": "https://cloud.google.com/solutions/contact-center",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Filestore Basic"
+   },
+   {
+    "letter": "B",
+    "len": 65,
+    "text": "Apagar las líneas telefónicas del banco para reducir las llamadas"
+   },
+   {
+    "letter": "C",
+    "len": 57,
+    "text": "Contact Center AI (CCAI) con Dialogflow CX y Agent Assist"
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Cloud Functions de primera generación sin disparador"
+   }
+  ],
+  "ratio": 1.24
+ },
+ {
+  "id": "CDL-D3-022",
+  "subtopic": "Cloud Load Balancing: Balanceador Global de Aplicaciones con Anycast IP",
+  "caseStudy": "none",
+  "scenario": "Una aplicación web global tiene servidores en Europa, Asia y América. Desean que los usuarios de todo el mundo se conecten a través de una única dirección IP pública estable con enrutamiento inteligente Anycast que dirija al usuario automáticamente a la región más cercana con menor latencia y capacidad disponible. ¿Qué servicio proporciona esta capacidad?",
+  "correct": "D",
+  "clave_len": 86,
+  "explanation": "El Global External Application Load Balancer de Google Cloud utiliza una única dirección IP Anycast global. El tráfico entra a la red perimetral privada de Google en el punto de presencia (PoP) más cercano al usuario y se enruta de forma inteligente a través de la fibra de Google hacia el backend disponible más próximo con menor latencia.",
+  "doc": "https://cloud.google.com/load-balancing/docs/application-load-balancer",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 106,
+    "text": "Un archivo de texto en un servidor web local con una lista de 500 direcciones IP para que el usuario elija"
+   },
+   {
+    "letter": "B",
+    "len": 96,
+    "text": "Desactivar el balanceo de carga para que todas las peticiones lleguen a una sola máquina pequeña"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 86,
+    "text": "Global External Application Load Balancer (Cloud Load Balancing global con IP Anycast)"
+   }
+  ],
+  "ratio": 1.16
+ },
+ {
+  "id": "CDL-D3-054",
+  "subtopic": "Anthos Config Management: Gobernanza Declarativa con GitOps",
+  "caseStudy": "none",
+  "scenario": "Una corporación opera 40 clústeres de GKE en diferentes regiones y entornos locales. El oficial de cumplimiento requiere que ciertas políticas de seguridad (como restringir permisos de root en contenedores y aplicar cuotas de recursos) se apliquen de forma automática, inmutable e idéntica en todos los clústeres a partir de una única fuente de verdad alojada en un repositorio Git central. ¿Qué herramienta de GKE Enterprise implementa este modelo GitOps?",
+  "correct": "D",
+  "clave_len": 64,
+  "explanation": "Anthos Config Management (Config Sync y Policy Controller) permite gestionar políticas y configuraciones de múltiples clústeres de Kubernetes a escala mediante un enfoque declarativo de GitOps, sincronizando automáticamente el estado de los clústeres con los manifiestos almacenados en un repositorio Git central.",
+  "doc": "https://cloud.google.com/anthos-config-management/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 84,
+    "text": "Enviar correos electrónicos mensuales a los desarrolladores recordándoles las reglas"
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "Apagar los 40 clústeres para evitar violaciones de políticas"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Anthos Config Management (ACM / Config Sync y Policy Controller)"
+   }
+  ],
+  "ratio": 1.16
+ }
+]

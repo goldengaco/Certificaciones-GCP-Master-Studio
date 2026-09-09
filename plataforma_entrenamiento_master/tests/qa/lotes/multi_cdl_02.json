@@ -1,0 +1,374 @@
+[
+ {
+  "id": "CDL-D1-008",
+  "domainId": "CDL-D1",
+  "subtopic": "Cultura DevOps / SRE: Autopsias Sin Culpa (Blameless Post-mortems)",
+  "scenario": "Tras una interrupción mayor del servicio causada por una configuración errónea durante un despliegue de emergencia, el equipo de liderazgo de TI desea evitar que vuelva a ocurrir sin penalizar al ingeniero responsable. Siguiendo las prácticas de Site Reliability Engineering (SRE) de Google, ¿qué práctica cultural se debe adoptar?",
+  "correct": "D",
+  "explanation": "Una autopsia sin culpa (Blameless Post-mortem) se centra en entender cómo el sistema permitió que ocurriera el error humano y cómo reforzar los procesos, salvaguardas y automatizaciones para evitar su recurrencia, construyendo una cultura de aprendizaje y alta confianza.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/why-you-should-practice-blameless-postmortems",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 186,
+    "text": "Realizar una revisión del incidente que identifique al responsable del cambio y registre su nombre en el informe final para reforzar la rendición de cuentas individual dentro del equipo."
+   },
+   {
+    "letter": "B",
+    "len": 183,
+    "text": "Redactar un informe que documente la cronología técnica del fallo y la corrección aplicada, sin analizar por qué el proceso permitió que la configuración errónea llegara a producción."
+   },
+   {
+    "letter": "C",
+    "len": 179,
+    "text": "Trasladar la ejecución de los despliegues de emergencia a un equipo de operaciones separado del de desarrollo, de modo que quien escribe el código nunca lo publique en producción."
+   },
+   {
+    "letter": "D",
+    "len": 171,
+    "text": "Realizar una autopsia sin culpa (Blameless Post-mortem) que examine las fallas sistémicas del proceso y las herramientas, asumiendo que los empleados actuaron de buena fe."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-005",
+  "domainId": "CDL-D2",
+  "subtopic": "Cloud Storage: Ciclo de Vida de Objetos (Object Lifecycle Management)",
+  "scenario": "Una empresa de imágenes médicas genera archivos DICOM que se consultan activamente durante los primeros 30 días posteriores al estudio. Entre los días 31 y 365 solo se consultan ocasionalmente, y después de un año deben conservarse por 7 años por regulación. ¿Cómo debe implementarse esto sin intervención manual?",
+  "correct": "D",
+  "explanation": "Object Lifecycle Management en Cloud Storage permite definir reglas basadas en la antigüedad del objeto para cambiar automáticamente su clase de almacenamiento (ej. Standard -> Coldline -> Archive) o eliminarlo cuando cumpla su vigencia legal, optimizando costos de forma 100% desatendida.",
+  "doc": "https://cloud.google.com/storage/docs/lifecycle",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 181,
+    "text": "Activar Autoclass en el bucket de Cloud Storage para que cada archivo DICOM cambie de clase según su patrón de acceso real, sin definir reglas por antigüedad ni plazos de retención."
+   },
+   {
+    "letter": "B",
+    "len": 179,
+    "text": "Aplicar al bucket una política de retención de 7 años con bloqueo (Bucket Lock) para que ningún estudio DICOM pueda eliminarse antes de cumplir el plazo exigido por la regulación."
+   },
+   {
+    "letter": "C",
+    "len": 175,
+    "text": "Crear el bucket directamente en la clase Coldline para que todos los estudios DICOM tengan el precio de almacenamiento más bajo desde el momento en que se genera cada archivo."
+   },
+   {
+    "letter": "D",
+    "len": 196,
+    "text": "Configurar una política de Object Lifecycle Management en el bucket de Cloud Storage para transicionar automáticamente los objetos de Standard a Coldline a los 30 días, y a Archive a los 365 días."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-013",
+  "domainId": "CDL-D3",
+  "subtopic": "Descomposición de Monolitos a Microservicios",
+  "scenario": "Una empresa de e-commerce tiene una aplicación monolítica gigante de 15 años. Cada vez que el equipo de pagos realiza un cambio menor, se debe compilar y probar toda la aplicación durante horas, y un fallo en el módulo de comentarios de usuarios derriba todo el portal de compras. ¿Cuál es el principal beneficio de descomponer este monolito en microservicios independientes?",
+  "correct": "B",
+  "explanation": "La arquitectura de microservicios divide una aplicación en servicios pequeños, acoplados de forma flexible e independientes. Esto habilita despliegues continuos rápidos por equipos autónomos, mejora la resiliencia (aislando errores) y permite escalar únicamente los módulos bajo alta demanda.",
+  "doc": "https://cloud.google.com/learn/what-are-microservices",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 181,
+    "text": "Reduce automáticamente la factura de infraestructura, porque repartir el monolito en servicios pequeños disminuye el cómputo total que consume la plataforma de comercio electrónico."
+   },
+   {
+    "letter": "B",
+    "len": 197,
+    "text": "Permite que equipos independientes desarrollen, escalen y desplieguen cada funcionalidad de forma autónoma, aislando los fallos para que un error en un servicio no afecte al resto de la plataforma."
+   },
+   {
+    "letter": "C",
+    "len": 190,
+    "text": "Simplifica la operación al eliminar la necesidad de orquestación, descubrimiento de servicios y observabilidad distribuida, ya que cada servicio se despliega y se supervisa de forma aislada."
+   },
+   {
+    "letter": "D",
+    "len": 179,
+    "text": "Garantiza que cada compra siga siendo una única transacción ACID, porque todos los microservicios continúan escribiendo sobre la misma base de datos central del monolito original."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-057",
+  "domainId": "CDL-D4",
+  "subtopic": "Autenticación de Clientes y OAuth 2.0 / OpenID Connect",
+  "scenario": "Una aplicación web desarrollada en Google Cloud necesita permitir a los usuarios iniciar sesión utilizando sus cuentas de Google de forma segura, otorgando a la app únicamente acceso a su perfil básico sin compartir su contraseña con la aplicación. ¿Qué estándares abiertos de la industria utiliza Google Cloud para autenticación y autorización segura?",
+  "correct": "A",
+  "explanation": "Google Cloud y sus servicios de identidad se basan en estándares abiertos globales líderes: OAuth 2.0 para delegación de autorización de recursos y OpenID Connect (OIDC) para verificación de identidad y autenticación de usuarios de forma segura sin revelar contraseñas a aplicaciones de terceros.",
+  "doc": "https://cloud.google.com/docs/authentication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "OAuth 2.0 (para autorización) y OpenID Connect / OIDC (para autenticación federada)"
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "text": "SAML 2.0 con aserciones firmadas emitidas por el proveedor de identidad corporativo"
+   },
+   {
+    "letter": "C",
+    "len": 79,
+    "text": "Kerberos con tickets emitidos por un controlador de dominio de Active Directory"
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "Claves de API del proyecto enviadas como parámetro en cada petición del usuario"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D1-018",
+  "domainId": "CDL-D1",
+  "subtopic": "Alineación de KPIs de Negocio con Métricas Cloud",
+  "scenario": "Una empresa de comercio electrónico mide la salud de su TI a través del tiempo de actividad de los servidores (uptime 99.9%). Sin embargo, la dirección quiere vincular estas métricas con el impacto real en el negocio, como la tasa de conversión y la tasa de carritos abandonados. ¿Cuál es el enfoque recomendado por Google Cloud?",
+  "correct": "A",
+  "explanation": "Alinear la ingeniería con el negocio requiere métricas que reflejen directamente la satisfacción y comportamiento del usuario final. Diseñar SLIs/SLOs alrededor de transacciones críticas permite entender cómo el rendimiento del sistema impacta las ventas y los objetivos comerciales.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 235,
+    "text": "Definir Objetivos de Nivel de Servicio (SLOs) e Indicadores de Nivel de Servicio (SLIs) centrados en la experiencia del usuario (como latencia de checkout y éxito de transacciones) directamente correlacionados con los KPIs de ingresos."
+   },
+   {
+    "letter": "B",
+    "len": 212,
+    "text": "Adoptar como métrica de referencia el Acuerdo de Nivel de Servicio (SLA) de disponibilidad que Google Cloud publica para cada producto y reportar a la dirección el crédito de servicio obtenido cuando se incumple."
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "text": "Ampliar los paneles de Cloud Monitoring con más métricas de infraestructura (CPU, memoria, IOPS de disco y ancho de banda de red) de todas las máquinas virtuales y presentarlas al comité de dirección."
+   },
+   {
+    "letter": "D",
+    "len": 222,
+    "text": "Elevar el objetivo de disponibilidad del 99.9 al 99.999 por ciento en toda la plataforma, asumiendo que cada nueve adicional se traduce de forma proporcional en una mejora de la tasa de conversión y del carrito abandonado."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-011",
+  "domainId": "CDL-D2",
+  "subtopic": "Cloud SQL: Escalabilidad de Lecturas mediante Read Replicas",
+  "scenario": "Una tienda en línea utiliza Cloud SQL para procesar pedidos. Durante el horario comercial, los analistas de negocio ejecutan consultas de reportes muy pesadas que ralentizan las transacciones de compra de los clientes. ¿Cómo debe resolverse este problema de rendimiento?",
+  "correct": "B",
+  "explanation": "Las réplicas de lectura (Read Replicas) permiten escalar horizontalmente la capacidad de lectura de Cloud SQL, aislando las consultas pesadas de Business Intelligence de la base de datos primaria transaccional (OLTP).",
+  "doc": "https://cloud.google.com/sql/docs/mysql/replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 175,
+    "text": "Aumentar el tipo de máquina de la instancia primaria de Cloud SQL a más vCPUs y más memoria para que absorba a la vez las consultas de reporting y las transacciones de compra."
+   },
+   {
+    "letter": "B",
+    "len": 175,
+    "text": "Crear una o más réplicas de lectura (Read Replicas) en Cloud SQL y redirigir las consultas de reportes a estas réplicas para no sobrecargar la instancia primaria de escritura."
+   },
+   {
+    "letter": "C",
+    "len": 169,
+    "text": "Habilitar la configuración de Alta Disponibilidad de Cloud SQL y dirigir las consultas de los analistas a la instancia en espera (standby) situada en la zona secundaria."
+   },
+   {
+    "letter": "D",
+    "len": 168,
+    "text": "Colocar una instancia de Memorystore for Redis delante de Cloud SQL para servir desde la caché los resultados de las consultas de reporting de los analistas de negocio."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-033",
+  "domainId": "CDL-D3",
+  "subtopic": "Recommender API para Optimización de Recursos y Costos",
+  "scenario": "Un administrador de nube desea identificar automáticamente máquinas virtuales sobredimensionadas (con baja utilización de CPU y memoria), discos persistentes huérfanos que ya no están conectados a ninguna VM y permisos de IAM no utilizados para optimizar costos y seguridad. ¿Qué servicio inteligente de Google Cloud proporciona estas sugerencias accionables?",
+  "correct": "C",
+  "explanation": "Google Cloud Recommender utiliza análisis heurístico e inteligencia artificial para proporcionar recomendaciones automatizadas y personalizadas sobre reducción de costos (redimensionamiento de VMs, eliminación de discos ociosos), seguridad (reducción de permisos IAM excesivos) y rendimiento en la nube.",
+  "doc": "https://cloud.google.com/recommender/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 39,
+    "text": "Desactivar la consola de administración"
+   },
+   {
+    "letter": "B",
+    "len": 91,
+    "text": "Contratar un auditor externo para revisar manualmente cada servidor una vez cada cinco años"
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "Google Cloud Recommender (Recomendador de Google Cloud)"
+   },
+   {
+    "letter": "D",
+    "len": 18,
+    "text": "Cloud Interconnect"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-012",
+  "domainId": "CDL-D4",
+  "subtopic": "Cloud HSM: Módulos de Seguridad de Hardware Certificados FIPS 140-2 Nivel 3",
+  "scenario": "Una entidad financiera internacional está sujeta a regulaciones que exigen que sus claves criptográficas maestras residan exclusivamente dentro de Módulos de Seguridad de Hardware (Hardware Security Modules - HSM) certificados bajo el estándar FIPS 140-2 Nivel 3, garantizando que las claves nunca salgan del hardware físico. ¿Qué servicio administrado de Google Cloud cumple con esta certificación?",
+  "correct": "D",
+  "explanation": "Cloud HSM es un servicio de módulos de seguridad de hardware en la nube totalmente administrado que permite alojar claves de cifrado y realizar operaciones criptográficas dentro de clústeres HSM certificados FIPS 140-2 Nivel 3 sin la sobrecarga de mantener hardware físico local.",
+  "doc": "https://cloud.google.com/kms/docs/hsm",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "Cloud KMS con nivel de protección de software"
+   },
+   {
+    "letter": "B",
+    "len": 38,
+    "text": "Cloud External Key Manager (Cloud EKM)"
+   },
+   {
+    "letter": "C",
+    "len": 38,
+    "text": "Secret Manager con rotación automática"
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "Cloud HSM (integrado dentro de Cloud KMS)"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D1-023",
+  "domainId": "CDL-D1",
+  "subtopic": "Experiencia de Cliente (CX) Personalizada con IA",
+  "scenario": "Una tienda en línea de moda desea ofrecer recomendaciones personalizadas en tiempo real a cada usuario según su historial de navegación y compras, además de soporte al cliente automatizado con lenguaje natural. ¿Cómo contribuye Google Cloud a este objetivo?",
+  "correct": "C",
+  "explanation": "Las soluciones de IA de Google Cloud permiten procesar señales de comportamiento en tiempo real a escala masiva, ofreciendo recomendaciones altamente precisas y agentes virtuales conversacionales que elevan la satisfacción y fidelidad del cliente.",
+  "doc": "https://cloud.google.com/solutions/retail",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 206,
+    "text": "Proporciona Looker y BigQuery para elaborar informes semanales de segmentación de clientes que el equipo de marketing revisa y convierte manualmente en campañas de correo electrónico dirigidas a cada grupo."
+   },
+   {
+    "letter": "B",
+    "len": 207,
+    "text": "Proporciona Google Analytics 4 y Firebase para registrar el comportamiento de navegación y el historial de compras de cada usuario y almacenarlos en un panel de eventos consultable por el equipo de producto."
+   },
+   {
+    "letter": "C",
+    "len": 211,
+    "text": "Proporciona servicios de inteligencia artificial como Vertex AI Search and Conversation y Contact Center AI para generar recomendaciones contextuales e interacciones conversacionales inteligentes en tiempo real."
+   },
+   {
+    "letter": "D",
+    "len": 203,
+    "text": "Proporciona Cloud CDN y Cloud Load Balancing para acelerar la carga de la tienda y servir el catálogo de productos desde la ubicación más cercana a cada comprador, mejorando la experiencia de navegación."
+   }
+  ]
+ },
+ {
+  "id": "CDL-D2-059",
+  "domainId": "CDL-D2",
+  "subtopic": "Pub/Sub vs Pub/Sub Lite: Selección Costo-Eficiente",
+  "scenario": "Una empresa requiere una cola de mensajería para ingesta de telemetría de una sola región. Tienen un volumen constante y muy predecible de mensajes y buscan la opción de menor costo posible, estando dispuestos a gestionar la partición y el aprovisionamiento de capacidad por zonas. ¿Qué servicio es el más adecuado?",
+  "correct": "B",
+  "explanation": "Pub/Sub Lite es una versión zonal de menor costo de Pub/Sub diseñada para cargas con patrones de tráfico predecibles donde los usuarios gestionan la capacidad de rendimiento y almacenamiento de las particiones, reduciendo sustancialmente los costos en comparación con Pub/Sub estándar.",
+  "doc": "https://cloud.google.com/pubsub/docs/choosing-pubsub-or-lite",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 68,
+    "text": "Cloud Pub/Sub estándar (global y sin aprovisionamiento de capacidad)"
+   },
+   {
+    "letter": "B",
+    "len": 12,
+    "text": "Pub/Sub Lite"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "Cloud Spanner con multi-región global"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D3-009",
+  "domainId": "CDL-D3",
+  "subtopic": "Cloud Functions: Cómputo Serverless Basado en Eventos (FaaS)",
+  "scenario": "Cada vez que un usuario sube una imagen a un bucket de Cloud Storage, la empresa necesita ejecutar un pequeño fragmento de código en Node.js que genere una miniatura (thumbnail) de 100x100 píxeles y guarde el resultado. El código solo tarda 2 segundos en ejecutarse. ¿Qué servicio sin servidor basado en eventos es el más simple y costo-eficiente?",
+  "correct": "C",
+  "explanation": "Cloud Functions es una plataforma de funciones como servicio (FaaS) orientada a eventos y sin servidor que ejecuta código automáticamente en respuesta a cambios en Cloud Storage, mensajes de Pub/Sub o peticiones HTTP, facturando únicamente por los milisegundos de ejecución.",
+  "doc": "https://cloud.google.com/functions/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 103,
+    "text": "Mantener un clúster de 10 máquinas virtuales Compute Engine dedicadas exclusivamente a esperar archivos"
+   },
+   {
+    "letter": "B",
+    "len": 90,
+    "text": "Contratar a un diseñador para que redimensione manualmente cada imagen que suba un usuario"
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Cloud Functions (con un disparador de evento de Cloud Storage)"
+   },
+   {
+    "letter": "D",
+    "len": 11,
+    "text": "Cloud Armor"
+   }
+  ]
+ },
+ {
+  "id": "CDL-D4-077",
+  "domainId": "CDL-D4",
+  "subtopic": "Cloud Data Loss Prevention: Desidentificación y Seudonimización con Tokenización",
+  "scenario": "Un banco necesita permitir que un equipo de científicos de datos analice patrones de compras con tarjetas de crédito. Por regulaciones de privacidad, los números de tarjeta reales no pueden estar visibles, pero los análisis requieren que el mismo número de tarjeta siempre se transforme en el mismo token seudonimizado consistente (para poder rastrear compras del mismo usuario a lo largo del tiempo) de forma reversible para usuarios autorizados. ¿Qué técnica de transformación de Sensitive Data Protection (Cloud DLP) cumple esto?",
+  "correct": "C",
+  "explanation": "Sensitive Data Protection admite transformaciones avanzadas de desidentificación como la seudonimización criptográfica determinista con preservación de formato (FPE). Esto reemplaza el dato sensible (ej. tarjeta de crédito) por un token seguro y consistente que permite análisis relacional sin exponer el valor original.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/pseudonymization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 173,
+    "text": "Enmascaramiento con caracteres (Character Masking) sustituyendo por asteriscos todos los dígitos de la tarjeta salvo los cuatro últimos, dentro de Sensitive Data Protection."
+   },
+   {
+    "letter": "B",
+    "len": 154,
+    "text": "Tokenización criptográfica mediante hash con clave HMAC-SHA-256 (Crypto Hashing) aplicada al número de tarjeta y configurada en Sensitive Data Protection."
+   },
+   {
+    "letter": "C",
+    "len": 155,
+    "text": "Tokenización criptográfica con preservación de formato (Crypto-Deterministic Format-Preserving Encryption / Pseudonymization) en Sensitive Data Protection."
+   },
+   {
+    "letter": "D",
+    "len": 163,
+    "text": "Redacción completa (Redaction) del campo de la tarjeta y cálculo de k-anonimato sobre el conjunto de datos antes de entregarlo, mediante Sensitive Data Protection."
+   }
+  ]
+ }
+]

@@ -1,0 +1,1325 @@
+[
+ {
+  "id": "PCA-D1-004",
+  "scenario": "Altostrat Media distributes high-resolution video segments and game patch assets globally. Premium content must be cached close to subscribers at edge locations worldwide to reduce egress bandwidth costs while ensuring only authenticated users with valid signed tokens can download the media. What architecture should you implement?",
+  "correct": "D",
+  "clave_len": 86,
+  "explanation": "Cloud Storage alojado como backend de un External Application Load Balancer con Cloud CDN (o Media CDN) almacena en caché el contenido estático en los puntos de presencia de borde (PoPs) globales de Google, y las Signed URLs restringen las descargas exclusivamente a usuarios con tokens válidos.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 79,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Desplegar servidores de archivos Filestore Enterprise en cada región con rsync."
+   },
+   {
+    "letter": "B",
+    "len": 83,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Almacenar archivos en Compute Engine con NGINX y replicación de discos entre zonas."
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Distribuir archivos empaquetados en contenedores Cloud Run con caché en memoria."
+   },
+   {
+    "letter": "D",
+    "len": 86,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Almacenar recursos en Cloud Storage tras un Load Balancer con Cloud CDN y Signed URLs."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-009",
+  "scenario": "Altostrat Media's microservices run across hundreds of GKE pods in multiple regions. The operations team needs a managed observability architecture to collect distributed application traces, aggregate exception stack traces automatically, and analyze log patterns in real time without provisioning third-party infrastructure. Which solution should you recommend?",
+  "correct": "D",
+  "clave_len": 88,
+  "explanation": "Google Cloud Operations Suite ofrece una solución totalmente administrada que combina Cloud Logging para consultas en tiempo real, Cloud Monitoring para métricas, Cloud Trace para trazas distribuidas de latencia de microservicios y Cloud Error Reporting para agregación automática de errores.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 84,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Desplegar servidores Prometheus y Elasticsearch autogestionados en cada clúster GKE."
+   },
+   {
+    "letter": "B",
+    "len": 85,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Configurar exportaciones de syslog hacia máquinas virtuales dedicadas con discos NFS."
+   },
+   {
+    "letter": "C",
+    "len": 81,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Instalar agentes Fluentd que envíen archivos de logs comprimidos a Cloud Storage."
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Implementar Cloud Operations Suite con instrumentación de Cloud Trace y Error Reporting."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-004",
+  "scenario": "Company A connects VPC-1 to VPC-2 via VPC Network Peering. They also connect VPC-2 to VPC-3 via VPC Network Peering. Workloads in VPC-1 can communicate with VPC-2, and VPC-2 can communicate with VPC-3. However, workloads in VPC-1 cannot reach VPC-3. What is the architectural reason for this behavior?",
+  "correct": "D",
+  "clave_len": 246,
+  "explanation": "VPC Network Peering in Google Cloud is strictly non-transitive. Only directly connected peering networks exchange routes. To route between VPC-1 and VPC-3, they must either peer directly, use Shared VPC, or utilize Network Connectivity Center / VPN gateways.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 237,
+    "densidad": 6,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "VPC-2 is not exporting the custom routes it learned from its other peering; enabling export of custom routes on the VPC-2 side of the VPC-1 peering and import on the VPC-1 side makes the VPC-3 subnet routes visible to workloads in VPC-1."
+   },
+   {
+    "letter": "B",
+    "len": 245,
+    "densidad": 7,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "IP forwarding is disabled on the VPC-2 side, so packets whose destination is a VPC-3 address are dropped instead of being forwarded; enabling the can-ip-forward capability across VPC-2's subnets restores the transit path between VPC-1 and VPC-3."
+   },
+   {
+    "letter": "C",
+    "len": 246,
+    "densidad": 5,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "The subnet ranges of VPC-1 and VPC-3 overlap, so the peering silently suppresses the conflicting routes; renumbering one of the two networks into a non-overlapping CIDR block restores end-to-end connectivity between the two workload environments."
+   },
+   {
+    "letter": "D",
+    "len": 246,
+    "densidad": 9,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Google Cloud VPC Network Peering is strictly non-transitive; traffic from VPC-1 cannot transit through VPC-2 to reach VPC-3. To enable communication, you must peer VPC-1 directly to VPC-3 or use Network Connectivity Center / HA VPN hub-and-spoke."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-001",
+  "scenario": "An enterprise uses GitHub Actions for CI/CD pipelines deploying to Google Cloud. Security policy strictly forbids creating, downloading, or storing long-lived service account private key JSON files in GitHub repository secrets. How should the CI/CD pipeline authenticate to Google Cloud?",
+  "correct": "D",
+  "clave_len": 257,
+  "explanation": "Workload Identity Federation exchanges external OpenID Connect (OIDC) tokens issued by GitHub Actions for short-lived Google Cloud credentials. This eliminates the security risk of managing and leaking permanent service account JSON keys.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 265,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Create a dedicated deployment service account, generate a key with gcloud iam service-accounts keys create, store the JSON blob in a GitHub Actions encrypted secret, and rotate it every 30 days with a scheduled workflow that mints a new key and deletes the old one."
+   },
+   {
+    "letter": "B",
+    "len": 295,
+    "densidad": 4,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure Workload Identity Federation with an OIDC Workload Identity Pool and Provider for token.actions.githubusercontent.com, then grant roles/iam.workloadIdentityUser on the deployment service account to the pool-wide principalSet covering every repository the provider can issue tokens for."
+   },
+   {
+    "letter": "C",
+    "len": 259,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure Workload Identity Federation with a SAML 2.0 workload identity provider pointed at GitHub's OIDC discovery document, mapping google.subject to assertion.repository and granting that principal permission to impersonate the deployment service account."
+   },
+   {
+    "letter": "D",
+    "len": 257,
+    "densidad": 2,
+    "eco": 7,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure Google Cloud Workload Identity Federation with an OIDC Workload Identity Pool and Provider for GitHub (token.actions.githubusercontent.com), granting the GitHub repository subject assertion permission to impersonate the deployment Service Account."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-008",
+  "scenario": "An enterprise has 500 service accounts with overly broad Editor and Owner permissions granted years ago. Security policy mandates implementing the principle of least privilege across all service accounts. The security team needs an automated tool that analyzes historical IAM permission usage over the past 90 days and suggests precise, minimal custom roles without breaking active production applications. What service should you use?",
+  "correct": "C",
+  "clave_len": 204,
+  "explanation": "IAM Recommender applies machine learning to analyze actual API calls made by principals over the past 90 days. It detects unused permissions and generates actionable recommendations to replace overly broad roles (Owner/Editor) with least-privilege roles.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 209,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Use Policy Analyzer in Policy Intelligence to enumerate which principals can access which resources, export the allow-policy analysis to BigQuery, and hand-craft custom roles from the reported permission sets."
+   },
+   {
+    "letter": "B",
+    "len": 212,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Enable Data Access audit logs on all services, route them to a BigQuery sink, and run scheduled queries over 90 days of methodName values to derive the minimal permission set for each of the 500 service accounts."
+   },
+   {
+    "letter": "C",
+    "len": 204,
+    "densidad": 2,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Use Google Cloud IAM Recommender (part of Policy Intelligence) to review automated role recommendations based on actual ML-analyzed 90-day permission usage and apply rightsized custom or predefined roles."
+   },
+   {
+    "letter": "D",
+    "len": 227,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Apply the constraints/iam.disableServiceAccountKeyCreation and constraints/iam.allowedPolicyMemberDomains organization policies and downgrade all 500 service accounts from Owner to the Editor predefined role as an interim step."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-009",
+  "scenario": "An enterprise stores sensitive intellectual property in BigQuery and Cloud Storage in Project A. To satisfy national defense data protection standards, data inside Project A must be accessible only from authorized private VPC networks, and data exfiltration to any storage bucket or BigQuery dataset outside Project A must be cryptographically blocked at the API layer. What should you configure?",
+  "correct": "A",
+  "clave_len": 210,
+  "explanation": "VPC Service Controls establishes a secure perimeter around Google Cloud managed services (BigQuery, GCS). Requests to restricted services from outside the perimeter or attempts to copy data to external unapproved resources are blocked, preventing data exfiltration.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 210,
+    "densidad": 3,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a VPC Service Controls (VPC-SC) Service Perimeter enclosing Project A, restricting services 'bigquery.googleapis.com' and 'storage.googleapis.com', and adding the authorized VPC network to the perimeter."
+   },
+   {
+    "letter": "B",
+    "len": 233,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Apply the constraints/storage.publicAccessPrevention and constraints/iam.allowedPolicyMemberDomains organization policies to Project A and grant BigQuery and Cloud Storage roles only to cleared program members through IAM conditions."
+   },
+   {
+    "letter": "C",
+    "len": 238,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Turn on Private Google Access, route *.googleapis.com to the restricted VIP 199.36.153.4/30 via Cloud DNS, and add egress firewall rules denying all internet traffic from Project A's subnets, so the APIs answer only in the authorized VPC."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Encrypt the BigQuery datasets and Cloud Storage buckets in Project A with Customer-Managed Encryption Keys backed by Cloud HSM, and restrict the Cloud KMS CryptoKey Decrypter role to the program's service accounts in a separate key project."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-002",
+  "scenario": "An enterprise requires a progressive delivery strategy on GKE. When a new software release is deployed, traffic must start at 10% canary. If error rates remain normal for 15 minutes, traffic increases to 50%, and finally to 100%. If HTTP 5xx error rates exceed 1% at any stage, the deployment must automatically roll back immediately. What native Google Cloud service manages this canary progression?",
+  "correct": "D",
+  "clave_len": 232,
+  "explanation": "Google Cloud Deploy provides automated canary deployment progression, natively managing gradual traffic shifting (via GKE Gateway API / Service Mesh) and integrating with automated verification steps for instant rollbacks upon error detection.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 247,
+    "densidad": 1,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Run a Cloud Build pipeline that executes 'kubectl set image' followed by 'kubectl rollout status', with manual approval gates between the 10%, 50% and 100% stages and an on-call operator running 'kubectl rollout undo' when 5xx errors are reported."
+   },
+   {
+    "letter": "B",
+    "len": 251,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure a Cloud Deploy delivery pipeline with the standard deployment strategy across dev, staging and prod targets, using a deploy verification job to run smoke tests after each promotion and requiring manual approval before the production rollout."
+   },
+   {
+    "letter": "C",
+    "len": 236,
+    "densidad": 0,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Use Config Sync to reconcile the rendered manifests from a Git repository into the GKE fleet, changing the image tag through a pull request and rolling back by reverting the commit when Cloud Monitoring reports elevated 5xx error rates."
+   },
+   {
+    "letter": "D",
+    "len": 232,
+    "densidad": 2,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure a Google Cloud Deploy Delivery Pipeline with an automated Canary deployment strategy (specifying canary percentages 10% -> 50% -> 100%), integrated with Cloud Monitoring metric verification for automatic rollback triggers."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-005",
+  "scenario": "An enterprise provides sandbox Google Cloud projects for developer experimentation with a strict $1,000 monthly budget per project. If a project exceeds 100% of its budget, the system must automatically disable billing for that project to prevent further charges, even if it terminates active VMs. How should this automated kill switch be designed?",
+  "correct": "A",
+  "clave_len": 256,
+  "explanation": "Cloud Billing Budgets only send notifications; they do not stop resources automatically. To enforce a hard cap, budget alerts publish to Pub/Sub, triggering a Cloud Function that programmatically unbinds the project's billing account.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 256,
+    "densidad": 4,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure a Cloud Billing Budget with threshold_percent = 1.0 publishing notifications to a Cloud Pub/Sub topic; trigger a Cloud Function that calls the Google Cloud Billing API to remove the billing account link from the project (billingAccountName = '')."
+   },
+   {
+    "letter": "B",
+    "len": 240,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure a Cloud Billing Budget with a 100% threshold rule and enable the budget's built-in 'disable billing to stop usage' automatic action so Cloud Billing itself unlinks the billing account from the sandbox project when the alert fires."
+   },
+   {
+    "letter": "C",
+    "len": 239,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Publish the 100% budget threshold notification to Pub/Sub and trigger a Cloud Function that calls compute.instances.stop on every VM in the sandbox project, leaving the billing account linked so the project stays usable for the next month."
+   },
+   {
+    "letter": "D",
+    "len": 225,
+    "densidad": 1,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Apply per-project quota overrides through the Service Usage API capping Compute Engine CPUs, persistent disk and egress bandwidth in each sandbox project so the project cannot consume more than $1,000 of resources in a month."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-003",
+  "scenario": "An enterprise streams 100,000 IoT sensor messages per second to a Pub/Sub topic and needs to write them directly into a BigQuery table with minimal latency. Deploying and managing a Cloud Dataflow or Cloud Run pipeline just to write Pub/Sub messages into BigQuery adds unnecessary compute costs and operational overhead. What Pub/Sub subscription type solves this?",
+  "correct": "C",
+  "clave_len": 233,
+  "explanation": "Pub/Sub BigQuery Subscriptions stream messages directly from Pub/Sub into BigQuery tables with zero intermediate compute infrastructure (no Dataflow or Cloud Run needed), dramatically simplifying architecture and lowering costs.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 267,
+    "densidad": 1,
+    "eco": 9,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Pub/Sub Cloud Storage subscription that batches messages into Avro files in a bucket, and define a BigQuery external table so analysts query it without Dataflow or Cloud Run pipeline; the table rescans files each query, so latency stays nowhere near minimal."
+   },
+   {
+    "letter": "B",
+    "len": 264,
+    "densidad": 1,
+    "eco": 8,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Pub/Sub topic with a pull subscription and a BigQuery scheduled query that runs periodically to load sensor messages into the table, avoiding Dataflow or Cloud Run; scheduled queries only run SQL and cannot pull from a subscription, so nothing reaches it."
+   },
+   {
+    "letter": "C",
+    "len": 233,
+    "densidad": 3,
+    "eco": 10,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Cloud Pub/Sub BigQuery Subscription (bigquery_config), allowing Pub/Sub to write messages directly into the destination BigQuery table serverlessly without deploying or managing intermediate Dataflow jobs or Cloud Functions."
+   },
+   {
+    "letter": "D",
+    "len": 264,
+    "densidad": 1,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure a push subscription that POSTs each sensor message from the topic to the BigQuery tabledata.insertAll endpoint, so Pub/Sub writes rows without a Dataflow pipeline; tabledata.insertAll is a streaming API with quotas well below 100,000 messages per second."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-013",
+  "scenario": "Knightmotives Automotive operates 10 million connected commercial vehicles. Hundreds of thousands of vehicles simultaneously transmit high-frequency sensor readings (battery voltage, motor temperature, GPS location) over cellular networks. The cloud ingestion layer must absorb millions of messages per second with sub-second processing and sub-10ms persistence. Which architecture provides this capability?",
+  "correct": "D",
+  "clave_len": 82,
+  "explanation": "Para millones de vehículos conectados transmitiendo telemetría continua, Cloud Pub/Sub ingiere y amortigua el flujo de datos sin servidor, Cloud Dataflow ejecuta transformaciones y filtrado en ventanas de tiempo, y Cloud Bigtable ofrece latencias de escritura de milisegundos con escalado horizontal masivo.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Conectar vehículos a máquinas Compute Engine mediante sockets TCP directos."
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Guardar eventos en Cloud Storage y procesar cada hora con scripts de Cloud Run."
+   },
+   {
+    "letter": "C",
+    "len": 77,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Enviar telemetría directamente a Cloud SQL con particionado diario de tablas."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "densidad": 1,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Ingerir con Pub/Sub, procesar en tiempo real con Dataflow y persistir en Bigtable."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-014",
+  "scenario": "Knightmotives vehicles operating in remote regions accumulate 100 MB to 500 MB of detailed diagnostic sensor logs in local vehicle storage during multi-day trips. When vehicles return to service depots, these diagnostic packages must be uploaded automatically over depot Wi-Fi to Google Cloud for predictive failure analysis at minimal cost. Which upload architecture should you recommend?",
+  "correct": "D",
+  "clave_len": 83,
+  "explanation": "Almacenar localmente los registros en el vehículo y subirlos por Wi-Fi al llegar a los centros de servicio mediante Signed URLs temporales de Cloud Storage es la arquitectura más económica y escalable, eliminando costes astronómicos de comunicación satelital y automatizando la ingestión por lotes.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 79,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Forzar a los vehículos a mantener conexiones satelitales continuas en el campo."
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Almacenar archivos en discos físicos locales y enviarlos por correo trimestral."
+   },
+   {
+    "letter": "C",
+    "len": 84,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Transmitir telemetría por llamadas satelitales directas a bases de datos en la nube."
+   },
+   {
+    "letter": "D",
+    "len": 83,
+    "densidad": 1,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Subir archivos desde distribuidores a Cloud Storage usando Signed URLs y red Wi-Fi."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-018",
+  "scenario": "Knightmotives Automotive wants to detect early mechanical anomalies (such as motor overheating or brake pressure loss) in real time while vehicles are operating. The streaming ingestion pipeline must evaluate sensor readings against a trained machine learning model with sub-second latency and trigger emergency alerts to fleet dispatchers. Which architecture delivers this capability?",
+  "correct": "A",
+  "clave_len": 75,
+  "explanation": "Cloud Dataflow streaming enriquecido con la transformación `RunInference` de Apache Beam o llamadas a endpoints de Vertex AI permite evaluar modelos de Machine Learning sobre flujos continuos de telemetría en tiempo real, emitiendo alertas inmediatas ante anomalías críticas.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Integrar un pipeline de Dataflow streaming que invoca modelos en Vertex AI."
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Configurar procedimientos en Cloud SQL para clasificar valores anómalos de sensor."
+   },
+   {
+    "letter": "C",
+    "len": 85,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Programar alertas en Cloud Monitoring basadas exclusivamente en límites fijos de CPU."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Exportar datos a Cloud Storage y ejecutar análisis de regresión semanal en local."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-011",
+  "scenario": "A development team wants to deploy a development and staging database on Cloud Spanner. The workload requires less than 500 IOPS and 100GB of storage. Sizing a full 1-node instance ($0.90/hr) is cost-prohibitive for dev environments. How can the team provision Spanner with granular fractional compute capacity?",
+  "correct": "C",
+  "clave_len": 190,
+  "explanation": "Cloud Spanner supports granular sizing via Processing Units (PUs). Instances can be provisioned in increments of 100 PUs (100 PUs = 10% of a node), allowing low-throughput development and production workloads to scale cost-effectively.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 192,
+    "densidad": 1,
+    "eco": 7,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Cloud Spanner instances are provisioned only in whole nodes, so the team should share a single one-node instance between development and staging and separate the environments by database name."
+   },
+   {
+    "letter": "B",
+    "len": 197,
+    "densidad": 2,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run the Cloud Spanner emulator in a container on a Compute Engine instance for development and staging, pointing the applications at it with the SPANNER_EMULATOR_HOST variable to avoid any billing."
+   },
+   {
+    "letter": "C",
+    "len": 190,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Provision the Cloud Spanner instance using Processing Units (PUs) in increments of 100 PUs (e.g. 100 PUs = 0.1 node, scaling up to 1000 PUs = 1 node), providing fractional cost and capacity."
+   },
+   {
+    "letter": "D",
+    "len": 197,
+    "densidad": 0,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Use a small Cloud SQL for PostgreSQL instance for development and staging and switch the connection string to Cloud Spanner in production, since both speak PostgreSQL through the Spanner interface."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-014",
+  "scenario": "An enterprise security audit discovered that individual Cloud Storage objects were inadvertently made public through legacy Object ACLs. Additionally, an operator accidentally ran gsutil rm on critical customer data. What two bucket-level security and resilience configurations should you enforce across all corporate storage buckets?",
+  "correct": "C",
+  "clave_len": 235,
+  "explanation": "Uniform Bucket-Level Access (UBLA) disables fine-grained object ACLs, unifying access control under IAM. Cloud Storage Soft Delete protects against accidental or malicious deletions by retaining deleted objects in a soft-deleted state for recovery without restoring from backups.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 226,
+    "densidad": 0,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Enable Public Access Prevention on every bucket to block public grants, and turn on Object Versioning so overwritten and deleted objects are retained as noncurrent generations that operators can restore with gcloud storage cp."
+   },
+   {
+    "letter": "B",
+    "len": 231,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Enable Uniform Bucket-Level Access on all buckets to disable legacy ACLs, and schedule a daily Storage Transfer Service job mirroring each production bucket into a separate backup project from which deleted objects can be restored."
+   },
+   {
+    "letter": "C",
+    "len": 235,
+    "densidad": 2,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Enable Uniform Bucket-Level Access (UBLA) to disable legacy ACLs and enforce unified IAM policies, and configure Cloud Storage Soft Delete (with a 7 to 90-day retention window) to allow instant recovery of accidentally deleted objects."
+   },
+   {
+    "letter": "D",
+    "len": 218,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Enable Uniform Bucket-Level Access to remove legacy object ACLs, and attach an Autoclass configuration plus a 90-day Object Lifecycle Management rule so customer data is kept recoverable for ninety days after deletion."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-017",
+  "scenario": "An enterprise requires that all database passwords and API tokens stored in Secret Manager must be rotated automatically every 30 days. When rotation occurs, Secret Manager must trigger a service that generates a new password, updates the Cloud SQL database user, tests the connection, and publishes the new active secret version. How should you design this automated workflow?",
+  "correct": "A",
+  "clave_len": 281,
+  "explanation": "Secret Manager supports automatic rotation schedules. When a rotation period triggers, Secret Manager sends a notification to a Pub/Sub topic, which triggers a Cloud Function to orchestrate updating the external system (e.g. Cloud SQL) and activating the new secret version.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 281,
+    "densidad": 5,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure a rotation schedule (rotation_period = '2592000s') on the Secret Manager secret, configuring a Cloud Pub/Sub topic subscription that triggers a Cloud Function (or Cloud Run) to execute the rotation lifecycle (create new version -> update database -> destroy old version)."
+   },
+   {
+    "letter": "B",
+    "len": 261,
+    "densidad": 4,
+    "eco": 8,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Set the secret's rotation schedule with next_rotation_time and rotation_period = 2592000s and let Secret Manager itself generate the replacement password, apply it to the Cloud SQL user and promote the new version as the enabled one automatically every 30 days."
+   },
+   {
+    "letter": "C",
+    "len": 271,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Set version_destroy_ttl to 30 days and an expire_time on each secret version, so stale credentials are destroyed on schedule and every application is forced to request a freshly created version from Secret Manager the next time it authenticates to the Cloud SQL database."
+   },
+   {
+    "letter": "D",
+    "len": 271,
+    "densidad": 0,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Schedule a Cloud Scheduler job every 30 days that invokes a Cloud Run job to generate a password, run ALTER USER against the Cloud SQL instance and then overwrite the payload of the existing enabled secret version in place, so consumers pinned to 'latest' need no change."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-010",
+  "scenario": "A mission-critical Java microservice in GKE is consuming 80% CPU under normal load. Developers suspect inefficient regular expressions or un-optimized object serialization in production code. The profiling tool must run continuously in production with less than 5% CPU overhead without restarting or modifying production binaries. What Google Cloud tool fulfills this requirement?",
+  "correct": "B",
+  "clave_len": 225,
+  "explanation": "Google Cloud Profiler is a continuous, low-overhead (<1% CPU/memory) profiling tool that uses statistical sampling in production environments to generate hierarchical flame graphs of CPU, heap, and thread allocation down to the line of code.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 213,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Instrument the service with OpenTelemetry and send distributed traces to Cloud Trace, using the span waterfall and the latency distributions to locate the request path responsible for the elevated CPU consumption."
+   },
+   {
+    "letter": "B",
+    "len": 225,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy Google Cloud Profiler agent with the Java application (using statistical sampling with <1% CPU overhead), visualizing interactive flame graphs of CPU time and heap memory allocation across code functions in production."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "densidad": 0,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Exec into the running pods on a schedule to capture jcmd thread dumps and Java Flight Recorder recordings, then merge the samples offline to find the methods that dominate CPU time inside the Java service."
+   },
+   {
+    "letter": "D",
+    "len": 210,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Build a Cloud Monitoring dashboard from the container CPU and memory metrics scraped by Google Cloud Managed Service for Prometheus, alerting whenever the Java service exceeds 80% of its configured CPU request."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-007",
+  "scenario": "An enterprise streaming media platform experiences massive, predictable morning traffic surges every day at 08:00 AM. Reactive CPU-based autoscaling takes 5 to 10 minutes to detect high CPU and spin up new VMs, causing morning latency spikes. How should the Managed Instance Group autoscaler be optimized to provision capacity in advance of recurring surges?",
+  "correct": "A",
+  "clave_len": 275,
+  "explanation": "Predictive Autoscaling for Compute Engine MIGs analyzes historical load metrics to forecast future traffic surges and scales out instances ahead of time, eliminating cold-start latency spikes for predictable recurring daily workloads.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 275,
+    "densidad": 3,
+    "eco": 9,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Enable Predictive Autoscaling (mode = 'PREDICTIVE_ONLY' or 'OPTIMIZE_AVAILABILITY') on the Managed Instance Group autoscaler, which uses machine learning to analyze historical daily and weekly traffic patterns and scales up VM capacity minutes before forecasted surges begin."
+   },
+   {
+    "letter": "B",
+    "len": 271,
+    "densidad": 1,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Raise the Managed Instance Group's minimum instance count to the observed 08:00 peak size on the CPU-based autoscaler, and leave the 60 percent target utilization policy reacting to whatever additional traffic surges above that permanently provisioned floor each morning."
+   },
+   {
+    "letter": "C",
+    "len": 270,
+    "densidad": 1,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Add a scaling schedule to the Managed Instance Group autoscaler starting at 08:00 with a 30-minute duration and a minimum required instance count equal to the peak size, leaving the reactive CPU utilization autoscaler active around that recurring morning traffic window."
+   },
+   {
+    "letter": "D",
+    "len": 270,
+    "densidad": 1,
+    "eco": 7,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Change the Managed Instance Group's autoscaling signal from CPU utilization to a Cloud Monitoring metric of load-balancer requests per instance, so the group reacts to the actual traffic arriving each morning rather than to the CPU spikes that traffic eventually causes."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-036",
+  "scenario": "knightmotives_automotive stores golden master ECU firmware images and vehicle cryptographic certificates in Cloud Storage. The disaster recovery team has established a strict Recovery Point Objective (RPO) of under 15 minutes across two distant geographic regions (e.g. us-central1 and us-east1) to guarantee business continuity during a regional disaster. What Cloud Storage configuration meets this SLA?",
+  "correct": "D",
+  "clave_len": 199,
+  "explanation": "Dual-Region Cloud Storage with Turbo Replication provides an SLA-backed guarantee that 100% of newly written objects are replicated across paired regions within 15 minutes, satisfying strict RPO < 15-minute compliance requirements.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 222,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Store the firmware images and certificates in a multi-region Cloud Storage bucket in the 'us' location, relying on Google's built-in geo-redundancy across the region's data centers to survive the loss of any single region."
+   },
+   {
+    "letter": "B",
+    "len": 205,
+    "densidad": 3,
+    "eco": 1,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a single-region bucket in us-central1 and a Storage Transfer Service job that runs every hour copying the new and changed objects into a second bucket in us-east1 with checksum verification enabled."
+   },
+   {
+    "letter": "C",
+    "len": 208,
+    "densidad": 3,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Dual-Region Cloud Storage bucket spanning us-central1 and us-east1 and rely on its default asynchronous replication, monitoring the replication metrics to confirm that both regions hold every object."
+   },
+   {
+    "letter": "D",
+    "len": 199,
+    "densidad": 4,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Create a Dual-Region Cloud Storage bucket (e.g. nam4: us-central1 and us-east1) and enable Turbo Replication to guarantee 100% of objects replicate across regions within 15 minutes with a backed SLA."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-021",
+  "scenario": "VPC-A hosts internal microservices under the domain 'corp.internal'. Workloads in VPC-B (which is in a different project) must resolve hostnames in 'corp.internal' without exposing the DNS zone publicly or deploying dedicated BIND DNS virtual machines. How should Cloud DNS be configured?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "Cloud DNS Peering allows a consumer VPC (VPC-B) to forward DNS queries for a specific private domain directly to a producer VPC (VPC-A) that hosts the private zone, enabling seamless cross-project name resolution without public exposure or DNS servers.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 216,
+    "densidad": 2,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a second Cloud DNS private zone for 'corp.internal' in Project B authorized for VPC-B and keep its record set synchronized with the zone in Project A through a Cloud Build job that runs on every change merged."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "densidad": 4,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure a Cloud DNS Private Zone for 'corp.internal' in Project A authorized for VPC-A, and create a Cloud DNS Peering Zone in Project B for 'corp.internal' that forwards queries for that domain directly to VPC-A."
+   },
+   {
+    "letter": "C",
+    "len": 218,
+    "densidad": 1,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Publish 'corp.internal' as a Cloud DNS public managed zone containing the RFC 1918 addresses of the microservices, and restrict who can reach them with VPC firewall rules rather than with the visibility of the records."
+   },
+   {
+    "letter": "D",
+    "len": 223,
+    "densidad": 3,
+    "eco": 2,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a pair of BIND9 resolvers on Compute Engine instances inside VPC-A holding the corp.internal records, and reconfigure every virtual machine in VPC-B to use those two resolver addresses instead of the metadata server."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-023",
+  "scenario": "An enterprise internal microservice deployed in us-central1 and us-east1 must be accessible via a single private internal IP address from anywhere in the global VPC. If backend pods in us-central1 become unhealthy or saturated, traffic must seamlessly fail over to healthy backends in us-east1. What load balancer architecture should you deploy?",
+  "correct": "A",
+  "clave_len": 177,
+  "explanation": "Regional Internal Application Load Balancers with Global Access enabled allow clients in any Google Cloud region to send private traffic to the load balancer, while cross-region backend services provide automated failover between backend instance groups across regions.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 177,
+    "densidad": 3,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a Regional Internal Application Load Balancer with Global Access enabled, configured with multi-region backend services and health checks across us-central1 and us-east1."
+   },
+   {
+    "letter": "B",
+    "len": 191,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy an Internal Passthrough Network Load Balancer in each region, publish both forwarding rule addresses to the client applications, and let each client retry the other address on failure."
+   },
+   {
+    "letter": "C",
+    "len": 202,
+    "densidad": 0,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Publish the microservice through an External Network Load Balancer with a public Anycast IP address, restricting access with VPC firewall rules and Cloud Armor policies that allow only corporate ranges."
+   },
+   {
+    "letter": "D",
+    "len": 198,
+    "densidad": 2,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Cloud DNS private zone with a failover routing policy resolving the service name to the us-central1 backends and switching to the us-east1 backends when probes report the primary unhealthy."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-025",
+  "scenario": "To satisfy PCI-DSS requirement 11.4, an enterprise must deploy an automated Network Intrusion Detection System (IDS) to inspect all East-West (inter-subnet) and North-South (internet) traffic for malware, spyware, and vulnerability exploits without installing agents on virtual machines or rerouting traffic through bottleneck third-party appliance VMs. What service should you deploy?",
+  "correct": "C",
+  "clave_len": 209,
+  "explanation": "Google Cloud IDS is a fully managed cloud-native intrusion detection system. It uses Google's native Packet Mirroring to transparently inspect network traffic using Palo Alto Networks threat detection technologies without latency impact or VM agent maintenance.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 238,
+    "densidad": 0,
+    "eco": 1,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Attach Cloud Armor security policies with the preconfigured OWASP ModSecurity core rule set to the external Application Load Balancer backend services, inspecting every request for exploit and malware signatures before it reaches the VMs."
+   },
+   {
+    "letter": "B",
+    "len": 223,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Enable VPC Flow Logs at 100 percent sampling on every subnet and stream them into Security Command Center Event Threat Detection, correlating the 5-tuple connection records to identify malware, spyware and exploit attempts."
+   },
+   {
+    "letter": "C",
+    "len": 209,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy Google Cloud IDS (Intrusion Detection System) endpoints in the VPC, backed by Packet Mirroring that transparently mirrors network traffic to a Google-managed Palo Alto Networks threat inspection engine."
+   },
+   {
+    "letter": "D",
+    "len": 237,
+    "densidad": 2,
+    "eco": 8,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a fleet of third-party next-generation firewall appliance VMs behind an Internal Passthrough Network Load Balancer and add custom static routes so every subnet's traffic is forced through the appliances for deep packet inspection."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-027",
+  "scenario": "An enterprise security team requires automated self-healing remediation whenever a storage bucket is accidentally made public (allUsers / allAuthenticatedUsers granted storage.objectViewer). When Security Command Center detects finding 'PUBLIC_BUCKET_ACL', the system must automatically remove the public IAM binding within 30 seconds and post an alert to the SOC Slack channel. What event-driven pipeline implements this?",
+  "correct": "A",
+  "clave_len": 285,
+  "explanation": "SCC Continuous Finding Exports stream real-time security findings to Cloud Pub/Sub. An event-driven Cloud Function parses the finding payload, executes automated remediation via Google Cloud APIs (removing public IAM members), and alerts the SOC instantly.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 285,
+    "densidad": 4,
+    "eco": 9,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure a Continuous Finding Export in Security Command Center (filtered by category='PUBLIC_BUCKET_ACL') publishing to a Cloud Pub/Sub topic, which triggers an automated Cloud Function that invokes the Cloud Storage API to strip the public IAM binding and send a Slack notification."
+   },
+   {
+    "letter": "B",
+    "len": 261,
+    "densidad": 2,
+    "eco": 7,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure a Security Command Center Continuous Export to BigQuery and run a scheduled query every 15 minutes that lists the new PUBLIC_BUCKET_ACL findings and calls a remote function to strip the public IAM binding and post the summary to the SOC Slack channel."
+   },
+   {
+    "letter": "C",
+    "len": 260,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Enforce the organization policy constraint 'constraints/storage.publicAccessPrevention' on every folder so that allUsers and allAuthenticatedUsers can never be granted storage.objectViewer, and audit the enforcement monthly with a Cloud Asset Inventory export."
+   },
+   {
+    "letter": "D",
+    "len": 255,
+    "densidad": 2,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Schedule an hourly Cloud Run job that enumerates every bucket with 'gcloud storage buckets get-iam-policy', removes the allUsers and allAuthenticatedUsers bindings it finds, writes the change to Cloud Logging and posts the result to the SOC Slack channel."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-020",
+  "scenario": "An enterprise checkout system executes a synchronous HTTP call chain: Checkout Service -> Inventory Service -> Payment Service -> Shipping Service -> Notification Service. When Notification Service experiences slow latency or downtime, the entire checkout pipeline blocks and fails, preventing customers from placing orders. How should the architecture be refactored?",
+  "correct": "D",
+  "clave_len": 274,
+  "explanation": "Event-driven architecture using Cloud Pub/Sub decouples producer services from consumer services. If non-critical downstream services (such as notifications) slow down or fail, messages are safely buffered in Pub/Sub topics without impacting user checkout transactions.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 304,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Keep the synchronous chain and wrap every hop in Envoy retries with exponential backoff and outlier detection, so the Notification Service is ejected from the load-balancing pool as soon as it starts failing and the call fails open instead of blocking the checkout once the ejection threshold is reached."
+   },
+   {
+    "letter": "B",
+    "len": 245,
+    "densidad": 0,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Have the Checkout Service return HTTP 200 to the customer first and then call the Notification Service from a background thread after the response has been written, so the notification no longer sits on the critical path of the checkout request."
+   },
+   {
+    "letter": "C",
+    "len": 248,
+    "densidad": 2,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Replace the hard-coded call chain with a Cloud Workflows orchestration that invokes Inventory, Payment, Shipping and Notification in sequence, with per-step retry policies and compensation steps that roll back an order when a downstream step fails."
+   },
+   {
+    "letter": "D",
+    "len": 274,
+    "densidad": 3,
+    "eco": 7,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Refactor to an Event-Driven Architecture: Have Checkout Service publish an 'OrderCreated' event to Cloud Pub/Sub, allowing Inventory, Payment, Shipping, and Notification services to consume events asynchronously and independently with retry buffering and dead-letter queues."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-013",
+  "scenario": "A Node.js REST API on Cloud Run makes asynchronous database calls to Cloud SQL. By default, Cloud Run sets concurrency = 80 (allowing up to 80 concurrent requests per container instance). SREs notice that under high concurrency, CPU utilization remains low (20%), but container instances scale up prematurely because concurrency was lowered to 1 by a novice developer. How should concurrency be tuned for optimal cost and throughput?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "For asynchronous, non-blocking I/O workloads (Node.js, Go, Async Python), higher concurrency (80-250) allows each container instance to handle multiple simultaneous requests while waiting on database responses, reducing container instance counts and cloud spend.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 207,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Leave concurrency at 1 but enable CPU always allocated with startup CPU boost and set minimum instances to 20, so the event loop is never throttled and warm containers absorb the traffic without cold starts."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure Cloud Run concurrency to a higher value (e.g., 80 to 250) suited for non-blocking I/O async event loops, maximizing throughput per container instance and reducing total running instances and billing costs."
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Set concurrency to the maximum value of 1000 while keeping the default 1 vCPU and 512 MiB container, so a very small number of instances absorbs the whole request volume and billing drops accordingly."
+   },
+   {
+    "letter": "D",
+    "len": 211,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Leave concurrency at 1 and instead raise the maximum instances limit and the Cloud SQL max_connections setting, so the service is free to scale out to thousands of single-request containers during traffic peaks."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-038",
+  "scenario": "EHR Healthcare is migrating containerized patient charting microservices to Google Kubernetes Engine (GKE). To comply with HIPAA security controls, the cluster must ensure that worker nodes and the control plane have zero public IP exposure, VM boot integrity is cryptographically verified, and Kubernetes pods authenticate to Google Cloud services without using static, long-lived JSON service account keys. What configuration implements these controls?",
+  "correct": "A",
+  "clave_len": 277,
+  "explanation": "Private GKE eliminates public IP attack surfaces on nodes and control plane. Shielded Nodes protect against kernel rootkits and boot-level tampering. Workload Identity replaces dangerous long-lived JSON keys with short-lived, automatically rotated OAuth2 tokens tied directly to Kubernetes Service Accounts.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 277,
+    "densidad": 0,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a Private GKE Cluster (private nodes, private endpoint with Master Authorized Networks), enable Shielded GKE Nodes (Secure Boot, vTPM, Integrity Monitoring), and configure GKE Workload Identity binding Kubernetes Service Accounts directly to Google IAM Service Accounts."
+   },
+   {
+    "letter": "B",
+    "len": 243,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a Private GKE Cluster with private nodes and Shielded GKE Nodes enabled, and give the node pool a dedicated service account with narrowly scoped roles so that every pod on the node inherits those permissions through the metadata server."
+   },
+   {
+    "letter": "C",
+    "len": 260,
+    "densidad": 0,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a Standard GKE cluster with public node IP addresses protected by Cloud Armor and firewall rules, enable Workload Identity for pod authentication and turn on Shielded GKE Nodes with Secure Boot and integrity monitoring on every node pool in the cluster."
+   },
+   {
+    "letter": "D",
+    "len": 252,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a Private GKE Cluster with Shielded GKE Nodes and store the Google service account JSON keys in Secret Manager, mounting them into the pods at start-up with the Secret Manager CSI driver so that no key is ever baked into a container image layer."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-028",
+  "scenario": "EHR Healthcare is auditing access to its production GKE clusters processing HIPAA workloads. While the cluster is configured as a Private GKE cluster, the Kubernetes API Server endpoint must be protected so that only authorized corporate admin jump-boxes (10.240.0.0/24) and on-premises NOC CIDR blocks (192.168.10.0/24) can execute kubectl commands, blocking all other internal and external networks. What feature enforces this control?",
+  "correct": "A",
+  "clave_len": 146,
+  "explanation": "Master Authorized Networks provides Layer 3/4 CIDR-based access filtering for the GKE Kubernetes API Server (both public and private endpoints), ensuring only specified trusted IP blocks can communicate with kubectl.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 146,
+    "densidad": 0,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Enable Master Authorized Networks on the GKE cluster, specifying only the trusted corporate admin and NOC CIDR ranges in the authorized CIDR list."
+   },
+   {
+    "letter": "B",
+    "len": 154,
+    "densidad": 0,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Disable the cluster's public endpoint so the control plane is reachable only from the VPC, relying on VPC firewall rules to filter which subnets reach it."
+   },
+   {
+    "letter": "C",
+    "len": 166,
+    "densidad": 0,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Define Kubernetes RBAC ClusterRoleBindings granting kubectl permissions only to the administrator group, leaving the API endpoint reachable from any routable network."
+   },
+   {
+    "letter": "D",
+    "len": 162,
+    "densidad": 1,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Reach the control plane through an IAP TCP forwarding tunnel to a bastion inside the VPC, granting roles/iap.tunnelResourceAccessor to the cluster administrators."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-039",
+  "scenario": "An enterprise CISO mandates that developers and administrators can only access the Google Cloud Console and execute gcloud CLI commands if they are using corporate-managed laptops running an encrypted disk, current OS patch level, and connecting from authorized corporate IP addresses. Access from personal, unmanaged devices must be blocked even if valid user passwords and MFA are provided. What solution enforces this?",
+  "correct": "D",
+  "clave_len": 302,
+  "explanation": "Context-Aware Access (BeyondCorp Enterprise) uses Access Context Manager to evaluate contextual signals (user identity, device management state, disk encryption, OS patch level, geographic location) before granting access to Google Cloud Console, APIs, and SAML applications.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 284,
+    "densidad": 2,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Enforce 2-Step Verification with hardware security keys (FIDO2/Titan) for every developer and administrator, shorten the Google Cloud session length in the Admin console to four hours, and require reauthentication with the key before any sensitive administrative action or role grant."
+   },
+   {
+    "letter": "B",
+    "len": 275,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Build a VPC Service Controls perimeter around every project and attach an Access Level admitting only the corporate egress ranges 198.51.100.0/22, so that any API call or Cloud Console action arriving from an address outside those ranges is refused at the perimeter boundary."
+   },
+   {
+    "letter": "C",
+    "len": 269,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Publish the administrative tooling behind Identity-Aware Proxy with an IAP access policy requiring membership in the platform-admins group and a client TLS certificate issued by the corporate certificate authority and installed only on managed laptops by the MDM agent."
+   },
+   {
+    "letter": "D",
+    "len": 302,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure Context-Aware Access (Access Context Manager) in Google Cloud / Google Workspace, deploying Endpoint Verification on corporate laptops and creating Access Levels that evaluate device posture (OS version, disk encryption, screen lock) and IP subnet before granting access to Google Cloud APIs."
+   }
+  ]
+ }
+]

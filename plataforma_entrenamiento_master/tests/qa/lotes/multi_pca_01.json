@@ -1,0 +1,374 @@
+[
+ {
+  "id": "PCA-D1-072",
+  "domainId": "PCA-D1",
+  "subtopic": "Altostrat Media: Dual-Region Ingestion & DR Failover",
+  "scenario": "To protect the live broadcast of the World Championship race against any regional Google Cloud outage, HRL provisions live video ingestion encoders in two separate geographic regions (us-central1 and us-east1). If the primary transcoding pipeline in us-central1 fails during the race, global viewer traffic must fail over automatically to the live backup stream in us-east1 with less than 3 seconds of viewer interruption. What architecture achieves this?",
+  "correct": "A",
+  "explanation": "Active-Active dual-region live video ingestion processes parallel streams in two independent regions. An Anycast Global Load Balancer or Cloud DNS Health-Checked Failover policy automatically redirects video playback clients to the secondary region within seconds upon primary failure.",
+  "doc": "https://cloud.google.com/load-balancing/docs/https/cross-region-example",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 314,
+    "text": "Ingest redundant RTMP feeds simultaneously into Live Stream API pipelines in both us-central1 and us-east1, and use Cloud DNS Health-Checked Failover Routing Policies (or Global External Application Load Balancer Multi-Region Backend Services with health checks) to route viewers dynamically to the healthy region."
+   },
+   {
+    "letter": "B",
+    "len": 274,
+    "text": "Ingest a single RTMP feed into a Live Stream API pipeline in us-central1 and continuously replicate the output HLS segments into a dual-region Cloud Storage bucket spanning us-central1 and us-east1, letting Cloud CDN serve segments from whichever region survives the outage."
+   },
+   {
+    "letter": "C",
+    "len": 301,
+    "text": "Run Live Stream API pipelines in both us-central1 and us-east1 and publish both playback endpoints in Cloud DNS as a weighted round-robin record set with a 300-second TTL, removing the failed region's record manually once broadcast operators have confirmed the outage from the production control room."
+   },
+   {
+    "letter": "D",
+    "len": 310,
+    "text": "Ingest redundant RTMP feeds into Live Stream API pipelines in us-central1 and us-east1, front each pipeline with its own Regional External Application Load Balancer, and publish the us-east1 address to viewers as a documented backup playback URL in the fan app settings screen and in the broadcast lower-third."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-009",
+  "domainId": "PCA-D2",
+  "subtopic": "GKE Autopilot vs Standard Cluster Provisioning",
+  "scenario": "A startup engineering team wants to deploy microservices on Kubernetes without managing node pools, sizing virtual machines, managing OS security patches, or configuring Kubernetes control plane scaling. They want Google SRE to manage cluster health and only pay for the exact CPU and memory requested by running pods. Which GKE mode should you select?",
+  "correct": "C",
+  "explanation": "GKE Autopilot is a fully managed, turnkey Kubernetes environment where Google manages all node infrastructure, control plane scaling, and security hardening. Users focus entirely on workloads and pay per-second only for pod resource requests.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 202,
+    "text": "Provision Compute Engine instances and install upstream Kubernetes with kubeadm, using the cluster autoscaler add-on and unattended upgrades so the team only manages the workload manifests once running."
+   },
+   {
+    "letter": "B",
+    "len": 203,
+    "text": "GKE Standard with node auto-provisioning, node auto-upgrade and node auto-repair enabled on custom Compute Engine node pools, letting Google keep the nodes patched while the team picks the machine types."
+   },
+   {
+    "letter": "C",
+    "len": 177,
+    "text": "GKE Autopilot mode, allowing Google to manage node provisioning, auto-scaling, OS upgrades, and security hardening according to GKE best practices with per-pod resource billing."
+   },
+   {
+    "letter": "D",
+    "len": 202,
+    "text": "Deploy the microservices to Cloud Run with per-service concurrency and CPU limits, paying only for the requests served and letting Google manage every layer of infrastructure with no cluster to operate."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-019",
+  "domainId": "PCA-D3",
+  "subtopic": "Shielded GKE Nodes: Secure Boot & vTPM",
+  "scenario": "An enterprise requires that all GKE worker nodes must protect against rootkits, bootkits, and malicious kernel-level modifications. If an unauthorized kernel driver or modified bootloader is detected during VM initialization, the node must fail to boot and trigger an alert in Security Command Center. What feature must be enabled on the GKE node pools?",
+  "correct": "D",
+  "explanation": "Shielded GKE Nodes leverage Secure Boot (ensuring only signed kernel software runs), vTPM (measured boot), and Integrity Monitoring to detect and prevent boot-level and kernel-level rootkit tampering.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/shielded-gke-nodes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 172,
+    "text": "Enable Confidential GKE Nodes on the node pools so the node's memory is encrypted with a per-VM key held by the AMD secure processor for the whole lifetime of the instance."
+   },
+   {
+    "letter": "B",
+    "len": 173,
+    "text": "Enable Binary Authorization with an attestor that requires every image to be signed after a vulnerability scan, and run the workloads under GKE Sandbox for kernel isolation."
+   },
+   {
+    "letter": "C",
+    "len": 168,
+    "text": "Enable node auto-upgrade on Container-Optimized OS node pools and turn on Security Posture vulnerability scanning so kernel CVEs are patched and reported automatically."
+   },
+   {
+    "letter": "D",
+    "len": 179,
+    "text": "Enable Shielded GKE Nodes with Secure Boot (cryptographically verifies bootloader digital signatures) and Virtual Trusted Platform Module (vTPM) with Integrity Monitoring enabled."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-028",
+  "domainId": "PCA-D4",
+  "subtopic": "FinOps: Cloud Storage Turbo Replication Trade-Offs",
+  "scenario": "A disaster recovery audit reveals that standard Dual-Region Cloud Storage replication takes up to 12 hours to replicate 99.9% of newly written objects between paired regions (e.g., us-central1 and us-east1). For mission-critical transactional transaction logs, the RPO target requires that 100% of newly written objects must replicate across regions in under 15 minutes. What storage feature satisfies this SLA?",
+  "correct": "C",
+  "explanation": "Turbo Replication for Dual-Region Cloud Storage buckets accelerates cross-region replication, replicating 100% of objects within 15 minutes regardless of object size, backed by a service level agreement.",
+  "doc": "https://cloud.google.com/storage/docs/turbo-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 234,
+    "text": "Recreate the bucket in the multi-region 'us' location, which stores redundant copies of every object in at least two geographically separated regions and raises the availability SLA to 99.95% for the mission-critical transaction logs."
+   },
+   {
+    "letter": "B",
+    "len": 228,
+    "text": "Keep the standard dual-region bucket and schedule a Storage Transfer Service job every 15 minutes that copies newly written objects into a second bucket in us-east1, filtered by last modification time so only new logs are moved."
+   },
+   {
+    "letter": "C",
+    "len": 217,
+    "text": "Enable Turbo Replication on the Dual-Region Cloud Storage bucket, guaranteeing that 100% of newly uploaded objects replicate to the secondary region within a 15-minute target backed by an availability and latency SLA."
+   },
+   {
+    "letter": "D",
+    "len": 227,
+    "text": "Enable Pub/Sub notifications for Cloud Storage on the OBJECT_FINALIZE event and trigger a Cloud Run function that copies each new transaction log object into a bucket in us-east1 within seconds of the original write completing."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-010",
+  "domainId": "PCA-D5",
+  "subtopic": "Apigee X: SpikeArrest vs Quota Policies",
+  "scenario": "An enterprise uses Apigee X to secure its product catalog API. The backend database can handle at most 100 requests per second before suffering CPU spikes. Additionally, business rules dictate that free-tier API developers are limited to 10,000 total requests per month. What two Apigee policies should be attached to the API proxy flow?",
+  "correct": "B",
+  "explanation": "In Apigee, SpikeArrest protects backend infrastructure from sudden short-term traffic spikes and DDoS surges by smoothing request arrival rates (e.g. 100 req/s). Quota enforces long-term business or monetization limits (e.g. 10,000 req/month).",
+  "doc": "https://cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 243,
+    "text": "Attach a SpikeArrest policy with rate = 100ps to the proxy request flow, and a second SpikeArrest policy with rate = 10000pm scoped to the free-tier developer app, using that second policy to hold monthly consumption at the contracted ceiling."
+   },
+   {
+    "letter": "B",
+    "len": 249,
+    "text": "Attach a SpikeArrest policy (rate = 100ps) to smooth out micro-bursts and protect backend databases from sudden traffic spikes, and attach a Quota policy (count = 10000, interval = 1, timeUnit = month) to enforce business billing consumption limits."
+   },
+   {
+    "letter": "C",
+    "len": 258,
+    "text": "Attach a Quota policy with count = 100, interval = 1 and timeUnit = second to protect the catalog database, plus a ResponseCache policy on the catalog endpoint so that repeated product lookups are served from the Apigee cache instead of reaching the backend."
+   },
+   {
+    "letter": "D",
+    "len": 265,
+    "text": "Attach a ConcurrentRateLimit policy capping the proxy at 100 simultaneous connections to the catalog target server, and configure the backend database with read replicas that scale out automatically whenever sustained CPU utilisation crosses the alerting threshold."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-035",
+  "domainId": "PCA-D6",
+  "subtopic": "Altostrat Media: Live Video Multi-Region Transcoder Failover",
+  "scenario": "To protect the live broadcast of the World Championship race against any regional Google Cloud outage, HRL provisions live video ingestion pipelines in two separate geographic regions (us-central1 and us-east1). If the primary transcoding pipeline in us-central1 fails during the live race, global viewer traffic must fail over automatically to the live backup stream in us-east1 with less than 3 seconds of viewer interruption. What architecture achieves this?",
+  "correct": "D",
+  "explanation": "Active-Active dual-region live video ingestion processes parallel streams in two independent regions. An Anycast Global Load Balancer or Cloud DNS Health-Checked Failover policy automatically redirects video playback clients to the secondary region within seconds upon primary failure.",
+  "doc": "https://cloud.google.com/livestream/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 326,
+    "text": "Run one Live Stream API channel in us-central1 and write the HLS and DASH segments into a dual-region Cloud Storage bucket spanning us-central1 and us-east1, serving playback worldwide through Media CDN with the bucket configured as a redundant origin, so segments stay retrievable from us-east1 if the primary region is lost."
+   },
+   {
+    "letter": "B",
+    "len": 306,
+    "text": "Keep a second Live Stream API channel provisioned but stopped in us-east1, and use a Cloud Monitoring alert on the primary channel's segment-emission metric to invoke a Cloud Function that starts the standby channel, tells the contribution encoder to redirect its feed and rewrites the playback DNS record."
+   },
+   {
+    "letter": "C",
+    "len": 314,
+    "text": "Ingest the same RTMP contribution feed into pipelines in both regions and publish the two playback hostnames through a Cloud DNS weighted round-robin record with a 300 second TTL, letting player clients re-resolve and settle on the healthy region once operations updates the weights after an incident is confirmed."
+   },
+   {
+    "letter": "D",
+    "len": 318,
+    "text": "Ingest redundant RTMP/SRT feeds simultaneously into Live Stream API pipelines in both us-central1 and us-east1, and use Cloud DNS Health-Checked Failover Routing Policies (or Global External Application Load Balancer Multi-Region Backend Services with health checks) to route viewers dynamically to the healthy region."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-016",
+  "domainId": "PCA-D1",
+  "subtopic": "Altostrat Media: High-Fanout Push Notifications & Cloud Tasks",
+  "scenario": "Knightmotives Automotive needs to distribute cryptographically signed firmware binary updates (500 MB each) to millions of vehicles globally. The OTA distribution system must support high-speed downloads, minimize backend compute load, and ensure only authorized vehicles can download the firmware images. Which architecture satisfies these requirements?",
+  "correct": "D",
+  "explanation": "Almacenar las imágenes de firmware en buckets multirregionales de Cloud Storage y distribuirlas mediante Cloud CDN con Signed URLs permite que los vehículos descarguen el binario desde los puntos de presencia de borde más cercanos a máxima velocidad, protegiendo los accesos mediante tokens firmados con tiempo de expiración.",
+  "doc": "https://cloud.google.com/storage/docs/access-control/signed-urls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Enviar actualizaciones de firmware como mensajes binarios en Cloud Pub/Sub."
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "text": "Alojar imágenes de firmware en Compute Engine con balanceador sin caché de red."
+   },
+   {
+    "letter": "C",
+    "len": 78,
+    "text": "Desplegar servidores FTP en cada país con sincronización nocturna de imágenes."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Distribuir firmware desde Cloud Storage con Cloud CDN y Signed URLs validadas."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-038",
+  "domainId": "PCA-D2",
+  "subtopic": "GKE Workload Identity Federation Binding",
+  "scenario": "A developer is configuring a pod on GKE to write diagnostic records to a private Cloud Storage bucket. The pod runs under the Kubernetes Service Account (KSA) 'log-collector' in namespace 'monitoring'. To implement Workload Identity without static service account keys, what exact IAM binding must be applied to the Google Service Account (GSA) 'gsa-storage-writer@project.iam.gserviceaccount.com'?",
+  "correct": "A",
+  "explanation": "GKE Workload Identity connects Kubernetes Service Accounts (KSAs) to Google Service Accounts (GSAs). The GSA must grant roles/iam.workloadIdentityUser to the principal serviceAccount:PROJECT_ID.svc.id.goog[NAMESPACE/KSA_NAME], and the KSA must be annotated with iam.gke.io/gcp-service-account.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 243,
+    "text": "Grant the role roles/iam.workloadIdentityUser to member 'serviceAccount:project.svc.id.goog[monitoring/log-collector]' on the Google Service Account 'gsa-storage-writer@project.iam.gserviceaccount.com', and annotate the KSA with the GSA email."
+   },
+   {
+    "letter": "B",
+    "len": 249,
+    "text": "Grant the role roles/iam.serviceAccountTokenCreator to member 'serviceAccount:project.svc.id.goog[monitoring/log-collector]' on the Google Service Account 'gsa-storage-writer@project.iam.gserviceaccount.com', and annotate the KSA with the GSA email."
+   },
+   {
+    "letter": "C",
+    "len": 240,
+    "text": "Grant the role roles/iam.workloadIdentityUser to member 'serviceAccount:project.svc.id.goog[default/log-collector]' on the Google Service Account 'gsa-storage-writer@project.iam.gserviceaccount.com', and annotate the KSA with the GSA email."
+   },
+   {
+    "letter": "D",
+    "len": 226,
+    "text": "Grant the role roles/iam.workloadIdentityUser to the GKE service agent 'service-PROJECT_NUMBER@container-engine-robot.iam.gserviceaccount.com' on the Google Service Account 'gsa-storage-writer@project.iam.gserviceaccount.com'."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-021",
+  "domainId": "PCA-D3",
+  "subtopic": "GKE Pod Security Standards (PSS)",
+  "scenario": "To prevent container breakout attacks, an enterprise security policy requires that no Kubernetes container may run as root (runAsNonRoot: true), containers cannot elevate privileges (allowPrivilegeEscalation: false), and host namespaces (hostPID, hostNetwork, hostIPC) are forbidden across all tenant namespaces. What native Kubernetes admission control mechanism should be configured?",
+  "correct": "D",
+  "explanation": "Pod Security Admission (PSA) enforces Pod Security Standards (Privileged, Baseline, Restricted). Labeling namespaces with 'enforce: restricted' prevents pods that violate hardening standards (e.g. running as root, privilege escalation) from being created.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/pod-security-standards",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 234,
+    "text": "Create a PodSecurityPolicy object setting runAsNonRoot, allowPrivilegeEscalation false and hostPID, hostNetwork and hostIPC to false, then bind it to every tenant service account with an RBAC ClusterRole granting 'use' on that policy."
+   },
+   {
+    "letter": "B",
+    "len": 238,
+    "text": "Label every tenant namespace with 'pod-security.kubernetes.io/enforce: baseline' and 'pod-security.kubernetes.io/warn: restricted' so the built-in admission controller rejects host namespace usage and warns about remaining hardening gaps."
+   },
+   {
+    "letter": "C",
+    "len": 215,
+    "text": "Set runAsNonRoot: true and allowPrivilegeEscalation: false in the securityContext of every Deployment template, and enforce those fields with a conftest policy check in the CI pipeline before any manifest is merged."
+   },
+   {
+    "letter": "D",
+    "len": 210,
+    "text": "Configure Kubernetes Pod Security Admission by labeling namespaces with 'pod-security.kubernetes.io/enforce: restricted' and 'pod-security.kubernetes.io/audit: restricted' to reject non-compliant pod manifests."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-038",
+  "domainId": "PCA-D4",
+  "subtopic": "FinOps: Cloud Storage Autoclass for Automated Tiering",
+  "scenario": "An enterprise stores 20 Petabytes of unstructured document data with completely unpredictable access patterns (some files accessed 50 times in a week, others unaccessed for 2 years). Manually managing lifecycle transition rules is complex and risks unexpected retrieval/transition charges when older files are accessed. What Cloud Storage feature automates tier transitions with zero retrieval fees?",
+  "correct": "D",
+  "explanation": "Cloud Storage Autoclass automatically transitions objects between Standard, Nearline, Coldline, and Archive storage classes based on access patterns. Unlike standard lifecycle rules, Autoclass charges no retrieval fees or transition fees when colder objects are accessed.",
+  "doc": "https://cloud.google.com/storage/docs/autoclass",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 320,
+    "text": "Configure Object Lifecycle Management rules with age-based SetStorageClass actions, moving files to Nearline, Coldline and Archive on a fixed schedule, so unstructured document data ages out on a timer regardless of its unpredictable access pattern, still risking retrieval charges whenever an old file is touched again."
+   },
+   {
+    "letter": "B",
+    "len": 304,
+    "text": "Stamp Custom Time on each unstructured document whenever it is read, then key lifecycle rules on that stamp so the tier reflects real access instead of creation age, covering the unpredictable pattern of a 20 petabyte archive, though retrieval charges on colder tiers still apply once a file is accessed."
+   },
+   {
+    "letter": "C",
+    "len": 295,
+    "text": "Enable Autoclass so unstructured, unpredictably accessed document data settles into Nearline or Coldline on its own, then add a lifecycle rule forcing anything untouched past 365 days into Archive, since without it some genuinely cold files could keep risking retrieval charges at a warmer tier."
+   },
+   {
+    "letter": "D",
+    "len": 292,
+    "text": "Enable Cloud Storage Autoclass on the bucket, which automatically transitions objects to Nearline, Coldline, or Archive based on each individual object's last access time, and instantly transitions objects back to Standard upon access with zero retrieval fees or lifecycle transition charges."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-013",
+  "domainId": "PCA-D5",
+  "subtopic": "Cloud Run Concurrency & Performance Tuning",
+  "scenario": "A Node.js REST API on Cloud Run makes asynchronous database calls to Cloud SQL. By default, Cloud Run sets concurrency = 80 (allowing up to 80 concurrent requests per container instance). SREs notice that under high concurrency, CPU utilization remains low (20%), but container instances scale up prematurely because concurrency was lowered to 1 by a novice developer. How should concurrency be tuned for optimal cost and throughput?",
+  "correct": "B",
+  "explanation": "For asynchronous, non-blocking I/O workloads (Node.js, Go, Async Python), higher concurrency (80-250) allows each container instance to handle multiple simultaneous requests while waiting on database responses, reducing container instance counts and cloud spend.",
+  "doc": "https://cloud.google.com/run/docs/about-instance-concurrency",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 247,
+    "text": "Leave concurrency at 1 but enable CPU-always-allocated with startup-CPU-boost and set minimum instances to 20, so the Node.js event loop is never throttled and warm container instances absorb the asynchronous Cloud SQL traffic without cold starts."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "text": "Configure Cloud Run concurrency to a higher value (e.g., 80 to 250) suited for non-blocking I/O async event loops, maximizing throughput per container instance and reducing total running instances and billing costs."
+   },
+   {
+    "letter": "C",
+    "len": 239,
+    "text": "Set concurrency to the maximum value of 1000 while keeping the default 1-vCPU / 512-MiB container profile, so a very small number of container instances absorbs the whole asynchronous Cloud SQL request volume and billing drops accordingly."
+   },
+   {
+    "letter": "D",
+    "len": 211,
+    "text": "Leave concurrency at 1 and instead raise the maximum instances limit and the Cloud SQL max_connections setting, so the service is free to scale out to thousands of single-request containers during traffic peaks."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-007",
+  "domainId": "PCA-D6",
+  "subtopic": "MIG Auto-Scaling: Predictive Autoscaling vs Target CPU",
+  "scenario": "An enterprise streaming media platform experiences massive, predictable morning traffic surges every day at 08:00 AM. Reactive CPU-based autoscaling takes 5 to 10 minutes to detect high CPU and spin up new VMs, causing morning latency spikes. How should the Managed Instance Group autoscaler be optimized to provision capacity in advance of recurring surges?",
+  "correct": "A",
+  "explanation": "Predictive Autoscaling for Compute Engine MIGs analyzes historical load metrics to forecast future traffic surges and scales out instances ahead of time, eliminating cold-start latency spikes for predictable recurring daily workloads.",
+  "doc": "https://cloud.google.com/compute/docs/autoscaler/predictive-autoscaling",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 275,
+    "text": "Enable Predictive Autoscaling (mode = 'PREDICTIVE_ONLY' or 'OPTIMIZE_AVAILABILITY') on the Managed Instance Group autoscaler, which uses machine learning to analyze historical daily and weekly traffic patterns and scales up VM capacity minutes before forecasted surges begin."
+   },
+   {
+    "letter": "B",
+    "len": 271,
+    "text": "Configure the Managed Instance Group's minimum instance count to match the observed peak size on the CPU-based autoscaler, leaving the existing target utilization policy reacting to whatever additional traffic surges above that permanently provisioned floor each morning."
+   },
+   {
+    "letter": "C",
+    "len": 273,
+    "text": "Create a scaling schedule on the Managed Instance Group autoscaler starting at 08:00 with a 30-minute duration and a minimum required instance count equal to the peak size, leaving the reactive CPU utilization autoscaler active around that recurring morning traffic window."
+   },
+   {
+    "letter": "D",
+    "len": 270,
+    "text": "Change the Managed Instance Group's autoscaling signal from CPU utilization to a Cloud Monitoring metric of load-balancer requests per instance, so the group reacts to the actual traffic arriving each morning rather than to the CPU spikes that traffic eventually causes."
+   }
+  ]
+ }
+]

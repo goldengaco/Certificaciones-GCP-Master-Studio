@@ -1,0 +1,1243 @@
+[
+ {
+  "id": "PCA-D2-026",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "Knightmotives Automotive: Bigtable Dual-Cluster Routing & App Profiles",
+  "conceptos": [
+   "cloud bigtable",
+   "replication",
+   "app profile",
+   "multi-cluster routing",
+   "high availability"
+  ],
+  "title": "knightmotives_automotive: Bigtable Routing for Five-Nines Telemetry Ingestion",
+  "scenario": "Knightmotives Automotive ingests telemetry from 10 million connected vehicles into Cloud Bigtable. The contract with the fleet customers sets a 99.999% availability target for the ingestion path, and last quarter a zonal maintenance event stalled writes for 11 minutes because the client had no alternate target. Architecture review now demands that a zone or cluster outage be absorbed in under one second with no operator action and no client code that catches errors and retries elsewhere. Writes are idempotent and eventual consistency between clusters for 20 seconds is acceptable. How should you configure Bigtable?",
+  "keywords": [
+   "Cloud Bigtable",
+   "multi-cluster routing",
+   "app profile",
+   "replication",
+   "99.999%"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Pin the ingestion App Profile to the primary with single-cluster routing, and let the client detect write errors and switch to a profile aimed at the replica."
+   },
+   {
+    "letter": "B",
+    "text": "Replicate the instance across two clusters in separate zones and attach an App Profile that uses multi-cluster routing, so any healthy cluster can serve the request."
+   },
+   {
+    "letter": "C",
+    "text": "Run two independent single-cluster Bigtable instances in different zones and have the ingestion service dual-write every telemetry row, reading from whichever instance replies first."
+   },
+   {
+    "letter": "D",
+    "text": "Keep a single cluster and schedule managed Bigtable backups every hour into a second region, restoring the newest backup whenever the zone becomes unavailable."
+   }
+  ],
+  "correct": "B",
+  "explanation": "An instance with two or more replicated clusters plus an App Profile configured for multi-cluster routing lets Bigtable route each request to the nearest available cluster and fail over automatically in seconds when one becomes unreachable. That combination is what raises the covered SLA to 99.999%, and it works because the workload tolerates the eventual consistency that replication introduces between clusters.",
+  "distractors": {
+   "A": "Single-cluster routing makes failover the client's job: it must observe the error, decide the cluster is down and switch profiles, which cannot meet a sub-second automatic requirement.",
+   "C": "Two separate instances share no replication, so a write that lands in one and fails in the other leaves the zones permanently divergent and pushes reconciliation onto the ingestion service.",
+   "D": "Restoring a backup into a new cluster takes many minutes and loses everything written since the last hourly copy, so neither the failover time nor the availability target is met."
+  },
+  "officialDocUrl": "https://cloud.google.com/bigtable/docs/app-profiles",
+  "difficulty": "expert",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "knightmotives_automotive",
+  "caseStudySection": "Technical Constraints: High Availability and Disaster Recovery",
+  "blockId": "BLOCK-4"
+ },
+ {
+  "id": "PCA-D2-027",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.1",
+  "subsectionName": "Configuring network topologies",
+  "subtopic": "Knightmotives Automotive: Apigee X Network Provisioning & Peering",
+  "conceptos": [
+   "apigee x",
+   "vpc peering",
+   "cidr allocation",
+   "cloud armor",
+   "application load balancer"
+  ],
+  "title": "knightmotives_automotive: Provisioning Apigee X Networking for Partner APIs",
+  "scenario": "Knightmotives Automotive will monetize fleet analytics through Apigee X, exposing rate-limited telemetry APIs and a developer portal to 40 logistics partners over the public internet. The network team has one contiguous unused range left in the address plan, a /22, and refuses to renumber existing subnets. Security requires that partner traffic be screened for OWASP signatures and rate-limited by source IP before it reaches the Apigee runtime, the platform must sustain 12,000 requests per second at peak, and the gateway may add no more than 50 ms of latency. How should you provision the Apigee X networking?",
+  "keywords": [
+   "Apigee X",
+   "VPC peering",
+   "/22 range",
+   "Cloud Armor",
+   "global external Application Load Balancer"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create an ordinary /22 subnet in the Shared VPC host project, deploy the Apigee X runtime instances into it as managed instances, and place a regional internal Application Load Balancer in front."
+   },
+   {
+    "letter": "B",
+    "text": "Replace Apigee with API Gateway backed by Cloud Run services, publish the partner APIs there, and apply per-consumer quotas with API keys issued from the project's credentials page."
+   },
+   {
+    "letter": "C",
+    "text": "Reserve the /22 for VPC peering with the Apigee tenant project, create the Apigee instance on that range, and expose it with a global external Application Load Balancer and Cloud Armor."
+   },
+   {
+    "letter": "D",
+    "text": "Reserve the /22 for the Apigee instance and publish it to partners through an internal passthrough Network Load Balancer reachable over an HA VPN tunnel terminated in each partner network."
+   }
+  ],
+  "correct": "C",
+  "explanation": "Apigee X runs in a Google-managed tenant project that is attached to the customer VPC by VPC peering, and that peering consumes a dedicated non-overlapping range of at least /22 that cannot be an ordinary subnet holding other resources. Northbound exposure is done with a global external Application Load Balancer whose backend is the Apigee instance group or PSC NEG, and Cloud Armor policies attached to that load balancer provide the OWASP screening and per-IP rate limiting.",
+  "distractors": {
+   "A": "Apigee X runtime nodes are not deployed into a customer subnet; the range is handed to the peering with the tenant project, and an internal load balancer would not reach partners on the internet.",
+   "B": "API Gateway covers keys and quotas but not the developer portal and monetization the business case needs, and swapping the product does not answer how to fit Apigee into the address plan.",
+   "D": "A passthrough Network Load Balancer cannot host Cloud Armor policies, and building VPN tunnels to 40 partner networks contradicts publishing the APIs over the public internet."
+  },
+  "officialDocUrl": "https://cloud.google.com/apigee/docs/api-platform/get-started/networking-options",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "knightmotives_automotive",
+  "caseStudySection": "Technical Constraints: Private Dealer API Gateway",
+  "blockId": "BLOCK-4"
+ },
+ {
+  "id": "PCA-D2-028",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "EHR Healthcare: Private GKE Master Authorized Networks",
+  "conceptos": [
+   "gke",
+   "private cluster",
+   "master authorized networks",
+   "control plane global access",
+   "cloud router"
+  ],
+  "title": "EHR Healthcare: Reaching and Restricting a Private GKE Control Plane",
+  "scenario": "EHR Healthcare runs private GKE clusters in us-east4 that process PHI. The HIPAA audit requires that only two ranges be able to reach the Kubernetes API server: the admin jump-box subnet 10.240.0.0/24 in us-central1 and the on-premises NOC range 192.168.10.0/24, which arrives over a Dedicated Interconnect. Today the NOC operators get a connection timeout on every kubectl call, and any workload inside the VPC can still open the API server on port 443. The public endpoint is already disabled. Which two configurations are required? (Choose 2.)",
+  "keywords": [
+   "GKE",
+   "master authorized networks",
+   "control plane global access",
+   "Cloud Router",
+   "private endpoint"
+  ],
+  "isMultiSelect": true,
+  "expectedSelectCount": 2,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Enable master authorized networks on the cluster and list only the 10.240.0.0/24 jump-box range and the 192.168.10.0/24 NOC range as authorized CIDR blocks."
+   },
+   {
+    "letter": "B",
+    "text": "Turn off the public endpoint again and add a VPC firewall rule that denies TCP 443 from every subnet except the platform administrators' jump-box subnet."
+   },
+   {
+    "letter": "C",
+    "text": "Create Kubernetes RBAC ClusterRoleBindings that grant kubectl verbs only to the platform administrator group, leaving the private endpoint reachable from any routable network."
+   },
+   {
+    "letter": "D",
+    "text": "Configure IAP TCP forwarding to a bastion host inside the VPC and grant the operators roles/iap.tunnelResourceAccessor rather than filtering the API server by source CIDR block."
+   },
+   {
+    "letter": "E",
+    "text": "Enable control plane global access on the cluster and advertise the control plane range to the on-premises routers with a Cloud Router custom route advertisement."
+   }
+  ],
+  "correct": [
+   "A",
+   "E"
+  ],
+  "explanation": "Master authorized networks is the layer 3 filter on the API server: only the listed ranges may connect, which satisfies the audit and shuts out the rest of the VPC. It does not create reachability. The private endpoint lives in a Google-managed peered network, so traffic entering from a different region or from on-premises over the Interconnect only arrives when control plane global access is enabled and the Cloud Router advertises the control plane range to the on-premises routers. One authorizes, the other routes.",
+  "distractors": {
+   "B": "The public endpoint is already disabled, and a VPC firewall rule does not filter the peered control plane endpoint, so this neither fixes the NOC timeout nor enforces the audited ranges.",
+   "C": "RBAC governs what an already authenticated identity may do, not the network it connects from, so the source-range restriction the auditors asked for would still not exist.",
+   "D": "A bastion reached through IAP grants access to anyone who can open the tunnel and leaves the API server itself unfiltered, and it does nothing about the on-premises routing failure."
+  },
+  "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/authorized-networks",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "ehr_healthcare",
+  "caseStudySection": "Security and Compliance: Kubernetes API Server Hardening",
+  "blockId": "BLOCK-4"
+ },
+ {
+  "id": "PCA-D2-029",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "EHR Healthcare: Sole-Tenant Nodes for Licensing & Isolation",
+  "conceptos": [
+   "sole-tenant nodes",
+   "node affinity",
+   "bring your own license",
+   "committed use discounts",
+   "host maintenance policy"
+  ],
+  "title": "EHR Healthcare: Physical Isolation and Per-Core Licensing for Legacy Databases",
+  "scenario": "EHR Healthcare is lifting 24 Oracle database VMs out of its colocation into Google Cloud. The database licence is charged per physical core and the vendor audit clause forbids any other customer's workload from running on the same physical server. The platform team wants to keep using standard Compute Engine tooling, images and snapshots, wants the VMs pinned to the same host family for three years to qualify for a committed use discount, and needs maintenance events to move the whole set of VMs together. How should you provision the compute?",
+  "keywords": [
+   "sole-tenant nodes",
+   "node affinity labels",
+   "BYOL",
+   "committed use discount",
+   "host maintenance policy"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create a sole-tenant node group and launch the database VMs with node affinity labels that pin them to it, then buy a three-year commitment for that node type."
+   },
+   {
+    "letter": "B",
+    "text": "Order Bare Metal Solution servers in a region extension, install the databases on the hardware, and connect them to the VPC through a Partner Interconnect."
+   },
+   {
+    "letter": "C",
+    "text": "Reserve capacity for 24 shielded N2 instances in one zone and rely on the reservation plus Confidential Computing to keep other tenants off the hosts."
+   },
+   {
+    "letter": "D",
+    "text": "Move the databases into a dedicated GKE node pool with taints and tolerations so that only the database StatefulSets can be scheduled onto the nodes that hold the licensed workload."
+   }
+  ],
+  "correct": "A",
+  "explanation": "Sole-tenant nodes are physical Compute Engine servers dedicated to one project, which is exactly what a per-physical-core licence with an isolation clause requires. VMs are placed with node affinity labels, so the 24 databases land on the group the licence covers, the node group host maintenance policy controls how the whole set is moved during maintenance, and node group commitments qualify for the three-year discount while the VMs stay ordinary Compute Engine instances.",
+  "distractors": {
+   "B": "Bare Metal Solution does give dedicated hardware but it is a separate estate with its own provisioning, images and snapshots, which breaks the requirement to keep using standard Compute Engine tooling.",
+   "C": "A reservation guarantees capacity, not exclusivity: those instances still run on shared hosts, so the audit clause about other customers on the same physical server is not satisfied.",
+   "D": "Taints only steer the Kubernetes scheduler; the nodes remain multi-tenant virtual machines, so neither the physical isolation clause nor per-physical-core licensing is addressed."
+  },
+  "officialDocUrl": "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "ehr_healthcare",
+  "caseStudySection": "Compliance and Licensing: Hardware Isolation",
+  "blockId": "BLOCK-4"
+ },
+ {
+  "id": "PCA-D2-030",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.5",
+  "subsectionName": "Configuring prebuilt solutions or APIs with Agent Platform",
+  "subtopic": "Altostrat Media: Live Stream API & Transcoder API",
+  "conceptos": [
+   "live stream api",
+   "transcoder api",
+   "media cdn",
+   "rtmp input endpoint",
+   "hls dash"
+  ],
+  "title": "Altostrat Media: Provisioning Live Channels and VOD Transcoding",
+  "scenario": "Altostrat Media must broadcast a weekly live event to 4 million concurrent viewers with under 5 seconds of glass-to-glass latency, and then publish the same recording as an adaptive-bitrate VOD asset within 30 minutes of the event ending. The encoding appliances in the old data centre sat idle 6 days a week, so the CTO will not accept any always-on encoding fleet. The production truck can push a single RTMP feed. Which provisioning approach should the architects choose?",
+  "keywords": [
+   "Live Stream API",
+   "Transcoder API",
+   "RTMP input endpoint",
+   "Media CDN",
+   "adaptive bitrate"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Run an autoscaling GKE node pool of encoder pods that accept the RTMP feed, produce the renditions, and write HLS segments into a regional bucket fronted by Media CDN for delivery."
+   },
+   {
+    "letter": "B",
+    "text": "Create a Transcoder API job that reads the RTMP feed and emits the live renditions, then reuse the same template afterwards to produce the video on demand asset."
+   },
+   {
+    "letter": "C",
+    "text": "Create a Video Stitcher API live session pointed at the production truck, let it generate the renditions and manifests, and store the resulting segments for the video on demand publication."
+   },
+   {
+    "letter": "D",
+    "text": "Create a Live Stream API channel with an RTMP input endpoint that writes HLS and DASH renditions to a bucket served by Media CDN, and run a Transcoder API job for the VOD asset."
+   }
+  ],
+  "correct": "D",
+  "explanation": "The Live Stream API is the managed service for continuous live encoding: a channel is created with an input endpoint that accepts the RTMP feed and emits adaptive-bitrate HLS and DASH renditions to a Cloud Storage bucket, which Media CDN then delivers at low latency. The Transcoder API is the batch counterpart and produces the on-demand rendition of the recording afterwards. Both are billed per use, so nothing is running between weekly events.",
+  "distractors": {
+   "A": "Self-managed encoder pods reproduce the idle-capacity problem the CTO rejected and put the latency budget and rendition ladder in the hands of a fleet the team must patch and scale.",
+   "B": "The Transcoder API is a batch service for stored files; it cannot consume a continuous RTMP feed, so the live portion of the requirement has no service behind it.",
+   "C": "The Video Stitcher API inserts advertising into an existing stream and manifest, it does not encode a source feed, so there would be no renditions for it to stitch."
+  },
+  "officialDocUrl": "https://cloud.google.com/livestream/docs/overview",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "altostrat_media",
+  "caseStudySection": "Technical Constraints: Broadcast Infrastructure Provisioning",
+  "blockId": "BLOCK-4"
+ },
+ {
+  "id": "PCA-D2-031",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "Terraform Lifecycle: prevent_destroy & create_before_destroy",
+  "conceptos": [
+   "terraform",
+   "lifecycle meta-argument",
+   "prevent_destroy",
+   "create_before_destroy",
+   "cloud sql"
+  ],
+  "title": "Guarding Production Databases Inside a Terraform Pipeline",
+  "scenario": "A payments team manages 90 resources in one Terraform root module. Last month a renamed variable made the plan propose replacing a 4 TB Cloud SQL instance, and only a reviewer's second look stopped the apply. The team now wants any plan that would destroy the database or its backup bucket to fail outright, while a change to the web tier instance template must still roll out with zero downtime by bringing the replacement up before the old resource is removed. Which Terraform configuration meets both requirements?",
+  "keywords": [
+   "Terraform",
+   "prevent_destroy",
+   "create_before_destroy",
+   "lifecycle",
+   "Cloud SQL"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Set deletion_protection on the Cloud SQL instance and leave the rest of the module alone, trusting the provider to refuse any plan that would remove a stateful resource from the configuration."
+   },
+   {
+    "letter": "B",
+    "text": "Add ignore_changes over every attribute of the database and the bucket so drift never appears in the plan, and leave the default destroy-then-create replacement order."
+   },
+   {
+    "letter": "C",
+    "text": "Add a lifecycle block with prevent_destroy on the database and the bucket, and a lifecycle block with create_before_destroy on the instance template that fronts the web tier."
+   },
+   {
+    "letter": "D",
+    "text": "Deny the setIamPolicy and delete permissions to the pipeline service account with an IAM deny policy, so a destructive apply fails at the API even when the plan proposes the replacement."
+   }
+  ],
+  "correct": "C",
+  "explanation": "prevent_destroy makes Terraform error out during plan whenever the resource would be destroyed or replaced, which is exactly the hard stop the team wants around the database and the backup bucket. create_before_destroy inverts the default replacement order for the instance template so the new object exists before the old one is removed, which is what keeps the web tier serving during the change. The two lifecycle meta-arguments solve different halves of the requirement.",
+  "distractors": {
+   "A": "deletion_protection covers the Cloud SQL instance only; the backup bucket stays unguarded, and nothing changes the destroy-then-create order that would interrupt the web tier.",
+   "B": "ignore_changes hides attribute drift but does not stop a destroy, so the replacement plan would still run, and the default replacement order would still take the web tier down.",
+   "D": "A deny policy blocks the API call after the plan is approved, which breaks legitimate applies as well and gives no control over the order in which the web tier is replaced."
+  },
+  "officialDocUrl": "https://cloud.google.com/docs/terraform/best-practices/general-style-structure",
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-032",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "AlloyDB for PostgreSQL Provisioning & Storage Autoscaling",
+  "conceptos": [
+   "alloydb",
+   "columnar engine",
+   "read pool",
+   "postgresql compatibility",
+   "storage autoscaling"
+  ],
+  "title": "Scaling a PostgreSQL Estate That Serves Both OLTP and Dashboards",
+  "scenario": "A logistics company runs a 4 TB self-managed PostgreSQL 15 database growing 200 GB per month. Transactional writes need a p99 under 20 ms, and the same database also backs analytical dashboards whose scans now take 90 seconds and slow down the write path. The application depends on PostgreSQL extensions and stored procedures, so the team has budget for a migration but not for a rewrite, and every past storage expansion required a maintenance window they can no longer take. Which managed service configuration fits?",
+  "keywords": [
+   "AlloyDB",
+   "columnar engine",
+   "read pool instances",
+   "storage autoscaling",
+   "PostgreSQL"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create an AlloyDB cluster with a primary instance and a read pool, enable the columnar engine for the dashboard scans, and let the storage layer grow without a maintenance window."
+   },
+   {
+    "letter": "B",
+    "text": "Move to Cloud SQL for PostgreSQL Enterprise Plus with a large machine type and two cross-zone read replicas, sending the dashboard traffic to the replicas and enabling storage auto-increase."
+   },
+   {
+    "letter": "C",
+    "text": "Keep the database on Cloud SQL and schedule a Datastream change data capture pipeline into BigQuery, repointing every dashboard at the BigQuery copy of the tables."
+   },
+   {
+    "letter": "D",
+    "text": "Migrate the database to Spanner through its PostgreSQL interface, splitting transactional and analytical traffic across read-write and read-only replicas."
+   }
+  ],
+  "correct": "A",
+  "explanation": "AlloyDB is PostgreSQL compatible, so the extensions and stored procedures survive the migration without a rewrite. Its columnar engine keeps a column-oriented copy of hot data in memory and turns the 90-second analytical scans into vectorized reads, while read pool instances take that traffic off the primary so the transactional p99 is protected. Storage is disaggregated and grows automatically, which removes the maintenance window the team can no longer take.",
+  "distractors": {
+   "B": "Row-store replicas still execute the dashboard scans row by row, so the analytical latency stays in the same order of magnitude and replication lag keeps loading the primary.",
+   "C": "A change data capture pipeline adds a second system and minutes of staleness to dashboards, and it leaves the growing transactional database on the storage model the team wants to escape.",
+   "D": "Spanner's PostgreSQL interface supports a subset of the language, so the extensions and stored procedures would have to be rewritten, which is the cost the company ruled out."
+  },
+  "officialDocUrl": "https://cloud.google.com/alloydb/docs/overview",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-033",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "Cloud Deploy Target Delivery Pipelines",
+  "conceptos": [
+   "cloud deploy",
+   "delivery pipeline",
+   "targets",
+   "promotion approval",
+   "rollback"
+  ],
+  "title": "Promoting a Release Across Three GKE Environments With an Approval Gate",
+  "scenario": "A retailer deploys one microservice to GKE clusters in dev, staging and three production regions. Compliance requires a named approver before anything reaches production, and the operations runbook demands that a bad release be reverted in under 5 minutes without rebuilding the container image. Today each environment has its own Cloud Build trigger applying manifests, nobody can list which build is live in each region, and the last rollback took 40 minutes because the pipeline had to rebuild from source. Which configuration should the platform team adopt?",
+  "keywords": [
+   "Cloud Deploy",
+   "delivery pipeline",
+   "targets",
+   "requireApproval",
+   "rollback"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Keep the per-environment Cloud Build triggers and add a manual approval step to the production trigger, storing the rendered manifests as build artifacts so an operator can reapply an older set."
+   },
+   {
+    "letter": "B",
+    "text": "Adopt Config Sync so each cluster reconciles from an environment folder in Git, gate production behind a protected branch, and roll back by reverting the commit with the image tag."
+   },
+   {
+    "letter": "C",
+    "text": "Manage each environment as a separate Terraform workspace using the Kubernetes provider, gate production applies on a pull request review, and roll back by applying the previous state generation."
+   },
+   {
+    "letter": "D",
+    "text": "Define a Cloud Deploy delivery pipeline whose targets are the dev, staging and production clusters, require approval on the production targets, and roll back by redeploying the prior release."
+   }
+  ],
+  "correct": "D",
+  "explanation": "Cloud Deploy models the promotion sequence as a delivery pipeline with an ordered list of targets, so a single release object moves from dev to staging to production and the console shows which release is live on each target. Setting requireApproval on the production targets creates the named approval gate. Because each release keeps its already rendered manifests, a rollback redeploys the previous release directly and never returns to the build stage.",
+  "distractors": {
+   "A": "Independent triggers have no shared release object, so there is still no single view of what is live per region, and reapplying stored artifacts is a manual reconstruction rather than a rollback.",
+   "B": "A Git revert has to be merged and then reconciled by the agent on each cluster, which stretches the recovery beyond the five minute budget and gives no per-target approval gate.",
+   "C": "Terraform state was never designed as a release history, and applying a previous state generation across five clusters is slow and does not provide a promotion approval workflow."
+  },
+  "officialDocUrl": "https://cloud.google.com/deploy/docs/overview",
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-034",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "Dataproc Serverless Batch Workloads",
+  "conceptos": [
+   "dataproc serverless",
+   "spark batch workload",
+   "autoscaling",
+   "cost optimization",
+   "pyspark"
+  ],
+  "title": "Retiring an Idle Dataproc Cluster Behind a Nightly Spark Job",
+  "scenario": "A media analytics team runs one PySpark job that reads 8 TB from Cloud Storage and finishes in about 45 minutes each night. It runs on a 20-node Dataproc cluster that stays up 24 hours a day, so more than 95 percent of the monthly bill buys idle capacity. Finance wants the lowest cost for this workload, the data engineers will not rewrite the PySpark code, and platform engineering wants to stop patching worker images. What should you propose?",
+  "keywords": [
+   "Dataproc Serverless",
+   "batch workload",
+   "PySpark",
+   "autoscaling",
+   "cost optimization"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Attach an autoscaling policy with a minimum of two workers and a scheduled deletion after an idle period, recreating the cluster from a template before each nightly run."
+   },
+   {
+    "letter": "B",
+    "text": "Submit the job as a Dataproc Serverless for Spark batch workload, which provisions its own executors for the run, autoscales them and releases everything when the job finishes."
+   },
+   {
+    "letter": "C",
+    "text": "Port the pipeline to Apache Beam and run it on Dataflow, where the service allocates and releases workers per job and the shuffle service removes the need for a persistent cluster."
+   },
+   {
+    "letter": "D",
+    "text": "Load the 8 TB into BigQuery and reimplement the transformation logic as scheduled queries, so on-demand pricing charges only for the bytes each run scans."
+   }
+  ],
+  "correct": "B",
+  "explanation": "Dataproc Serverless for Spark runs an existing PySpark job as a batch workload without any cluster: Google provisions the executors for the duration of the run, autoscales them against the shuffle, and tears them down at the end, so billing follows the 45 minutes of actual work instead of 24 hours of idle nodes. There is no worker image to patch and the application code is submitted unchanged.",
+  "distractors": {
+   "A": "An idle-deletion policy narrows the waste but the team still owns cluster templates, image versions and start-up time, which is the operational burden platform engineering asked to remove.",
+   "C": "Dataflow is a strong batch engine, but moving from PySpark to Beam is exactly the rewrite the data engineers ruled out, and it changes the tuning model the team knows.",
+   "D": "Reimplementing Spark transformations as SQL is a larger rewrite than porting to Beam, and it forces a warehouse loading step for data that is read once per night."
+  },
+  "officialDocUrl": "https://cloud.google.com/dataproc-serverless/docs/overview",
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-035",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.1",
+  "subsectionName": "Configuring network topologies",
+  "subtopic": "Secure Web Proxy for Egress Filtering",
+  "conceptos": [
+   "secure web proxy",
+   "gateway security policy",
+   "egress filtering",
+   "vpc firewall rules",
+   "tls inspection"
+  ],
+  "title": "Restricting Workload Egress to Three Approved Hostnames",
+  "scenario": "A bank runs batch workloads on 60 Compute Engine instances that must reach exactly three external hostnames over TLS: two partner settlement endpoints and one package mirror. Everything else outbound has to be refused, and the regulator asks for a log line naming the requested host for every allowed and every denied connection on port 443. The instances have no external IP addresses and reach the internet through Cloud NAT today. The security team has seen workloads bypass hostname controls by connecting straight to an IP address. Which two actions should you take? (Choose 2.)",
+  "keywords": [
+   "Secure Web Proxy",
+   "gateway security policy",
+   "egress",
+   "firewall rules",
+   "hostname filtering"
+  ],
+  "isMultiSelect": true,
+  "expectedSelectCount": 2,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Deploy a Secure Web Proxy with a gateway security policy that allows only the three approved hosts and denies everything else, and point the workloads at the proxy endpoint."
+   },
+   {
+    "letter": "B",
+    "text": "Add a VPC egress firewall rule denying 0.0.0.0/0 for the workload service account and a higher priority rule permitting traffic only to the Secure Web Proxy endpoint."
+   },
+   {
+    "letter": "C",
+    "text": "Create a VPC Service Controls perimeter around the project so that only the approved external hostnames can be reached from the workload subnets and everything else is blocked."
+   },
+   {
+    "letter": "D",
+    "text": "Configure Cloud NAT with a reserved static address and ask each partner to allowlist it, relying on their inbound filters to reject connections that the bank has not approved."
+   },
+   {
+    "letter": "E",
+    "text": "Publish a Cloud DNS response policy that resolves every domain except the three approved hostnames to an unroutable address so no connection can be opened."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Secure Web Proxy terminates the TLS connection and applies a gateway security policy whose rules match on the requested host, so only the three approved endpoints are allowed and each decision is logged with the hostname the regulator wants. That control is only enforceable if the workloads cannot go around it, so the second half is a VPC egress firewall that denies all outbound traffic for the workload service account except to the proxy endpoint, which closes the direct-to-IP bypass.",
+  "distractors": {
+   "C": "VPC Service Controls draws a perimeter around Google Cloud managed services and their APIs; it has no view of connections to partner endpoints on the public internet.",
+   "D": "A stable NAT address tells the partners who is calling but it filters nothing on the way out, so the workloads could still open connections to any other host on the internet.",
+   "E": "DNS filtering is advisory: a workload that already knows the address connects without a lookup, and the response policy produces no per-request host log for denied traffic."
+  },
+  "officialDocUrl": "https://cloud.google.com/secure-web-proxy/docs/overview",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-036",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.1",
+  "subsectionName": "Configuring network topologies",
+  "subtopic": "Cloud Next-Generation Firewall (NGFW) with IPS",
+  "conceptos": [
+   "cloud ngfw enterprise",
+   "firewall endpoint",
+   "security profile group",
+   "intrusion prevention",
+   "layer 7 inspection"
+  ],
+  "title": "Blocking Exploit Signatures in East-West VPC Traffic",
+  "scenario": "A card processor must inspect east-west traffic between 12 subnets that carry cardholder data, at a sustained 5 Gbps. The PCI assessor requires that traffic matching a known exploit signature be dropped in line, not merely reported, and the change window forbids installing agents on the 400 existing virtual machines or changing their IP addresses and routes. The team already has hierarchical firewall policies in place. Which provisioning approach satisfies the assessor?",
+  "keywords": [
+   "Cloud NGFW Enterprise",
+   "firewall endpoint",
+   "security profile group",
+   "intrusion prevention",
+   "east-west"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create a Cloud NGFW Enterprise firewall endpoint in each zone, associate it with the VPC, and add firewall policy rules that apply a security profile group set to intrusion prevention."
+   },
+   {
+    "letter": "B",
+    "text": "Enable Cloud IDS by creating an endpoint per zone and mirroring the subnets to it, then have the security operations team act on the threat findings that appear in the console and the logs."
+   },
+   {
+    "letter": "C",
+    "text": "Configure Packet Mirroring on the 12 subnets toward a third-party detection appliance behind an internal passthrough Network Load Balancer, and send its alerts to the SIEM."
+   },
+   {
+    "letter": "D",
+    "text": "Attach a Cloud Armor security policy with the preconfigured OWASP rules to the load balancer backends so that requests carrying exploit signatures are rejected before they enter the subnets."
+   }
+  ],
+  "correct": "A",
+  "explanation": "Cloud NGFW Enterprise adds a zonal firewall endpoint that performs layer 7 inspection in line. Firewall policy rules reference a security profile group, and when its threat prevention action is set to block, packets matching an exploit signature are dropped rather than merely logged. Because the inspection is attached to the VPC by the endpoint, no agents are installed on the virtual machines and no routing or addressing changes are needed.",
+  "distractors": {
+   "B": "Cloud IDS is a detection service fed by mirrored copies of the traffic, so the original packets are already delivered; the assessor asked for in-line dropping, which mirroring cannot do.",
+   "C": "Mirroring to an appliance has the same limitation and additionally adds a fleet the team must size and patch, which the change window and the agent restriction were meant to avoid.",
+   "D": "Cloud Armor policies attach to load balancers and inspect traffic arriving from outside; the flows between the 12 internal subnets never pass through those front ends."
+  },
+  "officialDocUrl": "https://cloud.google.com/firewall/docs/about-intrusion-prevention",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-037",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "BigQuery Slot Reservations & Editions",
+  "conceptos": [
+   "bigquery editions",
+   "slot reservations",
+   "baseline slots",
+   "autoscaling slots",
+   "slot commitments"
+  ],
+  "title": "Making BigQuery Spend Predictable Without Starving the Analysts",
+  "scenario": "A retailer spends about 48,000 USD a month on BigQuery on-demand pricing, and the invoice swings by 40 percent between months. Overnight ETL needs a guaranteed floor of roughly 100 slots so its 3-hour window never slips, while ad hoc analyst queries spike to several hundred slots for a few minutes each afternoon. Finance wants a firm ceiling on monthly cost and the data team refuses any design that queues analyst queries behind the ETL. How should you configure capacity?",
+  "keywords": [
+   "BigQuery Editions",
+   "reservation",
+   "baseline slots",
+   "autoscaling",
+   "commitment"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Stay on on-demand pricing and apply a custom query usage quota per user and per project so the monthly bytes billed never exceed the ceiling finance approved."
+   },
+   {
+    "letter": "B",
+    "text": "Buy an annual commitment sized for the afternoon peak of several hundred slots and place every project in one reservation, so no query ever waits for capacity."
+   },
+   {
+    "letter": "C",
+    "text": "Create an Enterprise edition reservation with a 100 slot baseline and an autoscaling maximum, buy a one year commitment for it, and keep ETL and analysts in separate reservations."
+   },
+   {
+    "letter": "D",
+    "text": "Leave pricing untouched and reduce the work instead by adding materialized views and BI Engine so the recurring dashboards read far fewer bytes than they scan against the base tables."
+   }
+  ],
+  "correct": "C",
+  "explanation": "A BigQuery Editions reservation with a baseline of 100 slots guarantees the floor the ETL window depends on, and the autoscaling maximum lets the afternoon spikes borrow extra slots while capping what the reservation can ever cost. Buying a one year commitment for the baseline lowers the price of the part that is always in use. Separate reservation assignments for the ETL and the analyst projects keep the two workloads from queueing behind each other.",
+  "distractors": {
+   "A": "A bytes quota caps spend by refusing queries once the limit is hit, so the ceiling is bought with failed analyst queries and it still gives the ETL no guaranteed floor of capacity.",
+   "B": "Committing to the peak size pays for hundreds of slots that sit idle most of the day, and one shared reservation lets the ETL and the analysts contend for the same pool.",
+   "D": "Materialized views and BI Engine cut the cost of repeated dashboards but leave ad hoc scans on on-demand pricing, so the monthly total stays as volatile as it is today."
+  },
+  "officialDocUrl": "https://cloud.google.com/bigquery/docs/reservations-intro",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-038",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "GKE Workload Identity Federation Binding",
+  "conceptos": [
+   "workload identity federation",
+   "kubernetes service account",
+   "iam binding",
+   "gke",
+   "least privilege"
+  ],
+  "title": "Giving One Namespace Bucket Access Without Service Account Keys",
+  "scenario": "A media platform runs 30 namespaces on one GKE cluster. Only the pods in the ingest namespace may read a Cloud Storage bucket, and a security policy that took effect 30 days ago forbids any downloaded service account key from existing anywhere in the estate. Today every pod on the cluster inherits the node service account, so a container in any of the other 29 namespaces can read the bucket. The team wants the narrowest possible grant. How should you configure access?",
+  "keywords": [
+   "Workload Identity Federation",
+   "GKE",
+   "Kubernetes service account",
+   "IAM binding",
+   "least privilege"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create a service account, download a JSON key, store it in Secret Manager and mount it as a Kubernetes Secret in the ingest namespace so only those pods read the bucket."
+   },
+   {
+    "letter": "B",
+    "text": "Enable Workload Identity Federation on the cluster and node pools, then grant the ingest Kubernetes service account principal the object viewer role directly on the bucket."
+   },
+   {
+    "letter": "C",
+    "text": "Grant the object viewer role on the bucket to the node pool service account and move the ingest workloads onto a dedicated node pool that runs with that identity and is tainted for them."
+   },
+   {
+    "letter": "D",
+    "text": "Have the ingest pods call the metadata server for a token belonging to a custom instance service account, and leave the other namespaces on the default one."
+   }
+  ],
+  "correct": "B",
+  "explanation": "With Workload Identity Federation for GKE enabled, a Kubernetes service account maps to an IAM principal identifier that includes its namespace and name, and that principal can be granted a role directly on the bucket. Pods running as the ingest service account obtain short-lived credentials from the metadata server, so no key material exists, and pods in the other 29 namespaces authenticate as different principals that hold no grant on the bucket.",
+  "distractors": {
+   "A": "This is precisely the downloaded key the policy forbids: Secret Manager changes where the key is stored, not the fact that a long-lived credential exists and can be exfiltrated.",
+   "C": "A grant to the node service account applies to every pod scheduled on those nodes, and a taint is a scheduling hint rather than an authorization boundary, so the blast radius stays wide.",
+   "D": "Tokens from the metadata server carry the node identity, so any container sharing that node inherits the access, which is the exact over-broad grant the team is trying to remove."
+  },
+  "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-5"
+ },
+ {
+  "id": "PCA-D2-039",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "Cloud KMS Automatic Key Rotation",
+  "conceptos": [
+   "cloud kms",
+   "key rotation period",
+   "symmetric key versions",
+   "cmek",
+   "cryptoperiod"
+  ],
+  "title": "Meeting a 90-Day Cryptoperiod Without Re-Encrypting the Archive",
+  "scenario": "An insurer stores 60 TB of customer documents encrypted with a Cloud KMS symmetric key. A new control requires a fresh key version at least every 90 days, and a separate retention rule says objects written in the last 7 years must remain readable at any time. There is no budget or maintenance window for a job that would re-encrypt the archive after each rotation, and the auditors will check that the current cryptoperiod is enforced by the platform rather than by a calendar reminder. How should you configure the key?",
+  "keywords": [
+   "Cloud KMS",
+   "rotation period",
+   "key versions",
+   "symmetric encryption",
+   "cryptoperiod"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Schedule a quarterly pipeline that creates a brand new key in the same key ring, repoints the application configuration at it, and rewrites the affected objects so they use the newest key."
+   },
+   {
+    "letter": "B",
+    "text": "Keep the rotation schedule but destroy each previous key version as soon as a new primary is promoted, so only one version of the key material ever exists."
+   },
+   {
+    "letter": "C",
+    "text": "Replace the symmetric key with an asymmetric encryption key and set a 90 day rotation period on it, so the platform promotes a new key pair automatically at the end of every cryptoperiod."
+   },
+   {
+    "letter": "D",
+    "text": "Set a 90 day rotation period on the existing symmetric key so a new version becomes primary automatically while earlier versions stay enabled and can still decrypt old objects."
+   }
+  ],
+  "correct": "D",
+  "explanation": "A Cloud KMS symmetric key can carry a rotation period, and at each interval the service generates a new version and promotes it to primary. New encryptions use the new version, while the earlier versions remain enabled, so ciphertext written years ago is still decryptable by the version that produced it. Nothing has to be re-encrypted, and the schedule is enforced by the service rather than by an operator's reminder.",
+  "distractors": {
+   "A": "Creating a separate key each quarter forces the rewrite of the archive that the insurer has no budget for, and the schedule lives in a pipeline rather than in the key's own configuration.",
+   "B": "Destroying the previous version removes the only material able to decrypt everything encrypted under it, which breaks the seven year readability rule irreversibly.",
+   "C": "Cloud KMS does not support automatic rotation for asymmetric keys, so the control would have to be driven manually and the archive would need a new decryption path."
+  },
+  "officialDocUrl": "https://cloud.google.com/kms/docs/key-rotation",
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "PCA-D2-040",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "Anthos Bare Metal Provisioning",
+  "conceptos": [
+   "google distributed cloud",
+   "bare metal clusters",
+   "fleet management",
+   "edge inference",
+   "disconnected operation"
+  ],
+  "title": "Running Inference on the Factory Floor Through WAN Outages",
+  "scenario": "A manufacturer inspects parts with a vision model on three factory floors. Each inference must complete within 15 ms of the camera trigger, and the line has to keep inspecting for at least 8 hours when the site WAN fails, which happened twice last year. Each plant already owns 12 rack servers with GPUs and no virtualization licences. Central IT wants one place to see policy and workload state across the three sites once connectivity returns. How should you provision the compute?",
+  "keywords": [
+   "Google Distributed Cloud",
+   "bare metal",
+   "fleet",
+   "edge inference",
+   "disconnected"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create a regional GKE cluster in the nearest Google Cloud region and connect each plant with a Dedicated Interconnect, running the inference workloads centrally for all three factory floors."
+   },
+   {
+    "letter": "B",
+    "text": "Provision GKE clusters on VMware at each plant so existing hypervisor tooling manages the nodes, and register those clusters to the fleet for central policy."
+   },
+   {
+    "letter": "C",
+    "text": "Install Google Distributed Cloud bare metal clusters on the existing plant servers, run the inference workloads locally, and register each cluster to the fleet for centralized policy."
+   },
+   {
+    "letter": "D",
+    "text": "Deploy the model to a Vertex AI endpoint and have each plant call it over the WAN, caching the most recent predictions locally so the line can keep running while connectivity is restored."
+   }
+  ],
+  "correct": "C",
+  "explanation": "Google Distributed Cloud bare metal runs GKE directly on the customer's own servers with no hypervisor layer, which suits plants that own hardware but hold no virtualization licences and gives the workloads direct access to the local GPUs. Inference stays on the factory floor, so the 15 ms budget is met and the line keeps running through an 8 hour WAN outage. Registering each cluster to a fleet gives central IT one view of policy and configuration.",
+  "distractors": {
+   "A": "A round trip to the nearest region cannot fit inside a 15 ms trigger budget, and any WAN failure stops inspection immediately, which is the failure mode the plant needs to survive.",
+   "B": "Running clusters on VMware assumes a hypervisor estate and licences the plants do not have, and it adds a virtualization layer between the workload and the GPUs they already own.",
+   "D": "Cached predictions from earlier parts say nothing about the part currently under the camera, so inspection would effectively stop during the outage even though the line kept moving."
+  },
+  "officialDocUrl": "https://cloud.google.com/kubernetes-engine/distributed-cloud/bare-metal/docs/concepts/about-bare-metal",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "PCA-D2-041",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "Cross-Region Persistent Disk Replication",
+  "conceptos": [
+   "regional persistent disk",
+   "synchronous replication",
+   "force attach",
+   "zonal failure",
+   "rpo rto"
+  ],
+  "title": "Surviving a Zone Failure With Zero Data Loss on a Stateful VM",
+  "scenario": "A logistics firm runs a self-managed PostgreSQL server on one Compute Engine instance with a 2 TB balanced persistent disk. The business requires an RPO of zero and an RTO under 5 minutes for a zone failure inside the region, while a regional outage may be handled by the existing nightly export. Licensing rules out a managed database service this year, and the storage budget covers one extra replica at most, so a second full copy in another region is not affordable. How should you configure the disk?",
+  "keywords": [
+   "regional persistent disk",
+   "synchronous replication",
+   "force attach",
+   "RPO zero",
+   "zonal outage"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Attach a regional persistent disk replicated synchronously to a second zone, and recover by force attaching it to a standby instance that is started in that zone."
+   },
+   {
+    "letter": "B",
+    "text": "Keep the zonal disk and create an hourly snapshot schedule, restoring the most recent snapshot into a new disk in a surviving zone when the zone is lost."
+   },
+   {
+    "letter": "C",
+    "text": "Enable persistent disk asynchronous replication to a disk in a second region and promote the secondary volume when the primary zone becomes unavailable."
+   },
+   {
+    "letter": "D",
+    "text": "Move the data onto a Filestore Enterprise instance mounted by both the primary and the standby virtual machines so the file system survives the loss of any single zone in the region."
+   }
+  ],
+  "correct": "A",
+  "explanation": "A regional persistent disk writes every block synchronously to replicas in two zones of the same region, so no acknowledged write is lost and the RPO is zero. When the primary zone fails, the disk is force attached to a standby instance in the second zone and the database starts from a crash-consistent copy, which fits comfortably inside a 5 minute RTO. Only one additional replica is paid for, matching the storage budget.",
+  "distractors": {
+   "B": "Hourly snapshots leave up to an hour of transactions unrecoverable, and restoring a 2 TB disk before the database can start does not fit inside a five minute recovery objective.",
+   "C": "Asynchronous replication is designed for cross-region disaster recovery with an RPO measured in minutes, so acknowledged writes can still be lost and the second region adds cost.",
+   "D": "Filestore Enterprise is a shared file service rather than a block replica for the boot and data disks, and two servers mounting one PostgreSQL data directory would corrupt it."
+  },
+  "officialDocUrl": "https://cloud.google.com/compute/docs/disks/high-availability-regional-persistent-disk",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "PCA-D2-042",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.3",
+  "subsectionName": "Configuring compute systems",
+  "subtopic": "Managed Instance Group Rolling Updates",
+  "conceptos": [
+   "managed instance group",
+   "rolling update",
+   "max surge",
+   "max unavailable",
+   "canary deployment"
+  ],
+  "title": "Rolling a New Image Across 50 Instances Without Losing Capacity",
+  "scenario": "An e-commerce API runs on a regional managed instance group of 50 instances behind a load balancer. The release policy says served capacity must never drop below the current 50 instances during an update, the quota in the region allows at most 60 instances of this machine type, and the new image has to run on 20 percent of the fleet for one hour before the rest is touched. The previous release was rolled out by recreating instances and dropped 8 percent of requests. How should you configure the update?",
+  "keywords": [
+   "managed instance group",
+   "rolling update",
+   "maxSurge",
+   "maxUnavailable",
+   "canary"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Start a proactive rolling update with a maximum unavailable of five and a maximum surge of zero, so the group replaces the fleet in batches within the regional quota."
+   },
+   {
+    "letter": "B",
+    "text": "Add the new template as a second version with a target size of 20 percent, then run a proactive rolling update with a maximum surge of five and a maximum unavailable of zero."
+   },
+   {
+    "letter": "C",
+    "text": "Create a second managed instance group from the new template, add it as a backend, shift the load balancer weights gradually, and delete the original group once the release is validated."
+   },
+   {
+    "letter": "D",
+    "text": "Update the instance template on the group and leave the update policy opportunistic, so the new image is applied whenever autoscaling or repair events replace instances during the hour."
+   }
+  ],
+  "correct": "B",
+  "explanation": "Declaring the new template as a second version with a target size of 20 percent is how a managed instance group runs a canary, and the group keeps exactly that share on the new image until the update proceeds. A maximum unavailable of zero guarantees the served fleet never falls below 50 instances, while a maximum surge of five creates the replacements first and stays inside the 60 instance quota.",
+  "distractors": {
+   "A": "A maximum unavailable of five with no surge removes instances before their replacements exist, so served capacity drops below the 50 the release policy protects.",
+   "C": "A parallel group needs another 50 instances to be useful, which exceeds the regional quota of 60, and the load balancer weight shift is a heavier mechanism than the group's own canary.",
+   "D": "An opportunistic policy only applies the new template when instances happen to be replaced, so neither the timed canary share nor a predictable completion of the rollout is achieved."
+  },
+  "officialDocUrl": "https://cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups",
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "PCA-D2-043",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "Storage Transfer Service for On-Premises POSIX Data",
+  "conceptos": [
+   "storage transfer service",
+   "agent pool",
+   "nfs migration",
+   "incremental transfer",
+   "dedicated interconnect"
+  ],
+  "title": "Moving 300 TB of NFS Data Across a 10 Gbps Interconnect",
+  "scenario": "A studio must move 300 TB spread over 40 million files from an on-premises NFS share into Cloud Storage within 14 days, using a 10 Gbps Dedicated Interconnect that also carries production traffic. The share stays in use during the migration, so the final cutover needs an incremental pass that copies only what changed. The operations team wants transfer progress, retries and per-file error reporting in the console rather than in scripts they maintain. Which approach should you use?",
+  "keywords": [
+   "Storage Transfer Service",
+   "agent pool",
+   "NFS",
+   "incremental transfer",
+   "bandwidth limit"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Order a Transfer Appliance, copy the 300 TB onto it from the NFS share, ship it to Google for ingestion, and run a final catch-up pass over the Interconnect after the data is loaded."
+   },
+   {
+    "letter": "B",
+    "text": "Mount the share on a fleet of Compute Engine instances through Cloud VPN and run parallel gcloud storage rsync commands, splitting the directory tree so each instance handles a subset."
+   },
+   {
+    "letter": "C",
+    "text": "Stand up a Dataflow pipeline that reads the NFS share through a connector and writes the objects to Cloud Storage, using its metrics to track progress and failures."
+   },
+   {
+    "letter": "D",
+    "text": "Deploy Storage Transfer Service agents as an agent pool on hosts that mount the share, run a transfer job with a bandwidth limit, and rerun it for the incremental cutover."
+   }
+  ],
+  "correct": "D",
+  "explanation": "Storage Transfer Service for on-premises data uses a pool of agents installed on hosts that already mount the NFS share; the agents parallelize the copy across the pool and the service handles retries, checksums and per-file error reporting in the console. A bandwidth limit on the agent pool keeps the migration from starving production traffic on the shared 10 Gbps circuit, and rerunning the job transfers only the files that changed, which is the incremental cutover pass.",
+  "distractors": {
+   "A": "A Transfer Appliance is meant for sites without adequate bandwidth; 300 TB fits inside 14 days on a 10 Gbps link, and shipping plus ingestion would consume most of that window.",
+   "B": "Splitting an rsync tree by hand gives no central progress, no managed retry across hosts and no per-file error reporting, which is exactly the operational burden the team refuses.",
+   "C": "Dataflow is built for record-oriented data rather than file migration, so the team would maintain a bespoke pipeline that reimplements checksums and retries that the service already provides."
+  },
+  "officialDocUrl": "https://cloud.google.com/storage-transfer/docs/on-prem-overview",
+  "difficulty": "intermediate",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "PCA-D2-044",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.1",
+  "subsectionName": "Configuring network topologies",
+  "subtopic": "Cloud Interconnect SLA Topology Planning",
+  "conceptos": [
+   "dedicated interconnect",
+   "edge availability domain",
+   "metropolitan area",
+   "cloud router",
+   "global routing mode"
+  ],
+  "title": "Designing a 99.99% Dedicated Interconnect Topology for Two Regions",
+  "scenario": "A bank is replacing VPN tunnels with Dedicated Interconnect and must reach the 99.99% availability figure that Google publishes for the product. Workloads sit in us-east4 and us-central1 inside one VPC, and the compliance team refuses any design where production traffic can fall back to a path that transits the public internet. The network team has budget for four 10 Gbps circuits and can reach two metropolitan areas. Which two elements does the topology require? (Choose 2.)",
+  "keywords": [
+   "Dedicated Interconnect",
+   "99.99%",
+   "edge availability domain",
+   "metropolitan area",
+   "global routing"
+  ],
+  "isMultiSelect": true,
+  "expectedSelectCount": 2,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Provision four connections split across two metropolitan areas, placing the two connections in each metro in different edge availability domains of that location."
+   },
+   {
+    "letter": "B",
+    "text": "Provision two connections in the same metropolitan area but in different edge availability domains, which is the arrangement Google documents for the higher availability tier."
+   },
+   {
+    "letter": "C",
+    "text": "Order one 100 Gbps connection and create four VLAN attachments on it, spread across the two regions so each region has a redundant path to on-premises."
+   },
+   {
+    "letter": "D",
+    "text": "Add an HA VPN gateway over the internet as the backup path for the Interconnect, so traffic keeps flowing whenever a circuit or an edge availability domain is unavailable."
+   },
+   {
+    "letter": "E",
+    "text": "Place a Cloud Router with a VLAN attachment in each of the two regions and set the VPC dynamic routing mode to global so the prefixes are learned across both regions."
+   }
+  ],
+  "correct": [
+   "A",
+   "E"
+  ],
+  "explanation": "The published 99.99% topology needs four Dedicated Interconnect connections arranged as two in each of two metropolitan areas, with the pair inside each metro landing in different edge availability domains so that scheduled maintenance in one domain never touches both. Reaching workloads in two regions then requires a Cloud Router and VLAN attachment in each region, and setting the VPC to global dynamic routing so the on-premises prefixes learned in one region are usable from the other.",
+  "distractors": {
+   "B": "Two connections in a single metropolitan area is the documented arrangement for 99.9%; a metro-level event still takes the whole path down, so the higher figure is not reached.",
+   "C": "Multiple VLAN attachments on one physical circuit share the same fibre, router port and edge availability domain, so nothing about that single point of failure is actually redundant.",
+   "D": "A VPN fallback carries production traffic over the public internet, which the compliance team has ruled out, and the Interconnect SLA is not raised by an unrelated backup product."
+  },
+  "officialDocUrl": "https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/dedicated-creating-9999-availability",
+  "difficulty": "expert",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ },
+ {
+  "id": "PCA-D2-045",
+  "certId": "pca",
+  "domainId": "PCA-D2",
+  "domainName": "2. Managing and provisioning a solution infrastructure",
+  "sectionId": "PCA-2",
+  "sectionName": "Managing and provisioning a cloud solution infrastructure",
+  "subsectionId": "PCA-2.2",
+  "subsectionName": "Configuring individual storage systems",
+  "subtopic": "Cloud Spanner Schema Optimization: Interleaved Tables",
+  "conceptos": [
+   "cloud spanner",
+   "interleaved tables",
+   "primary key design",
+   "data locality",
+   "splits"
+  ],
+  "title": "Colocating Order Line Items to Cut a Spanner Join",
+  "scenario": "An order service on Spanner reads one order and its roughly 50 line items on every request, at 4,000 requests per second. Orders and OrderItems are independent top-level tables joined on order_id, and the p99 read latency has climbed to 38 ms against a 10 ms target because each request fans out to rows scattered over several splits. Line items are never queried without their order and are always deleted with it. Which schema change should you make?",
+  "keywords": [
+   "Spanner",
+   "interleaved tables",
+   "data locality",
+   "primary key",
+   "ON DELETE CASCADE"
+  ],
+  "isMultiSelect": false,
+  "expectedSelectCount": 1,
+  "options": [
+   {
+    "letter": "A",
+    "text": "Create a secondary index on OrderItems keyed by order_id storing the frequently read columns, so the join reads one index range instead of the base table."
+   },
+   {
+    "letter": "B",
+    "text": "Redefine OrderItems as a table interleaved in Orders with order_id as the key prefix and ON DELETE CASCADE, so each order and its items are stored in the same split."
+   },
+   {
+    "letter": "C",
+    "text": "Add a foreign key constraint from OrderItems to Orders on order_id, which lets the query optimizer use the enforced relationship to colocate the child rows with their parent order."
+   },
+   {
+    "letter": "D",
+    "text": "Denormalize the line items into an array of structs stored in a column of the Orders table, so one row read returns the order with all of its items."
+   }
+  ],
+  "correct": "B",
+  "explanation": "Interleaving OrderItems in Orders makes the child rows physically adjacent to their parent row, sharing the key prefix and therefore the same split. A read of one order and its 50 items becomes a single contiguous scan instead of a fan-out across splits, which is what removes the join latency. ON DELETE CASCADE matches the lifecycle the application already has, since line items never outlive their order.",
+  "distractors": {
+   "A": "A secondary index is stored separately from the parent table, so the request still touches two locations and can still cross splits, leaving most of the latency in place.",
+   "C": "A foreign key enforces referential integrity but has no effect on physical placement, so the child rows stay wherever their own key range puts them and the fan-out remains.",
+   "D": "An array column returns everything in one read but makes every line item change rewrite the whole order row, and individual items can no longer be indexed or updated on their own."
+  },
+  "officialDocUrl": "https://cloud.google.com/spanner/docs/schema-and-data-model",
+  "difficulty": "advanced",
+  "bloomsLevel": "analyze",
+  "timeEstimateSeconds": 120,
+  "caseStudy": "none",
+  "caseStudySection": "General Enterprise Architecture",
+  "blockId": "BLOCK-6"
+ }
+]

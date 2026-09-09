@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D5-011",
+  "subtopic": "Anthos Service Mesh: STRICT mTLS Enforcement",
+  "caseStudy": "none",
+  "scenario": "To comply with Zero-Trust architecture mandates, an enterprise requires that all inter-pod communications within and between GKE clusters must be encrypted with mutual TLS (mTLS) and reject any plaintext TCP communication. Furthermore, cryptographic certificates must rotate automatically without restarting application pods. What service mesh policy enforces this?",
+  "correct": "C",
+  "clave_len": 238,
+  "explanation": "Anthos Service Mesh utilizes Google-managed Mesh CA for automatic short-lived workload certificate issuance and rotation. Applying a PeerAuthentication policy with mode: STRICT enforces mutual TLS across all sidecar proxies and rejects unencrypted plaintext connections.",
+  "doc": "https://cloud.google.com/service-mesh/docs/security/peer-authentication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 31,
+    "text": "Disable all network encryption."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Manually install SSL certificates inside every container image once a year."
+   },
+   {
+    "letter": "C",
+    "len": 238,
+    "text": "Deploy Anthos Service Mesh with Google-managed Mesh CA, and apply a PeerAuthentication policy at the root namespace (istio-system) with 'mode: STRICT', requiring valid cryptographic mTLS client certificates for all pod-to-pod connections."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Allow permissive unencrypted plaintext TCP communication."
+   }
+  ],
+  "ratio": 4.38
+ },
+ {
+  "id": "PCA-D3-032",
+  "subtopic": "Org Policy: VM External IP Access Restriction",
+  "caseStudy": "none",
+  "scenario": "To prevent accidental exposure of private VMs to the public internet, an enterprise security policy requires that no Compute Engine instance in development or production projects may be provisioned with an external public IP address. What Organization Policy constraint must be applied?",
+  "correct": "D",
+  "clave_len": 184,
+  "explanation": "The Organization Policy constraint constraints/compute.vmExternalIpAccess controls which Compute Engine instances can have external IP addresses. Setting it to Deny All at the organization level strictly blocks any VM from being created with a public IP.",
+  "doc": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#org_policy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "constraints/compute.disableSerialPortAccess"
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "constraints/iam.allowedPolicyMemberDomains"
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "Delete the VPC network from the projects."
+   },
+   {
+    "letter": "D",
+    "len": 184,
+    "text": "Apply the Organization Policy list constraint 'constraints/compute.vmExternalIpAccess' set to 'Deny All' (or restricted to an empty allow-list) across all projects in the organization."
+   }
+  ],
+  "ratio": 4.38
+ },
+ {
+  "id": "PCA-D3-020",
+  "subtopic": "GKE Datapath V2 (Cilium) NetworkPolicies",
+  "caseStudy": "none",
+  "scenario": "A multi-tenant GKE cluster hosts frontend, backend, and database pods in the same namespace. To satisfy PCI-DSS micro-segmentation requirements, frontend pods must only be allowed to communicate with backend pods on TCP port 8080, and frontend pods must be strictly blocked from directly reaching database pods on TCP port 5432. What networking feature enforces this Layer 4 pod-to-pod isolation?",
+  "correct": "C",
+  "clave_len": 231,
+  "explanation": "GKE Datapath V2 utilizes Cilium and eBPF in the Linux kernel for high-performance networking and native Kubernetes NetworkPolicy enforcement, enabling granular pod-to-pod Layer 3/4 traffic filtering.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/dataplane-v2",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "Use basic HTTP Basic Authentication in frontend code."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Deploy hardware firewalls inside the Kubernetes pods."
+   },
+   {
+    "letter": "C",
+    "len": 231,
+    "text": "Enable GKE Datapath V2 (powered by eBPF and Cilium) on the cluster, and apply Kubernetes NetworkPolicy manifests defining podSelector and ingress/egress rules allowing frontend -> backend:8080 and denying frontend -> database:5432."
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Disable all networking inside the Kubernetes cluster."
+   }
+  ],
+  "ratio": 4.36
+ },
+ {
+  "id": "PCA-D4-002",
+  "subtopic": "Cloud Deploy Canary Deployments & Automated Rollbacks",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires a progressive delivery strategy on GKE. When a new software release is deployed, traffic must start at 10% canary. If error rates remain normal for 15 minutes, traffic increases to 50%, and finally to 100%. If HTTP 5xx error rates exceed 1% at any stage, the deployment must automatically roll back immediately. What native Google Cloud service manages this canary progression?",
+  "correct": "D",
+  "clave_len": 232,
+  "explanation": "Google Cloud Deploy provides automated canary deployment progression, natively managing gradual traffic shifting (via GKE Gateway API / Service Mesh) and integrating with automated verification steps for instant rollbacks upon error detection.",
+  "doc": "https://cloud.google.com/deploy/docs/canary-deployment",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Deploy straight to 100% on production on Friday afternoon."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Manually adjust replica counts in Kubernetes YAML files."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Disable all monitoring alerts during releases."
+   },
+   {
+    "letter": "D",
+    "len": 232,
+    "text": "Configure a Google Cloud Deploy Delivery Pipeline with an automated Canary deployment strategy (specifying canary percentages 10% -> 50% -> 100%), integrated with Cloud Monitoring metric verification for automatic rollback triggers."
+   }
+  ],
+  "ratio": 4.35
+ },
+ {
+  "id": "PCA-D4-050",
+  "subtopic": "EHR Healthcare: DICOM De-Identification ETL Pipeline",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare needs to export 1,000,000 DICOM radiology images (CT, MRI, X-Ray) from hospital archives to an external university medical research partner. DICOM metadata tags (PatientName, PatientID, PatientBirthDate) and burned-in pixel text (patient names stamped directly into image pixels) must be completely stripped before sharing. What managed pipeline achieves this?",
+  "correct": "D",
+  "clave_len": 272,
+  "explanation": "The Cloud Healthcare API includes native DICOM de-identification that modifies metadata tags and leverages Cloud DLP OCR to detect and redact burned-in PHI pixel text, creating fully anonymized datasets compliant with HIPAA Safe Harbor.",
+  "doc": "https://cloud.google.com/healthcare-api/docs/how-tos/dicom-de-identification",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "Export raw DICOM files directly to a public Google Drive folder."
+   },
+   {
+    "letter": "B",
+    "len": 84,
+    "text": "Have doctors use Microsoft Paint to blur patient names manually on 1,000,000 images."
+   },
+   {
+    "letter": "C",
+    "len": 40,
+    "text": "Delete all radiology images permanently."
+   },
+   {
+    "letter": "D",
+    "len": 272,
+    "text": "Use the Google Cloud Healthcare API DICOM De-identification operation, configuring tag filtering (clearing or encrypting PHI metadata tags) and Cloud DLP Optical Character Recognition (OCR) pixel redaction to automatically detect and redact burned-in text on image pixels."
+   }
+  ],
+  "ratio": 4.34
+ },
+ {
+  "id": "PCA-D3-045",
+  "subtopic": "Knightmotives Automotive: Apigee OAuth 2.0 & API Key Verification",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "5,000 independent authorized dealers query knightmotives_automotive's parts catalog and vehicle diagnostic REST APIs. Security policy mandates that dealer software must authenticate using OAuth 2.0 Client Credentials flow (exchanging client_id and client_secret for short-lived access tokens) and enforce strict per-dealer rate limits (SpikeArrest) to prevent API scraping. What API gateway policy configuration implements this?",
+  "correct": "B",
+  "clave_len": 241,
+  "explanation": "Apigee X OAuthV2 policies generate and validate cryptographically signed OAuth 2.0 access tokens. Paired with SpikeArrest policies, Apigee protects backend systems from burst traffic and unauthorized dealer access.",
+  "doc": "https://cloud.google.com/apigee/docs/api-platform/reference/policies/oauthv2-policy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 60,
+    "text": "Send database credentials directly in the HTTP query string."
+   },
+   {
+    "letter": "B",
+    "len": 241,
+    "text": "Configure Apigee X with an OAuthV2 policy (Operation: GenerateAccessToken with client_credentials grant type), attach a VerifyAccessToken policy on all protected API proxies, and enforce a SpikeArrest policy (rate = 50ps) on dealer products."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Require dealers to fax API requests to headquarters."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Allow open HTTP GET queries without any authentication."
+   }
+  ],
+  "ratio": 4.33
+ },
+ {
+  "id": "PCA-D6-005",
+  "subtopic": "Cloud Load Balancing: Global Anycast Multi-Region Failover",
+  "caseStudy": "none",
+  "scenario": "An enterprise web application is deployed in both us-central1 and europe-west1 behind a single Global External Application Load Balancer Anycast IP address. If the entire us-central1 backend service becomes unhealthy or saturated due to a regional power failure, how does the load balancer react?",
+  "correct": "C",
+  "clave_len": 221,
+  "explanation": "Google's Global External Application Load Balancer uses Anycast BGP routing to advertise a single virtual IP globally. If backends in one region fail health checks, Google's edge proxies automatically reroute user requests to the nearest healthy region over Google's global backbone.",
+  "doc": "https://cloud.google.com/load-balancing/docs/https/cross-region-example",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 37,
+    "text": "All users worldwide are disconnected."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "An administrator must manually edit DNS A records."
+   },
+   {
+    "letter": "C",
+    "len": 221,
+    "text": "The Global External Application Load Balancer automatically routes US users to healthy backends in europe-west1 seamlessly over Google's private global fiber network without changing IP addresses or modifying DNS records."
+   },
+   {
+    "letter": "D",
+    "len": 67,
+    "text": "The load balancer drops all US traffic and returns HTTP 502 errors."
+   }
+  ],
+  "ratio": 4.31
+ },
+ {
+  "id": "PCA-D4-028",
+  "subtopic": "FinOps: Cloud Storage Turbo Replication Trade-Offs",
+  "caseStudy": "none",
+  "scenario": "A disaster recovery audit reveals that standard Dual-Region Cloud Storage replication takes up to 12 hours to replicate 99.9% of newly written objects between paired regions (e.g., us-central1 and us-east1). For mission-critical transactional transaction logs, the RPO target requires that 100% of newly written objects must replicate across regions in under 15 minutes. What storage feature satisfies this SLA?",
+  "correct": "C",
+  "clave_len": 217,
+  "explanation": "Turbo Replication for Dual-Region Cloud Storage buckets accelerates cross-region replication, replicating 100% of objects within 15 minutes regardless of object size, backed by a service level agreement.",
+  "doc": "https://cloud.google.com/storage/docs/turbo-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "Write custom bash scripts using gsutil rsync in a 1-second loop."
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "Switch to a single-region storage bucket."
+   },
+   {
+    "letter": "C",
+    "len": 217,
+    "text": "Enable Turbo Replication on the Dual-Region Cloud Storage bucket, guaranteeing that 100% of newly uploaded objects replicate to the secondary region within a 15-minute target backed by an availability and latency SLA."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Export files to an on-premises USB hard drive."
+   }
+  ],
+  "ratio": 4.31
+ },
+ {
+  "id": "PCA-D5-022",
+  "subtopic": "Cloud Run Sidecars for Observability & Security",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires all Cloud Run services to include an OpenTelemetry Collector sidecar container (for metrics forwarding) and an Envoy proxy sidecar container (for local request logging and routing) running alongside the primary application container within the same serverless instance lifecycle. What Cloud Run feature enables this?",
+  "correct": "C",
+  "clave_len": 270,
+  "explanation": "Cloud Run supports Multi-Container deployments (Sidecars), allowing teams to deploy auxiliary containers (logging agents, OpenTelemetry collectors, proxies, Cloud SQL Auth Proxy) alongside the primary container, communicating over localhost within a single serverless instance.",
+  "doc": "https://cloud.google.com/run/docs/deploying-multi-container",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 102,
+    "text": "Pack all 3 binaries into a single giant container image and manage them with custom bash fork scripts."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Deploy each sidecar as a separate Compute Engine VM."
+   },
+   {
+    "letter": "C",
+    "len": 270,
+    "text": "Configure Cloud Run Multi-Container (Sidecars) in the service YAML / Terraform, specifying the primary application container and secondary sidecar containers (e.g. OpenTelemetry collector) sharing local localhost networking and memory within the same Cloud Run instance."
+   },
+   {
+    "letter": "D",
+    "len": 34,
+    "text": "Disable all sidecar functionality."
+   }
+  ],
+  "ratio": 4.31
+ },
+ {
+  "id": "PCA-D1-065",
+  "subtopic": "Altostrat Media: Off-Season Video Archival Lifecycle",
+  "caseStudy": "altostrat_media",
+  "scenario": "Each HRL racing season generates 10 Petabytes of 4K raw video master recordings. During the 9-month active racing season, broadcasters frequently access these files to create promo reels. During the 3-month off-season, files are rarely accessed. HRL must retain all footage for 10 years for historical rights while minimizing recurring storage costs. What Cloud Storage lifecycle policy should you configure?",
+  "correct": "A",
+  "clave_len": 220,
+  "explanation": "Automated Object Lifecycle Management transitions objects to Coldline ($0.007/GB/mo) and Archive ($0.0012/GB/mo) once frequent access ends, reducing storage bills on 10PB from $200,000+/month to ~$12,000/month.",
+  "doc": "https://cloud.google.com/storage/docs/lifecycle",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 220,
+    "text": "Configure Cloud Storage Object Lifecycle Management: Keep in Standard for 270 days (active season), transition to Coldline at 270 days, and transition to Archive storage at 365 days with deletion at 3650 days (10 years)."
+   },
+   {
+    "letter": "B",
+    "len": 65,
+    "text": "Delete all video files immediately after the live broadcast ends."
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "Export videos to local VHS magnetic tapes."
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "Keep all 10PB in Standard storage indefinitely."
+   }
+  ],
+  "ratio": 4.29
+ },
+ {
+  "id": "PCA-D5-019",
+  "subtopic": "Cloud Run Jobs for Run-to-Completion Batch Tasks",
+  "caseStudy": "none",
+  "scenario": "A nightly database backup and report generation script runs containerized code that takes 45 minutes to execute and terminates upon completion. The script does not listen on an HTTP port or serve web traffic. Using standard Cloud Run Services is awkward because Cloud Run Services expect HTTP listeners and have request timeout limits. What Google Cloud serverless compute feature is designed specifically for non-HTTP batch execution?",
+  "correct": "A",
+  "clave_len": 234,
+  "explanation": "Cloud Run Jobs are built specifically for run-to-completion containerized tasks that do not listen for HTTP requests (e.g. database migrations, nightly reports, backups), supporting execution times up to 24 hours per task and parallel task arrays.",
+  "doc": "https://cloud.google.com/run/docs/create-jobs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 234,
+    "text": "Deploy the container as a Google Cloud Run Job (which executes run-to-completion batch tasks with up to 24-hour timeout per task, supports parallel task arrays, and requires no HTTP listener), triggering execution via Cloud Scheduler."
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "Run the container on a 24/7 dedicated VM."
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Execute the backup manually every morning at 3 AM."
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "Create a mock HTTP server inside the container and use Cloud Run Service."
+   }
+  ],
+  "ratio": 4.28
+ },
+ {
+  "id": "PCA-D5-027",
+  "subtopic": "Cloud Bigtable Garbage Collection Policies",
+  "caseStudy": "none",
+  "scenario": "An ad-tech telemetry table in Cloud Bigtable stores 100TB of user impression click events. Compliance policy mandates that impression records older than 30 days must be permanently expunged, and no column family should retain more than 3 historical versions per cell. How should this data retention policy be enforced?",
+  "correct": "B",
+  "clave_len": 261,
+  "explanation": "Bigtable Garbage Collection Policies define automated rules (max_age, max_versions, or combinations) per column family. Bigtable automatically ignores and purges expired cells during background storage compaction without manual scripting.",
+  "doc": "https://cloud.google.com/bigtable/docs/garbage-collection",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Delete the Bigtable cluster every 30 days and recreate it."
+   },
+   {
+    "letter": "B",
+    "len": 261,
+    "text": "Configure a Bigtable Garbage Collection Policy on the column family using an Intersection or Union rule specifying max_age = '2592000s' (30 days) and max_versions = 3; Bigtable automatically purges expired cells during compaction with zero application overhead."
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "Keep all data forever and let storage grow indefinitely."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Write a python script that runs DELETE queries in a loop every night."
+   }
+  ],
+  "ratio": 4.28
+ },
+ {
+  "id": "PCA-D6-030",
+  "subtopic": "Altostrat Media: GKE Fleet Multi-Region Ingress Failover",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media deploys matchmaking and API services across three GKE clusters in North America, Europe, and Asia. If the North American GKE cluster suffers a major incident, incoming mobile API requests must automatically redirect to the European or Asian clusters within seconds based on real-time health checks. What load balancer architecture achieves this?",
+  "correct": "D",
+  "clave_len": 214,
+  "explanation": "The GKE Multi-Cluster Gateway API provisions a Global External Application Load Balancer across multiple clusters in a GKE Fleet, providing automated health-checked failover and Anycast routing across regions.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/deploying-multi-cluster-gateways",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Expose each cluster on a public NodePort and rely on client-side DNS caching."
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "Shut down the game in all regions."
+   },
+   {
+    "letter": "C",
+    "len": 39,
+    "text": "Manually re-IP the mobile game clients."
+   },
+   {
+    "letter": "D",
+    "len": 214,
+    "text": "Deploy the GKE Gateway API with Multi-Cluster GatewayClass (gke-l7-gxlb-mc) attached to a GKE Fleet, routing external traffic through a single Global Anycast IP with automated multi-cluster health-checked failover."
+   }
+  ],
+  "ratio": 4.28
+ },
+ {
+  "id": "PCA-D2-027",
+  "subtopic": "Knightmotives Automotive: Apigee X Network Provisioning & Peering",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive is provisioning Apigee X to securely manage API traffic from 5,000 dealer networks. Apigee X runtime instances reside in a Google-managed tenant VPC. The architecture must enable private communication between Apigee X and knightmotives_automotive's backend microservices in their VPC, while exposing the Apigee ingress to the public internet through a Global External Application Load Balancer protected by Cloud Armor. What network configuration is required?",
+  "correct": "B",
+  "clave_len": 299,
+  "explanation": "Apigee X uses Service Networking VPC Peering or PSC to communicate privately with customer backend VPCs. To expose Apigee X to external consumers, a Global External Application Load Balancer routes traffic to Apigee via a PSC NEG, allowing Cloud Armor WAF inspection at Google's edge.",
+  "doc": "https://cloud.google.com/apigee/docs/api-platform/get-started/install-cli",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 60,
+    "text": "Connect Apigee to backends via public internet IP addresses."
+   },
+   {
+    "letter": "B",
+    "len": 299,
+    "text": "Establish Service Networking VPC Peering between the customer VPC and the Google Services network (for backend connectivity), and deploy a Global External Application Load Balancer targeting an Apigee Private Service Connect (PSC) Network Endpoint Group (NEG) with Cloud Armor WAF policies attached."
+   },
+   {
+    "letter": "C",
+    "len": 82,
+    "text": "Disable firewalls and allow all 0.0.0.0/0 traffic directly into internal GKE pods."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Deploy Apigee on a developer's desktop machine using Docker Compose."
+   }
+  ],
+  "ratio": 4.27
+ },
+ {
+  "id": "PCA-D6-011",
+  "subtopic": "Cloud NAT High Availability & Multiple Gateways",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires high availability for outbound software updates across 1,000 private Compute Engine instances without external IPs. A network engineer asks if deploying a single Cloud NAT gateway introduces a single point of failure that can crash if an underlying Google NAT server fails. What is the correct architectural answer?",
+  "correct": "D",
+  "clave_len": 253,
+  "explanation": "Cloud NAT is a fully distributed, software-defined network service built into Google's Andromeda SDN. It does not route traffic through intermediate NAT VMs or physical appliances, meaning there is no single point of failure.",
+  "doc": "https://cloud.google.com/nat/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 82,
+    "text": "Yes, Cloud NAT runs on a single proxy VM in zone A that will crash during outages."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "You must deploy 10 Cloud NAT gateways per subnet for redundancy."
+   },
+   {
+    "letter": "C",
+    "len": 32,
+    "text": "Cloud NAT only works on Mondays."
+   },
+   {
+    "letter": "D",
+    "len": 253,
+    "text": "No, Cloud NAT is a software-defined, distributed SDN service implemented directly in Google's Andromeda network virtualization fabric; it does not use gateway VMs or proxy bottlenecks, providing inherent high availability across all zones in the region."
+   }
+  ],
+  "ratio": 4.26
+ },
+ {
+  "id": "PCA-D3-023",
+  "subtopic": "Cloud Armor WAF: OWASP Top 10 Rules & Preview Mode",
+  "caseStudy": "none",
+  "scenario": "An enterprise e-commerce web application running behind a Global External Application Load Balancer requires Web Application Firewall (WAF) protection against SQL Injection (SQLi) and Cross-Site Scripting (XSS). The operations team must deploy pre-configured WAF rules safely to ensure that legitimate customer traffic is not falsely blocked before rules are permanently enforced. What procedure should you follow?",
+  "correct": "D",
+  "clave_len": 256,
+  "explanation": "Cloud Armor pre-configured WAF rules defend against OWASP Top 10 vulnerabilities. Enabling Preview Mode logs what the rule would have done without actually blocking traffic, allowing safe tuning and elimination of false positives before production enforcement.",
+  "doc": "https://cloud.google.com/armor/docs/waf-rules",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Enforce aggressive deny rules immediately during peak holiday shopping hours."
+   },
+   {
+    "letter": "B",
+    "len": 78,
+    "text": "Ask customers in a popup window to promise not to enter SQL injection strings."
+   },
+   {
+    "letter": "C",
+    "len": 26,
+    "text": "Disable the load balancer."
+   },
+   {
+    "letter": "D",
+    "len": 256,
+    "text": "Create a Cloud Armor Security Policy attaching pre-configured WAF rules (sqli-v33-stable and xss-v33-stable) with 'preview = true', monitor evaluation logs in Cloud Logging for false positives, and switch preview to false to enforce blocking once verified."
+   }
+  ],
+  "ratio": 4.24
+ },
+ {
+  "id": "PCA-D3-024",
+  "subtopic": "Security Command Center (SCC) Premium: Event Threat Detection",
+  "caseStudy": "none",
+  "scenario": "An enterprise security operations center (SOC) needs automated detection for advanced cloud threats, including cryptocurrency mining on VMs, anomalous IAM service account usage, brute-force SSH attempts, and outbound communication to known malware command-and-control (C2) IP addresses across all 200 projects. What Google Cloud native security service provides this threat detection?",
+  "correct": "D",
+  "clave_len": 216,
+  "explanation": "Security Command Center (SCC) Premium provides enterprise-grade threat detection services: Event Threat Detection (analyzes Cloud Logging stream using Google threat intelligence), VM Threat Detection (agentless hypervisor memory inspection), and Container Threat Detection.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-security-command-center-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Security Command Center (SCC) Standard tier only."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Rely on monthly billing invoices to detect crypto mining."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Install custom python log scrapers on every VM."
+   },
+   {
+    "letter": "D",
+    "len": 216,
+    "text": "Security Command Center (SCC) Premium tier, enabling Event Threat Detection (ETD), Container Threat Detection (CTD), Virtual Machine Threat Detection (VMTD), and Rapid Vulnerability Detection across the organization."
+   }
+  ],
+  "ratio": 4.24
+ },
+ {
+  "id": "PCA-D4-054",
+  "subtopic": "Knightmotives Automotive: BigQuery Analytics Hub Data Monetization",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive wants to monetize aggregated agricultural soil, moisture, and crop yield datasets by selling access to 50 agricultural seed and fertilizer chemical companies. The solution must share live datasets securely without copying petabytes of data, allow publishers to revoke access instantly, enforce subscriber privacy, and support commercial subscriptions. What Google Cloud platform enables this data exchange?",
+  "correct": "B",
+  "clave_len": 317,
+  "explanation": "BigQuery Analytics Hub enables zero-copy, secure data sharing across organizations. Publishers share data assets (tables, views) through listings, and subscribers query the data in place within their own BigQuery projects with fine-grained access governance and zero data duplication.",
+  "doc": "https://cloud.google.com/bigquery/docs/analytics-hub-introduction",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Export datasets to CSV files on public FTP servers."
+   },
+   {
+    "letter": "B",
+    "len": 317,
+    "text": "Deploy BigQuery Analytics Hub: Create a Private Data Exchange, publish shared data listings (referencing authorized views with aggregate soil data), and allow subscribers to link shared datasets into their own BigQuery projects with zero data replication, centralized access auditing, and instant revocation controls."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Email compressed ZIP files to all 50 chemical companies every week."
+   },
+   {
+    "letter": "D",
+    "len": 107,
+    "text": "Grant full BigQuery Owner IAM roles to all chemical companies in knightmotives_automotive's master project."
+   }
+  ],
+  "ratio": 4.23
+ },
+ {
+  "id": "PCA-D3-021",
+  "subtopic": "GKE Pod Security Standards (PSS)",
+  "caseStudy": "none",
+  "scenario": "To prevent container breakout attacks, an enterprise security policy requires that no Kubernetes container may run as root (runAsNonRoot: true), containers cannot elevate privileges (allowPrivilegeEscalation: false), and host namespaces (hostPID, hostNetwork, hostIPC) are forbidden across all tenant namespaces. What native Kubernetes admission control mechanism should be configured?",
+  "correct": "D",
+  "clave_len": 210,
+  "explanation": "Pod Security Admission (PSA) enforces Pod Security Standards (Privileged, Baseline, Restricted). Labeling namespaces with 'enforce: restricted' prevents pods that violate hardening standards (e.g. running as root, privilege escalation) from being created.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/pod-security-standards",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Run all containers with privileged: true flag."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Grant all developers cluster-admin privileges."
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "Ask developers to review their YAML files before deploying."
+   },
+   {
+    "letter": "D",
+    "len": 210,
+    "text": "Configure Kubernetes Pod Security Admission by labeling namespaces with 'pod-security.kubernetes.io/enforce: restricted' and 'pod-security.kubernetes.io/audit: restricted' to reject non-compliant pod manifests."
+   }
+  ],
+  "ratio": 4.17
+ },
+ {
+  "id": "PCA-D4-023",
+  "subtopic": "Modernization: Database Migration Service (DMS) for CDC",
+  "caseStudy": "none",
+  "scenario": "An enterprise is migrating a mission-critical 10TB MySQL database from an on-premises datacenter to Google Cloud SQL for MySQL. The business allows a maximum of 15 minutes of downtime for final application cutover. How should the database migration be architected?",
+  "correct": "B",
+  "clave_len": 260,
+  "explanation": "Google Cloud Database Migration Service (DMS) provides serverless, continuous replication using native database replication protocols (MySQL binlogs, PostgreSQL WAL). Continuous replication keeps Cloud SQL synchronized in real-time, enabling near-zero downtime cutover.",
+  "doc": "https://cloud.google.com/database-migration",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Export tables to Excel and import via CSV."
+   },
+   {
+    "letter": "B",
+    "len": 260,
+    "text": "Use Google Cloud Database Migration Service (DMS) to perform an initial data dump followed by continuous Change Data Capture (CDC) replication using MySQL binlogs over Cloud Interconnect/VPN, promoting Cloud SQL to primary during a 5-minute maintenance window."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Manually re-enter 10TB of database records by typing on a keyboard."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Run mysqldump over the network during business hours and restore to Cloud SQL."
+   }
+  ],
+  "ratio": 4.17
+ },
+ {
+  "id": "PCA-D3-041",
+  "subtopic": "Altostrat Media: Game Asset Signed URLs Expiration",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media distributes seasonal 5GB game expansion packs stored in private Cloud Storage buckets. To prevent unauthorized leeching and hotlinking on third-party gaming forums, only players who have purchased the expansion in the mobile app should receive download access. Download URLs must automatically expire after 1 hour. How should you implement this?",
+  "correct": "A",
+  "clave_len": 242,
+  "explanation": "Signed URLs give time-limited read/write access to a specific Cloud Storage object without requiring the user to have a Google account. The backend service signs the URL with its private key, enforcing expiration after 1 hour.",
+  "doc": "https://cloud.google.com/storage/docs/access-control/signed-urls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 242,
+    "text": "Keep the bucket private, and have the backend authentication service generate Cloud Storage Signed URLs (or Cloud CDN Signed URLs) with an expiration timestamp of 1 hour using a dedicated Service Account with storage.objectViewer permissions."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Create a Google Cloud IAM user account for every mobile gamer."
+   },
+   {
+    "letter": "C",
+    "len": 57,
+    "text": "Make the storage bucket public with allUsers permissions."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Send expansion files via unencrypted email attachments."
+   }
+  ],
+  "ratio": 4.17
+ },
+ {
+  "id": "PCA-D3-047",
+  "subtopic": "EHR Healthcare: FHIR Store Access Control & Consent Management",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "Patients have the legal right under GDPR and state healthcare privacy laws to grant or revoke consent for specific medical data sharing (e.g., 'Allow oncology research sharing, but deny psychiatric records sharing'). EHR Healthcare needs an automated service that checks patient consent policies in real-time before releasing FHIR medical records to downstream research pipelines. What feature of the Cloud Healthcare API provides this?",
+  "correct": "B",
+  "clave_len": 225,
+  "explanation": "The Google Cloud Healthcare Consent Management API enables healthcare organizations to capture, manage, and enforce patient consent policies directly against FHIR stores, ensuring compliant data access across clinical research applications.",
+  "doc": "https://cloud.google.com/healthcare-api/docs/how-tos/consent-management",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 55,
+    "text": "Ask doctors to remember what each patient consented to."
+   },
+   {
+    "letter": "B",
+    "len": 225,
+    "text": "Use the Google Cloud Healthcare Consent Management API integrated with the FHIR Store, defining User Data Mappings and Consent Artifacts to automatically enforce fine-grained patient consent decisions at query execution time."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Ignore patient consent preferences completely."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Store consent records in a flat text file on an unmanaged VM."
+   }
+  ],
+  "ratio": 4.17
+ },
+ {
+  "id": "PCA-D4-018",
+  "subtopic": "FinOps: Active vs Long-Term Storage in BigQuery",
+  "caseStudy": "none",
+  "scenario": "An enterprise retains 10PB of historical regulatory audit logs in BigQuery. The compliance team rarely queries tables older than 90 days. The FinOps manager asks how much BigQuery storage pricing drops once a table or partition has not been modified for 90 consecutive days, and what action is required to trigger the discount. What is the correct answer?",
+  "correct": "C",
+  "clave_len": 240,
+  "explanation": "BigQuery automatically transitions tables or table partitions to Long-Term Storage if they are unedited for 90 consecutive days, reducing the storage price by 50% with zero degradation in query speed or availability.",
+  "doc": "https://cloud.google.com/bigquery/pricing#storage",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "You must manually export the table to Cloud Storage Coldline."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "BigQuery does not offer long-term storage discounts."
+   },
+   {
+    "letter": "C",
+    "len": 240,
+    "text": "BigQuery automatically lowers storage pricing by 50% (from $0.02/GB to $0.01/GB logical) for any table or partition not modified for 90 consecutive days, with zero manual action required and zero impact on query performance or availability."
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "Querying long-term storage takes 48 hours to return results."
+   }
+  ],
+  "ratio": 4.16
+ },
+ {
+  "id": "PCA-D6-028",
+  "subtopic": "Cloud Spanner Split Rebalancing & Capacity Management",
+  "caseStudy": "none",
+  "scenario": "A retail e-commerce platform on Cloud Spanner experiences a massive surge in sales on a specific product category. Spanner automatically detects high CPU load and storage size on the specific table split. How does Cloud Spanner dynamically adapt to prevent hot split saturation without downtime?",
+  "correct": "D",
+  "clave_len": 240,
+  "explanation": "Cloud Spanner continuously monitors split size and CPU load. When a split grows too large or experiences heavy traffic, Spanner automatically splits the range and rebalances the new splits across different nodes in the cluster with zero downtime.",
+  "doc": "https://cloud.google.com/spanner/docs/schema-and-data-model#splits",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 82,
+    "text": "Spanner requires manual 'ALTER TABLE SPLIT' commands from database administrators."
+   },
+   {
+    "letter": "B",
+    "len": 36,
+    "text": "Spanner drops 50% of write requests."
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "Spanner shuts down the database for 1 hour to re-index."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "text": "Spanner automatically divides the hot storage split into smaller sub-splits and redistributes (rebalances) those sub-splits across all available compute nodes in the cluster, spreading CPU and I/O load evenly with zero application downtime."
+   }
+  ],
+  "ratio": 4.16
+ },
+ {
+  "id": "PCA-D5-008",
+  "subtopic": "Dataflow: Streaming Windowing, Triggers & Watermarks",
+  "caseStudy": "none",
+  "scenario": "An IoT telemetry pipeline on Cloud Dataflow processes mobile vehicle speed readings using 1-minute fixed tumbling windows to detect speeding violations. Due to cellular tunnel dropouts, sensor messages occasionally arrive 5 to 10 minutes late. The pipeline must output initial window results immediately when on-time data completes, but must also re-calculate and emit updated window results when late data arrives up to 15 minutes late. How should the Apache Beam pipeline be configured?",
+  "correct": "D",
+  "clave_len": 220,
+  "explanation": "In Apache Beam (Dataflow), combining FixedWindows with withAllowedLateness(15 mins), early/late triggers, and accumulatingFiredPanes allows the pipeline to emit speculative fast results while accurately incorporating late-arriving cellular data into corrected window outputs.",
+  "doc": "https://beam.apache.org/documentation/programming-guide/#windowing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Drop all messages that arrive more than 1 second late."
+   },
+   {
+    "letter": "B",
+    "len": 49,
+    "text": "Store data in CSV files and process once a month."
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "Wait 24 hours before outputting any window calculations."
+   },
+   {
+    "letter": "D",
+    "len": 220,
+    "text": "Apply FixedWindows of 1 minute, configure withAllowedLateness(Duration.standardMinutes(15)), and set Triggering to AfterWatermark.pastEndOfWindow().withEarlyFirings() and .withLateFirings() with accumulatingFiredPanes()."
+   }
+  ],
+  "ratio": 4.15
+ }
+]

@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D4-029",
+  "options": {
+   "B": "El Error Budget es el importe de los créditos de servicio que el proveedor devuelve al cliente cuando incumple el SLA contratado, de modo que el equipo puede seguir desplegando cambios mientras el coste acumulado de esas penalizaciones siga siendo inferior al beneficio que aportan las nuevas funcionalidades.",
+   "C": "El Error Budget fija como meta la fiabilidad del 100%, de modo que cualquier error observado en producción congela de inmediato todos los despliegues hasta que la causa raíz esté resuelta y el equipo demuestre con pruebas de carga que ese fallo concreto no puede volver a repetirse.",
+   "D": "El Error Budget reparte una cuota fija de incidentes al mes entre los equipos de la organización: cada equipo recibe el mismo número de fallos permitidos con independencia del SLO de su servicio, y quien agota su cuota cede su turno de despliegue a los demás equipos."
+  },
+  "distractors": {
+   "B": "Confunde el presupuesto de errores con los créditos de servicio del SLA: estos son un mecanismo contractual y financiero frente al cliente externo, mientras que el Error Budget es un margen interno derivado del SLO que regula el ritmo de despliegue.",
+   "C": "SRE rechaza explícitamente el 100% como objetivo: es antieconómico y el usuario no percibe la diferencia frente a un SLO alto. El presupuesto existe precisamente para gastar de forma deliberada una cantidad tolerable de inestabilidad.",
+   "D": "El presupuesto se calcula por servicio a partir de su propio SLO y se consume según la desviación medida por los SLI, no como un reparto igualitario de incidentes entre equipos: un servicio crítico y uno interno no tienen el mismo margen."
+  }
+ },
+ {
+  "id": "CDL-D4-063",
+  "options": {
+   "A": "Las cuotas son el límite de gasto de la cuenta de facturación: al alcanzarlas Google Cloud suspende el proyecto, y para superarlas hay que aumentar primero el importe del presupuesto mensual configurado en Cloud Billing.",
+   "C": "Las cuotas reflejan la capacidad que Google reserva físicamente para el proyecto; para superar las 24 vCPUs hay que firmar un compromiso de uso (CUD) de un año o adquirir una reserva de capacidad con el equipo comercial.",
+   "D": "Las cuotas son idénticas para todos los proyectos y solo pueden ampliarse contratando el plan de soporte Premium, ya que las solicitudes de aumento se tramitan exclusivamente como un caso de soporte técnico con prioridad alta."
+  },
+  "distractors": {
+   "A": "Confunde cuotas con presupuestos: la cuota limita la cantidad de un recurso por proyecto y región, mientras que el presupuesto solo notifica y nunca detiene nada. Ampliar la cuota es una solicitud independiente del importe presupuestado.",
+   "C": "Una cuota predeterminada es un límite administrativo, no capacidad reservada: la reserva de capacidad y los CUD son productos distintos y opcionales. El aumento se pide gratis desde la consola sin adquirir ningún compromiso.",
+   "D": "Cualquier cliente puede solicitar un aumento desde la página de Cuotas sin coste y sin depender del plan de soporte contratado; además las cuotas no son iguales en todos los proyectos, pues varían con el historial de consumo y pago."
+  }
+ },
+ {
+  "id": "CDL-D2-022",
+  "options": {
+   "A": "BigQuery actúa como el Data Lake porque admite la ingesta de archivos sin transformar, mientras que Cloud SQL cumple el papel de Data Warehouse empresarial al modelar los datos limpios en tablas relacionales para los informes de negocio.",
+   "B": "Pub/Sub cumple la función de Data Lake porque conserva de forma duradera todos los mensajes crudos que llegan, y Dataflow actúa como Data Warehouse al transformarlos y dejarlos disponibles para las consultas analíticas del negocio.",
+   "D": "Cloud Storage y BigQuery son la misma capa de almacenamiento, y la distinción real la establece Dataplex, que designa mediante etiquetas de gobernanza qué buckets se consideran el Data Lake y qué conjuntos de datos el Data Warehouse."
+  },
+  "distractors": {
+   "A": "Invierte los papeles y asigna el de almacén analítico a una base de datos transaccional: Cloud SQL es OLTP y no está diseñada para consultas analíticas sobre grandes volúmenes, mientras que BigQuery es precisamente el Data Warehouse.",
+   "B": "Ninguno de los dos es una capa de persistencia: Pub/Sub es un bus de mensajería con retención limitada en días y Dataflow es un motor de procesamiento que no almacena los datos, solo los transforma y los escribe en otro destino.",
+   "D": "Dataplex organiza y gobierna activos repartidos entre ambos servicios, pero la diferencia entre lago y almacén viene de la naturaleza del servicio (objetos crudos frente a motor analítico columnar), no de una etiqueta de catálogo."
+  }
+ },
+ {
+  "id": "CDL-D4-018",
+  "options": {
+   "B": "Configurar exclusiones de registros (Log Exclusions) en el Log Router para los eventos de seguridad y ampliar a siete años la retención personalizada del bucket _Default de Cloud Logging.",
+   "C": "Crear métricas basadas en registros (Log-Based Metrics) sobre los eventos de seguridad y transacciones, y conservarlas en Cloud Monitoring para consultarlas durante el periodo regulatorio exigido.",
+   "D": "Descargar los registros periódicamente con `gcloud logging read` y copiarlos a un bucket de Cloud Storage mediante una tarea programada con Cloud Scheduler y un job de Cloud Run."
+  },
+  "distractors": {
+   "B": "Una exclusión descarta los registros antes de ingerirlos, justo lo contrario de conservarlos siete años; además un bucket de Cloud Logging no ofrece consultas SQL avanzadas ni transmisión en tiempo real hacia el SIEM externo.",
+   "C": "Las métricas basadas en registros guardan solo agregados numéricos (recuentos y distribuciones) y pierden la entrada individual que el auditor necesita como evidencia; además Cloud Monitoring retiene las series 24 meses, no siete años.",
+   "D": "Es una extracción por lotes sujeta a los límites de consulta del Explorador de registros, con ventanas de tiempo que pueden dejar huecos y sin entrega en tiempo real al SIEM: los sumideros ya hacen ese enrutamiento de forma nativa."
+  }
+ },
+ {
+  "id": "CDL-D4-022",
+  "options": {
+   "A": "No heredan nada: las políticas de IAM concedidas en el nodo de la Organización solo alcanzan a los proyectos que ya existían en el momento de otorgar el rol, por lo que hay que volver a concederlo en el proyecto nuevo.",
+   "B": "Heredan el rol únicamente si la carpeta nueva se creó con la herencia de políticas habilitada de forma explícita; en caso contrario la carpeta rompe la cadena y el proyecto queda aislado de las concesiones superiores.",
+   "D": "Heredan el rol `roles/viewer` solo sobre los metadatos del proyecto, pero necesitan una concesión adicional en cada servicio para poder leer el contenido de las tablas de BigQuery o los objetos de Cloud Storage."
+  },
+  "distractors": {
+   "A": "La herencia se evalúa en el momento del acceso sobre la jerarquía vigente, no en el momento de conceder el rol: cualquier carpeta o proyecto creado después queda cubierto automáticamente por la política del nodo superior.",
+   "B": "No existe ninguna opción para desactivar o romper la herencia de IAM en la jerarquía de recursos: las políticas son siempre acumulativas hacia abajo y un nivel inferior solo puede añadir permisos, nunca retirar los heredados.",
+   "D": "El rol heredado aporta íntegramente todos los permisos que contiene en cada recurso situado por debajo del nodo, incluidos los de lectura sobre BigQuery y Cloud Storage: no hace falta repetir la concesión servicio por servicio."
+  }
+ },
+ {
+  "id": "CDL-D4-060",
+  "options": {
+   "A": "Planificar (estimar el gasto del ejercicio), Aprovisionar (comprar por adelantado la capacidad de servidores) y Amortizar (repartir contablemente la inversión durante la vida útil del equipamiento).",
+   "B": "Etiquetar (aplicar labels a todos los recursos), Facturar internamente (repartir el coste entre los centros de coste) y Auditar (revisar la factura una sola vez al cierre del ejercicio fiscal anual).",
+   "D": "Migrar (trasladar las cargas de trabajo a la nube), Optimizar (redimensionar recursos y comprar CUDs) y Apagar (eliminar los entornos de desarrollo fuera del horario laboral de la empresa)."
+  },
+  "distractors": {
+   "A": "Describe el ciclo tradicional de inversión de capital en un centro de datos propio, con capacidad comprada por anticipado. FinOps es un ciclo continuo sobre gasto operativo variable que se consume y se ajusta a diario.",
+   "B": "El etiquetado y el reparto interno de costes son actividades dentro de la fase de Informar, y una auditoría anual contradice el carácter iterativo del marco: faltan por completo las fases de Optimizar y de Operar.",
+   "D": "La migración es un proyecto puntual y no una fase del ciclo, y apagar entornos ociosos es una táctica concreta dentro de Optimizar: el modelo omite Informar y Operar, que son las que sostienen la práctica en el tiempo."
+  }
+ },
+ {
+  "id": "CDL-D4-028",
+  "options": {
+   "A": "(1) SLO (Service Level Objective); (2) SLI (Service Level Indicator); (3) SLA (Service Level Agreement)",
+   "B": "(1) SLI (Service Level Indicator); (2) SLA (Service Level Agreement); (3) SLO (Service Level Objective)",
+   "C": "(1) SLA (Service Level Agreement); (2) SLO (Service Level Objective); (3) SLI (Service Level Indicator)"
+  },
+  "distractors": {
+   "A": "Intercambia el indicador y el objetivo: la medición cuantitativa observada en tiempo real es el SLI, mientras que el SLO es la meta interna que el equipo se fija sobre ese indicador.",
+   "B": "Acierta el primero, pero coloca el acuerdo contractual en el lugar de la meta interna: el SLA es el compromiso externo con penalizaciones y siempre se fija por debajo del SLO que el equipo persigue.",
+   "C": "Invierte por completo el orden: el SLA no es una medición en tiempo real sino un contrato, y el SLI es una métrica observada que no lleva asociada ninguna penalización financiera para el proveedor."
+  }
+ },
+ {
+  "id": "CDL-D4-079",
+  "options": {
+   "A": "Conservar las 40 cuentas de servicio pero rotar sus claves JSON cada 90 días, de modo que las credenciales antiguas dejen de ser válidas aunque la cuenta de servicio siga existiendo y habilitada.",
+   "C": "Sustituir las claves JSON por la suplantación de cuentas de servicio con tokens de corta duración, manteniendo activas las 40 cuentas por si alguna carga de trabajo vuelve a necesitarlas.",
+   "D": "Reducir con el Recomendador de IAM los roles de las 40 cuentas hasta `roles/viewer` y dejarlas habilitadas para no interrumpir ninguna integración desconocida que aún dependa de ellas."
+  },
+  "distractors": {
+   "A": "La rotación mantiene viva una credencial válida para una identidad que nadie utiliza: la superficie de ataque (la cuenta y los permisos que conserva) sigue intacta, y solo se elimina desactivando y borrando la cuenta.",
+   "C": "La suplantación con credenciales efímeras es la práctica correcta para las cuentas que sí se usan, pero no resuelve el hallazgo: las 40 identidades inactivas siguen existiendo con sus permisos y deben desactivarse y eliminarse.",
+   "D": "Aplicar el mínimo privilegio a una identidad que no se usa deja igualmente una vía de acceso activa. La guía de Google es desactivarla primero, que es reversible y valida que nada la usa, y eliminarla después."
+  }
+ },
+ {
+  "id": "CDL-D3-003",
+  "options": {
+   "B": "Mediante la política de Reinicio Automático (Automatic Restart), que vuelve a arrancar la máquina virtual sobre un host físico sano en cuanto termina el evento de mantenimiento programado del servidor original.",
+   "C": "Colocando la instancia afectada en un Grupo de Instancias Administrado regional que crea una réplica en otra zona y retira la instancia original mientras dura la ventana de mantenimiento del host.",
+   "D": "Notificando al cliente con antelación mediante Personalized Service Health para que programe él mismo una ventana de mantenimiento y detenga ordenadamente la carga de trabajo antes de que empiece."
+  },
+  "distractors": {
+   "B": "El reinicio automático sí devuelve la VM al servicio, pero implica un arranque completo: hay tiempo de inactividad, se pierde el contenido de la memoria y se cortan las conexiones de red, justo lo que el escenario exige evitar.",
+   "C": "Un MIG da disponibilidad al conjunto sustituyendo instancias, pero no preserva la máquina virtual concreta que el cliente está ejecutando: la original se destruye y se pierde su estado, y el escenario pregunta por esa misma VM.",
+   "D": "Trasladaría la interrupción al cliente en lugar de evitarla, y el mantenimiento de host en Compute Engine es transparente: no requiere ninguna acción del cliente ni una ventana acordada para las VMs con migración en vivo."
+  }
+ },
+ {
+  "id": "CDL-D3-041",
+  "options": {
+   "A": "(1) VPC Network Peering entre los proyectos de cada departamento; (2) Shared VPC con un proyecto Host compartido por las dos organizaciones",
+   "C": "(1) Shared VPC con proyecto Host y proyectos de servicio; (2) Private Service Connect publicando el servicio de la otra empresa con un endpoint",
+   "D": "(1) VPC Network Peering entre los proyectos departamentales; (2) Cloud Interconnect dedicado de 10 Gbps contratado entre ambas organizaciones"
+  },
+  "distractors": {
+   "A": "Están intercambiadas: el emparejamiento conecta VPCs pero no permite administrar centralizadamente una única red troncal, y la VPC Compartida solo funciona dentro de una misma organización, nunca entre dos distintas.",
+   "C": "Private Service Connect expone un servicio concreto a través de un endpoint privado, no interconecta las dos redes: no habría alcance IP completo entre las VPCs, que es lo que pide el requisito (2).",
+   "D": "Cloud Interconnect conecta un centro de datos on-premises con una VPC a través de una instalación de colocación: no es el mecanismo para unir dos redes VPC que ya están dentro de Google Cloud."
+  }
+ },
+ {
+  "id": "CDL-D4-077",
+  "options": {
+   "A": "Enmascaramiento con caracteres (Character Masking) sustituyendo por asteriscos todos los dígitos de la tarjeta salvo los cuatro últimos, dentro de Sensitive Data Protection.",
+   "B": "Tokenización criptográfica mediante hash con clave HMAC-SHA-256 (Crypto Hashing) aplicada al número de tarjeta y configurada en Sensitive Data Protection.",
+   "D": "Redacción completa (Redaction) del campo de la tarjeta y cálculo de k-anonimato sobre el conjunto de datos antes de entregarlo, mediante Sensitive Data Protection."
+  },
+  "distractors": {
+   "A": "El enmascaramiento es irreversible y no genera un identificador único por tarjeta: dos tarjetas distintas con los mismos cuatro dígitos finales quedarían indistinguibles, así que no permite rastrear las compras de un mismo cliente.",
+   "B": "El hash con clave sí produce siempre el mismo token para el mismo número, pero es una función de un solo sentido: no existe forma de recuperar el número original, y el escenario exige que la transformación sea reversible.",
+   "D": "La redacción elimina el valor y no deja ningún token con el que correlacionar las compras del mismo cliente, y el k-anonimato es una métrica de riesgo de reidentificación, no una transformación que genere seudónimos."
+  }
+ },
+ {
+  "id": "CDL-D3-037",
+  "options": {
+   "A": "Montar la clave JSON de la cuenta de servicio como un Secret de Kubernetes cifrado dentro del clúster y referenciarla desde el Pod mediante una variable de entorno, rotando el valor del secreto cada 90 días.",
+   "C": "Asignar el rol `roles/storage.objectViewer` a la cuenta de servicio de los nodos de Compute Engine del clúster de GKE, de modo que los Pods obtengan el token desde el servidor de metadatos de la instancia.",
+   "D": "Guardar la clave JSON en Secret Manager y recuperarla desde el Pod al arrancar mediante la API, de modo que la credencial no quede escrita en la imagen del contenedor ni en el repositorio de código."
+  },
+  "distractors": {
+   "A": "La clave de larga duración sigue existiendo dentro del clúster y puede leerla cualquiera con acceso al espacio de nombres o extraerse desde el contenedor comprometido: la práctica recomendada es eliminar la clave, no guardarla mejor.",
+   "C": "Concede el permiso a todos los Pods que se ejecuten en el nodo, un alcance de grupo cuando el requisito es por carga de trabajo: cualquier contenedor comprometido en ese nodo accedería al bucket privado con la misma identidad.",
+   "D": "Secret Manager protege la clave en reposo, pero el Pod necesita igualmente una identidad para leer el secreto y sigue existiendo una credencial estática de larga duración en circulación: traslada el problema en lugar de eliminarlo."
+  }
+ },
+ {
+  "id": "CDL-D2-089",
+  "options": {
+   "A": "Vertex AI Text Embeddings API (generación de vectores) -> Cloud Storage (los vectores se guardan como archivos JSON en un bucket) -> Gemini en Vertex AI (generación de la respuesta).",
+   "B": "Document AI (extracción de entidades de los documentos legales) -> Cloud SQL para PostgreSQL (almacenamiento relacional) -> Vertex AI Vector Search (redacción de la respuesta final).",
+   "D": "Vertex AI Vector Search (conversión de los documentos en vectores) -> Vertex AI Feature Store (almacenamiento de los vectores) -> Gemini en Vertex AI (generación de la respuesta final)."
+  },
+  "distractors": {
+   "A": "Cloud Storage almacena los archivos de vectores pero no ofrece búsqueda por similitud ni índice de vecinos aproximados, así que el sistema no puede recuperar los fragmentos relevantes: ese papel corresponde a Vertex AI Vector Search.",
+   "B": "Cierra el flujo con un motor de recuperación: Vector Search devuelve los fragmentos más parecidos pero no genera texto. La síntesis de la respuesta fundamentada requiere un modelo de lenguaje como Gemini en Vertex AI.",
+   "D": "Asigna mal la primera etapa: Vector Search indexa y consulta vectores que otro servicio debe generar antes con la API de embeddings, y el Feature Store sirve atributos de modelos de ML, no búsqueda de similitud semántica."
+  }
+ },
+ {
+  "id": "CDL-D4-081",
+  "options": {
+   "A": "Sumideros de registros (Log Sinks) que exportan los registros de la aplicación a BigQuery para consultarlos con SQL",
+   "B": "El agente de operaciones (Ops Agent) recopilando las métricas nativas de la máquina virtual: CPU, memoria y disco",
+   "D": "Rastreo distribuido con Cloud Trace y perfilado continuo del código con Cloud Profiler sobre la aplicación heredada"
+  },
+  "distractors": {
+   "A": "El sumidero deja los registros consultables como filas en BigQuery, pero no crea ninguna serie temporal en Cloud Monitoring: no se pueden graficar en los paneles ni usar como condición de una política de alertas.",
+   "B": "El Ops Agent recoge métricas del sistema operativo y del host, pero los valores que interesan (latencia de pago y número de pedidos) están dentro del texto de los registros de la aplicación, que esas métricas no contemplan.",
+   "D": "Trace mide la latencia de las peticiones instrumentadas y Profiler el consumo de CPU y memoria del proceso: ninguno lee el contenido de los registros, y la aplicación heredada no está instrumentada con esas bibliotecas."
+  }
+ },
+ {
+  "id": "CDL-D4-007",
+  "options": {
+   "A": "Federación de Identidades para Cargas de Trabajo (Workload Identity Federation mediante OIDC)",
+   "B": "Identity-Aware Proxy (IAP) con niveles de acceso contextual definidos en Access Context Manager",
+   "C": "Identity Platform (autenticación de los usuarios finales de las aplicaciones con SAML y OIDC)"
+  },
+  "distractors": {
+   "A": "La federación de cargas de trabajo permite que una aplicación o una canalización externa suplante una cuenta de servicio sin clave: está pensada para identidades de máquina, no para el inicio de sesión de empleados en la consola.",
+   "B": "IAP aplica autorización contextual delante de una aplicación concreta y consume identidades que ya existen en Google Cloud: no federa el directorio corporativo ni sustituye la creación de las identidades de los empleados.",
+   "C": "Identity Platform es la solución de identidad para los clientes y usuarios finales de las aplicaciones que la empresa desarrolla (CIAM), no para autenticar a los empleados que acceden a la consola de Google Cloud."
+  }
+ },
+ {
+  "id": "CDL-D4-088",
+  "options": {
+   "A": "Event Threat Detection en Security Command Center",
+   "B": "Security Health Analytics en Security Command Center",
+   "C": "Análisis de vulnerabilidades en Artifact Registry"
+  },
+  "distractors": {
+   "A": "Event Threat Detection analiza flujos de Cloud Logging (auditoría, DNS, firewall) buscando amenazas a nivel de plataforma: no observa el comportamiento del proceso dentro del contenedor en tiempo de ejecución.",
+   "B": "Security Health Analytics evalúa la configuración de los recursos para encontrar desviaciones de la postura de seguridad, y lo hace mediante análisis periódicos: no detecta la ejecución de un shell inverso en un Pod activo.",
+   "C": "El análisis de vulnerabilidades revisa la imagen del contenedor en busca de CVE conocidas antes de desplegarla: no tiene visibilidad sobre lo que el contenedor ejecuta una vez está corriendo en el clúster."
+  }
+ },
+ {
+  "id": "CDL-D4-061",
+  "options": {
+   "B": "Security Command Center Premium con Event Threat Detection y análisis de postura",
+   "C": "Cloud Logging con sumideros hacia BigQuery y paneles de análisis en Looker Studio",
+   "D": "Google Cloud Armor con reglas WAF preconfiguradas y protección DDoS de capa 7"
+  },
+  "distractors": {
+   "B": "SCC Premium se centra en los hallazgos y la postura de seguridad de los recursos de Google Cloud: no ingiere petabytes de telemetría de red y autenticación de terceros ni aporta manuales de orquestación y respuesta automatizada.",
+   "C": "Esa combinación almacena y consulta registros, pero carece de reglas de detección gestionadas, de enriquecimiento con inteligencia de amenazas y de automatización de la respuesta a incidentes propias de una plataforma SIEM/SOAR.",
+   "D": "Cloud Armor protege el perímetro de las aplicaciones web frente a ataques y denegación de servicio: no centraliza la telemetría del centro de operaciones de seguridad ni orquesta la respuesta a los incidentes detectados."
+  }
+ },
+ {
+  "id": "CDL-D4-085",
+  "options": {
+   "A": "Registros de Auditoría de Actividad del Administrador (Admin Activity)",
+   "C": "Aprobación de Acceso (Access Approval para autorizar cada solicitud)",
+   "D": "Registros de Auditoría de Acceso a Datos (Data Access Audit Logs)"
+  },
+  "distractors": {
+   "A": "Los Admin Activity dejan constancia de las acciones administrativas ejecutadas por los principales del propio cliente sobre sus recursos: el acceso del personal de Google se registra en un flujo distinto y separado.",
+   "C": "Access Approval es el control que permite al cliente aprobar o denegar el acceso de Google antes de que ocurra. Los auditores piden la evidencia registrada de los accesos ya realizados, que aporta Access Transparency.",
+   "D": "Los Data Access registran las lecturas y escrituras de datos realizadas por los usuarios y las cuentas de servicio del propio proyecto, nunca las acciones del personal de soporte o ingeniería de Google."
+  }
+ },
+ {
+  "id": "CDL-D3-006",
+  "options": {
+   "A": "Cloud KMS con claves CMEK y Cloud HSM certificado FIPS 140-2 nivel 3 aplicadas al cifrado de los discos persistentes.",
+   "C": "Controles de Servicio de VPC con un perímetro de servicio y Google Cloud Armor con reglas WAF delante de la aplicación.",
+   "D": "VMs Blindadas (Shielded VM con Secure Boot, vTPM y monitoreo de integridad) desplegadas sobre nodos Sole-Tenant dedicados."
+  },
+  "distractors": {
+   "A": "Protege los datos en reposo controlando las claves de cifrado del disco, pero no verifica la integridad del firmware de arranque ni cifra los datos mientras se procesan en la memoria RAM de la instancia.",
+   "C": "Son controles de red y de perímetro contra la exfiltración de datos y los ataques web: no intervienen en el arranque de la máquina virtual ni protegen el contenido de la memoria frente al hipervisor.",
+   "D": "Cubre la mitad del requisito: la integridad de arranque queda protegida, pero un nodo de inquilino único solo garantiza aislamiento físico del host y deja los datos en claro en la RAM, que es lo que resuelven las Confidential VMs."
+  }
+ },
+ {
+  "id": "CDL-D3-089",
+  "options": {
+   "A": "Crear una máquina virtual en Compute Engine con la misma versión de Node.js, copiar el código con `gcloud compute scp` y configurar Nginx con un certificado TLS renovado por una tarea programada.",
+   "B": "Reescribir la aplicación como funciones independientes en Cloud Run Functions, dividiendo cada ruta HTTP en una función con su propio despliegue, sus dependencias y su configuración de escalado.",
+   "C": "Desplegar la aplicación en el entorno flexible de App Engine con un archivo `app.yaml` que fije instancias mínimas siempre encendidas y trasladar las sesiones de usuario a Memorystore."
+  },
+  "distractors": {
+   "A": "Es un traslado literal a una VM: mantiene la administración del servidor, el parcheo del sistema operativo y la renovación del certificado, y no aporta autoescalado, que son justamente los objetivos que plantea el escenario.",
+   "B": "Ofrece autoescalado y HTTPS, pero exige reescribir y trocear la aplicación existente, lo contrario del menor esfuerzo posible: Cloud Run ejecuta el mismo código Node.js contenedorizado sin cambiar su estructura.",
+   "C": "El entorno flexible se ejecuta sobre VMs administradas que tardan minutos en escalar y nunca bajan a cero instancias, por lo que mantiene un coste base permanente, y añade una dependencia de Memorystore que nadie ha pedido."
+  }
+ },
+ {
+  "id": "CDL-D4-011",
+  "options": {
+   "A": "(1) Claves simétricas AES-256 para cifrado; (2) claves asimétricas RSA o de curva elíptica para firma; y (3) claves de validación MAC, que son los tres tipos que Cloud KMS puede alojar dentro de un llavero.",
+   "B": "(1) Cifrado en reposo sobre el disco; (2) cifrado en tránsito entre los centros de datos de Google; y (3) cifrado en uso mediante Confidential Computing, que son los tres modos en que la plataforma protege los datos.",
+   "D": "(1) Claves gestionadas por Google; (2) Cloud External Key Manager (EKM) con la clave alojada en un socio externo; y (3) Cloud HSM, que sustituye por completo a Cloud KMS en la gestión de las claves de la organización."
+  },
+  "distractors": {
+   "A": "Enumera los propósitos criptográficos de una clave de Cloud KMS, que responden a otra pregunta: no describen quién genera, custodia y controla las claves, que es el eje de los tres niveles de gestión por los que se pregunta.",
+   "B": "Describe los tres estados del dato que Google Cloud protege de forma predeterminada, no los modelos de gestión de claves: ninguno de los tres indica si la clave la administra Google, el cliente en Cloud KMS o un sistema externo.",
+   "D": "Cloud EKM y Cloud HSM son niveles de protección de una clave dentro del modelo CMEK y Cloud HSM no reemplaza a Cloud KMS, sino que es uno de sus niveles: la enumeración omite además el modelo CSEK de claves suministradas por el cliente."
+  }
+ },
+ {
+  "id": "CDL-D4-064",
+  "options": {
+   "B": "Generar una única clave de validez prolongada y restringir su uso mediante una condición de IAM que limite el acceso a determinadas direcciones IP de origen y a la franja horaria laboral de la empresa.",
+   "C": "Eliminar la clave antigua en el mismo momento de crear la nueva y actualizar después la aplicación externa, de modo que en ningún instante existan dos claves válidas simultáneamente para la misma cuenta.",
+   "D": "Almacenar la clave JSON en el repositorio de configuración cifrada con Cloud KMS y aplicar además la política de organización que desactiva por completo la creación de claves de cuentas de servicio."
+  },
+  "distractors": {
+   "B": "Las condiciones acotan desde dónde y cuándo se puede usar la credencial, pero una clave que nunca se rota sigue siendo válida de forma indefinida si se filtra: la rotación periódica es lo que limita la ventana de exposición.",
+   "C": "Invierte el orden seguro de la rotación: al borrar la clave antes de que la aplicación adopte la nueva se provoca un corte de autenticación. La secuencia correcta es crear, desplegar, verificar y solo entonces eliminar.",
+   "D": "La restricción `iam.disableServiceAccountKeyCreation` impediría crear la propia clave que la aplicación heredada necesita, y guardar el archivo cifrado en el repositorio deja igualmente una credencial de larga duración en el control de versiones."
+  }
+ },
+ {
+  "id": "CDL-D3-077",
+  "options": {
+   "A": "Empaquetar dentro de la imagen del contenedor un archivo de configuración distinto por entorno (desarrollo, preproducción y producción) y seleccionar el adecuado con un argumento de compilación en Cloud Build.",
+   "C": "Mantener la sesión del usuario en la memoria del proceso y configurar en el balanceador de carga la afinidad de sesión por cookie, de modo que cada usuario regrese siempre a la misma instancia del servicio.",
+   "D": "Instalar las dependencias del sistema en el host durante el arranque mediante un script de inicio y confiar en las versiones que ya provee la imagen base del sistema operativo del contenedor."
+  },
+  "distractors": {
+   "A": "Genera un artefacto distinto por entorno, mientras que la metodología exige una única compilación inmutable que se promociona entre entornos con la configuración inyectada en ejecución desde el propio entorno.",
+   "C": "La afinidad de sesión convierte el proceso en un servicio con estado: al escalar hacia abajo, redesplegar o reiniciar una instancia se pierde la sesión. El factor exige procesos sin estado con la sesión en un servicio de respaldo.",
+   "D": "Rompe la declaración explícita y el aislamiento de dependencias: la compilación deja de ser reproducible porque el resultado depende del estado del host y de las versiones que traiga la imagen base en cada arranque."
+  }
+ },
+ {
+  "id": "CDL-D4-041",
+  "options": {
+   "A": "El firewall de VPC no tiene estado, por lo que además de la regla de Ingress hay que crear una regla de Egress explícita que autorice el tráfico saliente desde el puerto TCP 443 hacia los rangos de origen de los clientes.",
+   "B": "Las respuestas se permiten porque la regla implícita de Egress con prioridad 65535 autoriza todo el tráfico saliente; si se creara una regla que la anulara, el tráfico de retorno hacia los clientes dejaría de entregarse.",
+   "C": "El tráfico de retorno se permite únicamente si la instancia lleva la misma etiqueta de red usada en la regla de Ingress y se habilita el seguimiento de conexiones en el servicio de backend del balanceador."
+  },
+  "distractors": {
+   "A": "Las reglas de firewall de VPC sí son con estado: el seguimiento de conexiones autoriza automáticamente los paquetes de respuesta de una sesión permitida, de modo que esa regla de Egress adicional es innecesaria.",
+   "B": "Mezcla dos mecanismos distintos: el tráfico de retorno de una conexión establecida lo autoriza el seguimiento de estado, con independencia de la regla implícita de salida, que solo gobierna las conexiones nuevas iniciadas por la VM.",
+   "C": "Las etiquetas de red solo seleccionan a qué instancias se aplica una regla, no gobiernan las respuestas, y no existe ningún interruptor de seguimiento de conexiones: el comportamiento con estado es inherente al firewall de VPC."
+  }
+ },
+ {
+  "id": "CDL-D4-031",
+  "options": {
+   "A": "Porque un ConfigMap de Kubernetes admite valores de texto de hasta un megabyte y Secret Manager permite guardar cargas binarias mayores con replicación automática en varias regiones de Google Cloud.",
+   "B": "Porque Secret Manager rota por sí mismo la clave de la pasarela de pagos cada 90 días y actualiza el valor en el proveedor externo, de modo que la aplicación no necesita volver a desplegarse nunca.",
+   "C": "Porque Secret Manager cifra el valor en reposo mientras que un Secret de Kubernetes se guarda sin cifrar en etcd, de modo que basta con mover la clave a un Secret en vez de a un ConfigMap del clúster."
+  },
+  "distractors": {
+   "A": "El tamaño y la replicación son características secundarias que no explican el riesgo: el motivo real es el control de acceso con IAM, el cifrado, el versionado para la rotación y el registro de cada lectura del secreto.",
+   "B": "Secret Manager programa avisos de rotación mediante Pub/Sub y conserva las versiones, pero no genera ni cambia la credencial en el sistema del proveedor de pagos: esa lógica debe implementarla el cliente.",
+   "C": "GKE cifra etcd en reposo y admite además el cifrado de secretos a nivel de aplicación con Cloud KMS, así que ese no es el diferencial: lo que aporta Secret Manager es IAM granular, versionado y auditoría por cada acceso."
+  }
+ }
+]

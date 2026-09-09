@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D3-017",
+  "subtopic": "Cloud Load Balancing: Backend Service & Health Checks",
+  "scenario": "You are configuring a Global External HTTP(S) Load Balancer. You have already created a Managed Instance Group `web-mig-us` in `us-central1`. You need to create an HTTP health check, create a global backend service utilizing HTTP protocol on port 80, attach the health check, and add `web-mig-us` as a backend. Which sequence of gcloud commands accomplishes this?",
+  "correct": "C",
+  "clave_len": 336,
+  "explanation": "Configuring load balancer backends follows a strict dependency order: 1) Create the Health Check (`health-checks create http`), 2) Create the Backend Service with the health check (`backend-services create --global`), 3) Add the instance group backend to the service (`backend-services add-backend --global`).",
+  "doc": "https://cloud.google.com/load-balancing/docs/https/setup-global-ext-https-compute",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 89,
+    "text": "gcloud compute target-http-proxies create web-backend-svc --health-check=web-health-check"
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "gcloud compute forwarding-rules create web-backend-svc --ports=80 --global"
+   },
+   {
+    "letter": "C",
+    "len": 336,
+    "text": "gcloud compute health-checks create http web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --global && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --global"
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "gcloud compute url-maps create web-backend-svc --instance-group=web-mig-us"
+   }
+  ],
+  "ratio": 4.25
+ },
+ {
+  "id": "ACE-D5-019",
+  "subtopic": "Access Transparency & Access Approval Governance",
+  "scenario": "A financial institution subject to European banking regulations requires that any manual administrative access by Google Cloud engineers or support staff to customer production infrastructure must: 1) Require explicit prior approval from corporate security officers. 2) Generate an immutable audit log detailing why Google personnel accessed the system. Which Google Cloud services satisfy these requirements?",
+  "correct": "D",
+  "clave_len": 137,
+  "explanation": "Access Transparency provides near real-time audit logs whenever Google administrators access customer data during support tickets. Access Approval extends this by requiring explicit customer approval before Google support engineers can access data.",
+  "doc": "https://cloud.google.com/access-approval/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Compute Engine Serial Console and OS Login."
+   },
+   {
+    "letter": "B",
+    "len": 24,
+    "text": "Cloud DNS and Cloud NAT."
+   },
+   {
+    "letter": "C",
+    "len": 30,
+    "text": "VPC Flow Logs and Cloud Armor."
+   },
+   {
+    "letter": "D",
+    "len": 137,
+    "text": "Google Cloud Access Approval (for manual approval gates) and Access Transparency (for immutable access logs of Google personnel actions)."
+   }
+  ],
+  "ratio": 4.24
+ },
+ {
+  "id": "ACE-D3-032",
+  "subtopic": "VPC Static External IP Reservation & Attachment",
+  "scenario": "You have an SFTP gateway VM on Compute Engine that external trading partners connect to. The trading partners firewall require a static, unchanging public IP address. You need to reserve a static regional external IPv4 address named `sftp-static-ip` in `us-east1` and assign it to an existing VM `sftp-gateway`. Which sequence of commands executes this?",
+  "correct": "A",
+  "clave_len": 247,
+  "explanation": "Reserving a static regional IP address uses `gcloud compute addresses create <NAME> --region=<REGION>`. To attach this reserved static IP to an existing VM's network interface, use `gcloud compute instances add-access-config` (or update the existing access config).",
+  "doc": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 247,
+    "text": "gcloud compute addresses create sftp-static-ip --region=us-east1 && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=$(gcloud compute addresses describe sftp-static-ip --region=us-east1 --format='value(address)')"
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "gcloud dns records create sftp-gateway --ip-type=static"
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "gcloud compute instances restart sftp-gateway --make-ip-static"
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "gcloud compute networks update sftp-gateway --static-ip=true"
+   }
+  ],
+  "ratio": 4.19
+ },
+ {
+  "id": "ACE-D4-008",
+  "subtopic": "Cloud Logging Exclusion Filters & Cost Control",
+  "scenario": "Your Google Cloud billing report shows that Cloud Logging ingestion costs have surged due to millions of noisy HTTP 200 health check logs from load balancers. You need to create an exclusion filter on the `_Default` log bucket to discard these health check logs from ingestion while retaining all other logs. What configuration should you apply?",
+  "correct": "B",
+  "clave_len": 179,
+  "explanation": "Cloud Logging sinks (like `_Default`) allow creating Exclusion Filters (`--exclusion`). Excluded logs are discarded before ingestion and storage, incurring zero ingestion charges while allowing non-excluded logs to be retained.",
+  "doc": "https://cloud.google.com/logging/docs/routing/overview#exclusions",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "Delete the _Default log sink completely."
+   },
+   {
+    "letter": "B",
+    "len": 179,
+    "text": "Create an Exclusion Filter on the _Default log sink with filter expression: resource.type=\"http_load_balancer\" AND httpRequest.status=200 AND httpRequest.userAgent=\"GoogleHC/1.0\"."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Turn off VPC logging globally across all subnets."
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Disable the Load Balancer health checks."
+   }
+  ],
+  "ratio": 4.16
+ },
+ {
+  "id": "ACE-D3-031",
+  "subtopic": "Cloud Spanner Deployment & DDL Execution",
+  "scenario": "You are deploying a global order management database on Cloud Spanner. You need to create a regional instance `spanner-orders` in `us-central1` with 300 Processing Units, create a database named `orders_db`, and execute a DDL statement creating an `Orders` table with primary key `OrderId STRING(36)`. Which sequence of commands accomplishes this?",
+  "correct": "D",
+  "clave_len": 295,
+  "explanation": "Provisioning Cloud Spanner requires creating the instance (`gcloud spanner instances create --processing-units=300`), then creating the database with initial DDL schema definitions (`gcloud spanner databases create --ddl='...'`).",
+  "doc": "https://cloud.google.com/spanner/docs/create-manage-databases",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "gcloud compute instances create spanner-orders --spanner-units=300"
+   },
+   {
+    "letter": "B",
+    "len": 88,
+    "text": "gcloud sql instances create spanner-orders --type=SPANNER --ddl='CREATE TABLE Orders...'"
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "bq mk --dataset spanner_orders && bq query 'CREATE TABLE Orders...'"
+   },
+   {
+    "letter": "D",
+    "len": 295,
+    "text": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 --description='Orders Spanner' && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'"
+   }
+  ],
+  "ratio": 4.0
+ },
+ {
+  "id": "ACE-D5-024",
+  "subtopic": "GKE RBAC vs Google Cloud IAM",
+  "scenario": "You need to grant a developer read-only access to view Pods and Deployments in a single Kubernetes namespace `development` within a GKE cluster, without granting them permission to view workloads in other namespaces or modify cluster infrastructure. How should permissions be granted?",
+  "correct": "A",
+  "clave_len": 202,
+  "explanation": "Google Cloud IAM grants cluster-level access (`roles/container.viewer` allows listing clusters and obtaining kubeconfig credentials). Granular namespace-level permissions (e.g. read pods only in `development`) are governed inside the cluster via native Kubernetes RBAC `Role` and `RoleBinding` objects.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 202,
+    "text": "Grant the developer roles/container.viewer at the GCP project level (to authenticate), and create a Kubernetes Role and RoleBinding in namespace development granting read access to pods and deployments."
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "Grant primitive roles/editor on the project."
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "Grant roles/container.admin at the GCP project level."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Deploy an unmanaged Kubernetes cluster on Compute Engine."
+   }
+  ],
+  "ratio": 3.94
+ },
+ {
+  "id": "ACE-D3-013",
+  "subtopic": "Cloud NAT & Cloud Router Deployment",
+  "scenario": "You have created a custom VPC network with private subnets. The VMs need outbound internet access to download software packages, but must not receive unsolicited inbound internet connections. You need to deploy Cloud NAT in region `us-east1`. What sequence of gcloud commands should you run?",
+  "correct": "D",
+  "clave_len": 279,
+  "explanation": "Cloud NAT operates in conjunction with a Cloud Router in the target region. You first create the Cloud Router (`gcloud compute routers create`), then attach the Cloud NAT service (`gcloud compute routers nats create`) specifying `--auto-allocate-nat-external-ips` and `--nat-all-subnet-ip-ranges`.",
+  "doc": "https://cloud.google.com/nat/docs/gcloud-quickstart",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "gcloud compute firewall-rules create allow-outbound-nat --allow=all --direction=EGRESS"
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "gcloud compute networks update my-vpc --enable-nat"
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "gcloud compute instances create nat-gateway --image-family=nat --region=us-east1"
+   },
+   {
+    "letter": "D",
+    "len": 279,
+    "text": "Create a Cloud Router using gcloud compute routers create nat-router --network=my-vpc --region=us-east1, then create the NAT gateway using gcloud compute routers nats create nat-gw --router=nat-router --region=us-east1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges."
+   }
+  ],
+  "ratio": 3.88
+ },
+ {
+  "id": "ACE-D4-051",
+  "subtopic": "GKE Cluster Autoscaler Profiles & Cost Optimization",
+  "scenario": "You manage a batch processing GKE cluster where workloads scale up and down frequently. During scale-downs, you want the GKE Cluster Autoscaler to aggressively pack Pods onto fewer nodes and rapidly terminate underutilized worker nodes to minimize compute spend, accepting occasional pod evictions. Which autoscaling profile should you configure on the cluster?",
+  "correct": "A",
+  "clave_len": 145,
+  "explanation": "GKE Cluster Autoscaler supports two profiles: `balanced` (default, balances scale-down speed with avoiding unnecessary evictions) and `optimize-utilization` (aggressively prioritizes bin packing and scale-down speed, evicting pods rapidly to shut down idle nodes and maximize cost savings).",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler#autoscaling_profiles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 145,
+    "text": "Set the autoscaling profile to optimize-utilization using gcloud container clusters update my-cluster --autoscaling-profile=optimize-utilization."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Set the autoscaling profile to balanced."
+   },
+   {
+    "letter": "C",
+    "len": 31,
+    "text": "Disable the Cluster Autoscaler."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Deploy an HPA on the kube-system namespace."
+   }
+  ],
+  "ratio": 3.82
+ },
+ {
+  "id": "ACE-D4-025",
+  "subtopic": "Compute Engine Serial Console Debugging",
+  "scenario": "A Linux VM `db-server-1` failed to boot after a kernel patch update and is completely unresponsive to SSH connections. You need to view the live boot console output and interact with the GRUB bootloader to select an older kernel. What feature must you enable and use?",
+  "correct": "C",
+  "clave_len": 178,
+  "explanation": "Interactive serial console access (`serial-port-enable=1`) allows direct terminal access to the VM's serial ports (Ports 1-4) via `gcloud compute connect-to-serial-port`, enabling low-level boot diagnostics, GRUB menu interaction, and recovery of unbootable VMs.",
+  "doc": "https://cloud.google.com/compute/docs/troubleshooting/troubleshooting-using-serial-console",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "SSH into the VM over public internet using port 80."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Delete the VM and recreate it from a Debian image."
+   },
+   {
+    "letter": "C",
+    "len": 178,
+    "text": "Enable serial port access by setting serial-port-enable=1 in instance metadata, and connect using gcloud compute connect-to-serial-port db-server-1 --zone=us-central1-a --port=1."
+   },
+   {
+    "letter": "D",
+    "len": 39,
+    "text": "Upload the VM to BigQuery for analysis."
+   }
+  ],
+  "ratio": 3.81
+ },
+ {
+  "id": "ACE-D3-065",
+  "subtopic": "Compute Engine Snapshot Schedule Deployment",
+  "scenario": "To protect against data corruption and ensure disaster recovery, you need to create an automated daily snapshot schedule named `daily-backup-schedule` in region `us-central1` that takes snapshots of attached persistent disks every day at 02:00 UTC and retains snapshots for exactly 14 days. Which command creates this schedule?",
+  "correct": "C",
+  "clave_len": 204,
+  "explanation": "Automated persistent disk backups in Compute Engine are configured via Resource Policies using `gcloud compute resource-policies create snapshot-schedule <NAME> --region=<REGION> --daily-schedule --start-time=<UTC_TIME> --max-retention-days=<DAYS>`.",
+  "doc": "https://cloud.google.com/compute/docs/disks/scheduled-snapshots",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "bq mk --snapshot_schedule daily-backup-schedule"
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "gcloud app deploy backup-cron.yaml"
+   },
+   {
+    "letter": "C",
+    "len": 204,
+    "text": "gcloud compute resource-policies create snapshot-schedule daily-backup-schedule --region=us-central1 --daily-schedule --start-time=02:00 --max-retention-days=14 --on-source-disk-delete=keep-auto-snapshots"
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "gcloud compute disks snapshot-schedule create daily-backup-schedule --time=02:00"
+   }
+  ],
+  "ratio": 3.8
+ },
+ {
+  "id": "ACE-D4-023",
+  "subtopic": "Network Intelligence Center Connectivity Tests",
+  "scenario": "Compute Engine instances in VPC-A cannot reach a private database in peered VPC-B over port 5432. You want to diagnose whether the traffic is being dropped by a VPC firewall rule, an invalid VPC route table entry, or a missing peering export without deploying synthetic packet generators. Which Google Cloud tool should you use?",
+  "correct": "D",
+  "clave_len": 167,
+  "explanation": "Network Intelligence Center Connectivity Tests perform static graph analysis of the VPC configuration (routes, firewalls, peerings, Cloud Routers) and dynamic live packet tracing to identify the exact firewall rule or route dropping packets.",
+  "doc": "https://cloud.google.com/network-intelligence-center/docs/connectivity-tests/concepts/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 55,
+    "text": "Deploy an unmanaged traceroute VM in the public subnet."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Disable all firewall rules in both VPCs."
+   },
+   {
+    "letter": "C",
+    "len": 38,
+    "text": "Delete and recreate both VPC networks."
+   },
+   {
+    "letter": "D",
+    "len": 167,
+    "text": "Run a Network Management Connectivity Test (via gcloud network-management connectivity-tests create) between the source VM IP and destination database IP on port 5432."
+   }
+  ],
+  "ratio": 3.77
+ },
+ {
+  "id": "ACE-D4-026",
+  "subtopic": "BigQuery Query Execution Plan Diagnostics",
+  "scenario": "A complex analytical query in BigQuery is running much slower than expected and consuming excessive slot milliseconds. You inspect the Query Execution Plan in BigQuery. The execution graph shows that Stage 3 has severe 'repartitioning' skew, high output rows, and excessive time spent in 'Compute' and 'Wait'. What is the most likely optimization to resolve this skew?",
+  "correct": "C",
+  "clave_len": 163,
+  "explanation": "High wait and compute times in BigQuery execution stages with repartitioning indicate shuffle bottlenecks and data skew caused by non-clustered join/group-by operations or Cartesian products (CROSS JOIN). Clustering the table on join keys collocates related rows and eliminates data shuffling across slots.",
+  "doc": "https://cloud.google.com/bigquery/docs/query-plan-explanation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Add LIMIT 10 to the subquery."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Export the data to CSV in Cloud Storage before querying."
+   },
+   {
+    "letter": "C",
+    "len": 163,
+    "text": "Cluster the underlying table by the JOIN and GROUP BY keys to minimize shuffle repartitioning overhead, or rewrite the query to avoid high-cardinality CROSS JOINs."
+   },
+   {
+    "letter": "D",
+    "len": 48,
+    "text": "Convert the BigQuery dataset to Cloud Datastore."
+   }
+  ],
+  "ratio": 3.68
+ },
+ {
+  "id": "ACE-D5-033",
+  "subtopic": "VPC Service Controls Ingress/Egress Rules",
+  "scenario": "A data science project `analytics-proj` is protected inside VPC Service Controls Perimeter A. An external partner company running project `partner-proj` (in a different GCP Organization) needs to push analytical datasets into a BigQuery table inside Perimeter A. Instead of dismantling the perimeter, what configuration allows this specific cross-perimeter data exchange?",
+  "correct": "B",
+  "clave_len": 154,
+  "explanation": "VPC Service Controls supports directional Ingress and Egress rules. Administrators can establish fine-grained, identity-based and method-based exceptions to securely allow data to enter or leave the perimeter without weakening perimeter boundaries.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/ingress-egress-rules",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "Make the BigQuery dataset public to allUsers."
+   },
+   {
+    "letter": "B",
+    "len": 154,
+    "text": "Configure VPC Service Controls Ingress and Egress rules on Perimeter A defining specific source identity, destination project, and API method permissions."
+   },
+   {
+    "letter": "C",
+    "len": 30,
+    "text": "Delete Perimeter A completely."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Deploy an open VPN tunnel between the two projects."
+   }
+  ],
+  "ratio": 3.67
+ },
+ {
+  "id": "ACE-D4-003",
+  "subtopic": "Compute Engine VM Machine Type Modification",
+  "scenario": "An application running on an `e2-standard-2` VM `batch-worker-1` in zone `us-central1-a` is experiencing severe CPU exhaustion. You need to upgrade the VM to an `e2-standard-8` (8 vCPUs, 32 GB RAM) with minimal downtime. Which sequence of operations must you perform?",
+  "correct": "A",
+  "clave_len": 254,
+  "explanation": "To change the machine type of a standalone Compute Engine instance, the instance must first be in the `TERMINATED` (stopped) state. You stop the VM, execute `gcloud compute instances set-machine-type`, and start the VM.",
+  "doc": "https://cloud.google.com/compute/docs/instances/changing-machine-type-of-stopped-instance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 254,
+    "text": "Stop the instance using gcloud compute instances stop, change the machine type using gcloud compute instances set-machine-type batch-worker-1 --zone=us-central1-a --machine-type=e2-standard-8, and restart the instance with gcloud compute instances start."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Attach 6 additional persistent disks to increase CPU capacity."
+   },
+   {
+    "letter": "C",
+    "len": 95,
+    "text": "Run gcloud compute instances set-machine-type on the live running instance without stopping it."
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Delete the VM and recreate it from a fresh OS image."
+   }
+  ],
+  "ratio": 3.65
+ },
+ {
+  "id": "ACE-D3-020",
+  "subtopic": "Cloud Bigtable Deployment & CBT CLI",
+  "scenario": "You are deploying a high-throughput time-series metrics ingestion engine. You need to create a Cloud Bigtable instance named `telemetry-db` in zone `us-central1-b` with 4 SSD nodes, and create a table named `device-readings` with a column family named `cf1`. Which sequence of commands should you run?",
+  "correct": "B",
+  "clave_len": 239,
+  "explanation": "Provisioning a Cloud Bigtable instance uses `gcloud bigtable instances create` specifying cluster zone, node count, and storage type (SSD/HDD). Table and column family provisioning is performed using the `cbt` CLI (`cbt createtable <table_name> 'families=<family_name>'`).",
+  "doc": "https://cloud.google.com/bigtable/docs/creating-instance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "gcloud sql instances create telemetry-db --database-version=BIGTABLE_1"
+   },
+   {
+    "letter": "B",
+    "len": 239,
+    "text": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD --display-name='Telemetry DB' && cbt -instance=telemetry-db createtable device-readings 'families=cf1'"
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "gcloud compute instances create telemetry-db --storage-type=bigtable"
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "bq mk --dataset telemetry-db && bq mk --table device-readings"
+   }
+  ],
+  "ratio": 3.6
+ },
+ {
+  "id": "ACE-D5-027",
+  "subtopic": "Cloud Armor Preconfigured WAF Core Rule Sets",
+  "scenario": "Your company's e-commerce web application is protected by Google Cloud Armor. Security mandates require blocking common web application vulnerabilities (OWASP Top 10), specifically SQL Injection (SQLi) and Cross-Site Scripting (XSS) attacks before they reach backend instances. Which Cloud Armor rule expression should you configure?",
+  "correct": "B",
+  "clave_len": 179,
+  "explanation": "Cloud Armor provides preconfigured WAF rules based on ModSecurity Core Rule Set (CRS 3.3). Using `evaluatePreconfiguredExpr('sqli-v33-stable')` and `evaluatePreconfiguredExpr('xss-v33-stable')` automatically inspects HTTP payloads for SQL injection and cross-site scripting attack vectors at Google's global edge.",
+  "doc": "https://cloud.google.com/armor/docs/waf-rules",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Deploy an unmanaged Snort IDS VM on Compute Engine."
+   },
+   {
+    "letter": "B",
+    "len": 179,
+    "text": "Configure Cloud Armor rules using preconfigured WAF expressions: evaluatePreconfiguredExpr('sqli-v33-stable') and evaluatePreconfiguredExpr('xss-v33-stable') with action deny-403."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Create a VPC firewall rule blocking port 80 and 443."
+   },
+   {
+    "letter": "D",
+    "len": 48,
+    "text": "Set Cloud Storage bucket permissions to private."
+   }
+  ],
+  "ratio": 3.56
+ },
+ {
+  "id": "ACE-D5-050",
+  "subtopic": "Cloud KMS Separation of Duties Architecture",
+  "scenario": "An enterprise security audit requires strict Separation of Duties for cryptographic key management in Cloud KMS. Key administrators must be able to manage key rings, create keys, and configure rotation schedules, but must NEVER have permission to encrypt or decrypt customer data. Data processing applications must be able to encrypt and decrypt data, but must NEVER be able to modify key configurations or rotate keys. How should IAM roles be assigned?",
+  "correct": "A",
+  "clave_len": 248,
+  "explanation": "Cloud KMS strictly enforces Separation of Duties by segregating administrative permissions (`roles/cloudkms.admin` manages key rings, rotation schedules, and IAM policies but CANNOT encrypt/decrypt) from cryptographic data plane permissions (`roles/cloudkms.cryptoKeyEncrypterDecrypter` encrypts and decrypts payloads but CANNOT alter key configurations).",
+  "doc": "https://cloud.google.com/kms/docs/separation-of-duties",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 248,
+    "text": "Grant roles/cloudkms.admin to Key Administrators (grants management without encrypter/decrypter rights), and grant roles/cloudkms.cryptoKeyEncrypterDecrypter to Application Service Accounts (grants data crypto operations without management rights)."
+   },
+   {
+    "letter": "B",
+    "len": 89,
+    "text": "Grant primitive roles/editor to both Key Administrators and Application Service Accounts."
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "Store the KMS private key in a shared Cloud Storage bucket."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Grant roles/owner to Key Administrators at the project level."
+   }
+  ],
+  "ratio": 3.56
+ }
+]

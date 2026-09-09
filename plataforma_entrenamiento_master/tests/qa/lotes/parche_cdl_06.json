@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D2-011",
+  "options": {
+   "A": "Aumentar el tipo de máquina de la instancia primaria de Cloud SQL a más vCPUs y más memoria para que absorba a la vez las consultas de reporting y las transacciones de compra.",
+   "C": "Habilitar la configuración de Alta Disponibilidad de Cloud SQL y dirigir las consultas de los analistas a la instancia en espera (standby) situada en la zona secundaria.",
+   "D": "Colocar una instancia de Memorystore for Redis delante de Cloud SQL para servir desde la caché los resultados de las consultas de reporting de los analistas de negocio."
+  },
+  "distractors": {
+   "A": "El escalado vertical amplía la capacidad, pero no aísla las cargas: las consultas pesadas siguen compitiendo por los mismos recursos que las compras, y exige reiniciar la instancia.",
+   "C": "La instancia en espera de una configuración HA no es accesible para consultas; solo recibe la replicación sincrónica y entra en servicio tras una conmutación por error.",
+   "D": "La caché acelera lecturas repetidas de la misma clave, pero los reportes son agregaciones cambiantes: la primera ejecución de cada consulta sigue golpeando la instancia primaria."
+  }
+ },
+ {
+  "id": "CDL-D4-017",
+  "options": {
+   "A": "Registros de Auditoría de Acceso a Datos (Data Access Logs), desactivados por defecto",
+   "B": "Registros de Auditoría de Eventos del Sistema (System Event Logs) en Cloud Audit Logs",
+   "D": "Registros de flujo de VPC (VPC Flow Logs) de la subred de producción en Cloud Logging"
+  },
+  "distractors": {
+   "A": "Los Data Access Logs registran lecturas y escrituras de datos de usuario, no la llamada administrativa que elimina el recurso de base de datos.",
+   "B": "Los System Event Logs recogen acciones que ejecuta el propio Google Cloud de forma automática, no las realizadas por un usuario o cuenta de servicio.",
+   "D": "Los flow logs muestran conexiones de red entre direcciones IP, pero no la identidad del autor ni la API de Google Cloud que se invocó."
+  }
+ },
+ {
+  "id": "CDL-D4-076",
+  "options": {
+   "B": "Reglas de firewall de entrada en la VPC que denieguen los rangos de direcciones IP de los países sin licencia de emisión.",
+   "C": "Identity-Aware Proxy (IAP) con un nivel de acceso de Access Context Manager que restrinja la región geográfica del usuario.",
+   "D": "Política de enrutamiento geográfico (geolocation routing) en Cloud DNS que resuelva el dominio solo para México, Estados Unidos y Canadá."
+  },
+  "distractors": {
+   "B": "El firewall de VPC filtra por rango de IP dentro de la red del proyecto y no maneja códigos de país; además actúa detrás del balanceador, no en el borde.",
+   "C": "IAP protege aplicaciones internas exigiendo una identidad autenticada, mientras que el tráfico de streaming al que se aplica la licencia es público y anónimo.",
+   "D": "El enrutamiento geográfico decide a qué dirección IP se resuelve el dominio, pero no bloquea nada: quien conozca la IP del balanceador sigue accediendo."
+  }
+ },
+ {
+  "id": "CDL-D2-045",
+  "options": {
+   "B": "Cloud Dataflow (ingesta) -> Cloud Pub/Sub (procesamiento streaming) -> Looker Studio (data warehouse analítico) -> BigQuery (visualización de negocio)",
+   "C": "Cloud Pub/Sub (ingesta) -> Cloud Dataproc con Spark por lotes (procesamiento) -> Cloud Bigtable (data warehouse analítico) -> Looker Studio (visualización)",
+   "D": "Cloud Storage (ingesta de archivos) -> Cloud Composer (orquestación por lotes) -> BigQuery (data warehouse analítico) -> Looker Studio (visualización de negocio)"
+  },
+  "distractors": {
+   "B": "Invierte los papeles de la cadena: Pub/Sub es la capa de mensajería de ingesta y BigQuery el almacén analítico, no la herramienta de visualización.",
+   "C": "Dataproc con Spark por lotes no procesa el flujo continuo de viajes, y Bigtable es NoSQL de baja latencia sin el SQL analítico que exige el almacén.",
+   "D": "Es la arquitectura por lotes clásica: no cumple el requisito de ingesta continua de eventos ni el de transformación en tiempo real."
+  }
+ },
+ {
+  "id": "CDL-D1-018",
+  "options": {
+   "B": "Adoptar como métrica de referencia el Acuerdo de Nivel de Servicio (SLA) de disponibilidad que Google Cloud publica para cada producto y reportar a la dirección el crédito de servicio obtenido cuando se incumple.",
+   "C": "Ampliar los paneles de Cloud Monitoring con más métricas de infraestructura (CPU, memoria, IOPS de disco y ancho de banda de red) de todas las máquinas virtuales y presentarlas al comité de dirección.",
+   "D": "Elevar el objetivo de disponibilidad del 99.9 al 99.999 por ciento en toda la plataforma, asumiendo que cada nueve adicional se traduce de forma proporcional en una mejora de la tasa de conversión y del carrito abandonado."
+  },
+  "distractors": {
+   "B": "El SLA es el compromiso contractual del proveedor y su penalización asociada; mide el servicio de Google, no la experiencia del comprador ni la conversión.",
+   "C": "Añade señales de causa, pero sigue midiendo el sistema en lugar del recorrido del cliente: el uptime del 99.9 por ciento ya era una métrica de ese tipo.",
+   "D": "Subir el objetivo global encarece la operación sin demostrar el vínculo con el negocio; la conversión no mejora de forma proporcional a los nueves de disponibilidad."
+  }
+ },
+ {
+  "id": "CDL-D2-086",
+  "options": {
+   "A": "Crear una vista autorizada por cada país que filtre las filas y otra vista adicional que omita la columna `salary`, concediendo a cada grupo acceso únicamente a la vista que le corresponde y nunca a la tabla base.",
+   "B": "Asignar `roles/bigquery.dataViewer` sobre el dataset a los gerentes regionales y crear un dataset independiente por país, dejando la columna de salario solo en el dataset de los directores de Recursos Humanos.",
+   "C": "Aplicar Sensitive Data Protection (Cloud DLP) para desidentificar la columna `salary` mediante tokenización y conceder a los gerentes regionales el rol de lector sobre la tabla de empleados completa."
+  },
+  "distractors": {
+   "A": "Las vistas autorizadas filtran filas, pero obligan a mantener una vista por país y no enmascaran: el usuario ve la columna completa o no la ve, nunca con asteriscos.",
+   "B": "Duplica los datos en tantos datasets como países y rompe la tabla única de empleados; el enmascaramiento por columna no se implementa con IAM de dataset.",
+   "C": "La desidentificación con DLP genera una copia transformada de los datos y no aporta el filtrado por país: los gerentes seguirían viendo todos los empleados."
+  }
+ },
+ {
+  "id": "CDL-D4-012",
+  "options": {
+   "A": "Cloud KMS con nivel de protección de software",
+   "B": "Cloud External Key Manager (Cloud EKM)",
+   "C": "Secret Manager con rotación automática"
+  },
+  "distractors": {
+   "A": "Las claves de software de Cloud KMS no residen en un módulo de hardware certificado FIPS 140-2 Nivel 3.",
+   "B": "Con EKM la clave vive en un gestor externo a Google, que no aporta la certificación FIPS 140-2 Nivel 3 administrada por Google Cloud.",
+   "C": "Secret Manager custodia secretos de aplicación (contraseñas, tokens), no ejecuta operaciones criptográficas dentro de un HSM."
+  }
+ },
+ {
+  "id": "CDL-D2-063",
+  "options": {
+   "B": "Adaptación del modelo (Model Adaptation) con frases de contexto en Speech-to-Text",
+   "C": "Reconocimiento multicanal (Multi-Channel Recognition) en Cloud Speech-to-Text",
+   "D": "Transcripción de audio largo con marcas de tiempo por palabra (word time offsets)"
+  },
+  "distractors": {
+   "B": "La adaptación mejora el reconocimiento de vocabulario y jerga específica, pero no atribuye cada frase a un interlocutor distinto.",
+   "C": "Separa la transcripción por canal físico de audio, y en una reunión grabada todos los participantes comparten un único canal.",
+   "D": "Aporta la temporización exacta de cada palabra, pero no identifica quién la pronunció dentro de la reunión."
+  }
+ },
+ {
+  "id": "CDL-D2-051",
+  "options": {
+   "A": "Proyecto 1: Firestore en Modo Datastore (Datastore Mode); Proyecto 2: Firestore en Modo Nativo (Native Mode)",
+   "B": "Proyecto 1: Firestore en Modo Nativo; Proyecto 2: Firestore en Modo Nativo reescribiendo el backend heredado de Datastore",
+   "D": "Proyecto 1: Firestore en Modo Nativo (Native Mode); Proyecto 2: Cloud Bigtable por su alta concurrencia de escritura"
+  },
+  "distractors": {
+   "A": "Invierte los modos: el Modo Datastore no ofrece listeners en tiempo real ni SDKs de cliente móvil, que es lo que necesita el proyecto 1.",
+   "B": "Obliga a reescribir el backend heredado; el Modo Datastore existe precisamente para conservar la compatibilidad con esa API sin tocar el código.",
+   "D": "Bigtable escala muy bien las escrituras, pero no es compatible con la API clásica de Datastore ni con su modelo de entidades y claves."
+  }
+ },
+ {
+  "id": "CDL-D2-084",
+  "options": {
+   "B": "Anclar el modelo (Grounding) con Vertex AI Search sobre el repositorio de literatura clínica de la empresa para que recupere la terminología correcta en cada solicitud de resumen.",
+   "C": "Ampliar el prompt con varios centenares de ejemplos adicionales de resúmenes médicos ya redactados para que el modelo disponga de más contexto en cada llamada al endpoint.",
+   "D": "Sustituir el modelo fundacional por otro de mayor tamaño del Model Garden de Vertex AI, asumiendo que más parámetros implican conocer la terminología de patología."
+  },
+  "distractors": {
+   "B": "El anclaje recupera documentos en tiempo de consulta y cita fuentes, pero no hace que el modelo internalice la terminología en sus pesos, que es lo que pide el escenario.",
+   "C": "El equipo ya descartó el few-shot: la ventana de contexto no admite miles de términos de patología en cada llamada y el modelo sigue sin modificarse.",
+   "D": "Cambiar de modelo base no incorpora el vocabulario propietario del cliente; ningún modelo de propósito general contiene esos miles de términos internos."
+  }
+ },
+ {
+  "id": "CDL-D1-022",
+  "options": {
+   "A": "Porque la facturación por consumo de Google Cloud abarata por sí sola los proyectos, con independencia de que el equipo siga planificando entregas únicas con especificaciones cerradas a dos años vista.",
+   "C": "Porque migrar los servidores tal cual mediante lift-and-shift obliga a congelar el alcance funcional durante la migración, y el modelo en cascada es el único que garantiza documentar por completo la infraestructura destino.",
+   "D": "Porque Cloud Build, Artifact Registry y Cloud Deploy automatizan la integración y la entrega continua, y esas herramientas sustituyen a la priorización de producto y a las ceremonias del enfoque ágil."
+  },
+  "distractors": {
+   "A": "El ahorro por consumo es real, pero no es la razón por la que hace falta agilidad: con ciclos de dos años se sigue construyendo sobre hipótesis nunca validadas.",
+   "C": "Describe una migración de infraestructura, no la razón de negocio para iterar; además la calidad de la documentación no depende de la metodología elegida.",
+   "D": "La cadena de CI/CD habilita la entrega frecuente, pero las herramientas no reemplazan la práctica de validar hipótesis de producto con usuarios reales."
+  }
+ },
+ {
+  "id": "CDL-D3-060",
+  "options": {
+   "B": "Rehospedar los 45 servidores en Compute Engine con Migrate to Virtual Machines (estrategia Rehost) para trasladarlos a la nube sin cambios y decidir más adelante.",
+   "C": "Conservar los 45 servidores en el centro de datos local (estrategia Retain) hasta que cada departamento confirme por escrito que ya no necesita esas aplicaciones.",
+   "D": "Replataformar las aplicaciones obsoletas a contenedores en Cloud Run (estrategia Replatform) para reducir su coste de ejecución conservando la funcionalidad original."
+  },
+  "distractors": {
+   "B": "Rehospedar traslada a la nube aplicaciones que ya nadie usa: se sigue pagando cómputo y almacenamiento y se mantiene la superficie de ataque.",
+   "C": "Retain aplaza la decisión sobre cargas que sí siguen en uso; aquí el inventario ya confirmó dos años sin utilización de ningún departamento.",
+   "D": "Invertir esfuerzo de ingeniería en modernizar aplicaciones sin usuarios no genera valor de negocio; el marco prescribe darlas de baja, no migrarlas."
+  }
+ },
+ {
+  "id": "CDL-D2-087",
+  "options": {
+   "A": "Cloud Spanner aplica los cambios de esquema durante la ventana de mantenimiento semanal de la instancia, momento en el que las escrituras de los jugadores se encolan hasta que el índice queda construido.",
+   "B": "Cloud Spanner exige exportar la tabla a Cloud Storage, recrearla con las tres columnas y el índice secundario y volver a importar los datos, por lo que la parada depende del volumen de jugadores.",
+   "D": "Cloud Spanner agrega las tres columnas en línea sin bloqueo, pero la creación del índice secundario sí requiere bloquear la tabla para escrituras mientras el índice se rellena en segundo plano."
+  },
+  "distractors": {
+   "A": "Spanner no tiene ventanas de mantenimiento planificado ni encola las escrituras: su diseño de disponibilidad continua del 99.999 por ciento las excluye.",
+   "B": "Describe el procedimiento típico de motores sin DDL en línea; Spanner añade columnas y crea índices sin recrear ni reimportar la tabla.",
+   "D": "El relleno del índice secundario también se ejecuta en segundo plano sin bloquear escrituras: es exactamente la operación que Spanner realiza en línea."
+  }
+ },
+ {
+  "id": "CDL-D4-087",
+  "options": {
+   "B": "Comprobaciones de tiempo de actividad (Uptime Checks) de Cloud Monitoring contra el puerto 443 del portal",
+   "C": "Comprobaciones de estado (Health Checks) del balanceador de carga configuradas contra la ruta de inicio de sesión",
+   "D": "Cloud Trace con muestreo de latencia distribuida sobre las peticiones reales de los clientes del portal bancario"
+  },
+  "distractors": {
+   "B": "El Uptime Check valida que un extremo responda con el código esperado, pero no ejecuta un flujo de varios pasos con sesión iniciada.",
+   "C": "El health check decide si un backend recibe tráfico del balanceador; no simula una sesión de usuario ni valida la transferencia bancaria.",
+   "D": "Trace mide el tráfico real ya existente; no genera la transacción sintética cada 5 minutos cuando no hay usuarios conectados."
+  }
+ },
+ {
+  "id": "CDL-D2-005",
+  "options": {
+   "A": "Activar Autoclass en el bucket de Cloud Storage para que cada archivo DICOM cambie de clase según su patrón de acceso real, sin definir reglas por antigüedad ni plazos de retención.",
+   "B": "Aplicar al bucket una política de retención de 7 años con bloqueo (Bucket Lock) para que ningún estudio DICOM pueda eliminarse antes de cumplir el plazo exigido por la regulación.",
+   "C": "Crear el bucket directamente en la clase Coldline para que todos los estudios DICOM tengan el precio de almacenamiento más bajo desde el momento en que se genera cada archivo."
+  },
+  "distractors": {
+   "A": "Autoclass optimiza según el acceso observado de cada objeto, pero no aplica el calendario regulatorio de 30 y 365 días ni la conservación obligatoria de 7 años.",
+   "B": "El Bucket Lock garantiza la inmutabilidad y el plazo legal, pero no realiza ninguna transición de clase de almacenamiento: el coste sigue siendo el de Standard.",
+   "C": "Coldline impone una duración mínima de 90 días y cobra por recuperación, lo que penaliza justamente los estudios que se consultan de forma activa el primer mes."
+  }
+ },
+ {
+  "id": "CDL-D2-025",
+  "options": {
+   "B": "Crear vistas materializadas sobre las tablas de origen para que Looker Studio consulte agregados precalculados en vez de recorrer la tabla de detalle.",
+   "C": "Contratar una reserva de slots de BigQuery Enterprise con autoescalado para dar más capacidad de cómputo a las consultas interactivas del panel ejecutivo.",
+   "D": "Activar la extracción de datos (Extract) de Looker Studio para guardar una instantánea del conjunto en la caché del informe y filtrarla sin volver a BigQuery."
+  },
+  "distractors": {
+   "B": "Acelera agregaciones concretas, pero obliga a rediseñar el modelo de datos y el escenario exige explícitamente no cambiar la estructura de las tablas.",
+   "C": "Más slots reducen la cola y el tiempo de ejecución, pero el escaneo del almacenamiento persiste: la respuesta en sub-segundos requiere la capa en memoria.",
+   "D": "La extracción congela una instantánea limitada en tamaño y deja de reflejar la tabla en vivo, por lo que el panel ejecutivo pierde actualidad."
+  }
+ },
+ {
+  "id": "CDL-D4-089",
+  "options": {
+   "A": "Niveles de acceso de Access Context Manager basados en rangos de direcciones IP",
+   "B": "BeyondCorp Enterprise con Identity-Aware Proxy para el acceso a aplicaciones",
+   "C": "Verificación en dos pasos obligatoria con llaves de seguridad Titan en Cloud Identity"
+  },
+  "distractors": {
+   "A": "Define condiciones para conceder acceso a los recursos, pero no impone el cifrado del dispositivo ni permite borrarlo de forma remota.",
+   "B": "Protege el acceso a las aplicaciones desde cualquier dispositivo; no gestiona el ciclo de vida del teléfono ni borra sus datos corporativos.",
+   "C": "Refuerza la autenticación de la cuenta, pero no aplica políticas de bloqueo de pantalla ni actúa sobre un dispositivo extraviado."
+  }
+ },
+ {
+  "id": "CDL-D4-043",
+  "options": {
+   "A": "Google Cloud puede analizar los datos del cliente de forma agregada y anonimizada para segmentar audiencias publicitarias, salvo que el cliente active la cláusula de exclusión del acuerdo de tratamiento de datos.",
+   "B": "Los datos alojados en Google Cloud se rigen por la misma política de privacidad que los productos de consumo de Google, que permite personalizar anuncios a partir del contenido que almacena el usuario.",
+   "D": "Google conserva derechos de uso sobre los datos del cliente mientras el personal de soporte necesite acceder a ellos para resolver una incidencia, y esos accesos no quedan registrados para el cliente."
+  },
+  "distractors": {
+   "A": "No existe tal cláusula de exclusión opcional: el compromiso de no usar los datos del cliente con fines publicitarios es incondicional y aplica por defecto.",
+   "B": "Los servicios empresariales de Google Cloud se rigen por sus propios términos y por el acuerdo de tratamiento de datos, no por la política de los productos de consumo.",
+   "D": "El acceso del personal de soporte es excepcional, se limita a la instrucción del cliente y queda registrado en Access Transparency; no transfiere derecho de uso alguno."
+  }
+ },
+ {
+  "id": "CDL-D3-010",
+  "options": {
+   "A": "(1) App Engine Entorno Flexible (Flexible Environment); (2) App Engine Entorno Estándar (Standard Environment)",
+   "B": "(1) App Engine Entorno Estándar (Standard Environment); (2) App Engine Entorno Estándar con un runtime personalizado",
+   "C": "(1) App Engine Entorno Flexible con escalado automático; (2) App Engine Entorno Flexible con contenedores Docker propios"
+  },
+  "distractors": {
+   "A": "Invierte los entornos: el Flexible no escala a cero ni arranca en segundos, y el Estándar no admite binarios personalizados del sistema operativo.",
+   "B": "El entorno Estándar ejecuta runtimes en un sandbox cerrado: no permite instalar librerías C++ del sistema ni imágenes Docker propias.",
+   "C": "El entorno Flexible mantiene al menos una instancia activa y arranca en minutos, por lo que no cubre el escalado desde cero en segundos del proyecto 1."
+  }
+ },
+ {
+  "id": "CDL-D2-054",
+  "options": {
+   "A": "Apoyarse en la caché de resultados de BigQuery, que devuelve sin coste la respuesta de una consulta idéntica ya ejecutada antes sobre la tabla de transacciones de 100 millones de filas.",
+   "B": "Programar una consulta que reescriba cada 5 minutos una tabla de resumen con las ventas diarias por región, sustituyendo por completo su contenido en cada una de las ejecuciones.",
+   "C": "Agrupar la tabla de transacciones por la columna de región (clustering) para que el panel lea únicamente los bloques correspondientes a la región seleccionada en el filtro."
+  },
+  "distractors": {
+   "A": "La caché de resultados se invalida en cuanto la tabla base recibe nuevas transacciones, algo que ocurre de forma continua entre los refrescos del panel.",
+   "B": "Funciona, pero reprocesa las 100 millones de filas en cada ejecución; la vista materializada solo recalcula el incremento y no exige orquestación externa.",
+   "C": "El clustering reduce lo escaneado por filtro, pero la suma diaria por región se vuelve a calcular íntegra en cada consulta del panel ejecutivo."
+  }
+ },
+ {
+  "id": "CDL-D2-074",
+  "options": {
+   "A": "Cifrado predeterminado de Google Cloud con claves gestionadas por la plataforma (Google-managed keys)",
+   "C": "Customer-Supplied Encryption Keys (CSEK) suministradas en cada petición a la API de Cloud Storage",
+   "D": "Secret Manager con rotación programada de las credenciales de acceso a BigQuery y a Cloud Storage"
+  },
+  "distractors": {
+   "A": "Cifra todos los datos en reposo por defecto, pero el banco no puede rotar ni revocar esas claves: el control lo mantiene Google.",
+   "C": "CSEK obliga al cliente a custodiar la clave fuera de Google y no está disponible para BigQuery, uno de los servicios que exige el requisito.",
+   "D": "Secret Manager gestiona secretos de aplicación, no las claves criptográficas que cifran los datos en reposo de los servicios."
+  }
+ },
+ {
+  "id": "CDL-D2-024",
+  "options": {
+   "A": "Crear la tabla agrupada (clustering) por la columna `call_date`, para que BigQuery ordene físicamente los bloques por fecha y descarte los que quedan fuera del rango consultado.",
+   "B": "Crear una vista materializada que precalcule los registros de llamadas agregados por día, de modo que las consultas lean ese resumen en lugar de la tabla de detalle.",
+   "D": "Contratar una reserva de slots de BigQuery para que las consultas sobre los 10 años de registros dejen de facturarse por bytes escaneados y pasen a un coste mensual fijo."
+  },
+  "distractors": {
+   "A": "El clustering ordena los datos y reduce el escaneo de forma aproximada, pero no ofrece la poda determinista por partición ni permite exigir un filtro obligatorio de fecha.",
+   "B": "Una vista materializada sirve para agregaciones fijas; aquí se consultan los registros de detalle filtrados por fecha, no un resumen diario precalculado.",
+   "D": "Cambia el modelo de facturación, pero no evita escanear la tabla completa de 10 años: el rendimiento de la consulta sigue igual de degradado."
+  }
+ },
+ {
+  "id": "CDL-D4-016",
+  "options": {
+   "A": "Cloud Logging (definiendo alertas basadas en registros que busquen la cadena de error 500 en los registros del balanceador)",
+   "B": "Error Reporting (que agrupa las excepciones de la aplicación y avisa por correo cuando aparece un error nuevo en producción)",
+   "D": "Instalar el Agente de Operaciones (Ops Agent) en las máquinas virtuales para que publique las métricas de CPU del sistema invitado"
+  },
+  "distractors": {
+   "A": "La alerta basada en registros dispara ante una línea concreta, pero no evalúa un umbral del 85 por ciento de CPU sostenido durante 5 minutos.",
+   "B": "Error Reporting agrupa excepciones del código de la aplicación, no métricas de infraestructura como la utilización de CPU de las máquinas virtuales.",
+   "D": "El agente aporta las métricas del sistema invitado, pero por sí solo no define umbrales, condiciones de alerta ni canales de notificación."
+  }
+ },
+ {
+  "id": "CDL-D2-075",
+  "options": {
+   "A": "Política de organización de uso compartido restringido por dominio aplicada al proyecto del laboratorio",
+   "B": "Claves de cifrado gestionadas por el cliente (CMEK) en Cloud KMS para los datasets y los buckets del laboratorio",
+   "D": "Reglas de firewall de VPC y Acceso Privado a Google que bloqueen la salida a Internet de las subredes"
+  },
+  "distractors": {
+   "A": "Impide conceder permisos de IAM a identidades de otros dominios, pero no evita que una cuenta interna legítima copie los datos a otro proyecto propio.",
+   "B": "CMEK controla el cifrado en reposo; un usuario con permisos válidos sigue leyendo los datos ya descifrados y puede exportarlos fuera del perímetro.",
+   "D": "El firewall filtra el tráfico de red de las máquinas virtuales, pero BigQuery y Cloud Storage son APIs de Google a las que se accede fuera de la VPC."
+  }
+ },
+ {
+  "id": "CDL-D3-029",
+  "options": {
+   "A": "Migrate to Virtual Machines (antes Migrate for Compute Engine)",
+   "C": "La Calculadora de Precios de Google Cloud (Pricing Calculator)",
+   "D": "Database Migration Service para inventariar las bases de datos"
+  },
+  "distractors": {
+   "A": "Ejecuta la migración de las máquinas virtuales, pero no descubre el inventario ni estima el TCO antes de decidir.",
+   "C": "Estima el coste de una configuración que se introduce a mano: no descubre servidores ni mapea dependencias de red.",
+   "D": "Migra motores de base de datos concretos, sin cubrir servidores, aplicaciones ni el modelado financiero del TCO."
+  }
+ }
+]

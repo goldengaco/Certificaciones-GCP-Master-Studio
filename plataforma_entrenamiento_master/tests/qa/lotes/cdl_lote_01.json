@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D3-081",
+  "subtopic": "Cloud Domains y Google Cloud DNS: Presencia Web Completa",
+  "caseStudy": "none",
+  "scenario": "Una nueva empresa de base tecnológica necesita registrar su nombre de dominio comercial en Internet (ej. `miempresa.com`) y administrar sus registros DNS (registros A, CNAME, MX) con alta disponibilidad y DNSSEC para proteger contra la falsificación de DNS. ¿Qué servicios de Google Cloud completan esta solución?",
+  "correct": "C",
+  "clave_len": 144,
+  "explanation": "Cloud Domains permite buscar, registrar y gestionar nombres de dominio directamente en la consola de Google Cloud, integrándose de forma nativa con Cloud DNS para servir registros DNS con seguridad DNSSEC y 100% de disponibilidad.",
+  "doc": "https://cloud.google.com/domains/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Billing Reports"
+   },
+   {
+    "letter": "C",
+    "len": 144,
+    "text": "Cloud Domains (para registrar y administrar la propiedad del dominio) y Cloud DNS (para servir los registros DNS autorizados con DNSSEC global)."
+   },
+   {
+    "letter": "D",
+    "len": 23,
+    "text": "Compute Engine Spot VMs"
+   }
+  ],
+  "ratio": 6.65
+ },
+ {
+  "id": "CDL-D3-075",
+  "subtopic": "Google Cloud VMware Engine: Recuperación ante Desastres con VMware SRM",
+  "caseStudy": "none",
+  "scenario": "Una institución financiera opera su centro de datos principal en premisas con VMware vSphere. Para su plan de recuperación ante desastres (DR), desean utilizar Google Cloud como sitio secundario sin tener que comprar un segundo centro de datos físico, replicando sus VMs con VMware Site Recovery Manager (SRM) directamente a Google Cloud VMware Engine. ¿Qué beneficio central aporta esta solución?",
+  "correct": "D",
+  "clave_len": 283,
+  "explanation": "Google Cloud VMware Engine permite a las organizaciones utilizar la nube como un sitio secundario de recuperación de desastres (DR) utilizando herramientas nativas de VMware como Site Recovery Manager (SRM), garantizando conmutación rápida sin la inversión de capital (CapEx) de un centro de datos físico secundario.",
+  "doc": "https://cloud.google.com/vmware-engine/docs/disaster-recovery",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Impide recuperar datos en caso de una catástrofe."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Cloud Storage Coldline como único servidor de cómputo"
+   },
+   {
+    "letter": "C",
+    "len": 71,
+    "text": "Obliga a reescribir todas las máquinas virtuales en código ensamblador."
+   },
+   {
+    "letter": "D",
+    "len": 283,
+    "text": "Permite utilizar Google Cloud VMware Engine como sitio de recuperación ante desastres elástico y bajo demanda totalmente compatible con herramientas familiares de VMware (como SRM y vSphere Replication), evitando la cuantiosa inversión de construir un segundo centro de datos físico."
+   }
+  ],
+  "ratio": 4.91
+ },
+ {
+  "id": "CDL-D2-040",
+  "subtopic": "Document AI: Automatización de Documentos Empresariales",
+  "caseStudy": "none",
+  "scenario": "El departamento de cuentas por pagar de una corporación procesa mensualmente 50,000 facturas en formato PDF recibidas por correo electrónico. El equipo ingresa manualmente los datos (nombre del proveedor, número de factura, fecha, total e impuestos) en el sistema ERP, lo que provoca errores continuos. ¿Qué servicio de IA especializada automatiza este proceso?",
+  "correct": "B",
+  "clave_len": 86,
+  "explanation": "Document AI es la plataforma de Google Cloud para comprender y extraer datos no estructurados de documentos (facturas, contratos, recibos, formularios de impuestos) transformándolos en datos estructurados listos para ser consumidos por sistemas ERP o analíticos.",
+  "doc": "https://cloud.google.com/document-ai/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud NAT"
+   },
+   {
+    "letter": "B",
+    "len": 86,
+    "text": "Document AI (utilizando procesadores especializados como Invoice Parser y Form Parser)"
+   },
+   {
+    "letter": "C",
+    "len": 13,
+    "text": "Cloud Spanner"
+   },
+   {
+    "letter": "D",
+    "len": 32,
+    "text": "Google Compute Engine Bare Metal"
+   }
+  ],
+  "ratio": 4.78
+ },
+ {
+  "id": "CDL-D4-090",
+  "subtopic": "Resumen Maestro de Seguridad y Operaciones en Google Cloud",
+  "caseStudy": "none",
+  "scenario": "El Comité de Riesgos y Cumplimiento de una institución financiera internacional solicita un dictamen final sobre si la postura de seguridad y gobernanza operativa de Google Cloud cumple con los más altos estándares mundiales para albergar operaciones críticas. ¿Cuál es la conclusión definitiva fundamentada en la arquitectura de Google Cloud?",
+  "correct": "D",
+  "clave_len": 437,
+  "explanation": "Google Cloud ofrece una arquitectura integral de seguridad, confiabilidad y gobernanza basada en décadas de investigación y operación a hiperescala, permitiendo a las organizaciones más exigentes del mundo innovar con confianza bajo los más rigurosos estándares de seguridad y cumplimiento normativo.",
+  "doc": "https://cloud.google.com/security",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 98,
+    "text": "Los servidores en la nube son más inseguros que una computadora desatendida en un pasillo público."
+   },
+   {
+    "letter": "B",
+    "len": 103,
+    "text": "Google Cloud carece de cualquier medida de seguridad y confía ciegamente en cualquier conexión anónima."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "La gobernanza de la nube solo permite utilizar hojas de cálculo de papel."
+   },
+   {
+    "letter": "D",
+    "len": 437,
+    "text": "Google Cloud proporciona una infraestructura de confianza probada a nivel planetario que combina: defensa en profundidad multicapa con chips Titan y cifrado predeterminado, arquitectura Zero Trust con BeyondCorp, gobernanza estandarizada con Resource Hierarchy y Organization Policies, observabilidad integral con Cloud Operations, excelencia operativa SRE y certificaciones de cumplimiento de terceros independientes del más alto nivel."
+   }
+  ],
+  "ratio": 4.78
+ },
+ {
+  "id": "CDL-D4-072",
+  "subtopic": "Servicio de Asistencia Activa (Active Assist): Inteligencia de Recomendaciones",
+  "caseStudy": "none",
+  "scenario": "Google Cloud incluye un portafolio de capacidades impulsadas por aprendizaje automático e inteligencia artificial que genera recomendaciones continuas para optimizar costos, seguridad, rendimiento y sostenibilidad en toda la organización. ¿Cómo se denomina este conjunto de herramientas?",
+  "correct": "B",
+  "clave_len": 103,
+  "explanation": "Active Assist es el portafolio de herramientas inteligentes de Google Cloud (incluyendo Recommender, Network Analyzer, Cost Recommendations y Policy Intelligence) que utiliza IA y análisis predictivo para ayudar a los clientes a operar en la nube de forma más segura, económica y eficiente.",
+  "doc": "https://cloud.google.com/active-assist",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "B",
+    "len": 103,
+    "text": "Active Assist (que engloba a Recommender, Network Analyzer y herramientas de optimización automatizada)"
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "Un manual de usuario impreso de 1990"
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 4.68
+ },
+ {
+  "id": "CDL-D3-083",
+  "subtopic": "Resiliencia ante Caídas Zonales: Persistent Disks Regionales (Regional PD)",
+  "caseStudy": "none",
+  "scenario": "Una empresa ejecuta una base de datos autogestionada en una máquina virtual de Compute Engine. Si la zona donde corre la VM sufre una falla de hardware, la empresa necesita poder encender una nueva VM en otra zona de la misma región y conectarla inmediatamente al mismo disco con todos los datos sincronizados sin requerir restauración de copias de seguridad. ¿Qué tipo de disco garantiza replicación síncrona entre dos zonas?",
+  "correct": "A",
+  "clave_len": 128,
+  "explanation": "Regional Persistent Disk proporciona almacenamiento en bloque con replicación síncrona de datos en dos zonas dentro de una misma región, permitiendo conmutar por error de forma casi instantánea una máquina virtual a otra zona sin pérdida de datos en caso de contingencia zonal.",
+  "doc": "https://cloud.google.com/compute/docs/disks/regional-persistent-disks",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 128,
+    "text": "Regional Persistent Disk (disco persistente regional que replica datos de forma síncrona en dos zonas dentro de la misma región)"
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Zonal Persistent Disk estándar sin replicación"
+   },
+   {
+    "letter": "D",
+    "len": 17,
+    "text": "Local SSD efímero"
+   }
+  ],
+  "ratio": 4.57
+ },
+ {
+  "id": "CDL-D3-059",
+  "subtopic": "Estrategia 6 R: Retain (Retener en Premisas) y Fachadas con Apigee",
+  "caseStudy": "none",
+  "scenario": "Un banco tiene un sistema central mainframe heredado que no puede ser migrado ni reemplazado en el corto plazo debido a restricciones regulatorias (estrategia Retain). Sin embargo, el banco necesita que sus nuevas aplicaciones móviles en Google Cloud consulten saldos del mainframe de forma moderna y segura. ¿Cómo se resuelve esta integración?",
+  "correct": "D",
+  "clave_len": 190,
+  "explanation": "Para sistemas críticos que deben conservarse localmente (Retain), el patrón de 'Fachada de APIs' (utilizando Apigee) permite encapsular los protocolos complejos heredados del mainframe en APIs REST modernas y seguras, permitiendo que las nuevas aplicaciones en la nube interactúen fácilmente con ellos.",
+  "doc": "https://cloud.google.com/apigee/docs/api-platform/fundamentals/what-is-apigee",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "Exponer el mainframe directamente a Internet sin contraseñas"
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Destruir el mainframe con un mazo sin respaldo"
+   },
+   {
+    "letter": "D",
+    "len": 190,
+    "text": "Retener el mainframe en las instalaciones locales (Retain) y colocar una fachada de APIs moderna (con Apigee) para conectar de forma segura las aplicaciones en la nube con el sistema legado."
+   }
+  ],
+  "ratio": 4.45
+ },
+ {
+  "id": "CDL-D4-083",
+  "subtopic": "Google Cloud Armor: Reglas Preconfiguradas para OWASP Top 10",
+  "caseStudy": "none",
+  "scenario": "Una aplicación web de comercio electrónico necesita protegerse de forma inmediata contra ataques comunes de la lista OWASP Top 10 (como Inyección SQL - SQLi, Cross-Site Scripting - XSS, Inclusión Local de Archivos - LFI y Ejecución Remota de Código - RCE). ¿Cómo facilita Cloud Armor la protección contra estas amenazas sin tener que escribir expresiones regulares complejas desde cero?",
+  "correct": "B",
+  "clave_len": 196,
+  "explanation": "Google Cloud Armor incluye un conjunto integral de reglas de WAF preconfiguradas y ajustadas por Google basadas en el conjunto de reglas ModSecurity (CRS), diseñadas para mitigar ataques comunes de OWASP (inyección SQL, XSS, RCE, fijación de sesiones, inyección de comandos) con un solo clic.",
+  "doc": "https://cloud.google.com/armor/docs/waf-rules",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Eliminar el código fuente de la aplicación"
+   },
+   {
+    "letter": "B",
+    "len": 196,
+    "text": "Habilitando el conjunto de Reglas WAF Preconfiguradas de Cloud Armor (Preconfigured WAF Rules basadas en ModSecurity Core Rule Set) que detectan y bloquean automáticamente firmas de ataques OWASP."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Desconectando la base de datos de Internet y usándola únicamente en papel"
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 4.32
+ },
+ {
+  "id": "CDL-D3-061",
+  "subtopic": "Disaster Recovery (DR): RTO (Recovery Time Objective) y RPO (Recovery Point Objective)",
+  "caseStudy": "none",
+  "scenario": "En la definición del plan de continuidad del negocio, la junta directiva define que: (1) El tiempo máximo aceptable que el sistema puede estar inactivo tras un desastre es de 15 minutos, y (2) La cantidad máxima de datos que la empresa puede permitirse perder se mide en las transacciones de los últimos 2 minutos. ¿Cómo se denominan estas dos métricas respectivamente?",
+  "correct": "B",
+  "clave_len": 69,
+  "explanation": "El RTO (Recovery Time Objective) es la duración máxima tolerable de tiempo de inactividad que una aplicación puede sufrir antes de restablecerse. El RPO (Recovery Point Objective) es la cantidad máxima tolerable de pérdida de datos medida en tiempo (los datos generados entre el último respaldo y el incidente).",
+  "doc": "https://cloud.google.com/architecture/dr-scenarios-planning-guide",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 16,
+    "text": "(1) CPU; (2) RAM"
+   },
+   {
+    "letter": "B",
+    "len": 69,
+    "text": "(1) RTO (Recovery Time Objective); (2) RPO (Recovery Point Objective)"
+   },
+   {
+    "letter": "C",
+    "len": 16,
+    "text": "(1) TCO; (2) ROI"
+   },
+   {
+    "letter": "D",
+    "len": 16,
+    "text": "(1) RPO; (2) RTO"
+   }
+  ],
+  "ratio": 4.31
+ },
+ {
+  "id": "CDL-D3-039",
+  "subtopic": "Cloud Endpoints vs Apigee: Matriz de Decisión",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto evalúa opciones para la gestión de APIs: (1) Una API interna ligera entre microservicios que solo necesita validación de claves de API y tokens JWT con latencia mínima de microsegundos, y (2) Una plataforma de APIs expuesta a socios comerciales externos que requiere portal de desarrolladores, análisis de negocio, cuotas de facturación y monetización. ¿Qué solución corresponde a cada caso?",
+  "correct": "C",
+  "clave_len": 178,
+  "explanation": "Cloud Endpoints es un sistema de gestión de APIs ligero integrado mediante un proxy Nginx (ESP) ideal para microservicios internos en Google Cloud que requieren autenticación rápida JWT. Apigee es una plataforma empresarial completa para transformar, gobernar, monetizar y exponer APIs a desarrolladores externos y ecosistemas comerciales.",
+  "doc": "https://cloud.google.com/endpoints/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 38,
+    "text": "Cloud Storage Archive para ambos casos"
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Ambas deben implementarse en hojas de cálculo compartidas"
+   },
+   {
+    "letter": "C",
+    "len": 178,
+    "text": "(1) Cloud Endpoints (para protección y validación ligera interna de APIs); (2) Apigee (para gestión integral de APIs empresariales, monetización y ecosistemas de socios externos)"
+   },
+   {
+    "letter": "D",
+    "len": 31,
+    "text": "(1) Apigee; (2) Cloud Endpoints"
+   }
+  ],
+  "ratio": 4.24
+ },
+ {
+  "id": "CDL-D4-036",
+  "subtopic": "Cloud Logging: Retención y Almacenamiento en Buckets de Logs",
+  "caseStudy": "none",
+  "scenario": "Una empresa requiere configurar periodos de retención personalizados para diferentes tipos de registros en Cloud Logging: los registros de actividad de administrador deben conservarse por 400 días de forma predeterminada, mientras que los registros de depuración de aplicaciones solo deben retenerse durante 30 días para no incurrir en sobrecostos de almacenamiento. ¿Dónde se configuran estos periodos de retención?",
+  "correct": "A",
+  "clave_len": 191,
+  "explanation": "Cloud Logging almacena los registros en Log Buckets (`_Required`, `_Default` o personalizados). Los administradores pueden definir reglas de retención personalizadas (desde 1 día hasta varios años) para cumplir con requisitos de gobernanza y optimizar costos de almacenamiento.",
+  "doc": "https://cloud.google.com/logging/docs/buckets",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 191,
+    "text": "En los Buckets de Registros (Log Buckets como `_Default` y `_Required` o buckets personalizados) de Cloud Logging, ajustando el periodo de retención de días según las políticas de la empresa."
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "En hojas de cálculo de Excel enviadas por correo electrónico"
+   },
+   {
+    "letter": "C",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Cloud Logging no permite almacenar registros por más de 5 minutos."
+   }
+  ],
+  "ratio": 4.24
+ },
+ {
+  "id": "CDL-D4-048",
+  "subtopic": "Automatización Programática de Presupuestos mediante Pub/Sub y Cloud Functions",
+  "caseStudy": "none",
+  "scenario": "En un proyecto de laboratorio para desarrolladores (Sandbox), la empresa desea que si el gasto mensual supera el 100% del presupuesto de $500 USD, se ejecute una acción automática para apagar las máquinas virtuales de prueba y deshabilitar la facturación de ese proyecto específico para evitar gastos descontrolados. ¿Cómo se implementa esta automatización en Google Cloud?",
+  "correct": "A",
+  "clave_len": 228,
+  "explanation": "Las alertas de presupuesto de Cloud Billing pueden enviar mensajes a temas de Cloud Pub/Sub. Esto permite integrar lógica programática personalizada mediante Cloud Functions o Cloud Run para ejecutar respuestas automáticas como detener instancias de prueba, reducir cuotas o suspender recursos en entornos de desarrollo.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/notify",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 228,
+    "text": "Configurar la alerta de presupuesto para que publique notificaciones en un tema de Cloud Pub/Sub que dispare una Cloud Function o servicio de Cloud Run encargado de detener las VMs o desvincular la facturación programáticamente."
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Google Cloud prohíbe cualquier automatización con facturación"
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Pedir al guardia de seguridad del edificio que corte la luz general de la oficina"
+   }
+  ],
+  "ratio": 4.17
+ },
+ {
+  "id": "CDL-D3-073",
+  "subtopic": "Cloud Armor: Detección Adaptativa de Amenazas con Machine Learning",
+  "caseStudy": "none",
+  "scenario": "Un sitio de comercio electrónico sufre ataques DDoS sofisticados de Capa 7 que no coinciden con firmas de ataque estáticas conocidas. ¿Cómo ayuda la funcionalidad de Protección Adaptativa (Adaptive Protection) de Cloud Armor a mitigar estos ataques?",
+  "correct": "A",
+  "clave_len": 218,
+  "explanation": "Cloud Armor Adaptive Protection utiliza modelos avanzados de Machine Learning para analizar el tráfico web, detectar patrones anómalos de ataques DDoS de Capa 7 y generar alertas accionables con reglas de mitigación específicas para neutralizar el ataque rápidamente.",
+  "doc": "https://cloud.google.com/armor/docs/adaptive-protection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 218,
+    "text": "Utiliza modelos de Machine Learning entrenados con telemetría global de Google para detectar anomalías de tráfico en tiempo real, identificar firmas del ataque y generar reglas de bloqueo sugeridas de forma automática."
+   },
+   {
+    "letter": "B",
+    "len": 66,
+    "text": "Reenvía todos los ataques al correo personal del director general."
+   },
+   {
+    "letter": "C",
+    "len": 71,
+    "text": "Apaga el sitio web durante el ataque para que nadie pueda ver el error."
+   },
+   {
+    "letter": "D",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   }
+  ],
+  "ratio": 4.14
+ },
+ {
+  "id": "CDL-D4-065",
+  "subtopic": "Sistemas SIEM y Alertas de Seguridad en Tiempo Real",
+  "caseStudy": "none",
+  "scenario": "Una empresa bancaria utiliza un centro de operaciones de seguridad (SOC) que monitorea eventos a través de Splunk / Chronicle. Necesitan que todos los registros de Cloud Audit Logs y alertas de Security Command Center se transmitan de forma continua con latencia de milisegundos hacia el SIEM para correlación de incidentes. ¿Qué arquitectura de Google Cloud implementa esta integración?",
+  "correct": "C",
+  "clave_len": 198,
+  "explanation": "La arquitectura canónica para conectar Google Cloud con plataformas SIEM externas es utilizar Cloud Logging Sinks para exportar registros de auditoría y seguridad hacia Cloud Pub/Sub, donde agentes o conectores del SIEM consumen los mensajes de forma desacoplada y en tiempo real.",
+  "doc": "https://cloud.google.com/architecture/exporting-stackdriver-logs-for-splunk",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 38,
+    "text": "Cloud Storage Archive con acceso anual"
+   },
+   {
+    "letter": "B",
+    "len": 33,
+    "text": "Desactivar la seguridad del banco"
+   },
+   {
+    "letter": "C",
+    "len": 198,
+    "text": "Configurar un Log Sink en Cloud Logging con filtro de registros de seguridad que transmita los eventos a un tema de Cloud Pub/Sub, permitiendo que el sistema SIEM consuma los eventos en tiempo real."
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "Copiar los registros a mano en un documento de Microsoft Word cada semana"
+   }
+  ],
+  "ratio": 4.12
+ },
+ {
+  "id": "CDL-D4-039",
+  "subtopic": "Privilegios Mínimos para Service Accounts y Prevención de Suplantación no Autorizada",
+  "caseStudy": "none",
+  "scenario": "Un desarrollador solicita permisos para realizar tareas administrativas especiales. En lugar de crear y entregarle una clave JSON permanente de una Service Account con altos privilegios, el equipo de seguridad le permite suplantar (impersonate) la cuenta de servicio de forma temporal durante su sesión interactiva utilizando el rol `roles/iam.serviceAccountTokenCreator`. ¿Cuál es el beneficio de seguridad de este enfoque?",
+  "correct": "A",
+  "clave_len": 225,
+  "explanation": "La suplantación de cuentas de servicio (Service Account Impersonation) permite a usuarios autenticados generar credenciales efímeras de corta vida para actuar en nombre de una Service Account, eliminando el riesgo de filtración de claves JSON privadas y manteniendo una trazabilidad forense completa de la identidad humana responsable.",
+  "doc": "https://cloud.google.com/iam/docs/impersonating-service-accounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 225,
+    "text": "Genera tokens de acceso temporales de corta duración (ej. 1 hora), elimina el riesgo de robo de archivos de claves estáticas JSON y registra en Cloud Audit Logs exactamente qué usuario humano suplantó a la cuenta de servicio."
+   },
+   {
+    "letter": "B",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Desactiva todos los registros de auditoría para no dejar rastros."
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Permite que cualquier persona en Internet controle la cuenta de servicio sin autenticación."
+   }
+  ],
+  "ratio": 4.09
+ },
+ {
+  "id": "CDL-D3-016",
+  "subtopic": "Artifact Registry: Gestión Segura de Contenedores y Paquetes de Software",
+  "caseStudy": "none",
+  "scenario": "Una empresa necesita un repositorio centralizado y privado para almacenar y versionar sus imágenes de contenedores Docker y paquetes de software (npm, Maven, Python), que además escanee automáticamente las imágenes en busca de vulnerabilidades de seguridad conocidas (CVEs) antes de ser desplegadas. ¿Qué servicio de Google Cloud cumple este rol?",
+  "correct": "C",
+  "clave_len": 119,
+  "explanation": "Artifact Registry es el gestor universal de artefactos y paquetes de Google Cloud para imágenes de contenedores OCI/Docker y paquetes de lenguajes (Java Maven, Node.js npm, Python pip), integrado con escaneo automático de vulnerabilidades y controles de acceso IAM.",
+  "doc": "https://cloud.google.com/artifact-registry/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Un servidor FTP público compartido sin contraseña en Internet"
+   },
+   {
+    "letter": "B",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "C",
+    "len": 119,
+    "text": "Artifact Registry (la evolución moderna de Container Registry con soporte multi-lenguaje y escaneo de vulnerabilidades)"
+   },
+   {
+    "letter": "D",
+    "len": 18,
+    "text": "Cloud Interconnect"
+   }
+  ],
+  "ratio": 4.06
+ },
+ {
+  "id": "CDL-D4-084",
+  "subtopic": "Security Health Analytics en Security Command Center",
+  "caseStudy": "none",
+  "scenario": "Un oficial de seguridad busca un servicio que escanee continuamente la infraestructura de Google Cloud para detectar automáticamente errores de configuración comunes como: buckets de Cloud Storage públicos abiertos a todo el mundo, puertos de administración SSH (puerto 22) o RDP (puerto 3389) abiertos a Internet en reglas de firewall, o llaves de Service Account con más de 90 días sin rotación. ¿Qué módulo de Security Command Center realiza este escaneo continuo?",
+  "correct": "C",
+  "clave_len": 58,
+  "explanation": "Security Health Analytics (SHA) es el motor nativo de gestión de la postura de seguridad (CSPM) dentro de Security Command Center que escanea automáticamente recursos en busca de malas configuraciones, vulnerabilidades de red y violaciones de las mejores prácticas de seguridad de Google.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-security-health-analytics-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 12,
+    "text": "Google Fonts"
+   },
+   {
+    "letter": "B",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Security Health Analytics (SHA en Security Command Center)"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   }
+  ],
+  "ratio": 4.05
+ },
+ {
+  "id": "CDL-D4-037",
+  "subtopic": "Monitoreo de Infraestructura Híbrida y Multinube con Ops Agent",
+  "caseStudy": "none",
+  "scenario": "Un equipo de operaciones administra máquinas virtuales en Compute Engine y servidores locales. Desean recopilar métricas detalladas a nivel de sistema operativo (como utilización exacta de memoria RAM, espacio en disco particionado y procesos activos) y registros del sistema (syslog, logs de Apache/Nginx). ¿Qué agente unificado deben instalar en las máquinas virtuales?",
+  "correct": "D",
+  "clave_len": 87,
+  "explanation": "El Ops Agent de Google Cloud es el agente principal para recopilar telemetría de máquinas virtuales en Compute Engine y entornos híbridos, combinando la captura de métricas del sistema operativo (RAM, disco, procesos) y la transmisión continua de registros hacia Cloud Logging y Cloud Monitoring.",
+  "doc": "https://cloud.google.com/stackdriver/docs/solutions/ops-agent",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "B",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "C",
+    "len": 34,
+    "text": "Un archivo de texto estático vacío"
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "Google Cloud Ops Agent (el agente unificado para métricas de SO y recopilación de logs)"
+   }
+  ],
+  "ratio": 4.02
+ },
+ {
+  "id": "CDL-D3-047",
+  "subtopic": "Local SSD: Almacenamiento Efímero de Ultra Baja Latencia",
+  "caseStudy": "none",
+  "scenario": "Una aplicación de análisis financiero en Compute Engine requiere una unidad de almacenamiento temporal para espacio de intercambio (scratch space) y memoria caché que ofrezca millones de IOPS con latencia sub-milisegundo. El equipo no necesita que los datos persistan si la VM se detiene o se apaga. ¿Qué tipo de almacenamiento debe acoplarse a la instancia?",
+  "correct": "A",
+  "clave_len": 84,
+  "explanation": "Local SSD está conectado físicamente al servidor donde se aloja la instancia de Compute Engine. Ofrece un rendimiento de IOPS extremadamente alto y latencias muy bajas para cachés, procesamiento intermedio y espacio efímero, aunque sus datos no sobreviven a la detención de la VM.",
+  "doc": "https://cloud.google.com/compute/docs/disks/local-ssd",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 84,
+    "text": "Local SSD (discos de estado sólido conectados físicamente al servidor host de la VM)"
+   },
+   {
+    "letter": "B",
+    "len": 13,
+    "text": "Cloud Logging"
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Cintas magnéticas analógicas"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   }
+  ],
+  "ratio": 4.0
+ },
+ {
+  "id": "CDL-D4-027",
+  "subtopic": "Etiquetas y Rótulos (Labels vs Tags) para Asignación de Costos",
+  "caseStudy": "none",
+  "scenario": "Una empresa necesita: (1) Asignar pares de clave-valor a máquinas virtuales y buckets para desglosar el gasto en la factura por 'centro_de_costos: marketing' y 'ambiente: produccion' (Labels), y (2) Asignar etiquetas gobernadas centralmente para aplicar políticas de seguridad condicionales en IAM y firewall en toda la organización (Tags). ¿Cómo se diferencian Labels y Tags en Google Cloud?",
+  "correct": "A",
+  "clave_len": 267,
+  "explanation": "Las Labels son metadatos clave-valor ideales para categorización granular y atribución de costos en Billing Export. Las Tags de Resource Manager se administran a nivel organizacional y se integran con el motor de políticas para otorgar permisos condicionales o aplicar reglas de firewall dinámicamente.",
+  "doc": "https://cloud.google.com/resource-manager/docs/tags/tags-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 267,
+    "text": "Las Etiquetas (Labels) se utilizan principalmente para organizar recursos y desglosar costos en los reportes de facturación; los Rótulos/Tags (Resource Manager Tags) están gobernados centralmente y permiten aplicar políticas de IAM y reglas de firewall condicionales."
+   },
+   {
+    "letter": "B",
+    "len": 63,
+    "text": "Las Labels solo pueden tener una letra de longitud como máximo."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Google Cloud prohíbe el uso de etiquetas en cualquier recurso."
+   },
+   {
+    "letter": "D",
+    "len": 77,
+    "text": "Labels y Tags son nombres comerciales para discos magnéticos físicos locales."
+   }
+  ],
+  "ratio": 3.97
+ },
+ {
+  "id": "CDL-D4-035",
+  "subtopic": "Access Transparency y Access Approval: Control sobre el Personal de Google",
+  "caseStudy": "none",
+  "scenario": "Un banco altamente regulado exige que: (1) Si un ingeniero de soporte técnico de Google necesita acceder a sus datos para solucionar un ticket de soporte, el banco reciba un registro de auditoría en tiempo real con la justificación del acceso (Access Transparency), y (2) El banco deba aprobar explícitamente la solicitud antes de que el ingeniero de Google pueda acceder (Access Approval). ¿Qué servicios proporcionan este control soberano?",
+  "correct": "A",
+  "clave_len": 162,
+  "explanation": "Access Transparency proporciona registros casi en tiempo real cuando el personal de Google accede a los datos del cliente durante tareas de soporte o mantenimiento; y Access Approval permite a las empresas exigir una aprobación manual explícita antes de conceder cualquier acceso al personal de Google.",
+  "doc": "https://cloud.google.com/access-transparency",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 162,
+    "text": "Access Transparency (visibilidad en logs del acceso de personal de Google) y Access Approval (requerimiento de aprobación explícita del cliente antes del acceso)."
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "Desactivar toda la seguridad de la cuenta"
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Prohibir totalmente la apertura de tickets de soporte técnico"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   }
+  ],
+  "ratio": 3.92
+ },
+ {
+  "id": "CDL-D3-088",
+  "subtopic": "Cloud Load Balancing: Balanceadores Internos vs Externos",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto de redes debe estructurar una aplicación de 3 capas: (1) La capa web pública debe recibir conexiones de usuarios de todo el mundo desde Internet, y (2) La capa de microservicios de backend solo debe recibir conexiones privadas internas de la capa web sin estar expuesta a Internet. ¿Qué tipos de balanceadores de Cloud Load Balancing corresponden?",
+  "correct": "C",
+  "clave_len": 203,
+  "explanation": "External Load Balancing expone una IP pública para recibir tráfico desde Internet. Internal Load Balancing opera exclusivamente dentro de la red VPC asignando una IP privada interna de la subred, permitiendo balancear el tráfico de microservicios backend de forma segura y sin exposición externa.",
+  "doc": "https://cloud.google.com/load-balancing/docs/load-balancing-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Hacer público tanto el backend como la base de datos sin ninguna protección"
+   },
+   {
+    "letter": "B",
+    "len": 38,
+    "text": "Cloud Storage Archive para ambas capas"
+   },
+   {
+    "letter": "C",
+    "len": 203,
+    "text": "(1) External Application Load Balancer (para el tráfico público desde Internet); (2) Internal Application Load Balancer (para balancear el tráfico privado entre la capa web y el backend dentro de la VPC)"
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Desactivar todos los balanceadores de carga"
+   }
+  ],
+  "ratio": 3.9
+ },
+ {
+  "id": "CDL-D3-028",
+  "subtopic": "Migrate to Virtual Machines: Migración Automatizada de Servidores Físicos y VMs",
+  "caseStudy": "none",
+  "scenario": "Un equipo de infraestructura necesita migrar 300 servidores virtuales locales de VMware vSphere y servidores físicos hacia Compute Engine. Desean una herramienta que replique los discos en segundo plano sin interrumpir los sistemas operativos en producción y permita realizar pruebas previas no destructivas antes del corte final. ¿Qué herramienta de Google Cloud realiza esta tarea?",
+  "correct": "D",
+  "clave_len": 83,
+  "explanation": "Migrate to Virtual Machines es la solución de migración integrada y de alta velocidad de Google Cloud que automatiza la replicación continua, pruebas y conversión de servidores físicos y máquinas virtuales locales (VMware/AWS/Azure) hacia instancias nativas de Compute Engine con mínimo tiempo de inactividad.",
+  "doc": "https://cloud.google.com/migrate/virtual-machines/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 15,
+    "text": "Google Maps API"
+   },
+   {
+    "letter": "B",
+    "len": 37,
+    "text": "Cloud Functions de primera generación"
+   },
+   {
+    "letter": "C",
+    "len": 12,
+    "text": "Google Fonts"
+   },
+   {
+    "letter": "D",
+    "len": 83,
+    "text": "Migrate to Virtual Machines (anteriormente Migrate for Compute Engine / Velostrata)"
+   }
+  ],
+  "ratio": 3.89
+ },
+ {
+  "id": "CDL-D4-055",
+  "subtopic": "Cloud Data Loss Prevention (Sensitive Data Protection): Tipos de Información (infoTypes)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de salud en México y Estados Unidos necesita detectar automáticamente números de tarjetas de crédito, identificaciones fiscales (RFC, SSN) y correos electrónicos en gigabytes de archivos de texto. En el servicio Sensitive Data Protection (Cloud DLP), ¿cómo se denominan los detectores especializados de categorías de datos sensibles?",
+  "correct": "D",
+  "clave_len": 85,
+  "explanation": "Los infoTypes son los patrones y detectores configurables que utiliza Sensitive Data Protection (Cloud DLP) para identificar elementos de datos específicos (como `CREDIT_CARD_NUMBER`, `EMAIL_ADDRESS`, `US_SOCIAL_SECURITY_NUMBER` o `MEXICO_RFC_NUMBER`).",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/infotypes-reference",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Classes"
+   },
+   {
+    "letter": "B",
+    "len": 17,
+    "text": "Cloud DNS Records"
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Compute Engine Machine Types"
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "infoTypes (detectores predefinidos y personalizados de tipos de información sensible)"
+   }
+  ],
+  "ratio": 3.86
+ },
+ {
+  "id": "CDL-D4-004",
+  "subtopic": "Roles de IAM: Primitivos (Básicos) vs Predefinidos vs Personalizados",
+  "caseStudy": "none",
+  "scenario": "Un oficial de seguridad revisa la asignación de permisos en Google Cloud y encuentra usuarios con roles 'Editor' y 'Viewer' asignados a nivel de proyecto. Recomienda migrar a roles predefinidos o personalizados. ¿Cuál es el motivo técnico de esta recomendación?",
+  "correct": "A",
+  "clave_len": 303,
+  "explanation": "Los roles primitivos o básicos (Viewer, Editor, Owner) provienen de las primeras versiones de GCP y otorgan permisos masivos e indiscriminados en todos los recursos de un proyecto. La mejor práctica es utilizar roles predefinidos específicos por servicio (ej. `roles/storage.objectAdmin`) o roles personalizados cuando se requieren combinaciones exactas de permisos.",
+  "doc": "https://cloud.google.com/iam/docs/understanding-roles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 303,
+    "text": "Los roles primitivos (Viewer, Editor, Owner) son demasiado amplios y afectan a todos los servicios del proyecto; los roles predefinidos son específicos por servicio y siguen el principio de menor privilegio, mientras que los roles personalizados permiten definir listas exactas de permisos individuales."
+   },
+   {
+    "letter": "B",
+    "len": 78,
+    "text": "Los roles personalizados solo pueden crearse imprimiendo formularios en papel."
+   },
+   {
+    "letter": "C",
+    "len": 85,
+    "text": "Los roles primitivos son más caros y Google cobra $100 por cada asignación de Viewer."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Google Cloud ha desactivado todos los roles predefinidos en todo el mundo."
+   }
+  ],
+  "ratio": 3.84
+ }
+]

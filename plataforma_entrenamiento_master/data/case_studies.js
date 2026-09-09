@@ -1,129 +1,123 @@
 /**
  * Google Cloud Certification Training Platform (Master Edition)
- * Authoritative PCA Case Studies Database
+ * Authoritative PCA Case Studies Database (Verified 2026-08-26)
  * 
- * Contains complete, rich enterprise case study architectures for:
- * 1. Mountkirk Games (Mobile Gaming, Agones/GKE, Spanner, Redis, Dataflow)
- * 2. TerramEarth (Connected Vehicles, Bigtable, GCS Lifecycle, Vertex AI, Apigee)
- * 3. EHR Healthcare (Healthcare SaaS, HIPAA/HITECH, Cloud Healthcare API, Interconnect, Private GKE, DLP)
- * 4. Helicopter Racing League (Sports Live Stream, Transcoder API, Cloud CDN, Video Intelligence, Cloud Run)
+ * Official Google Cloud Professional Cloud Architect Case Studies:
+ * 1. Altostrat Media (Digital Media, Global Streaming, Multi-Region Compute)
+ * 2. Cymbal Retail (E-Commerce, Omnichannel Retail, Inventory, BigQuery)
+ * 3. EHR Healthcare (Healthcare SaaS, HIPAA/HITECH, Zero Trust, Private GKE, Cloud DLP)
+ * 4. Knightmotives Automotive (Connected Fleet IoT, Predictive Maintenance, Edge AI)
  */
 
 (function (global) {
   'use strict';
 
   const GCP_CASE_STUDIES = {
-    version: '2.0.0',
-    lastUpdated: '2026-08-21',
+    version: '3.0.0',
+    lastUpdated: '2026-08-26',
 
     studies: {
-      mountkirk_games: {
-        id: 'mountkirk_games',
-        name: 'Mountkirk Games',
-        tagline: 'Next-Generation Global Multiplayer Mobile Gaming Platform',
-        badge: 'Gaming / Multi-Region',
+      altostrat_media: {
+        id: 'altostrat_media',
+        name: 'Altostrat Media',
+        tagline: 'Global Digital Media, Entertainment & Real-Time Content Delivery Platform',
+        badge: 'Media / Streaming',
         color: '#4285F4',
-        icon: 'sports_esports',
+        icon: 'movie',
 
-        companyOverview: 'Mountkirk Games makes popular, highly rated mobile games for iOS and Android. They have recently seen exponential growth and are preparing to launch a flagship multiplayer game anticipated to attract 10x their current player base globally across North America, Europe, and Asia. They require a scalable, reliable, and cost-effective cloud-native architecture on Google Cloud that can automatically handle unpredictable game traffic spikes, ensure sub-100ms global latency for real-time matches, provide global ACID-compliant transactional consistency for player purchases and inventories, and deliver streaming telemetry analytics.',
+        companyOverview: 'Altostrat Media is a global digital media and entertainment company providing streaming video on demand (SVOD), live broadcasting, and interactive digital gaming platforms to over 50 million active global subscribers across North America, Europe, and Asia-Pacific. They are migrating their legacy data center footprint to Google Cloud to deliver sub-second content ingestion, global low-latency stream distribution, high-throughput user profile management, and AI-driven automated content recommendations.',
 
         existingInfrastructure: [
-          'Monolithic game server binaries running on self-managed Linux virtual machines hosted in traditional on-premises colocation facilities and legacy cloud providers across North America and Europe.',
-          'Self-managed MySQL database clusters with custom master-slave replication and complex manual sharding scripts that suffer from replication lag and single points of failure.',
-          'Self-hosted Memcached clusters used for caching player profiles and session tokens, requiring manual memory rebalancing and node provisioning.',
-          'Custom Bash deployment scripts and cron-based log shipping routines transmitting raw log files to local SAN storage arrays, delaying operational observability by several hours.',
-          'Infrastructure provisioning is entirely static; servers are pre-allocated for peak loads, resulting in immense financial waste during off-peak hours and severe connection drops, lag, and downtime during viral game launch spikes.'
+          'Monolithic media transcoders and streaming microservices running on VMware virtual machines across colocation data centers in North America and Europe.',
+          'Self-managed MySQL and Redis clusters suffering from replication lag during global peak viewing hours and viral release events.',
+          'Legacy hardware-based appliances for media encoding with static provisioning, causing high idle capital expenses between major streaming events.',
+          'Decentralized file storage systems across regional data centers without automated global synchronization, creating content delivery bottlenecks.'
         ],
 
         businessRequirements: [
-          'Dynamically scale backend compute capacity to seamlessly support rapid, unpredictable surges in active concurrent players during global launch events.',
-          'Minimize infrastructure management and operational overhead by adopting fully managed and automated Google Cloud services.',
-          'Maximize player retention and competitive integrity by delivering consistent sub-100ms global network latency for all multiplayer matches worldwide.',
-          'Enable continuous integration and zero-downtime deployment of game updates and patches without interrupting active game sessions.',
-          'Gain real-time business and player behavioral insights via streaming telemetry analytics to optimize in-game monetization, virtual economy balance, and marketing campaigns.',
-          'Optimize overall cloud infrastructure costs by aggressively leveraging ephemeral, discounted compute resources without compromising availability.'
+          'Deliver broadcast-quality, low-latency (< 5s) live and VOD streams to millions of concurrent viewers globally with 99.999% availability.',
+          'Adopt an agile, cloud-native architecture that scales dynamically during major release spikes and scales down during off-peak hours to minimize OpEx.',
+          'Protect premium copyrighted media assets against piracy, token spoofing, and DDoS attacks with enterprise-grade edge security.',
+          'Enable real-time viewer behavior analytics to power personalized AI recommendations and optimize subscriber retention.',
+          'Ensure zero-downtime continuous deployment for all customer-facing streaming APIs and mobile applications.'
         ],
 
         technicalRequirements: [
-          'Containerize dedicated game servers and orchestrate them dynamically using Google Kubernetes Engine (GKE) with Agones (open-source game server lifecycle controller).',
-          'Leverage GKE Spot VMs (formerly Preemptible VMs) for match-based game server node pools with automated fallback to standard nodes to reduce compute costs by 60-80%.',
-          'Deploy a globally distributed, horizontally scalable transactional database (Cloud Spanner) providing strong ACID consistency, multi-region high availability (99.999% SLA), and automated sharding for player accounts, inventories, and microtransactions.',
-          'Deploy Cloud Memorystore for Redis (Cluster mode) to provide sub-millisecond read/write latency for global player leaderboards, match queues, and session caching.',
-          'Ingest, process, and analyze millions of real-time player telemetry events per second using Cloud Pub/Sub, Cloud Dataflow (Apache Beam windowing), and BigQuery with time-partitioned tables.',
-          'Implement Global Anycast IP routing via Google Cloud External Application Load Balancer with Cloud Armor WAF and Cloud CDN to mitigate DDoS attacks and accelerate static asset delivery.'
+          'Containerize media processing and API services on Google Kubernetes Engine (GKE) and Cloud Run with automated horizontal autoscaling.',
+          'Deploy External Passthrough Network Load Balancing for UDP/stateful streaming protocols and Global External Application Load Balancing with Cloud CDN and Media CDN for video segment caching.',
+          'Deploy Cloud Spanner as a multi-region transactional database for subscriber accounts, subscriptions, and digital rights licensing with strict ACID consistency.',
+          'Deploy Cloud Memorystore for Redis Cluster for sub-millisecond session caching and real-time viewing queues.',
+          'Ingest and process streaming user telemetry using Cloud Pub/Sub, Cloud Dataflow (Apache Beam), and BigQuery partitioned tables.',
+          'Utilize Cloud KMS Customer-Managed Encryption Keys (CMEK) and Secret Manager for token verification and DRM encryption keys.'
         ],
 
         prescribedArchitecture: {
-          compute: 'Google Kubernetes Engine (GKE) running containerized dedicated game server workloads managed by Agones. Node pools are partitioned into: (1) Match Server Node Pool utilizing Spot VMs with graceful drain signals for ephemeral game sessions, and (2) Core Services Node Pool utilizing standard multi-zone instances for persistent APIs. GKE Workload Identity is configured for secure credential-less GCP service access.',
-          storage: 'Cloud Spanner configured as a Multi-Region Instance (nam-eur-asia) providing global external consistency, zero-downtime schema migrations, and 99.999% availability for user profiles, inventories, and transaction logs. Cloud Storage Standard with multi-region replication and Cloud CDN integration for game assets, patch binaries, and media.',
-          networking: 'Global External Application Load Balancer with Anycast IP routing game traffic over Google’s dedicated global fiber backbone. Cloud Armor security policies protect against L3/L4/L7 volumetric DDoS attacks and exploit attempts. Cloud NAT provides outbound connectivity for private GKE nodes.',
-          security: 'GKE Workload Identity eliminates static JSON service account keys. Cloud KMS manages encryption keys with automated envelope encryption. Secret Manager securely injects game server secrets and third-party API credentials into Kubernetes pods at runtime.',
-          dataAnalytics: 'Streaming Ingestion Pipeline: In-game telemetry -> Cloud Pub/Sub (global message buffer) -> Cloud Dataflow (Apache Beam autoscaling stream processing for sessionization and deduplication) -> BigQuery (time-partitioned, clustered tables) for executive reporting and Looker dashboards. Cloud Memorystore for Redis (Cluster mode) handles high-speed sorted sets for real-time global leaderboards.'
+          compute: 'Google Kubernetes Engine (GKE) Enterprise clusters across us-east4, europe-west1, and asia-east1 with GKE Autopilot / Node Auto-Provisioning. Cloud Run for serverless webhooks and stateless viewer APIs.',
+          storage: 'Cloud Spanner (Multi-Region Instance) for subscriber accounts and entitlements. Cloud Storage with Cloud CDN / Media CDN for VOD content and HLS/DASH media segments. Cloud Memorystore for Redis Cluster for active session caching.',
+          networking: 'Global External Application Load Balancer with Cloud CDN for HTTP media streaming; External Passthrough Network Load Balancer for low-latency UDP streams. Cloud Armor with Adaptive Protection for WAF and DDoS mitigation.',
+          security: 'Cloud KMS with CMEK for media bucket encryption; Secret Manager for DRM keys and API tokens; Workload Identity for secure GKE pod authentication without static credentials.',
+          dataAnalytics: 'Viewer Telemetry Pipeline: Client Apps -> Cloud Pub/Sub -> Cloud Dataflow (streaming deduplication) -> BigQuery (clustered by user_id and content_id). Vertex AI for personalized recommendation models.'
         },
 
-        executiveSummary: 'Mountkirk Games transitioned from a brittle, monolithic legacy architecture to an ultra-resilient, globally distributed cloud-native architecture on Google Cloud. By combining GKE with Agones on Spot VMs, Cloud Spanner for multi-region transactional consistency, Cloud Memorystore for Redis for real-time leaderboards, and an end-to-end Pub/Sub -> Dataflow -> BigQuery streaming analytics pipeline, Mountkirk achieved sub-100ms global latency, 99.999% availability, 70% compute cost savings, and real-time operational visibility for millions of concurrent players.',
+        executiveSummary: 'Altostrat Media modernized its global entertainment platform on Google Cloud using GKE, Cloud Spanner, Media CDN, and Vertex AI. The architecture delivers sub-5s live stream latency, 99.999% uptime, global external ACID consistency for subscriptions, and real-time analytics for 50M+ viewers.',
 
         keyMetrics: [
-          'Target Latency: < 100ms global multiplayer network latency',
-          'Availability SLA: 99.999% for player data and transactional storage (Cloud Spanner Multi-Region)',
-          'Telemetry Ingestion Scale: 10M+ player events per second with zero message loss',
-          'Compute Cost Optimization: Up to 70% reduction in game server infrastructure costs via GKE Spot VMs',
-          'Leaderboard Query Latency: < 1ms response time via Cloud Memorystore for Redis Cluster'
+          'Global Streaming Latency: < 5s glass-to-glass for live broadcasts',
+          'Database Availability SLA: 99.999% via Cloud Spanner Multi-Region',
+          'Telemetry Scale: 15M+ events/second ingested with zero loss via Pub/Sub and Dataflow',
+          'Cache Hit Ratio: > 92% at the edge via Cloud CDN / Media CDN'
         ]
       },
 
-      terramearth: {
-        id: 'terramearth',
-        name: 'TerramEarth',
-        tagline: 'Connected Heavy Equipment Telemetry & Predictive Maintenance Platform',
-        badge: 'IoT / Petabyte Analytics',
-        color: '#34A853',
-        icon: 'agriculture',
+      cymbal_retail: {
+        id: 'cymbal_retail',
+        name: 'Cymbal Retail',
+        tagline: 'Omnichannel Retail, Global Supply Chain & Smart E-Commerce Platform',
+        badge: 'Retail / E-Commerce',
+        color: '#FBBC04',
+        icon: 'shopping_cart',
 
-        companyOverview: 'TerramEarth manufactures heavy agricultural, forestry, and construction equipment deployed across 6 continents. With over 20 million connected vehicles worldwide equipped with hundreds of embedded telemetry sensors monitoring engine speed, hydraulic pressure, oil viscosity, fuel consumption, and temperature, TerramEarth captures critical operational data to revolutionize equipment reliability, proactively prevent catastrophic machine failures, and monetize predictive diagnostic insights for authorized global dealer networks.',
+        companyOverview: 'Cymbal Retail is a multinational retail enterprise operating over 2,000 physical department stores and a high-volume global e-commerce marketplace serving 40 million online shoppers. They are executing an omnichannel digital transformation on Google Cloud to unify in-store point-of-sale (POS) systems, warehouse inventory management, and digital storefronts into a real-time, event-driven retail ecosystem.',
 
         existingInfrastructure: [
-          '20 million connected vehicles worldwide generating continuous sensor telemetry.',
-          'Cellular Connectivity: Vehicles equipped with cellular modems transmit ~200 KB per hour per vehicle while operating in areas with cellular coverage, though connectivity is frequently intermittent in remote agricultural fields, deep forests, and mining pits.',
-          'Depot / Dealer Maintenance Connectivity: Vehicles upload 20 MB to 500 MB of detailed uncompressed raw diagnostic log files via depot Wi-Fi networks during routine maintenance and servicing visits.',
-          'Centralized on-premises data centers running legacy relational databases and enterprise SAN/NAS storage arrays, creating severe ingestion bottlenecks and storage capacity exhaustion.',
-          'Batch data processing cycles require several weeks to ingest, transform, and report on uploaded sensor logs, causing missed opportunities for proactive field maintenance before catastrophic component failures occur.',
-          'International operations must comply with diverse regional data privacy, residency, and sovereignty regulations across the Americas, European Union, and Asia-Pacific.'
+          'Disparate on-premises POS servers in stores connecting via batch overnight SFTP jobs to central data centers.',
+          'Monolithic Java e-commerce application hosted on legacy enterprise VMs with fixed capacity, frequently failing during Black Friday sales.',
+          'Legacy Oracle inventory database with batch updates, causing stockout discrepancies and canceled customer orders.',
+          'Decentralized customer support databases preventing unified 360-degree customer relationship management.'
         ],
 
         businessRequirements: [
-          'Drastically reduce costly machine downtime and catastrophic engine/hydraulic failures through real-time automated predictive maintenance alerts.',
-          'Monetize equipment telemetry by exposing secure, managed, and rate-limited diagnostic APIs to global dealer networks, certified mechanics, and fleet operators.',
-          'Lower operational infrastructure and data management costs through automated data ingestion, serverless processing, and intelligent storage lifecycle management.',
-          'Accelerate engineering feedback loops by enabling data science teams to rapidly train and deploy machine learning models on petabyte-scale historical sensor datasets.',
-          'Ensure strict adherence to international data privacy and regional data sovereignty regulations (e.g., GDPR).'
+          'Maintain real-time global inventory synchronization across all physical stores, regional distribution centers, and online storefronts.',
+          'Scale e-commerce infrastructure instantly during seasonal shopping surges (10x traffic spikes) with zero checkout failure.',
+          'Ensure strict PCI-DSS Level 1 compliance and protect customer payment data with Zero Trust perimeters.',
+          'Provide sub-second personalized product recommendations and dynamic pricing based on shopper browsing patterns.',
+          'Reduce supply chain logistics costs through predictive inventory allocation and demand forecasting.'
         ],
 
         technicalRequirements: [
-          'Implement dual-path ingestion architecture: (1) Real-time streaming pipeline for intermittent cellular telemetry (~200 KB/hr/vehicle), and (2) High-throughput batch ingestion for heavy depot Wi-Fi diagnostic uploads (20-500 MB/vehicle).',
-          'Deploy high-throughput, horizontally scalable NoSQL storage (Cloud Bigtable) optimized for time-series sensor ingestion with custom row-key design (vehicle_id#reverse_timestamp).',
-          'Store raw diagnostic files in Cloud Storage with automated Object Lifecycle Management rules (Standard -> Coldline after 30 days -> Archive after 365 days) to minimize long-term storage costs.',
-          'Deploy enterprise API management with Apigee to secure, rate-limit, authenticate (OAuth 2.0), and monetize dealer diagnostic APIs.',
-          'Build distributed machine learning pipelines with Vertex AI to train, evaluate, and serve predictive failure models.',
-          'Implement Customer-Managed Encryption Keys (CMEK) via Cloud KMS across regional storage buckets to satisfy strict data sovereignty requirements.'
+          'Migrate e-commerce microservices to GKE Private Clusters and Cloud Run with automated canary deployments via Cloud Deploy.',
+          'Deploy Cloud Spanner or Cloud SQL Enterprise Plus for transactional order processing and checkout ACID transactions.',
+          'Implement event-driven inventory tracking using Cloud Pub/Sub, Datastream for Change Data Capture (CDC), and BigQuery for real-time stock analytics.',
+          'Deploy Apigee API Management to securely expose supplier and vendor integration APIs with OAuth 2.0 and rate limiting.',
+          'Leverage BigQuery ML and Vertex AI Search and Conversation for intelligent product discovery and personalized promotions.',
+          'Enforce VPC Service Controls and Cloud DLP (Sensitive Data Protection) around customer PII and payment data stores.'
         ],
 
         prescribedArchitecture: {
-          compute: 'Serverless event-driven processing utilizing Cloud Functions and Cloud Run for ingestion webhooks, file validation, and metadata extraction. Vertex AI Training and Pipelines (Kubeflow) for distributed ML training on sensor telemetry. Apigee API Gateway for dealer-facing microservices.',
-          storage: 'Cloud Bigtable with multi-cluster replication across regions for high-throughput time-series sensor readings, utilizing an optimized row key format (vehicle_id#timestamp_reversed) to prevent write hotspots. Cloud Storage with Object Lifecycle Management (Standard -> Coldline at 30d -> Archive at 365d) for raw diagnostic bundles. BigQuery for fleet-wide analytical warehousing and SQL queries.',
-          networking: 'Cloud Pub/Sub as the global asynchronous message broker absorbing fluctuating streaming cellular telemetry. Global External Application Load Balancer with Cloud Armor fronting Apigee API endpoints. Cloud Interconnect establishing secure private connectivity between TerramEarth corporate headquarters and GCP VPC.',
-          security: 'Apigee API Management enforcing OAuth 2.0 access tokens, API key validation, quotas, and spike arrest policies for external dealer access. Cloud KMS with Customer-Managed Encryption Keys (CMEK) assigned to regional buckets in the EU and APAC for regulatory compliance. IAM least-privilege service accounts.',
-          dataAnalytics: 'Cellular Stream Ingestion: MQTT / Cellular Gateways -> Cloud Pub/Sub -> Cloud Dataflow (streaming windowing & anomaly detection) -> Cloud Bigtable. Depot Batch Ingestion: Depot Wi-Fi -> Cloud Storage Bucket -> GCS Notification -> Cloud Dataflow (batch ETL) -> BigQuery. Vertex AI Feature Store and Model Registry for predictive maintenance inference.'
+          compute: 'Google Kubernetes Engine (GKE) for core checkout and cart microservices; Cloud Run for stateless promotion and catalogue microservices; Apigee X for external supplier API governance.',
+          storage: 'Cloud Spanner for multi-region globally consistent inventory and order ledger; Cloud Storage with lifecycle rules for product images; BigQuery for real-time customer data platform (CDP).',
+          networking: 'Global External Application Load Balancer with Cloud Armor WAF and bot management; Dedicated Cloud Interconnect connecting warehouse fulfillment centers to Google Cloud VPCs.',
+          security: 'Cloud DLP for credit card and PII masking; VPC Service Controls isolating PCI-DSS scoped environments; Customer-Managed Encryption Keys via Cloud KMS.',
+          dataAnalytics: 'Omnichannel Ingestion: POS & Web Events -> Cloud Pub/Sub -> Cloud Dataflow -> BigQuery (partitioned by transaction_date). Vertex AI Recommendations for real-time personalization.'
         },
 
-        executiveSummary: 'TerramEarth modernized its connected vehicle infrastructure by deploying a hybrid streaming/batch data architecture on Google Cloud. Intermittent cellular telemetry streams through Pub/Sub, Dataflow, and Cloud Bigtable with optimized time-series row keys, while large depot Wi-Fi uploads are processed through Cloud Storage and BigQuery with automated Coldline/Archive lifecycle tiering. Apigee securely monetizes diagnostic APIs for global dealers, and Vertex AI predictive models reduce unpredicted equipment downtime by over 65%.',
+        executiveSummary: 'Cymbal Retail unified its retail operations on Google Cloud with GKE, Cloud Spanner, Apigee, and BigQuery. The architecture eliminated inventory synchronization lag, achieved 100% checkout uptime during peak holiday traffic, and delivered a 25% increase in conversion through Vertex AI personalized search.',
 
         keyMetrics: [
-          'Connected Fleet Size: 20 Million active vehicles worldwide',
-          'Cellular Ingestion Volume: 200 KB/hour/vehicle (streaming with intermittent tolerance)',
-          'Depot Upload Volume: 20 MB - 500 MB batch payload per vehicle maintenance session',
-          'Data Storage Tiering: Automated transition from Standard -> Coldline (30d) -> Archive (365d), cutting storage TCO by 80%',
-          'Predictive Failure Window: Alerts generated 48-72 hours prior to mechanical failure'
+          'Checkout Latency: < 200ms end-to-end payment processing',
+          'Inventory Sync Delay: < 2 seconds from physical POS scan to global digital catalog',
+          'Peak Concurrency: 500,000 simultaneous checkouts with zero dropped carts',
+          'Security Compliance: 100% PCI-DSS Level 1 certified'
         ]
       },
 
@@ -181,56 +175,57 @@
         ]
       },
 
-      helicopter_racing_league: {
-        id: 'helicopter_racing_league',
-        name: 'Helicopter Racing League',
-        tagline: 'Global Live High-Speed Sports Streaming & Real-Time Telemetry Platform',
-        badge: 'Media / Serverless AI',
-        color: '#FBBC04',
-        icon: 'sports_score',
+      knightmotives_automotive: {
+        id: 'knightmotives_automotive',
+        name: 'Knightmotives Automotive',
+        tagline: 'Connected Vehicle Telemetry, Fleet IoT & Autonomous Edge Intelligence',
+        badge: 'Automotive / Edge IoT',
+        color: '#34A853',
+        icon: 'directions_car',
 
-        companyOverview: 'Helicopter Racing League (HRL) is a world-class global sports entertainment organization operating competitive, high-speed helicopter races across iconic international locations. Each race event features high-performance racing helicopters equipped with multiple 4K onboard video cameras, biometric telemetry monitors attached to pilots, and avionics sensor arrays streaming high-frequency positional and mechanical metrics. HRL requires a modern, cloud-native video streaming and real-time telemetry platform that can handle extreme traffic bursts during race weekends while scaling to zero during off-season periods.',
+        companyOverview: 'Knightmotives Automotive is a global commercial vehicle manufacturer producing connected electric trucks, autonomous delivery vans, and specialized fleet machinery operating across North America, Europe, and Asia. Over 10 million connected vehicles continuously generate sensor telemetry (battery thermals, motor torque, brake wear, GPS routes). Knightmotives is building a cloud-native IoT and AI platform on Google Cloud to predict component failures, deliver over-the-air (OTA) firmware updates, and provide edge computing for autonomous driving assistance.',
 
         existingInfrastructure: [
-          'Self-hosted media processing hardware appliances deployed in on-premises data centers and mobile broadcast production trucks stationed at race venues.',
-          'Monolithic web and API backend hosted on fixed-capacity virtual servers in a single regional cloud provider.',
-          'Severe operational cost inefficiency: servers and hardware run continuously 24/7/365, even though live racing events occur on only 15 weekends per year (2 to 3 hours per live race).',
-          'Live video broadcasts experience high global latency (15-30 seconds), causing visible desynchronization between the live video stream and real-time cockpit telemetry.',
-          'Video highlight creation is performed manually by video editing staff, resulting in hours of delay before race overtakes and finish-line moments are published to digital channels.'
+          '10 million commercial vehicles equipped with cellular modems and local edge compute hardware.',
+          'Intermittent Connectivity: Vehicles operate in rural and remote logistics corridors with frequent cellular dropouts lasting hours to days.',
+          'High-throughput Wi-Fi depot uploads: Vehicles transmit 50 MB to 500 MB of detailed diagnostic logs when docking at fleet service centers.',
+          'On-premises legacy data warehouses failing to ingest real-time telematics streams at scale, delaying warranty and safety defect analysis by weeks.',
+          'Strict regulatory requirements for automotive safety and regional data sovereignty (GDPR in Europe, UNECE WP.29 for vehicle cybersecurity).'
         ],
 
         businessRequirements: [
-          'Deliver broadcast-quality, low-latency (< 5 seconds) 4K live video streams to millions of concurrent web and mobile subscribers worldwide.',
-          'Eliminate idle off-season infrastructure costs by adopting an entirely serverless, scale-to-zero compute architecture between race weekends.',
-          'Automatically identify race incidents, dramatic overtakes, and photo finishes using AI/ML video intelligence to generate and distribute real-time highlight clips within seconds of occurrence.',
-          'Provide an interactive, gamified fan engagement mobile application featuring real-time synchronized telemetry (airspeed, altitude, G-force, pilot heart rate, and 3D positioning).',
-          'Rapidly expand into new global broadcast territories without deploying physical broadcast infrastructure.'
+          'Predict catastrophic battery and transmission failures 72 hours in advance to eliminate roadside breakdowns and schedule preventive maintenance.',
+          'Distribute cryptographically secure Over-The-Air (OTA) firmware updates to global vehicle fleets with automated rollback capabilities.',
+          'Monetize fleet analytics by exposing secure, rate-limited telemetry APIs to commercial logistics partners and certified maintenance depots.',
+          'Enforce strict compliance with European GDPR data residency and international vehicle safety regulations.',
+          'Execute low-latency edge computer vision inference (< 30ms) on-vehicle for autonomous hazard detection without cloud network dependency.'
         ],
 
         technicalRequirements: [
-          'Build a serverless live video transcoding and packaging pipeline leveraging Google Cloud Transcoder API and Live Stream API capable of outputting adaptive bitrate HLS/DASH streams.',
-          'Deploy a global content delivery network using Cloud CDN and Media CDN fronted by Global External Application Load Balancing for low-latency media segment delivery.',
-          'Implement an event-driven serverless backend using Cloud Run with min-instances: 0 to scale from zero to tens of thousands of container instances instantly during live race bursts.',
-          'Deploy high-throughput NoSQL storage (Cloud Bigtable) for ingesting high-frequency helicopter telemetry, coupled with Firestore in Native Mode for real-time mobile app state synchronization.',
-          'Utilize Vertex AI and Cloud Video Intelligence API to automate race event classification, camera angle switching, and automated highlight video clipping.'
+          'Deploy Google Distributed Cloud (GDC) Edge on-vehicle with optimized TensorFlow Lite models for offline real-time computer vision inference.',
+          'Build a dual-path ingestion architecture: Cloud Pub/Sub for real-time streaming cellular telemetry and Cloud Storage with Signed URLs for depot Wi-Fi diagnostic log dumps.',
+          'Deploy Cloud Bigtable with optimized row key design (vehicle_id#reverse_timestamp) for high-throughput time-series sensor ingestion.',
+          'Automate multi-tier log archival using Cloud Storage Object Lifecycle Management (Standard -> Nearline at 30d -> Coldline at 90d -> Archive at 365d).',
+          'Deploy Apigee X API Management with OAuth 2.0, quota management, and developer portals for commercial partner telemetry access.',
+          'Apply Organization Resource Location Policies and Regional Cloud KMS CMEK keys to enforce European data residency for EU vehicle telemetry.'
         ],
 
         prescribedArchitecture: {
-          compute: 'Cloud Run (fully managed serverless container platform) for fan-facing APIs, telemetry ingestion webhooks, and backend services, configured with min-instances: 0 to scale to zero between races and auto-scale to thousands of instances in seconds during race events. Vertex AI Custom Training and Prediction for computer vision models.',
-          storage: 'Cloud Bigtable with SSD storage for high-throughput, sub-10ms latency time-series telemetry ingestion (avionics, biometric, and GPS data). Cloud Storage Multi-Region for raw master video archives and transcoded video segments. Firestore in Native Mode for real-time fan leaderboards, live race telemetry push updates, and interactive chat.',
-          networking: 'Live Broadcast Stream -> Cloud Video Ingestion -> Transcoder API -> Cloud Storage -> Global External Application Load Balancer with Cloud CDN / Media CDN delivering low-latency cached HLS/DASH video chunks to global viewers. Cloud Pub/Sub ingesting high-frequency helicopter telemetry streams.',
-          security: 'Firebase Authentication integrated with Google Cloud Identity Platform for fan login and identity federation. Cloud Armor security policies providing L7 WAF protection, rate limiting, and geo-fencing. Secret Manager for secure storage of API credentials and broadcast encoder keys.',
-          dataAnalytics: 'Video Intelligence API and Vertex AI for automated real-time shot detection, object tracking, and instant highlight reel generation. Telemetry Pipeline: Helicopter avionics -> Cloud Pub/Sub -> Cloud Dataflow -> Cloud Bigtable (real-time telemetry) + Firestore (app synchronization) + BigQuery (historical race analytics, engine performance metrics, and fan viewer behavior).'
+          compute: 'Google Distributed Cloud (GDC) Edge / containerized runtimes with TensorFlow Lite on-vehicle for local inference. Cloud Run and GKE for backend microservices in Google Cloud. Vertex AI Training and Pipelines for predictive maintenance MLOps.',
+          storage: 'Cloud Bigtable (multi-cluster replication) for real-time sensor time-series data. Cloud Storage with automated Lifecycle Management for multi-petabyte raw diagnostic bundles. BigQuery for fleet-wide analytical queries and warranty analytics.',
+          networking: 'Cloud Pub/Sub for high-throughput streaming telemetry buffering. Global External Application Load Balancer with Cloud CDN for OTA firmware distribution. External Passthrough Network Load Balancer for low-latency vehicle gateway connections.',
+          security: 'Apigee X enforcing token verification, spike arrest, and API product monetization. Cloud KMS CMEK enforcing regional cryptographic boundaries. Binary Authorization verifying OTA firmware container signatures.',
+          dataAnalytics: 'Streaming Path: Vehicle Cellular Modems -> Cloud Pub/Sub -> Cloud Dataflow (sliding window aggregations) -> Cloud Bigtable. Batch Path: Depot Wi-Fi -> Cloud Storage -> Dataflow -> BigQuery. Vertex AI Model Registry and Endpoints for fleet predictive maintenance.'
         },
 
-        executiveSummary: 'Helicopter Racing League transformed its global broadcast operations by adopting a 100% serverless, AI-powered architecture on Google Cloud. Using Transcoder API, Cloud CDN, Cloud Run (scale-to-zero), Cloud Bigtable, and Vertex AI / Video Intelligence API, HRL reduced off-season infrastructure idle costs to near zero while delivering sub-5-second 4K video latency, synchronized real-time cockpit telemetry to millions of fans, and generating automated AI race highlights within seconds.',
+        executiveSummary: 'Knightmotives Automotive transformed its connected fleet platform on Google Cloud with GDC Edge, Cloud Bigtable, Pub/Sub, Dataflow, and Apigee. The architecture delivers sub-30ms offline edge ML inference, predictive component failure alerts 72 hours in advance, and 100% GDPR data sovereignty compliance.',
 
         keyMetrics: [
-          'Live Stream Latency: < 5 seconds glass-to-glass global video latency',
-          'Cost Optimization: 90%+ reduction in off-season infrastructure spend via serverless scale-to-zero (Cloud Run min-instances: 0)',
-          'Telemetry Ingestion Throughput: 100,000+ telemetry events/second per racing helicopter with < 50ms processing latency',
-          'Automated AI Highlight Generation: Clip generated and published within 15 seconds of race event detection',
-          'Concurrent Viewers Scale: Seamless elasticity from 0 to 5M+ concurrent global streams'
+          'Connected Fleet: 10 Million commercial vehicles worldwide',
+          'Edge ML Inference Latency: < 30ms on-vehicle without internet connectivity',
+          'Telemetry Ingestion Throughput: 5M+ streaming events/sec with zero message loss',
+          'Storage Cost Reduction: 85% savings on 50 PB diagnostic archives via GCS Lifecycle Management',
+          'Predictive Maintenance Accuracy: > 94% true positive rate for battery/motor failure prediction'
         ]
       }
     },

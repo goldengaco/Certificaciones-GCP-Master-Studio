@@ -240,7 +240,7 @@
 
       // 6. Handle initial hash routing or default to dashboard
       const initialHash = (window.location.hash || '').replace(/^#\/?/, '').toLowerCase();
-      const validViews = ['dashboard', 'study', 'exam', 'drill', 'search', 'news', 'tools'];
+      const validViews = ['dashboard', 'study', 'exam', 'drill', 'search', 'news', 'tools', 'diagnostico'];
       if (validViews.includes(initialHash)) {
         this.navigateTo(initialHash);
       } else {
@@ -270,13 +270,46 @@
      */
     resolveQuestionPool(certId) {
       const id = (certId || '').toLowerCase();
+      let pool;
       if (id === 'cdl') {
-        return global.GCP_CDL_QUESTIONS || global.GCP_QUESTIONS_CDL || [];
+        pool = global.GCP_CDL_QUESTIONS || global.GCP_QUESTIONS_CDL || [];
       } else if (id === 'pca') {
-        return global.GCP_PCA_QUESTIONS || global.GCP_QUESTIONS_PCA || [];
+        pool = global.GCP_PCA_QUESTIONS || global.GCP_QUESTIONS_PCA || [];
       } else {
-        return global.GCP_ACE_QUESTIONS || global.GCP_QUESTIONS_ACE || [];
+        pool = global.GCP_ACE_QUESTIONS || global.GCP_QUESTIONS_ACE || [];
       }
+      return this.filtrarVerificadas(pool);
+    },
+
+    /**
+     * El banco se está reescribiendo por lotes. Un ítem ya reescrito y aprobado
+     * lleva `subsectionId`; los que faltan, no. Con el filtro activo se practica
+     * solo con los verificados, para no estudiar con preguntas que se adivinan.
+     *
+     * Si quedan menos de 20 verificados no se filtra: con tan pocos no hay
+     * sesión posible, y es mejor avisar que dejar la aplicación vacía.
+     */
+    MINIMO_VERIFICADAS: 20,
+
+    filtrarVerificadas(pool) {
+      if (!Array.isArray(pool) || !pool.length) return pool || [];
+      const activo = !this.state || !this.state.settings ||
+                     this.state.settings.soloVerificadas !== false;
+      this.contadorVerificadas = pool.filter(q => q && q.subsectionId).length;
+      this.contadorTotal = pool.length;
+      if (!activo) return pool;
+      const v = pool.filter(q => q && q.subsectionId);
+      return v.length >= this.MINIMO_VERIFICADAS ? v : pool;
+    },
+
+    /** Texto para la interfaz: cuántas preguntas hay disponibles y de qué tipo. */
+    resumenVerificadas() {
+      const v = this.contadorVerificadas || 0, t = this.contadorTotal || 0;
+      const activo = !this.state || !this.state.settings ||
+                     this.state.settings.soloVerificadas !== false;
+      if (!activo) return `${t} preguntas (banco completo, incluye ${t - v} sin verificar)`;
+      if (v < this.MINIMO_VERIFICADAS) return `${t} preguntas — aún no hay suficientes verificadas (${v}); se usa el banco completo`;
+      return `${v} preguntas verificadas de ${t}`;
     },
 
     /**
@@ -287,6 +320,15 @@
     switchCertification(certId, showFeedbackToast = true) {
       const validCerts = ['cdl', 'ace', 'pca'];
       const targetCert = validCerts.includes((certId || '').toLowerCase()) ? certId.toLowerCase() : 'ace';
+
+      // El banco puede no estar cargado todavia (carga perezosa). Se trae y se
+      // reintenta una sola vez; nunca se entra en bucle porque la segunda vez
+      // estaCargado() ya es true.
+      const D = global.GCP_DATA;
+      if (D && !D.estaCargado(targetCert)) {
+        D.asegurarBanco(targetCert).then(() => this.switchCertification(targetCert, showFeedbackToast));
+        return;
+      }
 
       this.activeCertId = targetCert;
       if (this.state) {
@@ -343,6 +385,9 @@
           if (dashCertTagline) dashCertTagline.textContent = manifest.tagline || '';
           if (dashCertLevel) dashCertLevel.textContent = manifest.level || 'Official';
           if (examBadgeCert) examBadgeCert.textContent = manifest.code || targetCert.toUpperCase();
+          // La insignia del examen estaba fija en 'ACE-2026' para las tres certificaciones.
+          const dashCertCode = document.getElementById('dash-cert-code');
+          if (dashCertCode) dashCertCode.textContent = (manifest.code || targetCert.toUpperCase()) + '-2026';
           if (examBlockTitle) examBlockTitle.textContent = `${manifest.name} — Bloque de Examen`;
         }
       }
@@ -358,7 +403,8 @@
 
       if (showFeedbackToast) {
         const certNames = { cdl: 'Cloud Digital Leader', ace: 'Associate Cloud Engineer', pca: 'Professional Cloud Architect' };
-        this.showToast(`Certificación activa: ${certNames[targetCert] || targetCert.toUpperCase()} (${this.questionPool.length} preguntas)`, 'info');
+        const nRes = this.tamanoReserva();
+        this.showToast(`Certificación activa: ${certNames[targetCert] || targetCert.toUpperCase()} (${this.getQuestionPool().length} para practicar` + (nRes ? ` + ${nRes} en reserva ciega` : '') + `)`, 'info');
       }
     },
 
@@ -375,8 +421,38 @@
      * Returns full question pool for active certification.
      * @returns {Array<object>}
      */
-    getQuestionPool() {
-      return this.questionPool || [];
+    getQuestionPool(opciones) {
+      const pool = this.questionPool || [];
+      const o = opciones || {};
+      // La reserva ciega existe para medir de verdad: nunca se practica.
+      // Solo el simulacro ciego la ve, y la revisión forense necesita el banco entero
+      // para resolver por id las preguntas ya contestadas.
+      if (o.soloReserva) return pool.filter(q => q && q.reservaCiega === true);
+      if (o.incluirReserva) return pool;
+      return pool.filter(q => !(q && q.reservaCiega === true));
+    },
+
+    /**
+     * Cuantos bloques de simulacro salen del banco practicable ahora mismo.
+     * Depende del filtro de verificadas, asi que cambia cuando el banco crece:
+     * por eso se calcula y no se escribe "6" en la interfaz.
+     * @param {string} [certId]
+     * @returns {number}
+     */
+    numeroDeBloques(certId) {
+      const id = certId || this.activeCertId || 'ace';
+      const manifest = (global.GCP_MANIFEST && global.GCP_MANIFEST.certifications)
+        ? global.GCP_MANIFEST.certifications[id]
+        : null;
+      const tam = (manifest && manifest.questionCount) || 50;
+      const total = this.getQuestionPool().length;
+      const E = global.GCP_ENGINE && global.GCP_ENGINE.BlockRotationEngine;
+      return E ? E.contarBloques(total, tam) : 1;
+    },
+
+    /** Cuántas preguntas hay apartadas en reserva ciega. */
+    tamanoReserva() {
+      return (this.questionPool || []).filter(q => q && q.reservaCiega === true).length;
     },
 
     /**
@@ -386,7 +462,7 @@
      */
     navigateTo(viewId, params = {}) {
       const targetView = (viewId || '').toLowerCase();
-      const validViews = ['dashboard', 'study', 'exam', 'drill', 'search', 'news', 'tools'];
+      const validViews = ['dashboard', 'study', 'exam', 'drill', 'search', 'news', 'tools', 'diagnostico'];
       if (!validViews.includes(targetView)) return;
 
       // Exam Guard: Confirm leaving active exam session
@@ -434,6 +510,12 @@
           targetEl.style.display = '';
           targetEl.classList.add('active', 'active-view');
           targetEl.setAttribute('aria-hidden', 'false');
+          // A11Y: el foco sigue a la vista (cabecera o seccion). Sin esto el
+          // teclado queda en un boton oculto y el lector no anuncia el cambio.
+          const head = targetEl.querySelector('h1, h2');
+          const foco = head || targetEl;
+          if (!foco.hasAttribute('tabindex')) foco.setAttribute('tabindex', '-1');
+          foco.focus();
         }
 
         // Update nav tabs
@@ -478,8 +560,8 @@
           }
           break;
         case 'search':
-          if (global.GCP_UI_SEARCH && typeof global.GCP_UI_SEARCH.init === 'function') {
-            global.GCP_UI_SEARCH.init();
+          if (global.GCP_UI_SEARCH && typeof global.GCP_UI_SEARCH.reindex === 'function') {
+            global.GCP_UI_SEARCH.reindex();
           }
           break;
         case 'news':
@@ -490,6 +572,12 @@
         case 'tools':
           if (global.GCP_UI_TOOLS && typeof global.GCP_UI_TOOLS.init === 'function') {
             global.GCP_UI_TOOLS.init();
+          }
+          break;
+        case 'diagnostico':
+          // Se recalcula al entrar: refleja lo respondido hasta este momento.
+          if (global.GCP_DIAGNOSTICO && typeof global.GCP_DIAGNOSTICO.render === 'function') {
+            global.GCP_DIAGNOSTICO.render();
           }
           break;
       }
@@ -512,7 +600,7 @@
 
       const history = certState.history || [];
       const questionStates = certState.questionStates || {};
-      const pool = this.questionPool || [];
+      const pool = this.getQuestionPool();
       const poolSize = pool.length > 0 ? pool.length : 300;
 
       // 1. Calculate Passing Probability via Engine
@@ -537,47 +625,10 @@
         });
       }
 
-      const probValue = Math.round(probResult.passingProbability || 0);
-
-      // 2. Update Header Passing Pill & Hero Gauge
-      const headerPassingProb = document.getElementById('header-passing-prob');
-      if (headerPassingProb) {
-        headerPassingProb.textContent = `${probValue}%`;
-        headerPassingProb.className = `passing-pill-value ${probValue >= 70 ? 'text-green' : probValue >= 50 ? 'text-yellow' : 'text-red'}`;
-      }
-
-      const dashPassingPercent = document.getElementById('dash-passing-percent');
-      if (dashPassingPercent) {
-        dashPassingPercent.textContent = `${probValue}%`;
-      }
-
-      const dashGaugeFill = document.getElementById('dash-gauge-fill');
-      if (dashGaugeFill) {
-        const circumference = 2 * Math.PI * 68; // ~427.25
-        const offset = circumference - (circumference * (probValue / 100));
-        dashGaugeFill.style.strokeDashoffset = offset;
-        dashGaugeFill.style.stroke = probValue >= 70 ? '#34A853' : probValue >= 50 ? '#FBBC04' : '#EA4335';
-      }
-
-      const dashReadinessBadge = document.getElementById('dash-readiness-badge');
-      if (dashReadinessBadge) {
-        if (probResult.coldStart || (history.length === 0 && Object.keys(questionStates).length === 0)) {
-          dashReadinessBadge.textContent = 'SIN REGISTRO';
-          dashReadinessBadge.className = 'verdict-badge badge-neutral';
-        } else if (probValue >= 85) {
-          dashReadinessBadge.textContent = 'ALTAMENTE PREPARADO';
-          dashReadinessBadge.className = 'verdict-badge badge-success';
-        } else if (probValue >= 70) {
-          dashReadinessBadge.textContent = 'LISTO PARA EXAMEN';
-          dashReadinessBadge.className = 'verdict-badge badge-success';
-        } else if (probValue >= 50) {
-          dashReadinessBadge.textContent = 'EN PROGRESO';
-          dashReadinessBadge.className = 'verdict-badge badge-warning';
-        } else {
-          dashReadinessBadge.textContent = 'NECESITA REFUERZO';
-          dashReadinessBadge.className = 'verdict-badge badge-danger';
-        }
-      }
+      // NOTA (2026-09-05): el gauge de probabilidad (header-passing-prob,
+      // dash-passing-percent, dash-gauge-fill, dash-readiness-badge) se elimino
+      // del HTML en un rediseno del dashboard; este bloque solo hacia no-ops
+      // tras `if`. Si vuelve el gauge, reconectar aqui.
 
       // 3. Update Hero Metrics
       let masteredCount = 0;
@@ -619,10 +670,14 @@
         dashStudyProgress.textContent = `${answeredQuestionsCount}/${poolSize} preguntas practicadas`;
       }
 
-      const nextBlockIndex = ((certState.rotation && certState.rotation.currentBlockIndex) || 0) % 6;
+      const totalBloques = this.numeroDeBloques();
+      const nextBlockIndex = ((certState.rotation && certState.rotation.currentBlockIndex) || 0) % totalBloques;
       const dashExamBlockInfo = document.getElementById('dash-exam-block-info');
       if (dashExamBlockInfo) {
-        dashExamBlockInfo.textContent = `Siguiente: Bloque ${nextBlockIndex + 1} de 6`;
+        const porBloque = Math.floor(this.getQuestionPool().length / totalBloques);
+        dashExamBlockInfo.textContent = totalBloques > 1
+          ? `Siguiente: Bloque ${nextBlockIndex + 1} de ${totalBloques} (${porBloque} preguntas)`
+          : `Simulacro de ${porBloque} preguntas`;
       }
 
       const weaknessCount = boxCounts[0] + boxCounts[1] + boxCounts[2];
@@ -685,11 +740,17 @@
       // 7. Render Session History Table
       const historyBody = document.getElementById('history-table-body');
       const historyEmpty = document.getElementById('history-empty-state');
+      const historyTable = document.getElementById('table-session-history');
       if (historyBody) {
         historyBody.innerHTML = '';
         if (history.length === 0) {
+          // Una tabla con <th> y un <tbody> vacio es un fallo de accesibilidad
+          // ("th elements have data cells they describe"). Sin filas, no hay tabla:
+          // se oculta entera y se muestra el mensaje de estado vacio.
+          if (historyTable) historyTable.hidden = true;
           if (historyEmpty) historyEmpty.style.display = 'block';
         } else {
+          if (historyTable) historyTable.hidden = false;
           if (historyEmpty) historyEmpty.style.display = 'none';
           // Show recent history (newest first)
           const sortedHistory = [...history].reverse();
@@ -774,19 +835,25 @@
       if (btnAce) btnAce.addEventListener('click', () => this.switchCertification('ace'));
       if (btnPca) btnPca.addEventListener('click', () => this.switchCertification('pca'));
 
-      // Navigation tab buttons
+      // Navigation tab buttons (solo existen dashboard/search/news/tools en el HTML)
       const navDash = document.getElementById('nav-btn-dashboard');
-      const navStudy = document.getElementById('nav-btn-study');
-      const navExam = document.getElementById('nav-btn-exam');
-      const navDrill = document.getElementById('nav-btn-drill');
       const navSearch = document.getElementById('nav-btn-search');
       const navNews = document.getElementById('nav-btn-news');
       const navTools = document.getElementById('nav-btn-tools');
 
+      const swVerif = document.getElementById('settings-verificadas-toggle');
+      if (swVerif) {
+        if (!this.state.settings) this.state.settings = {};
+        swVerif.checked = this.state.settings.soloVerificadas !== false;
+        swVerif.addEventListener('change', () => {
+          this.state.settings.soloVerificadas = swVerif.checked;
+          if (global.GCP_STATE) global.GCP_STATE.saveState(this.state);
+          this.switchCertification(this.activeCertId, false);
+          this.showToast(this.resumenVerificadas(), swVerif.checked ? 'success' : 'warning', 4000);
+        });
+      }
+
       if (navDash) navDash.addEventListener('click', () => this.navigateTo('dashboard'));
-      if (navStudy) navStudy.addEventListener('click', () => this.navigateTo('study'));
-      if (navExam) navExam.addEventListener('click', () => this.navigateTo('exam'));
-      if (navDrill) navDrill.addEventListener('click', () => this.navigateTo('drill'));
       if (navSearch) navSearch.addEventListener('click', () => this.navigateTo('search'));
       if (navNews) navNews.addEventListener('click', () => this.navigateTo('news'));
       if (navTools) navTools.addEventListener('click', () => this.navigateTo('tools'));
@@ -810,6 +877,19 @@
 
       if (btnStartStudy) btnStartStudy.addEventListener('click', () => this.navigateTo('study'));
       if (btnStartExam) btnStartExam.addEventListener('click', () => this.navigateTo('exam'));
+
+      // Simulacro ciego: usa solo la reserva, que nunca se practica.
+      const btnExamCiego = document.getElementById('btn-start-exam-ciego');
+      if (btnExamCiego) {
+        btnExamCiego.addEventListener('click', () => {
+          const n = this.tamanoReserva();
+          if (n < 20) {
+            this.showToast('Esta certificación aún no tiene reserva ciega suficiente (' + n + ' preguntas).', 'warning');
+            return;
+          }
+          this.navigateTo('exam', { ciego: true });
+        });
+      }
       if (btnStartDrill) btnStartDrill.addEventListener('click', () => this.navigateTo('drill'));
 
       // Header Utility Buttons
@@ -818,15 +898,23 @@
         btnThemeToggle.addEventListener('click', () => this.toggleTheme());
       }
 
-      const btnOpenSettings = document.getElementById('btn-open-settings');
-      if (btnOpenSettings) {
-        btnOpenSettings.addEventListener('click', () => this.openModal('modal-settings'));
+      // Marca: el logo tambien vuelve al inicio, con raton y con teclado.
+      // Antes era un div focable sin ningun listener (foco muerto).
+      const brandHome = document.getElementById('brand-home-link');
+      if (brandHome) {
+        brandHome.addEventListener('click', () => this.navigateTo('dashboard'));
+        brandHome.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.navigateTo('dashboard');
+          }
+        });
       }
 
-      const btnCaseStudiesHeader = document.getElementById('btn-case-studies-header');
-      if (btnCaseStudiesHeader) {
-        btnCaseStudiesHeader.addEventListener('click', () => this.openModal('modal-case-studies'));
-      }
+      // NOTA: btn-open-settings y btn-case-studies-header no existen en el HTML
+      // (verificado): esos modales hoy no tienen boton que los abra. Si se
+      // reponen los botones, reconectar aqui openModal('modal-settings') y
+      // openModal('modal-case-studies').
 
       // Settings Modal controls
       const settingsThemeSelect = document.getElementById('settings-theme-select');
@@ -1073,16 +1161,20 @@
         toastContainer = document.createElement('div');
         toastContainer.id = 'toast-container';
         toastContainer.className = 'toast-container';
+        // A11Y: el contenedor creado en caliente tambien debe anunciarse.
+        toastContainer.setAttribute('role', 'status');
+        toastContainer.setAttribute('aria-live', 'polite');
         document.body.appendChild(toastContainer);
       }
 
       // Limit concurrent toasts
-      while (toastContainer.children && toastContainer.children.length >= 4 && toastContainer.firstChild) {
+      while (toastContainer.children && toastContainer.children.length >= 2 && toastContainer.firstChild) {
         toastContainer.removeChild(toastContainer.firstChild);
       }
 
       const toast = document.createElement('div');
       toast.className = `toast-card toast-${type}`;
+      toast.setAttribute('role', 'status');
       const iconSymbol = type === 'success' ? '[OK]' : type === 'error' ? '[ERROR]' : type === 'warning' ? '[WARN]' : '[INFO]';
 
       toast.innerHTML = `
@@ -1115,10 +1207,52 @@
         this.renderCaseStudyInModal(initialStudy);
       }
 
+      // A11Y: guarda quien abrio para devolverle el foco al cerrar.
+      this._modalOpeners = this._modalOpeners || {};
+      if (document.activeElement instanceof HTMLElement) {
+        this._modalOpeners[modalId] = document.activeElement;
+      }
+
       modal.style.display = 'flex';
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
+
+      // A11Y: foco inicial dentro del modal + trampa de Tab.
+      const focusables = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstFocusable = Array.prototype.find.call(
+        focusables, (el) => !el.disabled && el.offsetParent !== null
+      );
+      if (firstFocusable) {
+        firstFocusable.focus();
+      } else {
+        modal.setAttribute('tabindex', '-1');
+        modal.focus();
+      }
+      if (!modal.dataset.trapBound) {
+        modal.dataset.trapBound = '1';
+        modal.addEventListener('keydown', (e) => {
+          if (e.key !== 'Tab') return;
+          const items = Array.prototype.filter.call(
+            modal.querySelectorAll(
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            ),
+            (el) => !el.disabled && el.offsetParent !== null
+          );
+          if (!items.length) return;
+          const first = items[0];
+          const last = items[items.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        });
+      }
     },
 
     /**
@@ -1133,6 +1267,15 @@
       modal.style.display = 'none';
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
+
+      // A11Y: devuelve el foco a quien abrio el modal.
+      if (this._modalOpeners && this._modalOpeners[modalId]) {
+        const opener = this._modalOpeners[modalId];
+        delete this._modalOpeners[modalId];
+        if (document.contains(opener) && typeof opener.focus === 'function') {
+          opener.focus();
+        }
+      }
 
       // Check if any other modal is open
       const remainingOpen = document.querySelectorAll('.modal-backdrop.active');
@@ -1224,6 +1367,24 @@
 
         const themeSelect = document.getElementById('settings-theme-select');
         if (themeSelect) themeSelect.value = theme;
+
+        // El icono estaba fijo en luna y nunca cambiaba, así que no decía nada.
+        // Ahora muestra ADÓNDE vas: en oscuro un sol, en claro una luna. Y el
+        // título lo dice con palabras, que es lo que lee un lector de pantalla.
+        const btnTema = document.getElementById('btn-theme-toggle');
+        if (btnTema) {
+          const destino = theme === 'dark' ? 'claro' : 'oscuro';
+          const icono = theme === 'dark' ? '#icon-sun' : '#icon-moon';
+          const use = btnTema.querySelector('use');
+          if (use) {
+            use.setAttribute('href', icono);
+            use.setAttribute('xlink:href', icono);
+          }
+          const svg = btnTema.querySelector('svg');
+          if (svg) svg.setAttribute('class', 'icon icon-theme-' + (theme === 'dark' ? 'sun' : 'moon'));
+          btnTema.setAttribute('title', 'Cambiar a modo ' + destino);
+          btnTema.setAttribute('aria-label', 'Cambiar a modo ' + destino);
+        }
       }
 
       if (persist && this.state) {
@@ -1265,12 +1426,27 @@
     module.exports = { GCP_APP, SoundFX };
   }
 
-  // Auto-init on DOMContentLoaded in browser
+  // Auto-init on DOMContentLoaded in browser.
+  // Solo se espera al banco de la certificacion activa; los otros dos se
+  // precargan despues, cuando el navegador esta ocioso.
   if (typeof document !== 'undefined') {
+    const arrancar = () => {
+      const D = global.GCP_DATA;
+      if (!D) { GCP_APP.init(); return; }
+      const activa = D.certActivaGuardada();
+      D.asegurarBanco(activa).then(() => {
+        GCP_APP.init();
+        D.precargarRestantes(activa, () => {
+          if (global.GCP_UI_SEARCH && typeof global.GCP_UI_SEARCH.init === 'function') {
+            global.GCP_UI_SEARCH.init();
+          }
+        });
+      });
+    };
     if (document.readyState === 'loading' && typeof document.addEventListener === 'function') {
-      document.addEventListener('DOMContentLoaded', () => GCP_APP.init());
+      document.addEventListener('DOMContentLoaded', arrancar);
     } else {
-      GCP_APP.init();
+      arrancar();
     }
   }
 

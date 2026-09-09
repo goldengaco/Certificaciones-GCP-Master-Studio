@@ -1,0 +1,218 @@
+[
+ {
+  "id": "ACE-D1-003",
+  "scenario": "You manage a development Google Cloud project with a monthly budget limit of $2,000. When spending reaches 100% of the budget, charges must be stopped programmatically, without waiting for a human to read an alert email and act. Which two things must you configure to build that automated shutdown path? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Deploy a Cloud Function subscribed to that topic that calls the Cloud Billing API to disable billing."
+  },
+  "distractors": {
+   "B": "Cloud Billing email alerts only notify human recipients; they cannot call an API or a webhook, so nothing is stopped automatically.",
+   "C": "Cloud Monitoring billing metrics arrive with hours of delay and are meant for observability, not for capping spend at the moment the threshold is crossed.",
+   "D": "Organization Policies constrain how resources may be configured; there is no organization policy constraint that enforces a monetary spending limit."
+  },
+  "explanation": "A budget only becomes an automation when both halves exist. First the Cloud Billing budget must be configured to publish its threshold notifications to a Pub/Sub topic (email recipients alone cannot trigger code). Second, something must consume that message: a Cloud Function subscribed to the topic reads the costAmount/budgetAmount payload and calls the Cloud Billing API (projects.updateBillingInfo with an empty billing account) to detach billing, or scales resources down. Neither step alone stops the spend."
+ },
+ {
+  "id": "ACE-D1-007",
+  "scenario": "Your organization's security policy requires that access to objects in the existing bucket gs://corp-financial-records be granted exclusively through IAM policies rather than individual object Access Control Lists (ACLs). Today a group of analysts can read those objects only because of object-level ACL entries, and they must keep their read access after the change. Which two actions should you take? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Grant the analysts roles/storage.objectViewer on the bucket before switching the access model."
+  },
+  "distractors": {
+   "B": "Setting default object ACLs to private only changes the ACL applied to newly written objects; object ACLs remain enabled and can still be set on the bucket.",
+   "C": "Object Lifecycle Management governs storage class transitions and deletion of objects; it never evaluates or removes access control entries.",
+   "D": "CMEK changes which key encrypts the object bytes and adds a KMS permission check, but object ACLs continue to be evaluated exactly as before."
+  },
+  "explanation": "Enabling uniform bucket-level access disables ACL evaluation on the bucket, so from that moment only IAM decides who can read an object. That is why the ACL-derived access the analysts rely on has to be re-created as an IAM binding first: granting roles/storage.objectViewer at the bucket level preserves their read access once ACLs stop being honored. Doing only the first step locks the analysts out; doing only the second leaves ACLs enabled and the policy unmet."
+ },
+ {
+  "id": "ACE-D1-009",
+  "scenario": "You are preparing a custom VPC subnet 10.0.0.0/20 in europe-west1 to host a VPC-native Google Kubernetes Engine (GKE) cluster. Pods and Services need dedicated, non-overlapping ranges that are routable inside the VPC rather than an overlay. Which two steps are required to bring the cluster up on VPC-native (alias IP) addressing? (Choose 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Create the cluster with --enable-ip-alias, naming the two secondary ranges for Pods and Services."
+  },
+  "distractors": {
+   "A": "A VPC-native cluster draws Pod and Service addresses from secondary ranges on its own subnet; peering a second VPC adds no usable range to the cluster.",
+   "B": "Enlarging the primary range only adds node addresses. VPC-native clusters still require separate secondary ranges for Pods and Services.",
+   "D": "Cloud NAT translates private source addresses for outbound internet traffic; it allocates no address space to Pods or Services."
+  },
+  "explanation": "VPC-native clusters use alias IP ranges, which come from secondary IP ranges defined on the subnet, so the two ranges must exist before the cluster is created. Creating the ranges is not enough on its own: the cluster must be created with --enable-ip-alias and told which secondary range to use for Pods (--cluster-secondary-range-name) and which for Services (--services-secondary-range-name); without those flags GKE would allocate ranges of its own or fall back to routes-based networking."
+ },
+ {
+  "id": "ACE-D1-010",
+  "scenario": "An enterprise is organizing 80 Google Cloud projects across Development, Staging, and Production environments for three distinct business units. Each environment must carry different IAM access and different Organization Policy constraints, and the projects underneath must inherit them automatically from the organization root down. Which two actions should you take? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Attach the environment-specific Organization Policy constraints to each environment folder node."
+  },
+  "distractors": {
+   "B": "A flat structure has no intermediate node to inherit from, so every policy must be repeated and maintained on each of the 80 projects.",
+   "C": "Separate organization nodes fragment Cloud Identity, billing and central administration, and policies cannot be inherited across organizations.",
+   "D": "Cloud Billing sub-accounts split invoicing and cost attribution; they are not part of the Resource Manager hierarchy that IAM and policies inherit through."
+  },
+  "explanation": "The folder hierarchy is the inheritance mechanism, but it enforces nothing by itself. Nesting environment folders (dev/stage/prod) under each business unit folder creates the attachment points; the constraints then have to be set on those folder nodes, where every project underneath inherits them. Building the hierarchy without setting policies on it leaves all three environments governed identically by whatever the organization root says."
+ },
+ {
+  "id": "ACE-D1-011",
+  "scenario": "A junior developer currently holds the primitive Editor role on a production project. A security audit requires strict least privilege. The developer needs to view project settings and to create, start, stop and delete Compute Engine instances, but must not be able to modify firewall rules or Cloud Storage buckets. Which two actions should you take? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Remove the existing roles/editor binding for the developer on the production project."
+  },
+  "distractors": {
+   "A": "roles/owner is a primitive role with full control over every resource, and roles/compute.admin also allows editing firewall rules and networks.",
+   "B": "roles/compute.networkAdmin and roles/storage.admin grant exactly the two things the developer must not have, and neither creates or deletes VM instances.",
+   "C": "IAM Deny rules would have to enumerate every service to be excluded, and keeping roles/editor still leaves broad modify permissions everywhere else."
+  },
+  "explanation": "roles/compute.instanceAdmin.v1 covers the full instance lifecycle without permission over firewalls or networks, and roles/viewer supplies the read-only visibility over the rest of the project. IAM bindings are additive and are evaluated as a union, so granting the narrow pair changes nothing while the old roles/editor binding is still in place: the Editor role must be removed for least privilege to actually take effect."
+ },
+ {
+  "id": "ACE-D1-015",
+  "scenario": "Developers in your engineering department must be able to create new Google Cloud projects themselves and link each new project to the corporate Cloud Billing account 01A2B3-45C6D7-89E0F1. They must not be able to see spending on projects owned by other teams, and they must not be able to change payment methods or billing administrators. Which two role grants should you make? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Grant roles/resourcemanager.projectCreator on the organization node."
+  },
+  "distractors": {
+   "A": "roles/billing.admin grants control over payment instruments, billing administrators and organization-wide spend reporting.",
+   "B": "roles/billing.viewer exposes cost detail for every project linked to the account and still does not permit linking a project.",
+   "C": "roles/resourcemanager.projectCreator is a Resource Manager role: it can only be granted on an organization or folder, never on a billing account."
+  },
+  "explanation": "Two different resources are involved, so two bindings are needed. On the billing account, roles/billing.user carries billing.resourceAssociations.create, the permission that links a project to the account, without exposing cost data or payment settings. On the organization node, roles/resourcemanager.projectCreator lets the developers create the projects in the first place. Granting projectCreator on the billing account is the classic error: the role has no meaning at that scope."
+ },
+ {
+  "id": "ACE-D2-017",
+  "scenario": "An enterprise has 15 autonomous business units, each in its own Google Cloud project. The central security team must administer all subnets, firewall rules, routes and Cloud NAT gateways from one project, while developers in each business unit project attach their own Compute Engine VMs to those centrally managed subnets. Which two actions are required? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Grant the business unit developers roles/compute.networkUser on the host project subnets."
+  },
+  "distractors": {
+   "B": "VPC Network Peering joins autonomous VPCs but leaves each project owning its own subnets and firewall rules, so nothing is centralized.",
+   "C": "Cloud VPN between 15 VPCs adds tunnel bandwidth limits and encryption overhead while still leaving network administration decentralized.",
+   "D": "Collapsing 15 business units into one project destroys resource isolation and per-unit IAM and billing boundaries."
+  },
+  "explanation": "Shared VPC puts the network in a host project and attaches the 15 business unit projects as service projects, which gives the security team single-point control of subnets, firewalls, routes and Cloud NAT. Attachment alone does not let anyone use the network: a service project principal can only create a VM on a shared subnet if they hold roles/compute.networkUser on that subnet (or on the host project). Skipping that grant is the most common Shared VPC failure, and it surfaces as subnets not appearing in the VM creation form."
+ },
+ {
+  "id": "ACE-D2-047",
+  "scenario": "Several Compute Engine virtual machines run in a VPC subnet with no external IP addresses. They must read and write objects in Cloud Storage over Google's internal network, without public internet egress and without paying for Cloud NAT. Which two conditions must hold for these VMs to reach the Cloud Storage API? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Confirm that the VPC still has a route for destination 0.0.0.0/0 whose next hop is the default internet gateway."
+  },
+  "distractors": {
+   "A": "Cloud NAT does provide egress, but it sends the API calls out through external addresses and bills for data processing, which the requirement excludes.",
+   "C": "Assigning external IP addresses puts every VM interface directly on the public internet, which is what the design is trying to avoid.",
+   "D": "Internal Application Load Balancers distribute traffic to your own backends; they are not a client-side egress path to a Google API endpoint."
+  },
+  "explanation": "Private Google Access is a per-subnet setting that lets instances without external addresses reach Google API endpoints, so it has to be enabled on the subnet holding the VMs. It is not self-contained: the packets are still addressed to the Google API front-end ranges, so the VPC needs a default route (0.0.0.0/0) whose next hop is the default internet gateway for them to be forwarded. Deleting that default route to 'lock down' a private subnet is a common mistake and it silently breaks Private Google Access, even though no traffic ever leaves Google's network."
+ },
+ {
+  "id": "ACE-D2-025",
+  "scenario": "An e-commerce business runs its primary transactional database on Cloud SQL for MySQL. Business intelligence reporting queries drive CPU on the primary instance high during business hours and degrade checkout latency. You must offload the analytical reads without weakening write consistency. The primary instance was originally created with automated backups turned off. Which two steps are required? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Enable automated backups and binary logging on the primary Cloud SQL instance."
+  },
+  "distractors": {
+   "A": "Memorystore for Redis is an in-memory key-value cache; it cannot run relational reporting queries, joins, or ACID transactions.",
+   "C": "More frequent backups produce more snapshots but run against the same instance and remove none of the reporting CPU load.",
+   "D": "A self-managed MySQL VM fed by daily CSV dumps serves stale data and adds replication and patching work you would own."
+  },
+  "explanation": "Read replicas are the supported way to serve reporting traffic: they replicate asynchronously from the primary and are queried through their own endpoints, so the primary keeps its write consistency untouched. Cloud SQL builds that replication stream from the primary's binary logs, so a replica cannot be created until automated backups and binary logging are enabled on the primary. On an instance created without backups, that prerequisite step is what makes the 'create replica' action available at all."
+ },
+ {
+  "id": "ACE-D1-055",
+  "scenario": "A healthcare application stores patient medical records in Cloud Storage buckets. Auditors require continuous recording of all read and write object operations (ADMIN_READ, DATA_READ and DATA_WRITE), retained for 7 years and queryable in a BigQuery dataset named audit_analytics. Data Access audit logs are disabled by default because of their volume. Which two actions are required for the audit entries to land in that dataset? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Grant the sink's writer identity the roles/bigquery.dataEditor role on the audit_analytics dataset."
+  },
+  "distractors": {
+   "A": "Object Versioning retains previous object payloads after an overwrite or delete, but it records nothing about who read an object.",
+   "B": "Storage Insights produces inventory reports describing which objects exist; it is not a per-request record of API operations.",
+   "C": "Polling logs from a Cloud Function adds latency and code to maintain, and roles/logging.viewer does not even grant access to Data Access logs."
+  },
+  "explanation": "Data Access logs for Cloud Storage must first be switched on in the project's IAM audit configuration, since only ADMIN_WRITE is captured by default, and a log sink then routes the matching entries to BigQuery. The sink is created with its own service identity, and Cloud Logging writes as that identity: until it holds roles/bigquery.dataEditor on the destination dataset every export silently fails and the dataset stays empty. Checking the sink's writer identity permission is the standard first diagnostic when an export produces no rows."
+ },
+ {
+  "id": "ACE-D3-019",
+  "scenario": "You are exposing an HTTPS web application on Google Kubernetes Engine through the GKE Ingress controller. Google Cloud must provision, attach and renew a trusted certificate for app.example.com with no manual rotation, and the certificate must actually reach ACTIVE status. Which two steps are required? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Point the app.example.com DNS A record at the Ingress load balancer's static IP address."
+  },
+  "distractors": {
+   "A": "A self-run cert-manager CronJob works but reintroduces exactly the key handling and renewal maintenance the requirement rules out.",
+   "C": "A self-signed kubernetes.io/tls Secret is untrusted by browsers and still has to be replaced by hand at every expiry.",
+   "D": "Cloud DNS TXT records hold verification strings and metadata; they cannot carry a certificate or serve TLS termination material."
+  },
+  "explanation": "The ManagedCertificate custom resource, referenced from the Ingress through the networking.gke.io/managed-certificates annotation, is what makes Google issue and auto-renew the certificate. Provisioning is validated over HTTP, so Google must find app.example.com already resolving to the load balancer's address: until the A record points at the Ingress IP the certificate stays in PROVISIONING and then reports FAILED_NOT_VISIBLE. Reserving a static IP and creating the record is therefore part of the deployment, not a follow-up task."
+ },
+ {
+  "id": "ACE-D3-037",
+  "scenario": "A backend service on Cloud Run must reach a Cloud SQL instance that is to be reachable only on a private address inside VPC prod-vpc, plus private Compute Engine VMs in subnet backend-sub, with no traffic crossing the public internet. Which two things must you configure? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Configure a private services access connection in prod-vpc and give the Cloud SQL instance a private IP from that range."
+  },
+  "distractors": {
+   "B": "The built-in connector reaches only the Cloud SQL instance, over its public endpoint, and attaches the service to no VPC, so the private VMs stay unreachable.",
+   "C": "Private Google Access and Cloud NAT both act on traffic that already originates inside the VPC; neither places a Cloud Run instance into prod-vpc.",
+   "D": "VPC Service Controls is an API exfiltration boundary and roles/compute.networkUser is an IAM permission; neither builds a network path to a private IP."
+  },
+  "explanation": "Direct VPC egress attaches the Cloud Run revision to backend-sub and gives it an address inside prod-vpc, which is what makes the private Compute Engine VMs reachable. That alone does not create the database: a Cloud SQL instance only gets a private IP once the VPC has a private services access connection, a VPC peering to the Google-managed producer network with an allocated IP range. Both halves are needed, and this is the same pattern as any private-IP Cloud SQL deployment."
+ }
+]

@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D6-001",
+  "subtopic": "Cloud Spanner: Multi-Region Paxos Quorum & Witness Nodes",
+  "caseStudy": "none",
+  "scenario": "An enterprise financial system requires a multi-region database deployment spanning North America (us-central1 and us-east1) that delivers 99.999% availability SLA, RPO = 0, and RTO = 0 during a total regional outage of us-central1. How does Cloud Spanner multi-region instance configuration maintain Paxos write quorum if an entire region fails?",
+  "correct": "D",
+  "clave_len": 371,
+  "explanation": "Multi-region Cloud Spanner configurations distribute read-write and witness replicas across 3 geographic regions. Paxos consensus requires a majority (e.g. 3 of 5). If an entire region containing 2 replicas fails, the remaining 2 read-write replicas and 1 witness maintain quorum, guaranteeing continuous zero-loss writes and 99.999% availability.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 90,
+    "text": "Cloud Spanner uses asynchronous primary-replica replication that requires manual failover."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Spanner requires database administrators to manually edit DNS records during regional outages."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Spanner shuts down completely when any region fails."
+   },
+   {
+    "letter": "D",
+    "len": 371,
+    "text": "Cloud Spanner uses a multi-region configuration (e.g. nam3: 2 read-write replicas in us-central1, 2 read-write replicas in us-east1, and 1 witness replica in us-east4); if us-central1 fails, the 2 replicas in us-east1 and the witness replica in us-east4 maintain a 3-of-5 Paxos majority quorum, continuing writes seamlessly with zero data loss and zero failover downtime."
+   }
+  ],
+  "ratio": 4.72
+ },
+ {
+  "id": "PCA-D4-025",
+  "subtopic": "Observability: Log-Based Metrics in Cloud Monitoring",
+  "caseStudy": "none",
+  "scenario": "A legacy billing microservice outputs errors as plain text log strings (e.g., 'PAYMENT_GATEWAY_TIMEOUT: transaction_id=123'). Modifying the application source code to emit custom Prometheus metrics is currently impossible. How can the operations team create a Cloud Monitoring metric that counts payment timeouts and alerts when timeouts exceed 50 per minute?",
+  "correct": "B",
+  "clave_len": 199,
+  "explanation": "Log-Based Metrics in Cloud Logging extract numerical counts or values from log entries matching a filter. These metrics integrate natively with Cloud Monitoring for dashboards and alerting without changing application code.",
+  "doc": "https://cloud.google.com/logging/docs/logs-based-metrics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "Rebuild the application from scratch in C++."
+   },
+   {
+    "letter": "B",
+    "len": 199,
+    "text": "Create a Counter Log-Based Metric in Cloud Logging with filter 'textPayload =~ \"PAYMENT_GATEWAY_TIMEOUT\"', and create a Cloud Monitoring Alert Policy triggered when the metric rate exceeds 50/minute."
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Delete all error logs."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Have an engineer count log lines on screen using tally marks."
+   }
+  ],
+  "ratio": 4.7
+ },
+ {
+  "id": "PCA-D4-011",
+  "subtopic": "Observability: Log Analytics & BigQuery Linked Datasets",
+  "caseStudy": "none",
+  "scenario": "A cybersecurity forensics team needs to execute complex multi-table SQL queries joining 100TB of Cloud Audit Logs with corporate HR employee tables in BigQuery to detect insider data exfiltration. Running standard regex text filters in Logs Explorer is too slow and cannot perform SQL joins. How should the logging architecture be configured?",
+  "correct": "C",
+  "clave_len": 225,
+  "explanation": "Log Analytics enhances Cloud Logging buckets with BigQuery-powered SQL analytics. Creating a BigQuery Linked Dataset exposes log buckets as read-only BigQuery views, enabling full ANSI SQL joins between log streams and corporate business datasets.",
+  "doc": "https://cloud.google.com/logging/docs/log-analytics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Use grep commands over SSH on backend servers."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Download all logs to local CSV files on forensic laptops."
+   },
+   {
+    "letter": "C",
+    "len": 225,
+    "text": "Upgrade the Cloud Logging Log Bucket to use Log Analytics, and create a BigQuery Linked Dataset, enabling security teams to query live log data using standard ANSI SQL in BigQuery Studio joined directly with corporate tables."
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "Delete all audit logs older than 2 hours."
+   }
+  ],
+  "ratio": 4.69
+ },
+ {
+  "id": "PCA-D6-002",
+  "subtopic": "Compute Engine: Future Capacity Reservations",
+  "caseStudy": "none",
+  "scenario": "An enterprise maintains a primary production environment in us-central1 and an Active-Passive disaster recovery failover environment in us-east1. During a major East Coast hurricane, hundreds of other companies simultaneously attempt to spin up VMs in us-east1, causing Compute Engine 'ZONE_RESOURCE_POOL_EXHAUSTED' errors. How can the enterprise guarantee that emergency VM compute capacity is 100% available in us-east1 when disaster strikes?",
+  "correct": "D",
+  "clave_len": 231,
+  "explanation": "Compute Engine Capacity Reservations guarantee that VM compute resources (vCPUs, memory, GPUs) are reserved and held in a specific zone. This prevents ZONE_RESOURCE_POOL_EXHAUSTED errors during regional disasters when many organizations fail over simultaneously.",
+  "doc": "https://cloud.google.com/compute/docs/instances/reservations-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "Hope that Google Cloud has spare capacity when the hurricane hits."
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "Use Spot VMs in the failover zone."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Keep physical laptops ready in an office closet."
+   },
+   {
+    "letter": "D",
+    "len": 231,
+    "text": "Create Compute Engine Capacity Reservations in the failover zone (us-east1-b), reserving the exact machine type, GPU, and instance count in advance, guaranteeing capacity is allocated and immediately launchable during an emergency."
+   }
+  ],
+  "ratio": 4.68
+ },
+ {
+  "id": "PCA-D4-003",
+  "subtopic": "FinOps: Flexible vs Resource-Based CUDs",
+  "caseStudy": "none",
+  "scenario": "An enterprise FinOps team is optimizing Google Cloud spend. The organization has two distinct workload profiles: 1) A steady-state fleet of 200 N2 Compute Engine instances in us-central1 running 24/7 with zero planned architecture changes for 3 years; 2) Microservices undergoing rapid modernization transitioning unpredictably between Compute Engine (C2/N2D), GKE Autopilot, and Cloud Run across multiple US regions. What Committed Use Discount (CUD) strategy maximizes cost savings?",
+  "correct": "A",
+  "clave_len": 282,
+  "explanation": "Resource-Based CUDs offer the highest discounts (up to 70%) for predictable, fixed machine families in a specific region. Flexible Spend-Based CUDs offer lower percentage discounts but apply flexibly across Compute Engine machine types, GKE Autopilot, and Cloud Run across multiple regions.",
+  "doc": "https://cloud.google.com/compute/docs/instances/signing-up-committed-use-discounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 282,
+    "text": "Purchase 3-year Resource-Based CUDs for the steady-state N2 us-central1 fleet (maximizing discount up to 57-70%), and purchase 1-year or 3-year Flexible Spend-Based CUDs for the modernizing workloads (providing cross-machine-family, cross-service, and cross-region spend discounts)."
+   },
+   {
+    "letter": "B",
+    "len": 90,
+    "text": "Purchase Resource-Based CUDs for all workloads and lock developers into obsolete VM types."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Pay 100% on-demand list prices for all workloads."
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "Move all workloads to on-premises servers."
+   }
+  ],
+  "ratio": 4.67
+ },
+ {
+  "id": "PCA-D4-015",
+  "subtopic": "SRE: Chaos Engineering & Fault Injection Testing",
+  "caseStudy": "none",
+  "scenario": "An enterprise claims its multi-region GKE and Cloud Spanner architecture can survive the total sudden failure of an entire Google Cloud region (e.g. us-central1) with zero downtime. Before launching to millions of users, the SRE team must validate this resilience hypothesis in a production-like staging environment by injecting realistic zonal and regional failures. What methodology and tooling should be adopted?",
+  "correct": "C",
+  "clave_len": 266,
+  "explanation": "Chaos Engineering systematically injects controlled faults (pod crashes, network latency, zone failures) to identify latent failure modes, validate automated self-healing mechanisms, and confirm disaster recovery SLAs before live incidents occur.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery-scenarios-for-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Assume the architecture works because the diagrams look good."
+   },
+   {
+    "letter": "B",
+    "len": 45,
+    "text": "Disable all database replicas during testing."
+   },
+   {
+    "letter": "C",
+    "len": 266,
+    "text": "Implement automated Chaos Engineering (using tools like Chaos Mesh or LitmusChaos on GKE and simulated network partitioning / VM kill experiments), injecting controlled zonal node crashes and network latency to empirically verify automated failover and SLO recovery."
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Unplug power cables in Google's proprietary physical datacenters."
+   }
+  ],
+  "ratio": 4.67
+ },
+ {
+  "id": "PCA-D6-032",
+  "subtopic": "Knightmotives Automotive: Store-and-Forward Cellular Resiliency",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "Agricultural tractors frequently operate in rural remote farm fields with zero cellular connectivity for 12 to 18 hours at a time. The onboard vehicle telemetry system must continue logging fine-grained sensor data (100+ parameters) locally without buffer overflow, and automatically synchronize the buffered batch records to Google Cloud Storage / Pub/Sub once cellular coverage or farm Wi-Fi is restored. What architecture ensures zero data loss?",
+  "correct": "A",
+  "clave_len": 304,
+  "explanation": "Edge Store-and-Forward buffers sensor data on local vehicle hardware during cellular disconnects. When connectivity returns, data is securely batched, compressed, and uploaded to Google Cloud Storage/Pub/Sub without data loss.",
+  "doc": "https://cloud.google.com/architecture/iot-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 304,
+    "text": "Implement an Edge Store-and-Forward architecture: Buffer sensor readings locally on encrypted vehicle solid-state storage (eMMC/NVMe) with FIFO rotation; upon detecting network connectivity, compress and batch-upload files to Cloud Storage / Pub/Sub with SHA-256 checksum verification and retry policies."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Drop all telemetry packets when cellular signal is lost."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Shut down the tractor whenever internet disconnects."
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "Require farmers to lay physical fiber optic cables across millions of acres of farmland."
+   }
+  ],
+  "ratio": 4.65
+ },
+ {
+  "id": "PCA-D4-035",
+  "subtopic": "SRE: Canary Analysis & Automated Rollback with Spinnaker/Cloud Deploy",
+  "caseStudy": "none",
+  "scenario": "An enterprise wants to eliminate human subjectivity from deployment approvals. When a new container canary is deployed (10% traffic), the system must run an automated statistical analysis (Mann-Whitney U test) comparing the canary version against the baseline version across 50 SLI metrics (latency, error rate, CPU, memory). If statistically significant regression is detected, the deployment must abort immediately. What architecture fulfills this?",
+  "correct": "D",
+  "clave_len": 280,
+  "explanation": "Automated Canary Analysis (ACA) uses statistical algorithms (such as Kayenta / Cloud Deploy verification jobs) to compare real-time telemetry between baseline and canary instances, objectively determining if a release is healthy without human error.",
+  "doc": "https://cloud.google.com/deploy/docs/verify-deployment",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Deploy directly to 100% production without testing."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Roll back all deployments automatically regardless of success."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Have a developer look at a graph for 10 seconds and click 'Approve'."
+   },
+   {
+    "letter": "D",
+    "len": 280,
+    "text": "Integrate Automated Canary Analysis (e.g. Kayenta / Cloud Deploy automated verification hooks) with Cloud Monitoring, executing automated statistical metric comparisons between baseline and canary pods over a 30-minute evaluation window to trigger automated promotion or rollback."
+   }
+  ],
+  "ratio": 4.64
+ },
+ {
+  "id": "PCA-D5-032",
+  "subtopic": "Altostrat Media: Cloud Tasks Push Queues for Push Notifications",
+  "caseStudy": "altostrat_media",
+  "scenario": "When a race winner crosses the finish line, HRL sends push notifications (via Apple APNs and Firebase Cloud Messaging) to 20 million mobile fan apps. Firing 20 million HTTP requests simultaneously would exhaust server connection pools and trigger APNs rate limiting. What Google Cloud architecture paces the notification fan-out smoothly?",
+  "correct": "C",
+  "clave_len": 314,
+  "explanation": "Cloud Tasks push queues manage high-volume asynchronous task fan-out, pacing dispatches to third-party push gateways (Apple APNs / FCM) across scalable Cloud Run workers without connection pool exhaustion.",
+  "doc": "https://cloud.google.com/tasks/docs/creating-queues",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "Post the winner's name on a billboard in the desert."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Send all 20 million notifications synchronously in a single Python thread."
+   },
+   {
+    "letter": "C",
+    "len": 314,
+    "text": "Use Cloud Tasks push queues configured with high dispatch throughput (e.g. max_dispatches_per_second = 5000) pulling batches of user tokens from Firestore, distributing notification delivery tasks across scalable Cloud Run workers to deliver notifications to 20M users in minutes without crashing APNs connections."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Send notifications via SMS text message to all 20 million fans simultaneously."
+   }
+  ],
+  "ratio": 4.62
+ },
+ {
+  "id": "PCA-D5-004",
+  "subtopic": "Cloud Tasks: Rate-Limiting & Task Deduplication",
+  "caseStudy": "none",
+  "scenario": "An enterprise order processing service must invoke a legacy third-party shipping partner REST API to purchase postage labels. The partner API crashes if it receives more than 20 requests per second and charges double if duplicate label requests are submitted. How should you architect the invocation pipeline?",
+  "correct": "A",
+  "clave_len": 287,
+  "explanation": "Google Cloud Tasks queues enforce granular dispatch rate limits (max_dispatches_per_second) and concurrency limits. Providing explicit Task Names guarantees idempotency and automated task deduplication, preventing duplicate billing.",
+  "doc": "https://cloud.google.com/tasks/docs/configuring-queues",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 287,
+    "text": "Dispatch shipping requests via Google Cloud Tasks: Configure the Queue rate limits (max_dispatches_per_second = 20, max_concurrent_dispatches = 10) and assign deterministic Task Names (e.g. tasks/order-12345) to enforce automatic task deduplication and prevent duplicate label purchases."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Disable communication with the shipping partner."
+   },
+   {
+    "letter": "C",
+    "len": 71,
+    "text": "Have employees manually click a button on a web page 20 times a second."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Fire 500 parallel HTTP requests simultaneously from Cloud Functions."
+   }
+  ],
+  "ratio": 4.6
+ },
+ {
+  "id": "PCA-D2-004",
+  "subtopic": "VPC Network Peering & Non-Transitive Routing",
+  "caseStudy": "none",
+  "scenario": "Company A connects VPC-1 to VPC-2 via VPC Network Peering. They also connect VPC-2 to VPC-3 via VPC Network Peering. Workloads in VPC-1 can communicate with VPC-2, and VPC-2 can communicate with VPC-3. However, workloads in VPC-1 cannot reach VPC-3. What is the architectural reason for this behavior?",
+  "correct": "D",
+  "clave_len": 246,
+  "explanation": "VPC Network Peering in Google Cloud is strictly non-transitive. Only directly connected peering networks exchange routes. To route between VPC-1 and VPC-3, they must either peer directly, use Shared VPC, or utilize Network Connectivity Center / VPN gateways.",
+  "doc": "https://cloud.google.com/vpc/docs/vpc-peering#non-transitive-peering",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "The MTU of VPC-1 is set to 1460 while VPC-3 is 1500."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "VPC-2 must have IP forwarding enabled on all its subnets."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "VPC Peering routes have timed out and need a reboot."
+   },
+   {
+    "letter": "D",
+    "len": 246,
+    "text": "Google Cloud VPC Network Peering is strictly non-transitive; traffic from VPC-1 cannot transit through VPC-2 to reach VPC-3. To enable communication, you must peer VPC-1 directly to VPC-3 or use Network Connectivity Center / HA VPN hub-and-spoke."
+   }
+  ],
+  "ratio": 4.58
+ },
+ {
+  "id": "PCA-D4-049",
+  "subtopic": "EHR Healthcare: Clinical Trial Pipeline FinOps & Spot VMs",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare processes 10,000 whole genome sequencing pipelines monthly. The compute jobs are stateless, containerized, fault-tolerant, and write checkpoints to Cloud Storage every 10 minutes. The existing infrastructure runs on on-demand GKE node pools costing $100,000/month. How should the data engineering team optimize compute costs?",
+  "correct": "B",
+  "clave_len": 218,
+  "explanation": "Spot VMs offer 60-91% discounts compared to on-demand VMs. For stateless, checkpointed batch workloads (genomics, bioinformatics), running on Spot VMs via Google Cloud Batch delivers massive FinOps savings with automated task recovery.",
+  "doc": "https://cloud.google.com/batch/docs/get-started",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 34,
+    "text": "Stop processing genomic sequences."
+   },
+   {
+    "letter": "B",
+    "len": 218,
+    "text": "Migrate genomic workloads to Google Cloud Batch or GKE Spot VM node pools with checkpoint recovery from Cloud Storage, reducing compute costs by 60-91% while automatically rescheduling preempted batch tasks seamlessly."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Purchase 1,000 on-premises servers and install in hospital closets."
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "Run genomic processing on developer iPads."
+   }
+  ],
+  "ratio": 4.57
+ },
+ {
+  "id": "PCA-D1-069",
+  "subtopic": "Altostrat Media: Pilot Engineering Telemetry & BigQuery",
+  "caseStudy": "altostrat_media",
+  "scenario": "After each race, engineering teams from 10 racing teams analyze 100GB of fine-grained telemetry to optimize aerodynamic trims, fuel consumption, and rotor performance. Engineers write complex ad-hoc SQL queries with window functions to compare pilot lap times across 50 telemetry parameters. Which storage and analytical engine provides this capability?",
+  "correct": "B",
+  "clave_len": 213,
+  "explanation": "BigQuery is Google Cloud's serverless analytical data warehouse. Partitioning by race_date and clustering by team_id/pilot_id enables sub-second SQL execution across 100GB+ datasets with advanced window functions.",
+  "doc": "https://cloud.google.com/bigquery/docs/analytics-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Store telemetry in Cloud Memorystore Redis."
+   },
+   {
+    "letter": "B",
+    "len": 213,
+    "text": "Stream all race telemetry into Google Cloud BigQuery, partitioned by race_date and clustered by team_id and pilot_id, allowing engineers to execute standard SQL analytical queries with window functions in seconds."
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Export data to an on-premises SQLite database file."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Download CSVs into Microsoft Excel on laptops."
+   }
+  ],
+  "ratio": 4.56
+ },
+ {
+  "id": "PCA-D3-019",
+  "subtopic": "Shielded GKE Nodes: Secure Boot & vTPM",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires that all GKE worker nodes must protect against rootkits, bootkits, and malicious kernel-level modifications. If an unauthorized kernel driver or modified bootloader is detected during VM initialization, the node must fail to boot and trigger an alert in Security Command Center. What feature must be enabled on the GKE node pools?",
+  "correct": "D",
+  "clave_len": 179,
+  "explanation": "Shielded GKE Nodes leverage Secure Boot (ensuring only signed kernel software runs), vTPM (measured boot), and Integrity Monitoring to detect and prevent boot-level and kernel-level rootkit tampering.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/shielded-gke-nodes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 29,
+    "text": "Reboot nodes every 5 minutes."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Use Ubuntu 12.04 with unverified custom kernels."
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "Disable all firewall rules on the cluster."
+   },
+   {
+    "letter": "D",
+    "len": 179,
+    "text": "Enable Shielded GKE Nodes with Secure Boot (cryptographically verifies bootloader digital signatures) and Virtual Trusted Platform Module (vTPM) with Integrity Monitoring enabled."
+   }
+  ],
+  "ratio": 4.51
+ },
+ {
+  "id": "PCA-D6-022",
+  "subtopic": "Cloud Router BGP Graceful Restart & BFD",
+  "caseStudy": "none",
+  "scenario": "An enterprise financial trading firm connects on-premises datacenters to Google Cloud using Dedicated Interconnects. Default BGP keepalive timers take up to 60-90 seconds to detect a physical fiber link break, during which trade packets are dropped. How can you configure Cloud Router to detect link failures and reroute traffic in under 1 second?",
+  "correct": "C",
+  "clave_len": 246,
+  "explanation": "Bidirectional Forwarding Detection (BFD) provides sub-second link failure detection for BGP sessions on Cloud Router. Configuring BFD intervals (e.g. 300ms * 3 = 900ms) triggers fast failover to redundant Interconnect links without waiting for 60-second BGP hold timers.",
+  "doc": "https://cloud.google.com/router/docs/concepts/bfd",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 69,
+    "text": "Have a network engineer watch router LEDs and unplug cables manually."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Rely on default BGP keepalive timers (60s hold time)."
+   },
+   {
+    "letter": "C",
+    "len": 246,
+    "text": "Enable Bidirectional Forwarding Detection (BFD) on the Cloud Router BGP peer configuration, setting receive and transmit intervals to 300ms (detect multiplier = 3), enabling sub-second physical link failure detection and instant route withdrawal."
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "Disable BGP routing and use static routes."
+   }
+  ],
+  "ratio": 4.5
+ },
+ {
+  "id": "PCA-D5-023",
+  "subtopic": "Cloud Spanner Backup Schedules & Point-in-Time Recovery",
+  "caseStudy": "none",
+  "scenario": "An operator mistakenly ran a DROP TABLE command or updated all customer balances to 0 in Cloud Spanner at 14:32:15 UTC. The database administrator needs to recover the database to its exact microsecond state at 14:31:00 UTC (1 minute prior to the corruption) with minimal data loss. What feature provides this recovery capability?",
+  "correct": "D",
+  "clave_len": 240,
+  "explanation": "Cloud Spanner Point-in-Time Recovery (PITR) retains historical data versions for up to 7 days (version_retention_period). Administrators can read historical data or restore the entire database to any microsecond timestamp in the retention window.",
+  "doc": "https://cloud.google.com/spanner/docs/pitr",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Restore from a 24-hour-old nightly database backup."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "Spanner cannot recover from accidental table drops."
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Manually retype all customer account balances from memory."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "text": "Use Cloud Spanner Point-in-Time Recovery (PITR) with configured version_retention_period (up to 7 days), executing a restore operation specifying the exact recovery timestamp '2026-04-17T14:31:00.000000Z' to create a new recovered database."
+   }
+  ],
+  "ratio": 4.5
+ },
+ {
+  "id": "PCA-D4-048",
+  "subtopic": "Knightmotives Automotive: OTA Firmware Progressive Rollout & Safety",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive is pushing a critical ECU engine control firmware update to 200,000 tractors globally. If a firmware bug causes tractors to stall, agricultural operations could halt across thousands of farms. How should the OTA deployment pipeline be structured to maximize safety and minimize blast radius?",
+  "correct": "C",
+  "clave_len": 294,
+  "explanation": "Phased canary rollouts for IoT/automotive firmware limit failure blast radius. Telemetry is monitored after each stage, with automated halt thresholds preventing buggy firmware from spreading to the global fleet.",
+  "doc": "https://cloud.google.com/architecture/devops/devops-tech-canary-releases",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Broadcast the firmware update to all 200,000 tractors simultaneously over cellular."
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "Disable all firmware updates permanently."
+   },
+   {
+    "letter": "C",
+    "len": 294,
+    "text": "Execute a phased progressive rollout: Stage 1: 100 internal test tractors -> Stage 2: 1% dealer loaner fleet -> Stage 3: 10% regional fleet -> Stage 4: 100% global fleet; monitor tractor CAN-bus error telemetry in BigQuery in real-time and automatically halt rollout if error rates exceed 0.1%."
+   },
+   {
+    "letter": "D",
+    "len": 72,
+    "text": "Require all 200,000 farmers to bring tractors into factories physically."
+   }
+  ],
+  "ratio": 4.5
+ },
+ {
+  "id": "PCA-D6-021",
+  "subtopic": "Cloud Storage Dual-Region Turbo Replication Failover",
+  "caseStudy": "none",
+  "scenario": "An enterprise stores mission-critical transactional XML settlement records in Cloud Storage. The application requires 99.99% availability SLA, cross-region disaster recovery between us-central1 and us-east1, and an RPO < 15 minutes. What storage architecture fulfills this SLA?",
+  "correct": "D",
+  "clave_len": 232,
+  "explanation": "Dual-Region Cloud Storage buckets replicate objects across two specific regions with a 99.99% availability SLA. Enabling Turbo Replication guarantees that 100% of newly written data is replicated within 15 minutes, satisfying strict financial RPO requirements.",
+  "doc": "https://cloud.google.com/storage/docs/turbo-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "Use Cloud Storage Coldline in a single zone."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Store settlement records in browser local storage."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Single-region bucket in us-central1 with weekly tape backups."
+   },
+   {
+    "letter": "D",
+    "len": 232,
+    "text": "Create a Dual-Region Cloud Storage bucket (custom placement in US-CENTRAL1 and US-EAST1) with Turbo Replication enabled (rpo = 'ASYNC_TURBO'), delivering 99.99% availability SLA and guaranteed 15-minute cross-region RPO replication."
+   }
+  ],
+  "ratio": 4.49
+ },
+ {
+  "id": "PCA-D2-038",
+  "subtopic": "GKE Workload Identity Federation Binding",
+  "caseStudy": "none",
+  "scenario": "A developer is configuring a pod on GKE to write diagnostic records to a private Cloud Storage bucket. The pod runs under the Kubernetes Service Account (KSA) 'log-collector' in namespace 'monitoring'. To implement Workload Identity without static service account keys, what exact IAM binding must be applied to the Google Service Account (GSA) 'gsa-storage-writer@project.iam.gserviceaccount.com'?",
+  "correct": "A",
+  "clave_len": 243,
+  "explanation": "GKE Workload Identity connects Kubernetes Service Accounts (KSAs) to Google Service Accounts (GSAs). The GSA must grant roles/iam.workloadIdentityUser to the principal serviceAccount:PROJECT_ID.svc.id.goog[NAMESPACE/KSA_NAME], and the KSA must be annotated with iam.gke.io/gcp-service-account.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 243,
+    "text": "Grant the role roles/iam.workloadIdentityUser to member 'serviceAccount:project.svc.id.goog[monitoring/log-collector]' on the Google Service Account 'gsa-storage-writer@project.iam.gserviceaccount.com', and annotate the KSA with the GSA email."
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "Disable IAM authentication on the Cloud Storage bucket."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Download a private key JSON file and mount it via a ConfigMap."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Grant roles/owner to all users in the project."
+   }
+  ],
+  "ratio": 4.47
+ },
+ {
+  "id": "PCA-D4-043",
+  "subtopic": "Modernization: Database Migration to Cloud Spanner with HarbourBridge",
+  "caseStudy": "none",
+  "scenario": "An enterprise is modernizing a legacy proprietary relational database (Oracle / SQL Server) to Google Cloud Spanner. The data architecture team needs a tool that automatically analyzes the legacy schema, suggests Spanner-compatible data types, flags anti-patterns (such as sequential primary keys), converts DDL, and orchestrates data migration. What open-source Google Cloud tool performs this?",
+  "correct": "A",
+  "clave_len": 211,
+  "explanation": "Spanner Migration Tool (HarbourBridge) is Google Cloud's open-source tool for migrating schemas and data from PostgreSQL, MySQL, Oracle, and SQL Server to Cloud Spanner, automating schema translation and best practice recommendations.",
+  "doc": "https://cloud.google.com/spanner/docs/migration-tool-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 211,
+    "text": "Use Spanner Migration Tool (formerly HarbourBridge), which evaluates source database schemas, performs automated type mapping, generates Spanner DDL with best practices, and orchestrates data export and loading."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Manually rewrite all 500 table schemas in a text editor without validation."
+   },
+   {
+    "letter": "C",
+    "len": 38,
+    "text": "Export tables to Microsoft Word files."
+   },
+   {
+    "letter": "D",
+    "len": 29,
+    "text": "Disable all database indexes."
+   }
+  ],
+  "ratio": 4.46
+ },
+ {
+  "id": "PCA-D4-016",
+  "subtopic": "Cost Optimization: GCS Object Lifecycle & Incomplete Multipart",
+  "caseStudy": "none",
+  "scenario": "An enterprise notices that Cloud Storage bucket sizes continue growing despite aggressive object deletion scripts. Investigation reveals that failed or aborted large file multipart uploads leave hidden uncommitted parts in storage buckets, accumulating terabytes of billable ghost storage. How should you automate the cleanup of incomplete multipart uploads?",
+  "correct": "B",
+  "clave_len": 175,
+  "explanation": "Failed multipart uploads leave temporary parts in GCS that are billable until committed or aborted. Configuring the AbortIncompleteMultipartUpload lifecycle rule automatically purges uncommitted parts after a specified number of days.",
+  "doc": "https://cloud.google.com/storage/docs/lifecycle#abort_incomplete_multipart_upload",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 37,
+    "text": "Disable multipart uploads completely."
+   },
+   {
+    "letter": "B",
+    "len": 175,
+    "text": "Add a Cloud Storage Object Lifecycle rule with action 'AbortIncompleteMultipartUpload' and condition 'age = 7', automatically purging abandoned upload parts older than 7 days."
+   },
+   {
+    "letter": "C",
+    "len": 34,
+    "text": "Delete all active storage buckets."
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "Manually inspect bucket XML files line by line."
+   }
+  ],
+  "ratio": 4.45
+ },
+ {
+  "id": "PCA-D4-041",
+  "subtopic": "Observability: OpenTelemetry Collector Gateway on GKE",
+  "caseStudy": "none",
+  "scenario": "An enterprise wants a vendor-neutral telemetry architecture on GKE. Microservices emit OTLP traces and metrics to local agent DaemonSets running on each node, which forward batches to a centralized scalable OpenTelemetry Collector Gateway deployment that strips sensitive PII before exporting data to Google Cloud Trace and Cloud Monitoring. What pattern does this implement?",
+  "correct": "B",
+  "clave_len": 209,
+  "explanation": "The OpenTelemetry Collector Agent (DaemonSet) + Gateway (Deployment) pattern is the industry standard for enterprise telemetry. It offloads processing from application containers, handles batching and retries, scrubs PII, and routes data to Google Cloud observability backends.",
+  "doc": "https://cloud.google.com/stackdriver/docs/instrumentation/opentelemetry-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 31,
+    "text": "Disable all traces and metrics."
+   },
+   {
+    "letter": "B",
+    "len": 209,
+    "text": "Deploy the OpenTelemetry Collector Agent as a DaemonSet for local receiver buffering and OTel Collector Gateway as a scalable Deployment with attributes processors for PII scrubbing and Google Cloud exporters."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Send raw telemetry over unencrypted HTTP to a public pastebin."
+   },
+   {
+    "letter": "D",
+    "len": 48,
+    "text": "Have every pod write traces to local disk files."
+   }
+  ],
+  "ratio": 4.45
+ },
+ {
+  "id": "PCA-D3-031",
+  "subtopic": "Cloud Armor Rate Limiting & Bot Defense",
+  "caseStudy": "none",
+  "scenario": "An enterprise customer login portal (/login) experiences credential stuffing attacks from distributed botnets that rotate through thousands of residential proxy IP addresses. Standard IP-based rate limiting fails because bots submit only 1 request per IP every 5 minutes. How should you configure Cloud Armor to detect and block distributed credential stuffing?",
+  "correct": "A",
+  "clave_len": 243,
+  "explanation": "Google Cloud Armor integrates natively with reCAPTCHA Enterprise. Clients receive risk scores and action tokens that Cloud Armor evaluates directly at the edge load balancer, dropping bot requests before they consume backend login resources.",
+  "doc": "https://cloud.google.com/armor/docs/bot-management",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 243,
+    "text": "Integrate Google Cloud Armor with reCAPTCHA Enterprise bot defense (using reCAPTCHA action tokens validated at the load balancer level via Cloud Armor security rules) combined with Cloud Armor Adaptive Protection to evaluate traffic anomalies."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Disable user authentication on the login page."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Require users to solve mathematical calculus equations on login."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Block all incoming IP addresses on the entire internet."
+   }
+  ],
+  "ratio": 4.42
+ },
+ {
+  "id": "PCA-D3-034",
+  "subtopic": "BigQuery Authorized Views & Datasets",
+  "caseStudy": "none",
+  "scenario": "Project A contains a master transactional table 'orders' with sensitive customer PII and financial margins. An external marketing team in Project B needs to query aggregated sales counts by region without ever having direct read access to the underlying 'orders' table. How should you provide access?",
+  "correct": "B",
+  "clave_len": 265,
+  "explanation": "BigQuery Authorized Views allow you to share query results with specific users or groups without giving them access to the underlying source tables. The view executes with the authorization of the view creator, protecting underlying sensitive columns.",
+  "doc": "https://cloud.google.com/bigquery/docs/authorized-views",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Copy the entire 50TB table to Project B every 10 minutes."
+   },
+   {
+    "letter": "B",
+    "len": 265,
+    "text": "Create an aggregated SQL View (SELECT region, COUNT(order_id) FROM orders GROUP BY 1) in a shared dataset, authorize the View in Project A's underlying dataset (Authorized View), and grant the marketing team BigQuery Data Viewer permissions only on the shared View."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Grant the marketing team the BigQuery Admin role on Project A."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Export the raw table to CSV and post it on a public web page."
+   }
+  ],
+  "ratio": 4.42
+ },
+ {
+  "id": "PCA-D2-043",
+  "subtopic": "Storage Transfer Service for On-Premises POSIX Data",
+  "caseStudy": "none",
+  "scenario": "An enterprise has 500TB of image files stored on an on-premises NetApp NFS storage appliance. They need to migrate the files to a Cloud Storage bucket over a 10Gbps Dedicated Interconnect. The migration tool must run multiple parallel streams, handle automated checksum verification, bandwidth rate limiting during business hours, and sync subsequent daily deltas. What solution should you deploy?",
+  "correct": "A",
+  "clave_len": 208,
+  "explanation": "Storage Transfer Service on-premises agents form a scalable cluster that coordinates parallel data transfers from POSIX/NFS storage directly to Cloud Storage with end-to-end checksum verification, pause/resume capabilities, and bandwidth rate limits.",
+  "doc": "https://cloud.google.com/storage-transfer/docs/on-prem-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 208,
+    "text": "Install a pool of Docker-based Storage Transfer Service Transfer Agents on-premises mounting the NFS share, and manage transfer jobs via Google Cloud Console/API with scheduled syncs and bandwidth throttling."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Download all files to an iPhone and sync via iCloud."
+   },
+   {
+    "letter": "C",
+    "len": 45,
+    "text": "Write a single-threaded rsync script in bash."
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "Upload files using web browser drag-and-drop."
+   }
+  ],
+  "ratio": 4.39
+ }
+]

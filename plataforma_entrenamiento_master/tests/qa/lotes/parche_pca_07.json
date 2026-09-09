@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D4-008",
+  "options": {
+   "A": "Run a root-cause analysis that concludes the cause was 'human error by the deploying engineer', assign mandatory retraining to that individual as the single action item, and close the incident once the configuration file has been reverted and the service is healthy again.",
+   "B": "Convene a post-mortem that reconstructs the timeline and impact accurately without naming the engineer, but mark the document confidential to the on-call team and record the remediation ideas in the meeting notes rather than in the bug tracker.",
+   "C": "Skip the retrospective because the 45-minute outage stayed inside the quarterly error budget, and instead mandate that every future configuration change be visually reviewed and signed off by a second engineer before it is deployed to production."
+  },
+  "distractors": {
+   "A": "Stops the causal chain at the human instead of the system: it produces no guardrail (pre-submit config validation, canary stage), and the blame framing suppresses reporting of the next near-miss.",
+   "B": "Blameless in tone but the learning never leaves the room: an unpublished write-up with untracked action items means the systemic fix is never prioritised, staffed or verified as done.",
+   "C": "Substitutes a human review gate for automated validation: a syntax error is exactly the defect a reviewer's eyes miss and a CI linter catches deterministically, so the same failure recurs."
+  }
+ },
+ {
+  "id": "PCA-D4-005",
+  "options": {
+   "B": "Configure a Cloud Billing Budget with a 100% threshold rule and enable the budget's built-in 'disable billing to stop usage' automatic action so Cloud Billing itself unlinks the billing account from the sandbox project when the alert fires.",
+   "C": "Publish the 100% budget threshold notification to Pub/Sub and trigger a Cloud Function that calls compute.instances.stop on every VM in the sandbox project, leaving the billing account linked so the project stays usable for the next month.",
+   "D": "Apply per-project quota overrides through the Service Usage API capping Compute Engine CPUs, persistent disk and egress bandwidth in each sandbox project so the project cannot consume more than $1,000 of resources in a month."
+  },
+  "distractors": {
+   "B": "No such built-in action exists: budgets can only notify (email, Slack, Pub/Sub). Unlinking the billing account requires your own Cloud Function calling the Cloud Billing API.",
+   "C": "Stops Compute Engine only: Cloud Storage, BigQuery, Cloud SQL, egress and every other billable API keep accruing charges, so the $1,000 hard cap is not actually enforced.",
+   "D": "Quotas bound resource units, not currency: unit prices differ wildly (GPUs, SSD, licences, egress) and many billable services have no quota, so a quota ceiling cannot express a spend cap."
+  }
+ },
+ {
+  "id": "PCA-D3-042",
+  "options": {
+   "B": "Create two Google Service Accounts holding roles/pubsub.publisher and roles/spanner.databaseUser respectively, generate JSON keys for each, and mount the keys as Kubernetes Secrets into the telemetry-ingestion and billing-service pods.",
+   "C": "Place telemetry-ingestion and billing-service in separate Kubernetes namespaces with NetworkPolicies and RBAC roles isolating each namespace, while both node pools keep using the default Compute Engine service account for Google API access.",
+   "D": "Enable GKE Workload Identity and bind a single shared Google Service Account holding both roles/pubsub.publisher and roles/spanner.databaseUser to the telemetry-ksa and billing-ksa Kubernetes service accounts."
+  },
+  "distractors": {
+   "B": "Reintroduces long-lived exported keys: a compromised telemetry pod (or any principal able to read Secrets in the namespace) walks away with a permanent credential that no IAM revocation expires.",
+   "C": "Namespace and RBAC boundaries are Kubernetes-internal only: both pods still read the node's default service account token from the metadata server, so a compromised telemetry pod reaches Spanner.",
+   "D": "One shared identity carries the union of both permission sets, so compromising the telemetry pod still yields Spanner access; the privilege boundary must be two distinct GSAs, not one."
+  }
+ },
+ {
+  "id": "PCA-D2-030",
+  "options": {
+   "B": "Provision Transcoder API Job and JobTemplate resources with multi-bitrate HLS elementary streams, one job per aircraft feed, reading the RTMP contribution stream and writing 1080p, 720p and 480p renditions to the Cloud Storage bucket.",
+   "C": "Provision 20 Live Stream API Channel resources each with a single RTMP Input and multi-bitrate HLS manifests, fronting the Cloud Storage origin with Media CDN so edge caching absorbs any interruption of an aircraft contribution feed.",
+   "D": "Provision a regional managed instance group of Compute Engine VMs running containerized FFmpeg behind an internal passthrough Network Load Balancer, autoscaling to 20 encoders and pushing HLS segments to the Cloud Storage origin bucket."
+  },
+  "distractors": {
+   "B": "Transcoder API is a file-based VOD service: it transcodes stored input objects into output objects and cannot ingest a continuous live RTMP feed or expose redundant input endpoints.",
+   "C": "One Input per Channel leaves no redundant ingestion endpoint; Media CDN caches delivery downstream of the encoder and cannot regenerate segments once the contribution feed is lost.",
+   "D": "Hand-rolls managed live transcoding: RTMP contribution sessions are stateful, so MIG autohealing or a scale-in event tears down live feeds, and there is no dual-input failover primitive."
+  }
+ },
+ {
+  "id": "PCA-D2-033",
+  "options": {
+   "A": "Chain three Cloud Build triggers that build the image and run kubectl apply against dev, staging and prod in sequence, gating production behind a manual trigger approval and calling a gcloud rollback script when a monitoring alert fires.",
+   "B": "Configure Google Cloud Deploy with a single Delivery Pipeline target pointing at the production cluster, promoting through dev, staging and prod Kubernetes namespaces inside that cluster and gating the prod namespace with Config Sync.",
+   "D": "Adopt Config Sync / GKE Enterprise Config Management with a Git repository holding dev, staging and prod directories, requiring a reviewed pull request before merging to the prod directory and reverting the commit if error rates spike."
+  },
+  "distractors": {
+   "A": "Cloud Build is a CI/build service with no release object: there is no promotable artifact across targets, no per-target approval on a release, and no first-class metric-driven rollback.",
+   "B": "Collapsing three environments into one target removes the stages Cloud Deploy promotes between, so requireApproval and per-target canary progression have nothing to attach to.",
+   "D": "GitOps reconciles declared state but models no release promotion: there is no rollout record, no automated canary analysis, and the approval lives in the Git provider, not the delivery service."
+  }
+ },
+ {
+  "id": "PCA-D1-063",
+  "options": {
+   "A": "Publish video PTS metadata and telemetry into Cloud Pub/Sub and run a Dataflow pipeline that joins the two streams with fixed 20ms processing-time windows based on when each element reaches the worker, writing merged packets to Bigtable for the Cloud Run WebSocket fan-out layer.",
+   "B": "Buffer the latest telemetry reading per aircraft in Cloud Memorystore for Redis behind a short TTL and have the Cloud Run WebSocket service read whichever cached value is current for the selected aircraft at the instant each video frame is decoded and rendered on the fan's device.",
+   "D": "Stream video PTS metadata and telemetry into BigQuery through the Storage Write API and run scheduled queries every minute that join frames to GPS telemetry on a 20ms range condition, serving the joined rows to the overlay renderer through BI Engine cached results."
+  },
+  "distractors": {
+   "A": "Processing-time windowing keys on arrival, not capture: the two uplinks have different transit delays, so a frame and its telemetry land in different windows and the overlay drifts.",
+   "B": "A last-value lookup ignores the frame's PTS entirely: when the video path lags the telemetry path the overlay leads the picture, and nothing bounds the offset to 20 milliseconds.",
+   "D": "Scheduled batch querying adds minutes of latency to a live broadcast: BigQuery is the analytics sink here, not a sub-second streaming join feeding an on-air overlay."
+  }
+ },
+ {
+  "id": "PCA-D6-027",
+  "options": {
+   "B": "Active-Active (Hot-Hot) Multi-Region: RTO in hours, RPO in hours (lowest cost); Warm Standby: RTO near 0, RPO = 0 (highest cost); Cold Standby / Backup & Restore: RTO in seconds, RPO = 0 (moderate cost).",
+   "C": "Active-Active (Hot-Hot) Multi-Region: RTO near 0, RPO = 0 (highest cost); Warm Standby: RTO in minutes, RPO = 0 (moderate cost); Cold Standby / Backup & Restore: RTO in hours/days, RPO = 0 (lowest cost).",
+   "D": "Active-Active (Hot-Hot) Multi-Region: RTO near 0, RPO = 0 (highest cost); Cold Standby / Backup & Restore: RTO in minutes, RPO in minutes (moderate cost); Warm Standby: RTO in hours/days, RPO in hours (lowest cost)."
+  },
+  "distractors": {
+   "B": "Inverts the cost-to-recovery relationship: active-active is the fastest and most expensive tier and backup & restore the slowest and cheapest, not the reverse.",
+   "C": "Claims RPO = 0 for the warm and cold tiers: only synchronous replication achieves zero data loss, while a restore recovers to the last snapshot, so RPO equals the backup interval.",
+   "D": "Swaps the warm and cold tiers: a warm standby keeps scaled-down resources already running and recovers in minutes, whereas backup & restore must rebuild infrastructure first."
+  }
+ },
+ {
+  "id": "PCA-D2-045",
+  "options": {
+   "B": "Keep Users and Orders as independent top-level tables and create secondary indexes on tenant_id with STORING clauses covering the selected columns, so the optimizer answers the tenant JOIN from covering index reads.",
+   "C": "Define Users and Orders as top-level tables with FOREIGN KEY (tenant_id) REFERENCES Tenants (tenant_id) constraints, letting Spanner enforce referential integrity and place related child rows in the parent's split.",
+   "D": "Prefix the primary keys of Users and Orders with a hashed shard key such as MOD(FARM_FINGERPRINT(tenant_id), 100) to spread writes evenly across splits, keeping the three tables as separate top-level tables."
+  },
+  "distractors": {
+   "B": "A covering index removes the base-table lookup but its splits are placed independently of the parent row, so the join still crosses split servers and the co-location requirement is unmet.",
+   "C": "Foreign keys only enforce referential integrity; they have no effect on physical row placement, so parent and child rows still live on different splits.",
+   "D": "Hash prefixing deliberately scatters a single tenant's rows across many splits to avoid hotspots, which is the opposite of the physical co-location this query pattern needs."
+  }
+ },
+ {
+  "id": "PCA-D3-052",
+  "options": {
+   "A": "Issue per-user ID tokens through Firebase Authentication and verify the token signature and audience claim in the Cloud Run backend, rejecting every voting or telemetry request that does not carry a valid signed user credential.",
+   "B": "Store the API key in the Android Keystore and iOS Keychain, apply R8/ProGuard obfuscation to the released binary and pin the backend TLS certificate so decompiling the app cannot recover the credential used against Cloud Run.",
+   "C": "Attach a Cloud Armor security policy to the load balancer in front of Cloud Run with reCAPTCHA Enterprise bot management and per-IP rate limiting on the voting and telemetry paths, blocking traffic scored as automated."
+  },
+  "distractors": {
+   "A": "Attests the user, not the binary: an attacker who registers a legitimate account still scripts the endpoints from a tampered or headless client with a perfectly valid token.",
+   "B": "Hides the secret without proving anything about the caller: the key still travels in the request and can be lifted at runtime by hooking the process, with no hardware attestation.",
+   "C": "Scores traffic heuristically instead of cryptographically attesting the app instance: distributed scripted clients that stay under the per-IP limit and pass the bot score get through."
+  }
+ },
+ {
+  "id": "PCA-D1-072",
+  "options": {
+   "B": "Ingest a single RTMP feed into a Live Stream API pipeline in us-central1 and continuously replicate the output HLS segments into a dual-region Cloud Storage bucket spanning us-central1 and us-east1, letting Cloud CDN serve segments from whichever region survives the outage.",
+   "C": "Run Live Stream API pipelines in both us-central1 and us-east1 and publish both playback endpoints in Cloud DNS as a weighted round-robin record set with a 300-second TTL, removing the failed region's record manually once broadcast operators have confirmed the outage from the production control room.",
+   "D": "Ingest redundant RTMP feeds into Live Stream API pipelines in us-central1 and us-east1, front each pipeline with its own Regional External Application Load Balancer, and publish the us-east1 address to viewers as a documented backup playback URL in the fan app settings screen and in the broadcast lower-third."
+  },
+  "distractors": {
+   "B": "Replicating output segments does not replicate the encoder: if us-central1 fails no new segments are produced, so playback stalls as soon as the replicated buffer is exhausted.",
+   "C": "Weighted round-robin has no health checking, so a share of viewers keeps being sent to the dead region, and the 300-second TTL plus manual edit dwarfs the 3-second interruption budget.",
+   "D": "Regional load balancers have separate non-anycast addresses, so failover becomes a client action: viewers must be told to change URL, which is neither automatic nor under three seconds."
+  }
+ },
+ {
+  "id": "PCA-D3-006",
+  "options": {
+   "A": "Create a break-glass Google group granted roles/editor on the production projects with an IAM Conditional expression restricting the binding to a fixed two-hour daily maintenance window, adding on-call SREs to the group during incidents.",
+   "B": "Grant on-call SREs roles/iam.serviceAccountTokenCreator on a privileged Editor service account so they can mint short-lived impersonation tokens with gcloud during incidents, recording every impersonation in Cloud Audit Logs.",
+   "C": "Write a Cloud Function triggered by the paging system's incident webhook that adds a roles/editor binding for the on-call SRE, plus a Cloud Scheduler job that strips the binding two hours later, logging both changes to Cloud Audit Logs."
+  },
+  "distractors": {
+   "A": "An IAM time condition bounds a fixed clock window, not a per-request two-hour entitlement, and group membership is standing access with no approver, justification or automatic revocation.",
+   "B": "The tokens expire but the right to mint them never does: it is a standing privilege with no approval workflow, no re-authentication and no expiry on the entitlement itself.",
+   "C": "A home-built elevation path with no approver or re-authentication step, and revocation depends on a scheduler job whose silent failure leaves permanent standing Editor access."
+  }
+ },
+ {
+  "id": "PCA-D3-018",
+  "options": {
+   "B": "Artifact Registry with Container Analysis on-demand scanning, gated at deploy time by GKE Pod Security Admission policies that reject workloads whose images report Critical CVEs.",
+   "C": "Security Command Center Premium Container Threat Detection combined with Cloud Armor pre-deployment vulnerability policies blocking Critical CVE images from reaching the GKE cluster.",
+   "D": "Container Registry (gcr.io) Artifact Analysis continuous scanning combined with GKE Autopilot's built-in image vulnerability admission gate denying deployment of Critical CVE images."
+  },
+  "distractors": {
+   "B": "Pod Security Admission evaluates pod security contexts, not image attestations or CVE findings; the admission gate on vulnerability policy is Binary Authorization.",
+   "C": "Container Threat Detection inspects already-running containers and Cloud Armor filters inbound L7 web traffic; neither participates in image admission at deploy time.",
+   "D": "Autopilot ships no built-in CVE admission gate (that is Binary Authorization), and Container Registry is deprecated in favour of Artifact Registry as the scanned repository."
+  }
+ },
+ {
+  "id": "PCA-D4-009",
+  "options": {
+   "A": "Build a Cloud Monitoring dashboard with p50/p95/p99 latency and error-rate charts for each of the 15 services and add an alerting policy on checkout latency above one second so the on-call engineer can compare the service graphs during a spike.",
+   "B": "Enable Cloud Profiler agents on the GKE, Cloud Run and Cloud Functions services to collect continuous CPU and heap profiles, and read the flame graphs to find the function consuming the most time during checkout requests.",
+   "D": "Emit structured Cloud Logging entries carrying a shared checkout correlation ID from every service and use Log Analytics SQL to join the entries, deriving each hop's duration from the difference between log timestamps."
+  },
+  "distractors": {
+   "A": "Per-service aggregates are precisely what already looks normal: without per-request correlation you cannot attribute a tail spike to one downstream RPC or database query.",
+   "B": "Profiler samples in-process CPU and heap across all requests; time spent blocked on a downstream RPC or slow query registers as idle and never surfaces in the profile.",
+   "D": "Rebuilds tracing by hand without span parent/child structure, and clock skew between hosts corrupts the derived per-hop durations, so database query spans stay invisible."
+  }
+ },
+ {
+  "id": "PCA-D4-053",
+  "options": {
+   "A": "Migrate to Cloud SQL for MySQL Enterprise Plus on the largest machine type with a regional HA configuration and add cross-region read replicas so global read traffic is distributed while writes continue against the single primary instance.",
+   "C": "Migrate the backend to Cloud Bigtable, modelling player inventory and purchases as wide-column rows keyed by player ID, relying on automatic tablet splitting and cluster autoscaling to absorb 50 million global players without manual sharding.",
+   "D": "Deploy Vitess on GKE in front of a fleet of Cloud SQL for MySQL instances so shard routing and resharding workflows are handled by the Vitess control plane instead of application code, preserving full MySQL wire compatibility for the game backend."
+  },
+  "distractors": {
+   "A": "Read replicas scale reads only: every write still funnels through one primary, so the lock contention and CPU saturation that broke the previous launch return unchanged at 50 million players.",
+   "C": "Bigtable scales horizontally but offers no multi-row ACID transactions, joins or SQL: a real-money purchase and inventory ledger needs the relational transactional guarantees MySQL provided.",
+   "D": "Keeps MySQL compatibility but not the requirement: the team still designs shard keys and runs resharding operations, which is exactly the manual sharding toil to be eliminated."
+  }
+ },
+ {
+  "id": "PCA-D2-014",
+  "options": {
+   "A": "Enable Public Access Prevention on every bucket to block public grants, and turn on Object Versioning so overwritten and deleted objects are retained as noncurrent generations that operators can restore with gcloud storage cp.",
+   "B": "Enable Uniform Bucket-Level Access on all buckets to disable legacy ACLs, and schedule a daily Storage Transfer Service job mirroring each production bucket into a separate backup project from which deleted objects can be restored.",
+   "D": "Enable Uniform Bucket-Level Access to remove legacy object ACLs, and attach an Autoclass configuration plus a 90-day Object Lifecycle Management rule so customer data is kept recoverable for ninety days after deletion."
+  },
+  "distractors": {
+   "A": "Public Access Prevention blocks only public principals: legacy object ACLs remain usable for private over-sharing, and only Uniform Bucket-Level Access actually disables the ACL surface.",
+   "B": "A daily mirror leaves up to 24 hours of writes unprotected and Storage Transfer's delete-sync propagates the accidental deletion, so recovery is a restore job rather than an in-place undelete.",
+   "D": "Autoclass only changes storage class for cost and lifecycle rules delete objects rather than retain them; neither restores an object already removed by gsutil rm."
+  }
+ },
+ {
+  "id": "PCA-D4-044",
+  "options": {
+   "A": "Write an MQL query fetching loadbalancer http/response_count, grouping by response_code_class with sum aggregation, then dividing the 500-class stream by the 200-class stream with 'div' and multiplying the result by 100.",
+   "B": "Write an MQL query using 'fetch' on gce_instance cpu/utilization filtered to the Managed Instance Group, aligning with rate(1m) and joining it against instance/uptime with 'ratio', multiplying by 100 in the query editor.",
+   "D": "Write an MQL query fetching loadbalancer http/response_count filtered to 5xx responses, applying align rate(1m) and group_by [] with sum, then scaling the single stream by 100 with 'value' to display the error percentage."
+  },
+  "distractors": {
+   "A": "Uses 2xx responses as the denominator instead of total responses: every 3xx and 4xx request is excluded, so the reported percentage is wrong whenever non-2xx traffic exists.",
+   "B": "Fetches the wrong metrics entirely: CPU utilization and uptime carry no HTTP status dimension, so no combination of them can express a 5xx response percentage.",
+   "D": "Plots an absolute 5xx rate scaled by 100 with no denominator stream, so the number grows with traffic volume even when the true error percentage is flat."
+  }
+ },
+ {
+  "id": "PCA-D1-048",
+  "options": {
+   "A": "Terminate the hospital MLLP connections on a Global External Application Load Balancer routed to Cloud Run services that parse each HL7v2 message and write it synchronously to the Cloud Healthcare API, relying on Cloud Run request-concurrency autoscaling to absorb the 50,000 msg/sec surge.",
+   "C": "Expose the MLLP adapter pool behind an External TCP Network Load Balancer and have the adapter pods write parsed HL7v2 messages straight into the Cloud Healthcare API, scaling the GKE node pool with the cluster autoscaler on node CPU utilization and sizing pod resource requests for peak admission throughput.",
+   "D": "Ingest HL7v2 through an MLLP adapter publishing to Cloud Pub/Sub and process the backlog with a streaming Dataflow pipeline that parses HL7 to JSON and writes to the Cloud Healthcare API, pinned to a fixed pool of 200 workers with autoscaling disabled for predictable cost."
+  },
+  "distractors": {
+   "A": "MLLP is a persistent TCP framing protocol an HTTP(S) load balancer cannot terminate, and the synchronous write couples ingestion to the Healthcare API, so throttling there drops messages instead of buffering them.",
+   "C": "No buffer sits between ingest and the Healthcare API, and CPU-driven node autoscaling reacts minutes after a surge begins, so admission spikes overrun the adapters and messages are lost.",
+   "D": "Pinning the worker count removes the horizontal scaling the requirement demands: during flu-season surges the Pub/Sub backlog grows without bound and the 2-second SLA is missed."
+  }
+ },
+ {
+  "id": "PCA-D4-047",
+  "options": {
+   "A": "Vertex AI batch prediction writes nightly failure probabilities into a BigQuery table, a scheduled query filters rows above 85%, and a Looker Studio report emails the regional dealer network each morning with the parts list for technicians to action.",
+   "B": "Cloud Monitoring alerting policies evaluate the raw tractor sensor metrics (engine vibration, hydraulic oil pressure, transmission temperature) and fire a notification-channel webhook into the dealer ERP whenever any single metric crosses a static threshold.",
+   "C": "Vertex AI predictions are published to a Pub/Sub topic consumed by a streaming Dataflow job that writes high-probability events into Bigtable, where the dealer ERP polls the table every 24 hours to assemble a replacement parts order for the next service visit."
+  },
+  "distractors": {
+   "A": "Nightly batch scoring plus a morning report consumes most of the 48-hour horizon, and nothing is actually reserved or scheduled: a human still has to place every parts order by hand.",
+   "B": "Static single-metric thresholds bypass the trained model: catastrophic failure is a multivariate pattern, so the alerts fire late on real failures and dispatch parts on benign spikes.",
+   "C": "The 24-hour poll interval is the bottleneck against a 48-hour failure horizon: parts cannot be shipped and a technician scheduled in the remaining window, and the farmer is never alerted."
+  }
+ },
+ {
+  "id": "PCA-D4-001",
+  "options": {
+   "B": "Use Cloud Build default worker pools and configure Cloud NAT with a reserved static external IP in the Shared VPC, then allowlist that address on the GitLab and Nexus servers so build steps can reach the private artifact repositories.",
+   "C": "Create a Cloud Build Private Worker Pool with external IP addresses assigned to the workers and add the pool's egress range to a VPC firewall allow rule, reaching the GitLab and Nexus servers through their public load balancer endpoints.",
+   "D": "Run the builds on a self-managed GKE cluster inside the Shared VPC using Tekton Pipelines with Workload Identity, and register that cluster as a custom Cloud Build worker pool backend so build steps execute on private nodes."
+  },
+  "distractors": {
+   "B": "Default pools execute in a Google-managed tenant project outside the customer VPC, so Cloud NAT there never applies to them and their egress cannot originate inside the VPC-SC perimeter.",
+   "C": "Assigning public IPs and routing to public endpoints defeats the private-subnet requirement, and the VPC Service Controls perimeter blocks that public API path anyway.",
+   "D": "Cloud Build cannot register a customer GKE cluster as a worker pool backend; no such backend type exists, and the alternative abandons the managed build service entirely."
+  }
+ },
+ {
+  "id": "PCA-D5-003",
+  "options": {
+   "A": "Create a Cloud Pub/Sub Cloud Storage subscription that writes batched Avro files into a staging bucket and define a BigQuery external table over that bucket so analysts query the sensor messages without any intermediate compute service.",
+   "B": "Create a Pub/Sub pull subscription and configure the BigQuery Data Transfer Service to run recurring load jobs that ingest the accumulated sensor messages into the destination table, avoiding any Dataflow job or Cloud Run service.",
+   "D": "Publish the sensor messages to the topic and configure a Pub/Sub push subscription that POSTs each message to the BigQuery tabledata.insertAll REST endpoint with an OIDC token, letting Pub/Sub deliver rows straight into the table."
+  },
+  "distractors": {
+   "A": "A Cloud Storage subscription flushes on a file-size or duration batch interval, so rows arrive minutes late, and an external table scans files rather than landing data in a managed BigQuery table.",
+   "B": "BigQuery Data Transfer Service has no Pub/Sub source connector and its schedules are hourly at best, so it neither connects to the subscription nor delivers minimal latency.",
+   "D": "Push subscriptions send the Pub/Sub message envelope to an HTTP endpoint; BigQuery's API expects its own request body, so a translating service is still required in the middle."
+  }
+ },
+ {
+  "id": "PCA-D3-012",
+  "options": {
+   "A": "Configure Access Context Manager access levels for the 50 projects and mine 30 days of Cloud Audit Logs data-access entries for cross-project API calls, deriving the perimeter ingress and egress rules from that history before creating any service perimeter.",
+   "B": "Create the service perimeter in enforced mode but attach an Access Level permitting every source IP range, then tighten the access level progressively while watching production logs for RESOURCES_NOT_IN_SAME_SERVICE_PERIMETER errors.",
+   "C": "Build a parallel 'staging' service perimeter in enforced mode around cloned copies of the 50 projects and replay synthetic traffic against it to enumerate every violation before enforcing a perimeter on the real production projects."
+  },
+  "distractors": {
+   "A": "Audit logs record which calls happened, not which ones a perimeter would have denied: the dependency analysis is manual and misses the ingress and egress cases the policy would block.",
+   "B": "An enforced perimeter blocks cross-perimeter API calls no matter how permissive the access level is, so real production traffic breaks during the very discovery phase that had to be non-disruptive.",
+   "C": "Cloned projects do not reproduce the real service-to-service call graph or partner egress, so the violation list is incomplete; dry-run mode evaluates actual production traffic without blocking it."
+  }
+ },
+ {
+  "id": "PCA-D6-019",
+  "options": {
+   "A": "Spanner serializes every global read-write transaction through one elected leader region that stamps commit timestamps from its own local clock, so ordering is defined by a single machine and clock skew between continents cannot influence the commit sequence.",
+   "C": "Spanner applies multi-version concurrency control with snapshot isolation so readers never block writers, and prevents ordering anomalies by aborting and retrying any transaction whose read set was modified between its snapshot and its commit attempt.",
+   "D": "Spanner requires client applications to attach a monotonically increasing sequence number obtained from a central Cloud Spanner sequence object to every transaction, and rejects any commit whose sequence number is lower than the last committed value."
+  },
+  "distractors": {
+   "A": "Spanner elects a Paxos leader per split, not one global sequencer, and external consistency comes from TrueTime's bounded uncertainty plus commit-wait, not from trusting any single machine's clock.",
+   "C": "Optimistic snapshot isolation yields serializability inside the database but not external consistency across regions, which is exactly the cross-continent clock-skew guarantee the audit demands.",
+   "D": "Pushes ordering onto the client through a sequencer that does not exist; a single global counter would serialize all writes through one hot resource, which is why TrueTime timestamps are used instead."
+  }
+ },
+ {
+  "id": "PCA-D2-029",
+  "options": {
+   "B": "Provision Compute Engine Confidential VMs with AMD SEV memory encryption and Shielded VM secure boot, so the charting database's memory is encrypted in use and cryptographically isolated from any other tenant sharing the physical host.",
+   "C": "Provision a zonal Compute Engine reservation of C3 instances covered by a three-year committed use discount, guaranteeing dedicated capacity for the charting database and a stable per-core cost for the proprietary licence.",
+   "D": "Provision Google Cloud VMware Engine and run the charting database on a private cloud of dedicated ESXi nodes, using DRS affinity rules to pin the database virtual machine to specific physical hosts within the cluster."
+  },
+  "distractors": {
+   "B": "Confidential VMs encrypt memory but still run on shared multi-tenant hosts, so the physical hardware isolation mandate is unmet and there is no socket visibility for core-based BYOL licensing.",
+   "C": "Reservations guarantee capacity, not dedicated hardware: the VMs still share physical hosts, and a committed use discount is a billing construct with no bearing on socket-based licensing.",
+   "D": "Answers with a different platform than the one asked for: this is not Compute Engine provisioning, and it forces a full VMware Engine migration whose node licensing model differs from BYOL per socket."
+  }
+ },
+ {
+  "id": "PCA-D2-034",
+  "options": {
+   "A": "Use Dataproc workflow templates with managed ephemeral clusters, so each of the 50 daily jobs provisions a right-sized cluster with preemptible secondary workers, runs the Spark job and deletes the cluster on completion.",
+   "C": "Attach a Dataproc autoscaling policy to the existing cluster with workerConfig minInstances near zero and a graceful decommission timeout so the 20-node cluster shrinks overnight and grows again when the ETL jobs are submitted.",
+   "D": "Submit the Spark jobs to a Dataproc on GKE virtual cluster backed by a dedicated standard GKE node pool so executors run as Kubernetes pods and the 50 daily jobs share the cluster instead of a permanent Hadoop cluster."
+  },
+  "distractors": {
+   "A": "Removes idle cost but not the cluster: the team still sizes machine types, pins image versions and debugs Hadoop configuration, while the requirement is to run jobs with no cluster management at all.",
+   "C": "Dataproc autoscaling scales worker nodes only: the master node keeps running and billing 24/7, and image versions, properties and upgrades remain the team's responsibility.",
+   "D": "The GKE cluster and its node pool are still long-lived infrastructure that must be provisioned, sized and upgraded, so idle nodes keep billing and the management burden merely moves."
+  }
+ },
+ {
+  "id": "PCA-D2-039",
+  "options": {
+   "A": "Set rotation_period = '7776000s' on the CryptoKey together with destroy_scheduled_duration = '86400s' so each superseded key version is scheduled for destruction as soon as a new primary version is created, leaving exactly one usable version.",
+   "B": "Create a brand-new CryptoKey every 90 days, repoint the CMEK references on every bucket, persistent disk and BigQuery dataset to the new key resource, and leave the old CryptoKey enabled so previously written data can still be decrypted.",
+   "D": "Set rotation_period = '7776000s' on the CryptoKey and schedule a Cloud Function that walks every Cloud Storage object and persistent disk after each rotation, re-encrypting the data so all ciphertext uses the current primary key version."
+  },
+  "distractors": {
+   "A": "Destroying superseded versions makes every object still encrypted under them permanently unrecoverable, which violates the requirement that existing data stay decryptable without re-encryption.",
+   "B": "Rotation in Cloud KMS means new versions inside one key: minting a new key forces a manual repointing of every CMEK resource and gives no automatic rotation on the 90-day schedule.",
+   "D": "Forces a bulk rewrite of petabytes on every rotation, which is exactly the outcome the requirement excludes: KMS keeps prior versions enabled so no re-encryption is needed at all."
+  }
+ }
+]

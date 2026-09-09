@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D6-036",
+  "subtopic": "Altostrat Media: Cloud Run Dynamic Autoscaling for Event Traffic",
+  "caseStudy": "altostrat_media",
+  "scenario": "During the final lap of the World Championship race, mobile app traffic surges from 5,000 to 500,000 requests per second within 10 seconds. Standard serverless autoscaling from min_instances = 0 experiences cold-start latency spikes. How should the SRE team prepare Cloud Run infrastructure before the race starts to guarantee sub-50ms API response times during sudden surges?",
+  "correct": "A",
+  "clave_len": 258,
+  "explanation": "Setting min_instances on Cloud Run keeps a designated baseline of container instances pre-warmed in memory. Adjusting min_instances prior to scheduled live high-traffic events absorbs massive traffic spikes with zero cold-start latency.",
+  "doc": "https://cloud.google.com/run/docs/configuring/min-instances",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 258,
+    "text": "Pre-warm Cloud Run 30 minutes before race start by updating min_instances = 1,000 and max_instances = 5,000 (with concurrency = 80), keeping pre-warmed container instances warm and active in memory to absorb the 500k req/s surge with zero cold-start latency."
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Disable all API endpoints during the final lap."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Deploy an on-premises physical server in the desert."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Leave min_instances = 0 and allow cold starts to queue."
+   }
+  ],
+  "ratio": 5.03
+ },
+ {
+  "id": "PCA-D4-012",
+  "subtopic": "Observability: Log Exclusions & Cost Optimization",
+  "caseStudy": "none",
+  "scenario": "An enterprise GKE cluster generates 500 million debug and health check log lines daily (e.g. 'GET /healthz HTTP/1.1 200 OK'), generating $15,000/month in Cloud Logging ingestion charges. The SRE team only needs to ingest ERROR and WARNING logs into the _Default log bucket while completely discarding successful health check logs. How should you optimize logging configuration?",
+  "correct": "B",
+  "clave_len": 229,
+  "explanation": "Log exclusions on Cloud Logging sinks drop matching log entries before ingestion. Excluded logs are not stored and do not count toward monthly ingestion billing, slashing log costs while preserving critical error and warning entries.",
+  "doc": "https://cloud.google.com/logging/docs/exclusions",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "Pay the $15,000 bill every month without action."
+   },
+   {
+    "letter": "B",
+    "len": 229,
+    "text": "Create an Exclusion Filter on the '_Default' Log Sink in Cloud Logging with filter 'jsonPayload.httpRequest.requestUrl = \"/healthz\" OR severity = DEBUG', dropping unwanted logs before ingestion without incurring log storage fees."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Delete the Cloud Logging API from the project."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Uninstall the Kubernetes container runtime."
+   }
+  ],
+  "ratio": 5.01
+ },
+ {
+  "id": "PCA-D5-016",
+  "subtopic": "Bigtable Key Design: Salting & Preventing Hotspots",
+  "caseStudy": "none",
+  "scenario": "An IoT application writes sensor data to Cloud Bigtable using row key format: [device_type]#[timestamp] (e.g. 'smart_meter#2026-04-17T12:00:00Z'). Because all 1,000,000 smart meters share the same device_type prefix and write simultaneously, all write traffic lands on a single Bigtable tablet split, causing CPU saturation on 1 node while 19 other nodes remain completely idle. How should the row key be redesigned?",
+  "correct": "C",
+  "clave_len": 243,
+  "explanation": "Bigtable stores rows in lexicographical order. Using low-cardinality prefixes or sequential timestamps causes write hotspotting on a single tablet. Salting or promoting high-cardinality unique device_ids distributes write traffic evenly across all nodes.",
+  "doc": "https://cloud.google.com/bigtable/docs/schema-design#row-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Keep sequential timestamps as the row key prefix."
+   },
+   {
+    "letter": "B",
+    "len": 63,
+    "text": "Increase Bigtable nodes from 20 to 1,000 without changing keys."
+   },
+   {
+    "letter": "C",
+    "len": 243,
+    "text": "Redesign the row key by promoting high-cardinality fields or applying Key Salting: Use format [hash_prefix]#[device_id]#[timestamp] (or [device_id]#[reverse_timestamp]), distributing writes uniformly across all tablet splits and cluster nodes."
+   },
+   {
+    "letter": "D",
+    "len": 34,
+    "text": "Migrate all data to Google Sheets."
+   }
+  ],
+  "ratio": 4.99
+ },
+ {
+  "id": "PCA-D4-034",
+  "subtopic": "FinOps: Cloud Monitoring Metrics Scope Multi-Project Centralization",
+  "caseStudy": "none",
+  "scenario": "An enterprise operates 100 Google Cloud projects. The centralized NOC team currently has to switch between 100 different project dashboards in the Google Cloud Console to inspect CPU, memory, and error metrics. How can you consolidate multi-project monitoring into a single unified workspace?",
+  "correct": "C",
+  "clave_len": 255,
+  "explanation": "Cloud Monitoring Metrics Scopes allow a central Scoping Project to monitor metrics across multiple Monitored Projects. This provides a unified single-pane-of-glass dashboard and multi-project PromQL/MQL alerting without merging project boundaries.",
+  "doc": "https://cloud.google.com/monitoring/settings/manage-metrics-scopes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "Disable monitoring in 99 of the 100 projects."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Open 100 browser tabs simultaneously on a single laptop."
+   },
+   {
+    "letter": "C",
+    "len": 255,
+    "text": "Configure a centralized Scoping Project in Cloud Monitoring, adding the 100 projects as Monitored Projects to its Metrics Scope, allowing the NOC team to view dashboards, run multi-project MQL queries, and trigger unified alerts in a single pane of glass."
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Merge all 100 projects into a single massive project."
+   }
+  ],
+  "ratio": 4.97
+ },
+ {
+  "id": "PCA-D3-014",
+  "subtopic": "Cloud DLP: Cryptographic Hash Tokenization (Pseudonymization)",
+  "caseStudy": "none",
+  "scenario": "An e-commerce analytics team needs to analyze customer repeat purchasing behavior by joining data across multiple BigQuery tables. However, customer Social Security Numbers (SSNs) and Email addresses must never be visible in plaintext to data analysts. The transformation must be deterministic (the same email always produces the exact same token) and irreversible without the secret cryptographic key. What Cloud DLP transformation meets this requirement?",
+  "correct": "C",
+  "clave_len": 215,
+  "explanation": "CryptoHashConfig in Sensitive Data Protection (Cloud DLP) uses keyed HMAC-SHA256 cryptographic hashing to replace sensitive values with deterministic tokens. This allows analytical queries to join records across tables without revealing the underlying PII.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/pseudonymization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Replace all emails with the static word 'REDACTED'."
+   },
+   {
+    "letter": "B",
+    "len": 45,
+    "text": "Store plaintext emails in public GCS buckets."
+   },
+   {
+    "letter": "C",
+    "len": 215,
+    "text": "Use Cloud DLP CryptoHashConfig with a transient or Cloud KMS-wrapped crypto key to generate deterministic HMAC-SHA256 pseudonymized tokens, preserving relational joinability across datasets while protecting raw PII."
+   },
+   {
+    "letter": "D",
+    "len": 34,
+    "text": "Base64-encode the email addresses."
+   }
+  ],
+  "ratio": 4.96
+ },
+ {
+  "id": "PCA-D5-029",
+  "subtopic": "Knightmotives Automotive: BigQuery BI Engine Implementation for Dealer Dashboards",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "5,000 agricultural equipment dealers access Looker Studio dashboards daily to track tractor fleet health and warranty repairs. Running individual on-demand BigQuery queries across petabytes of telemetry makes dashboards slow and expensive. How should knightmotives_automotive implement in-memory query acceleration?",
+  "correct": "D",
+  "clave_len": 215,
+  "explanation": "BigQuery BI Engine provisions fast in-memory memory that natively caches and accelerates SQL queries from Looker Studio, providing sub-second load times for 5,000 concurrent dealers and reducing query costs.",
+  "doc": "https://cloud.google.com/bigquery/docs/bi-engine-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 26,
+    "text": "Disable dealer dashboards."
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Rebuild the analytics platform using MySQL on a single VM."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Email static CSV files to dealers once a year."
+   },
+   {
+    "letter": "D",
+    "len": 215,
+    "text": "Allocate a BigQuery BI Engine reservation in the analytics project, accelerating Looker Studio dashboard queries in RAM to provide sub-second responses for all 5,000 dealers without increasing on-demand query costs."
+   }
+  ],
+  "ratio": 4.96
+ },
+ {
+  "id": "PCA-D3-033",
+  "subtopic": "Org Policy: Restrict Resource Locations",
+  "caseStudy": "none",
+  "scenario": "An enterprise European subsidiary must ensure that no cloud administrator or developer can accidentally create resources (Compute Engine VMs, GCS buckets, BigQuery datasets, Cloud SQL databases) outside authorized European regions (europe-west1 and europe-west3). What Organization Policy constraint must be enforced on the European Folder?",
+  "correct": "A",
+  "clave_len": 216,
+  "explanation": "The constraints/gcp.resourceLocations constraint enforces geographical boundaries on where Google Cloud resources can be created, guaranteeing compliance with European data residency and GDPR mandates.",
+  "doc": "https://cloud.google.com/resource-manager/docs/organization-policy/defining-locations",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 216,
+    "text": "Apply the Organization Policy list constraint 'constraints/gcp.resourceLocations' on the European Folder, setting the allow-list strictly to 'in:europe-locations' or specific regions ['europe-west1', 'europe-west3']."
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Disable all non-European languages on developer keyboards."
+   },
+   {
+    "letter": "C",
+    "len": 37,
+    "text": "constraints/compute.requireShieldedVm"
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "Send a quarterly memo to developers."
+   }
+  ],
+  "ratio": 4.95
+ },
+ {
+  "id": "PCA-D3-060",
+  "subtopic": "EHR Healthcare: Cloud DLP Cryptographic Tokenization",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare shares structured patient laboratory records with external academic research databases. Patient Social Security Numbers (9 digits: NNN-NN-NNNN) must be encrypted such that the resulting ciphertext retains the exact same 9-digit format (allowing legacy statistical tools expecting 9-digit inputs to parse records without crashing) and can be decrypted back to plaintext by authorized compliance officers using a Cloud KMS key. What Cloud DLP transformation fulfills this?",
+  "correct": "D",
+  "clave_len": 241,
+  "explanation": "Format-Preserving Encryption (FPE) using the FFX mode in Cloud DLP encrypts data while preserving its format and length (e.g. a 9-digit SSN encrypts to a different 9-digit number). It is fully reversible by authorized users with access to the Cloud KMS key.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/transformations-reference#fpe",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 62,
+    "text": "Base64 encode the SSNs into 16-character alphanumeric strings."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Store plaintext SSNs in public datasets."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "Delete all numbers and replace with letters."
+   },
+   {
+    "letter": "D",
+    "len": 241,
+    "text": "Use Cloud DLP Format-Preserving Encryption (CryptoReplaceFfxFpeConfig / FFX mode) with a Cloud KMS wrapped key and radix set to numeric, encrypting 9-digit SSNs into reversible 9-digit ciphertext while preserving character length and format."
+   }
+  ],
+  "ratio": 4.95
+ },
+ {
+  "id": "PCA-D6-003",
+  "subtopic": "Cloud SQL Cross-Region Read Replica Promotion",
+  "caseStudy": "none",
+  "scenario": "An enterprise runs its primary transactional database on Cloud SQL for PostgreSQL in us-central1 (with regional HA enabled). To protect against the catastrophic failure of the entire us-central1 region, a Cross-Region Read Replica is provisioned in us-east1. When us-central1 suffers a prolonged regional disaster, what is the exact operational procedure to fail over?",
+  "correct": "A",
+  "clave_len": 321,
+  "explanation": "During a total regional disaster, Cloud SQL cross-region failover requires promoting the cross-region read replica to an independent primary read-write database and updating application database connection routing.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/replication/cross-region-replicas#promote-replica",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 321,
+    "text": "Execute the DR runbook: 1) Promote the us-east1 Cross-Region Read Replica to become an independent standalone read-write primary database; 2) Update application connection strings or DNS/Private Service Connect endpoints to point to the newly promoted us-east1 instance; 3) Re-enable High Availability on the new primary."
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Restore from an on-premises tape backup created 3 months ago."
+   },
+   {
+    "letter": "C",
+    "len": 77,
+    "text": "Wait for Google Cloud engineers to fix us-central1 without taking any action."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Delete the database and recreate all tables from scratch."
+   }
+  ],
+  "ratio": 4.94
+ },
+ {
+  "id": "PCA-D6-024",
+  "subtopic": "Cloud Monitoring Automated Incident Remediation",
+  "caseStudy": "none",
+  "scenario": "An enterprise operates legacy worker VMs on Compute Engine. Occasionally, an internal queue processing daemon freezes without crashing the VM. The operations team wants an automated self-healing remediation pipeline: When a Cloud Monitoring alert detects zero queue message processing for 10 minutes, the alert must automatically trigger an automated workflow to safely restart the systemd service on the affected VM without human intervention. How should this be built?",
+  "correct": "A",
+  "clave_len": 276,
+  "explanation": "Cloud Monitoring Alert Webhooks trigger automated remediation handlers (Cloud Functions/Run). The handler parses the alert JSON payload (containing the affected VM ID) and executes targeted remediation (e.g. OS Config agent execution or VM restart) automatically.",
+  "doc": "https://cloud.google.com/monitoring/support/notification-options#webhook",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 276,
+    "text": "Attach a Webhook Notification Channel to the Cloud Monitoring Alert Policy, invoking a Cloud Function / Cloud Run service authenticated via OIDC token, which uses the Compute Engine OS Config / Cloud Workflows API to execute a remote systemd restart script on the specific VM."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Reboot all 500 enterprise VMs simultaneously whenever one service freezes."
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Hire an operator to check queue metrics manually every 5 minutes."
+   },
+   {
+    "letter": "D",
+    "len": 29,
+    "text": "Disable all queue monitoring."
+   }
+  ],
+  "ratio": 4.93
+ },
+ {
+  "id": "PCA-D3-022",
+  "subtopic": "Identity-Aware Proxy (IAP) TCP Forwarding for SSH/RDP",
+  "caseStudy": "none",
+  "scenario": "An enterprise is decommissioning its legacy SSH/RDP bastion host (jump box) VMs to eliminate public attack surfaces and maintenance costs. System administrators must be able to SSH and RDP into completely private Compute Engine VMs (with no external public IP addresses) securely from their laptops, authenticating via corporate Google Workspace credentials with MFA. What solution should you deploy?",
+  "correct": "A",
+  "clave_len": 275,
+  "explanation": "IAP TCP Forwarding allows authenticated users to tunnel SSH, RDP, and other TCP traffic directly to private VMs without public IPs or bastion hosts. Traffic flows through Google's identity-aware proxy edge, requiring only an ingress firewall rule for 35.235.240.0/20.",
+  "doc": "https://cloud.google.com/iap/docs/using-tcp-forwarding",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 275,
+    "text": "Enable Identity-Aware Proxy (IAP) TCP Forwarding, create a firewall rule allowing ingress on TCP 22/3389 from Google's IAP netblock (35.235.240.0/20), and grant administrators the roles/iap.tunnelResourceAccessor role to connect via 'gcloud compute ssh --tunnel-through-iap'."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Assign static public IPs to all private VMs and open port 22 to 0.0.0.0/0."
+   },
+   {
+    "letter": "C",
+    "len": 40,
+    "text": "Install a TeamViewer server on every VM."
+   },
+   {
+    "letter": "D",
+    "len": 54,
+    "text": "Leave all VMs unmanaged without administrative access."
+   }
+  ],
+  "ratio": 4.91
+ },
+ {
+  "id": "PCA-D4-045",
+  "subtopic": "Altostrat Media: Game Rollout SRE & Canary Testing",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media releases weekly game balance patches and weapon modifications. To prevent a bad patch from causing player churn or crashing game servers, altostrat needs to route 5% of multiplayer game matches to newly updated Agones game servers. If match completion rates drop or crash reports spike, the matchmaker must instantly shift players back to stable servers. How should this be implemented?",
+  "correct": "A",
+  "clave_len": 279,
+  "explanation": "Using Agones Fleet canary partitioning combined with Open Match routing allocates a safe percentage of match traffic to experimental game servers, validating real-world gameplay metrics while protecting 95% of players from disruptions.",
+  "doc": "https://agones.dev/site/docs/guides/fleet-updates/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 279,
+    "text": "Configure Agones Fleet and Open Match matchmaking rules to allocate 5% of new match tickets to a Canary Game Server Fleet, streaming live match telemetry to Cloud Monitoring; if crash rates exceed SLO thresholds, match allocations to the canary fleet are automatically set to 0%."
+   },
+   {
+    "letter": "B",
+    "len": 70,
+    "text": "Deploy the update to all 10,000 game servers worldwide simultaneously."
+   },
+   {
+    "letter": "C",
+    "len": 43,
+    "text": "Test game updates only on developer phones."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Shut down the game for 48 hours during every weekly patch."
+   }
+  ],
+  "ratio": 4.89
+ },
+ {
+  "id": "PCA-D3-027",
+  "subtopic": "Automated Incident Response with SCC & Cloud Functions",
+  "caseStudy": "none",
+  "scenario": "An enterprise security team requires automated self-healing remediation whenever a storage bucket is accidentally made public (allUsers / allAuthenticatedUsers granted storage.objectViewer). When Security Command Center detects finding 'PUBLIC_BUCKET_ACL', the system must automatically remove the public IAM binding within 30 seconds and post an alert to the SOC Slack channel. What event-driven pipeline implements this?",
+  "correct": "A",
+  "clave_len": 285,
+  "explanation": "SCC Continuous Finding Exports stream real-time security findings to Cloud Pub/Sub. An event-driven Cloud Function parses the finding payload, executes automated remediation via Google Cloud APIs (removing public IAM members), and alerts the SOC instantly.",
+  "doc": "https://cloud.google.com/security-command-center/docs/how-to-remediate-findings",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 285,
+    "text": "Configure a Continuous Finding Export in Security Command Center (filtered by category='PUBLIC_BUCKET_ACL') publishing to a Cloud Pub/Sub topic, which triggers an automated Cloud Function that invokes the Cloud Storage API to strip the public IAM binding and send a Slack notification."
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Delete all Cloud Storage buckets immediately upon creation."
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Wait for external security researchers to report the open bucket."
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Run a cron script on a developer laptop once a week."
+   }
+  ],
+  "ratio": 4.86
+ },
+ {
+  "id": "PCA-D4-007",
+  "subtopic": "SRE: Multi-Window Multi-Burn-Rate Alerting",
+  "caseStudy": "none",
+  "scenario": "An enterprise SRE team suffers from alert fatigue due to noisy short-lived error spikes while simultaneously missing slow, catastrophic error budget drains that deplete 100% of the budget over 3 days. According to Google SRE Workbook principles, how should SLO alerting be configured in Cloud Monitoring?",
+  "correct": "D",
+  "clave_len": 301,
+  "explanation": "Multi-Window Multi-Burn-Rate alerting (from Google's Site Reliability Engineering Workbook) pairs short and long evaluation windows at different burn rate multipliers. This eliminates false alarms from transient spikes while rapidly paging for severe budget depletion.",
+  "doc": "https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring/alerting-on-budget-burn-rate",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "Disable all alerts and check graphs once a week."
+   },
+   {
+    "letter": "B",
+    "len": 84,
+    "text": "Create an alert that pages the on-call engineer every time a single HTTP 500 occurs."
+   },
+   {
+    "letter": "C",
+    "len": 54,
+    "text": "Rely exclusively on customer tweets to detect outages."
+   },
+   {
+    "letter": "D",
+    "len": 301,
+    "text": "Configure Multi-Window Multi-Burn-Rate Alerting: Use a high burn rate (e.g. 14.4x burn rate over 1-hour and 5-minute windows, burning 2% budget in 1 hour) to page on-call immediately, and a low burn rate (e.g. 6x burn rate over 6-hour and 30-minute windows) to file a non-paging ticket for slow leaks."
+   }
+  ],
+  "ratio": 4.85
+ },
+ {
+  "id": "PCA-D4-029",
+  "subtopic": "Modernization: Mainframe Offloading to BigQuery",
+  "caseStudy": "none",
+  "scenario": "An enterprise bank runs critical core banking analytics on an IBM z/OS Mainframe. Mainframe Million Instructions Per Second (MIPS) consumption charges for business intelligence queries are costing $5,000,000 annually. The bank wants to offload analytical queries to Google Cloud while keeping the transactional OLTP core on the mainframe. What modernization pipeline achieves this?",
+  "correct": "A",
+  "clave_len": 262,
+  "explanation": "Google Cloud Mainframe Connector and CDC streaming offload expensive batch analytical queries from mainframes into BigQuery. This slashes mainframe MIPS operating expenses by millions while providing faster analytical querying in BigQuery.",
+  "doc": "https://cloud.google.com/solutions/mainframe-data-integration",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 262,
+    "text": "Use Google Cloud Mainframe Connector (or CDC replication via IBM MQ / Datastream) to stream mainframe VSAM/Db2 datasets into BigQuery, redirecting business intelligence and analytical queries to BigQuery to eliminate analytical MIPS consumption on the mainframe."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Print mainframe reports on paper and scan them with OCR."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Replace the entire mainframe with a single micro VM overnight."
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "Run the mainframe at 100% CPU capacity 24/7."
+   }
+  ],
+  "ratio": 4.85
+ },
+ {
+  "id": "PCA-D4-013",
+  "subtopic": "Modernization: Strangler Fig Migration Pattern",
+  "caseStudy": "none",
+  "scenario": "An enterprise operates a massive monolithic on-premises banking application. The architecture leadership mandates migrating to cloud-native microservices on Google Cloud. A 'big bang' complete rewrite is deemed too high-risk by the executive board. What incremental modernization pattern and Google Cloud component should be deployed?",
+  "correct": "D",
+  "clave_len": 350,
+  "explanation": "The Strangler Fig pattern places an API gateway (Apigee X) in front of legacy systems. Individual functionalities are gradually carved out into cloud microservices. The API gateway updates its routes incrementally, de-risking the migration and ensuring zero downtime for consumers.",
+  "doc": "https://cloud.google.com/architecture/modernizing-legacy-systems-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "Shut down the on-premises datacenter on Friday and deploy all new code simultaneously."
+   },
+   {
+    "letter": "B",
+    "len": 84,
+    "text": "Maintain both systems completely independent with zero synchronization for 10 years."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Convert the monolith into an Excel spreadsheet."
+   },
+   {
+    "letter": "D",
+    "len": 350,
+    "text": "Implement the Strangler Fig pattern: Deploy Apigee X as an API Facade in front of the on-premises monolith, route existing API traffic through Apigee, and gradually migrate individual domain capabilities (e.g. Accounts, Payments) into Google Cloud microservices, redirecting API proxy routes incrementally until the legacy monolith is decommissioned."
+   }
+  ],
+  "ratio": 4.84
+ },
+ {
+  "id": "PCA-D3-004",
+  "subtopic": "IAM Deny Policies",
+  "caseStudy": "none",
+  "scenario": "An enterprise security governance team must ensure that no user or administrator—including Project Owners—can delete Cloud KMS cryptographic keys or disable Cloud Audit Logging sinks across all projects in the organization. How should you enforce this guardrail?",
+  "correct": "B",
+  "clave_len": 214,
+  "explanation": "IAM Deny Policies override all allow policies, including Owner roles. Creating a Deny Policy at the Organization level guarantees that protected actions (destroying KMS keys, deleting audit log sinks) are permanently blocked regardless of project-level grants.",
+  "doc": "https://cloud.google.com/iam/docs/deny-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "Send a reminder email to all project administrators."
+   },
+   {
+    "letter": "B",
+    "len": 214,
+    "text": "Create an IAM Deny Policy at the Organization level with deny rules for permissions 'cloudkms.cryptoKeyVersions.destroy' and 'logging.sinks.delete' targeting all principals (except break-glass recovery principals)."
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Disable the Cloud KMS API entirely."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Revoke all IAM permissions from all employees."
+   }
+  ],
+  "ratio": 4.83
+ },
+ {
+  "id": "PCA-D2-037",
+  "subtopic": "BigQuery Slot Reservations & Editions",
+  "caseStudy": "none",
+  "scenario": "An enterprise data warehouse team runs critical end-of-month reporting queries that frequently get throttled due to noisy neighbor queries from ad-hoc analysts under on-demand pricing. The enterprise needs guaranteed, dedicated query execution capacity (slots) for finance, while allowing ad-hoc queries to autoscale dynamically with a hard monthly budget ceiling. How should you structure BigQuery capacity?",
+  "correct": "C",
+  "clave_len": 246,
+  "explanation": "BigQuery Editions (Standard, Enterprise, Enterprise Plus) support Capacity Commitments and Reservations. Baseline slots guarantee compute for critical workloads, while Autoscale slots dynamically scale to handle spikes within predefined budget limits.",
+  "doc": "https://cloud.google.com/bigquery/docs/editions-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 42,
+    "text": "Export all tables to MySQL on a single VM."
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Delete all historical data to speed up queries."
+   },
+   {
+    "letter": "C",
+    "len": 246,
+    "text": "Purchase BigQuery Enterprise Edition capacity, create dedicated Slot Reservations with baseline slots for finance (guaranteed throughput) and autoscale slots with max_slots caps for ad-hoc analysts, and assign projects to respective reservations."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Remain on on-demand pricing and ask analysts not to run queries."
+   }
+  ],
+  "ratio": 4.82
+ },
+ {
+  "id": "PCA-D3-010",
+  "subtopic": "VPC Service Controls: Perimeter Bridges",
+  "caseStudy": "none",
+  "scenario": "An enterprise has two separate VPC Service Controls perimeters: Perimeter A (protecting finance BigQuery datasets in Project A) and Perimeter B (protecting analytics Cloud Dataflow jobs in Project B). Dataflow workers in Perimeter B need to read tables from BigQuery in Perimeter A without merging the two perimeters into a single broad security domain. What should you configure?",
+  "correct": "A",
+  "clave_len": 245,
+  "explanation": "Perimeter Bridges link two separate VPC Service Controls perimeters, allowing resources within the bridged perimeters to communicate with each other while preserving the independent security boundaries of each perimeter.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/perimeter-bridges",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 245,
+    "text": "Create a VPC Service Controls Perimeter Bridge connecting Perimeter A and Perimeter B, allowing controlled bidirectional data sharing between the specific enclosed projects while maintaining perimeter isolation from the rest of the organization."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Delete both perimeters and disable VPC Service Controls."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Export data to an external public SFTP server."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Grant all users Owner permissions on both projects."
+   }
+  ],
+  "ratio": 4.8
+ },
+ {
+  "id": "PCA-D3-029",
+  "subtopic": "Assured Workloads for FedRAMP & Compliance",
+  "caseStudy": "none",
+  "scenario": "A government defense contractor must host workloads that comply strictly with FedRAMP High and CJIS (Criminal Justice Information Services) standards. The environment must guarantee that data resides only in authorized US regions, personnel supporting cloud operations are verified US Persons located on US soil, and only FIPS 140-2 Level 3 cryptographic modules are accessible. What Google Cloud solution automates these compliance guardrails?",
+  "correct": "C",
+  "clave_len": 251,
+  "explanation": "Google Cloud Assured Workloads provides automated compliance enforcement for government and regulated enterprises (FedRAMP, IL4/IL5, CJIS, ITAR), applying turnkey organization policies for data residency, US Person support personnel controls, and sovereign encryption.",
+  "doc": "https://cloud.google.com/assured-workloads/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Disable all access controls and encryption."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Standard Google Cloud projects with manual user auditing."
+   },
+   {
+    "letter": "C",
+    "len": 251,
+    "text": "Create an Assured Workloads environment selecting compliance regime 'FedRAMP High' or 'CJIS', which automatically configures Organization Policy constraints for US data residency, restricts support to US Persons, and enforces CMEK with Cloud HSM keys."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Deploy workloads in europe-west1 to avoid US regulations."
+   }
+  ],
+  "ratio": 4.8
+ },
+ {
+  "id": "PCA-D4-010",
+  "subtopic": "Observability: Cloud Profiler Continuous Low-Overhead Profiling",
+  "caseStudy": "none",
+  "scenario": "A mission-critical Java microservice in GKE is consuming 80% CPU under normal load. Developers suspect inefficient regular expressions or un-optimized object serialization in production code. The profiling tool must run continuously in production with less than 5% CPU overhead without restarting or modifying production binaries. What Google Cloud tool fulfills this requirement?",
+  "correct": "B",
+  "clave_len": 225,
+  "explanation": "Google Cloud Profiler is a continuous, low-overhead (<1% CPU/memory) profiling tool that uses statistical sampling in production environments to generate hierarchical flame graphs of CPU, heap, and thread allocation down to the line of code.",
+  "doc": "https://cloud.google.com/profiler/docs/about-profiler",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "Rewrite the entire application in Assembly language."
+   },
+   {
+    "letter": "B",
+    "len": 225,
+    "text": "Deploy Google Cloud Profiler agent with the Java application (using statistical sampling with <1% CPU overhead), visualizing interactive flame graphs of CPU time and heap memory allocation across code functions in production."
+   },
+   {
+    "letter": "C",
+    "len": 23,
+    "text": "Disable CPU monitoring."
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Attach an interactive desktop debugger to the live production JVM."
+   }
+  ],
+  "ratio": 4.79
+ },
+ {
+  "id": "PCA-D3-059",
+  "subtopic": "Altostrat Media: Binary Authorization with Cloud Build Attestors",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media must ensure that only container images built by official Cloud Build CI/CD pipelines that have passed automated unit tests and vulnerability scanning can deploy to production GKE clusters. If an engineer attempts to deploy an image built on a local laptop or an unverified container registry, GKE must reject the deployment. What service enforces this software supply chain control?",
+  "correct": "A",
+  "clave_len": 208,
+  "explanation": "Binary Authorization is a deploy-time security control for GKE. It integrates with Cloud Build and Cloud KMS to sign attestations, validating digital signatures before allowing pods to be created.",
+  "doc": "https://cloud.google.com/binary-authorization/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 208,
+    "text": "Configure Google Cloud Binary Authorization with GKE admission enforcement requiring cryptographic attestations created by a Cloud Build attestor and signed with Cloud KMS during the automated build pipeline."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Disable all container deployments permanently."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "Ask developers to sign an honesty agreement."
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "Run containers without security contexts."
+   }
+  ],
+  "ratio": 4.76
+ },
+ {
+  "id": "PCA-D4-017",
+  "subtopic": "SRE: Incident Management & PagerDuty/Slack Webhooks",
+  "caseStudy": "none",
+  "scenario": "When a critical production alert fires in Cloud Monitoring (e.g., GKE control plane unreachable or database CPU > 95%), the on-call SRE team must be paged immediately via PagerDuty, an incident war room Slack channel must receive structured diagnostic payloads, and an ITSM ticket must be created in ServiceNow automatically. What Cloud Monitoring mechanism configures this multi-channel incident dispatch?",
+  "correct": "B",
+  "clave_len": 247,
+  "explanation": "Cloud Monitoring Alert Policies support multiple simultaneous Notification Channels (PagerDuty, Slack, Webhooks, SMS, Email). When an alert fires, notifications are dispatched to all configured channels automatically with incident context.",
+  "doc": "https://cloud.google.com/monitoring/support/notification-options",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 38,
+    "text": "Disable all incident management tools."
+   },
+   {
+    "letter": "B",
+    "len": 247,
+    "text": "Configure Cloud Monitoring Notification Channels targeting PagerDuty (for on-call paging), Slack (for war room notifications), and Webhook endpoints (for automated ServiceNow incident generation), attaching all channels to critical Alert Policies."
+   },
+   {
+    "letter": "C",
+    "len": 39,
+    "text": "Send notifications via broadcast radio."
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "Hire an operator to watch screen monitors 24/7 and call engineers on landlines."
+   }
+  ],
+  "ratio": 4.75
+ },
+ {
+  "id": "PCA-D5-002",
+  "subtopic": "Pub/Sub: Schema Validation with Avro/Protobuf",
+  "caseStudy": "none",
+  "scenario": "Multiple independent development teams publish events to a shared 'enterprise-events' Pub/Sub topic. Downstream analytics pipelines frequently break when a publishing team introduces backward-incompatible JSON schema changes (e.g. renaming fields or changing data types). How should you enforce strict contract schema validation at the Pub/Sub topic level?",
+  "correct": "D",
+  "clave_len": 278,
+  "explanation": "Cloud Pub/Sub Schemas enforce message structure validation at topic ingestion time using Avro or Protobuf definitions. Publishers that send malformed or incompatible messages are rejected synchronously, preventing schema corruption in downstream pipelines.",
+  "doc": "https://cloud.google.com/pubsub/docs/schemas",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Write custom validation scripts in Python on a worker VM that reads after the fact."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Ask developers to review schemas in a weekly meeting."
+   },
+   {
+    "letter": "C",
+    "len": 40,
+    "text": "Disable data type validation completely."
+   },
+   {
+    "letter": "D",
+    "len": 278,
+    "text": "Create a Cloud Pub/Sub Schema resource (using Apache Avro or Protocol Buffers definition) and attach it to the Pub/Sub topic with schema_settings; Pub/Sub automatically validates message payloads at publish time and rejects non-conforming messages immediately with an API error."
+   }
+  ],
+  "ratio": 4.74
+ },
+ {
+  "id": "PCA-D3-056",
+  "subtopic": "EHR Healthcare: Dedicated Interconnect MACsec Security",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare transmits continuous streams of uncompressed radiology imaging and patient vital records across 100Gbps Dedicated Interconnect circuits between hospitals and Google Cloud. IPsec VPN tunnels introduce high CPU encryption latency and packet fragmentation on 100Gbps links. What hardware-level encryption standard should you configure directly on the physical fiber cross-connects?",
+  "correct": "D",
+  "clave_len": 237,
+  "explanation": "MACsec (IEEE 802.1AE) provides line-rate, hardware-accelerated Layer 2 encryption directly on Dedicated Interconnect physical links between on-premises edge routers and Google Cloud edge routers, securing hybrid transport without IPsec latency penalties.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/macsec",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Compress files with zip passwords before sending."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Unencrypted plaintext fiber connections."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Software SSL encryption inside every individual database row."
+   },
+   {
+    "letter": "D",
+    "len": 237,
+    "text": "Configure IEEE 802.1AE MACsec (Media Access Control Security) on the Cloud Interconnect attachments, enabling hardware line-rate Layer 2 encryption directly on physical router interfaces without latency overhead or IPsec packet overhead."
+   }
+  ],
+  "ratio": 4.74
+ }
+]

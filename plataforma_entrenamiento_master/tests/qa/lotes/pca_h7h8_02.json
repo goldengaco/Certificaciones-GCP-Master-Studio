@@ -1,0 +1,522 @@
+[
+ {
+  "id": "PCA-D6-006",
+  "scenario": "An enterprise uses Cloud Bigtable replicated across 2 clusters (us-central1-b and us-east1-c) with Multi-Cluster Any-Routing enabled for 99.999% SLA. A developer writes a record to Bigtable and immediately reads it back from a different client, but occasionally receives the old value. What distributed database principle explains this behavior, and how can strong read-your-writes consistency be enforced when needed?",
+  "correct": "C",
+  "clave_len": 276,
+  "densidad_clave": 4,
+  "eco_clave": 8,
+  "explanation": "Cloud Bigtable multi-cluster replication uses asynchronous eventual consistency. When using Multi-Cluster Any-Routing, sequential requests may hit different clusters before replication catches up. Using Single-Cluster Routing guarantees strong read-your-writes consistency.",
+  "doc": "https://cloud.google.com/bigtable/docs/replication-overview#consistency-model",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 243,
+    "densidad": 4,
+    "eco": 4,
+    "text": "Configure an application profile that uses cluster group routing naming both us-central1-b and us-east1-c, so that requests are confined to the named group and reads and writes for the same row always converge on a consistent view of that row."
+   },
+   {
+    "letter": "B",
+    "len": 250,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Call generateConsistencyToken on the table after each write and poll checkConsistency with the returned token until it reports true, so that the client only issues the follow-up read once replication of that write to both clusters has been confirmed."
+   },
+   {
+    "letter": "C",
+    "len": 276,
+    "densidad": 4,
+    "eco": 8,
+    "text": "Bigtable multi-cluster replication is asynchronously eventually consistent across clusters; to achieve strict Read-Your-Writes consistency for critical operations, configure a dedicated Application Profile using Single-Cluster Routing pointing to a designated primary cluster."
+   },
+   {
+    "letter": "D",
+    "len": 292,
+    "densidad": 7,
+    "eco": 2,
+    "text": "Delete the us-east1-c cluster so the instance runs on a single cluster in us-central1-b, removing replication lag entirely, restoring support for single-row read-modify-write transactions, and guaranteeing that every read observes the most recently written value for any row key in the table."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-007",
+  "scenario": "An enterprise streaming media platform experiences massive, predictable morning traffic surges every day at 08:00 AM. Reactive CPU-based autoscaling takes 5 to 10 minutes to detect high CPU and spin up new VMs, causing morning latency spikes. How should the Managed Instance Group autoscaler be optimized to provision capacity in advance of recurring surges?",
+  "correct": "A",
+  "clave_len": 275,
+  "densidad_clave": 3,
+  "eco_clave": 9,
+  "explanation": "Predictive Autoscaling for Compute Engine MIGs analyzes historical load metrics to forecast future traffic surges and scales out instances ahead of time, eliminating cold-start latency spikes for predictable recurring daily workloads.",
+  "doc": "https://cloud.google.com/compute/docs/autoscaler/predictive-autoscaling",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 275,
+    "densidad": 3,
+    "eco": 9,
+    "text": "Enable Predictive Autoscaling (mode = 'PREDICTIVE_ONLY' or 'OPTIMIZE_AVAILABILITY') on the Managed Instance Group autoscaler, which uses machine learning to analyze historical daily and weekly traffic patterns and scales up VM capacity minutes before forecasted surges begin."
+   },
+   {
+    "letter": "B",
+    "len": 250,
+    "densidad": 0,
+    "eco": 4,
+    "text": "Raise the Managed Instance Group's minimum instance count to the observed 08:00 peak size and leave the target CPU utilization autoscaler at 60%, so that it only has to handle whatever additional load appears above that permanently provisioned floor."
+   },
+   {
+    "letter": "C",
+    "len": 247,
+    "densidad": 3,
+    "eco": 4,
+    "text": "Add a scaling schedule to the autoscaler with --set-schedule starting at 08:00, a duration of thirty minutes and a minimum required instance count equal to the peak size, leaving the reactive CPU utilization autoscaler in place around that window."
+   },
+   {
+    "letter": "D",
+    "len": 264,
+    "densidad": 0,
+    "eco": 4,
+    "text": "Change the autoscaling signal from CPU utilization to a Cloud Monitoring metric of load balancer requests per second with a target utilization per instance, so the group reacts to the traffic actually arriving rather than to the CPU that traffic eventually causes."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-012",
+  "scenario": "To satisfy annual financial regulatory audits, an enterprise must conduct full disaster recovery failover testing simulating the loss of its primary datacenter and primary Google Cloud region. The DR test must validate application startup, database restore, and transaction processing without disrupting live production users. How should the DR drill be architected?",
+  "correct": "B",
+  "clave_len": 295,
+  "densidad_clave": 6,
+  "eco_clave": 6,
+  "explanation": "Conducting DR drills in isolated sandbox environments provisioned via Terraform with restored database snapshots validates operational runbooks, verifies RTO/RPO targets, and satisfies compliance audits without impacting production users.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery-scenarios-for-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 331,
+    "densidad": 2,
+    "eco": 8,
+    "text": "Run the drill inside the live production project during a low-traffic maintenance window: trigger a manual failover of the Cloud SQL high-availability primary onto its standby, repoint the DNS records at the failover region, execute the transaction suite against live services, record the observed recovery time and then fail back."
+   },
+   {
+    "letter": "B",
+    "len": 295,
+    "densidad": 6,
+    "eco": 6,
+    "text": "Provision an isolated Sandbox DR VPC in the failover region via Terraform, restore databases using Point-in-Time Recovery (PITR) or storage snapshots into the sandbox, execute synthetic end-to-end transaction test suites, validate RTO/RPO metrics, and destroy the sandbox environment post-audit."
+   },
+   {
+    "letter": "C",
+    "len": 317,
+    "densidad": 0,
+    "eco": 2,
+    "text": "Hold a tabletop exercise in which the platform team walks the auditors through the runbook, the architecture diagrams and the most recent backup completion report, then records the agreed theoretical RTO and RPO for each application tier and each database in the compliance evidence pack signed by the service owners."
+   },
+   {
+    "letter": "D",
+    "len": 313,
+    "densidad": 2,
+    "eco": 4,
+    "text": "Restore the production database backup into the existing staging environment, which shares the same VPC, service accounts and Interconnect VLAN attachment as production, run the end-to-end transaction suite there against the restored data, and delete the restored instance once the auditors have seen the results."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-021",
+  "scenario": "An enterprise stores mission-critical transactional XML settlement records in Cloud Storage. The application requires 99.99% availability SLA, cross-region disaster recovery between us-central1 and us-east1, and an RPO < 15 minutes. What storage architecture fulfills this SLA?",
+  "correct": "D",
+  "clave_len": 232,
+  "densidad_clave": 7,
+  "eco_clave": 5,
+  "explanation": "Dual-Region Cloud Storage buckets replicate objects across two specific regions with a 99.99% availability SLA. Enabling Turbo Replication guarantees that 100% of newly written data is replicated within 15 minutes, satisfying strict financial RPO requirements.",
+  "doc": "https://cloud.google.com/storage/docs/turbo-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 241,
+    "densidad": 1,
+    "eco": 6,
+    "text": "Create a multi-region Cloud Storage bucket in the US location, which stores the settlement records redundantly across several regions of the United States and replicates every newly written object automatically with no further configuration."
+   },
+   {
+    "letter": "B",
+    "len": 228,
+    "densidad": 3,
+    "eco": 2,
+    "text": "Create two single-region Standard buckets in us-central1 and us-east1 and keep them in step with a Storage Transfer Service job scheduled to run every hour, copying newly written objects from the primary bucket to the secondary."
+   },
+   {
+    "letter": "C",
+    "len": 216,
+    "densidad": 4,
+    "eco": 4,
+    "text": "Write the settlement records to a single-region bucket in us-central1 with object versioning enabled and a Pub/Sub notification that triggers a Cloud Function to copy each new object into a second bucket in us-east1."
+   },
+   {
+    "letter": "D",
+    "len": 232,
+    "densidad": 7,
+    "eco": 5,
+    "text": "Create a Dual-Region Cloud Storage bucket (custom placement in US-CENTRAL1 and US-EAST1) with Turbo Replication enabled (rpo = 'ASYNC_TURBO'), delivering 99.99% availability SLA and guaranteed 15-minute cross-region RPO replication."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-025",
+  "scenario": "An enterprise uses BigQuery in region us-central1 as its core analytical warehouse. To satisfy business continuity and disaster recovery mandates, the data warehouse must be replicated to us-east1. In the event of a regional outage in us-central1, data analytics queries must be able to fail over to us-east1 immediately. What BigQuery feature provides cross-region disaster recovery?",
+  "correct": "A",
+  "clave_len": 267,
+  "densidad_clave": 7,
+  "eco_clave": 5,
+  "explanation": "BigQuery Cross-Region Dataset Replication creates continuous, asynchronous replicas of datasets in secondary regions. During regional disruptions, promoting the secondary replica to primary restores query processing with minimal RTO.",
+  "doc": "https://cloud.google.com/bigquery/docs/cross-region-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 267,
+    "densidad": 7,
+    "eco": 5,
+    "text": "Configure BigQuery Cross-Region Dataset Replication: Add a secondary replica in us-east1 to the primary dataset in us-central1; in a regional disaster, promote the secondary replica in us-east1 to primary using ALTER SCHEMA SET OPTIONS (primary_replica = 'us-east1')."
+   },
+   {
+    "letter": "B",
+    "len": 291,
+    "densidad": 4,
+    "eco": 5,
+    "text": "Schedule a BigQuery Data Transfer Service cross-region dataset copy from us-central1 to us-east1 every hour, and repoint the analytics service accounts, scheduled queries and BI connections at the us-east1 copy once the primary region has been declared unavailable by the incident commander."
+   },
+   {
+    "letter": "C",
+    "len": 264,
+    "densidad": 4,
+    "eco": 4,
+    "text": "Export every table nightly to Avro files in a dual-region Cloud Storage bucket spanning us-central1 and us-east1, and on a regional outage run load jobs from the most recent export to rebuild the dataset and its partitioning in us-east1 before reopening analytics."
+   },
+   {
+    "letter": "D",
+    "len": 254,
+    "densidad": 3,
+    "eco": 2,
+    "text": "Create a dataset in us-east1 holding authorized views that reference the production tables in us-central1, so analysts keep issuing the same SQL through the us-east1 dataset and their queries continue to resolve if the primary region becomes unavailable."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-003",
+  "scenario": "An enterprise runs its primary transactional database on Cloud SQL for PostgreSQL in us-central1 (with regional HA enabled). To protect against the catastrophic failure of the entire us-central1 region, a Cross-Region Read Replica is provisioned in us-east1. When us-central1 suffers a prolonged regional disaster, what is the exact operational procedure to fail over?",
+  "correct": "A",
+  "clave_len": 321,
+  "densidad_clave": 6,
+  "eco_clave": 5,
+  "explanation": "During a total regional disaster, Cloud SQL cross-region failover requires promoting the cross-region read replica to an independent primary read-write database and updating application database connection routing.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/replication/cross-region-replicas#promote-replica",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 321,
+    "densidad": 6,
+    "eco": 5,
+    "text": "Execute the DR runbook: 1) Promote the us-east1 Cross-Region Read Replica to become an independent standalone read-write primary database; 2) Update application connection strings or DNS/Private Service Connect endpoints to point to the newly promoted us-east1 instance; 3) Re-enable High Availability on the new primary."
+   },
+   {
+    "letter": "B",
+    "len": 311,
+    "densidad": 2,
+    "eco": 4,
+    "text": "Trigger the Cloud SQL high-availability failover on the us-central1 instance so the regional standby takes over the primary role, keep the same instance connection name in every application, and let the HA pair rebuild its standby automatically once the region is restored and the failed zone comes back online."
+   },
+   {
+    "letter": "C",
+    "len": 364,
+    "densidad": 3,
+    "eco": 2,
+    "text": "Provision a brand new Cloud SQL for PostgreSQL instance in us-east1, restore the most recent automated backup into it, re-point the application connection strings and Private Service Connect endpoints once the restore finishes, and re-enable High Availability after verifying data consistency and replaying the transactions still pending in the application queues."
+   },
+   {
+    "letter": "D",
+    "len": 283,
+    "densidad": 3,
+    "eco": 4,
+    "text": "Leave the us-east1 instance as a cross-region read replica and simply re-point the application connection strings, DNS records and Private Service Connect endpoints at it, since it already holds a continuously replicated copy of the primary and needs no further configuration change."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-022",
+  "scenario": "An enterprise is decommissioning its legacy SSH/RDP bastion host (jump box) VMs to eliminate public attack surfaces and maintenance costs. System administrators must be able to SSH and RDP into completely private Compute Engine VMs (with no external public IP addresses) securely from their laptops, authenticating via corporate Google Workspace credentials with MFA. What solution should you deploy?",
+  "correct": "A",
+  "clave_len": 275,
+  "densidad_clave": 8,
+  "eco_clave": 3,
+  "explanation": "IAP TCP Forwarding allows authenticated users to tunnel SSH, RDP, and other TCP traffic directly to private VMs without public IPs or bastion hosts. Traffic flows through Google's identity-aware proxy edge, requiring only an ingress firewall rule for 35.235.240.0/20.",
+  "doc": "https://cloud.google.com/iap/docs/using-tcp-forwarding",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 275,
+    "densidad": 8,
+    "eco": 3,
+    "text": "Enable Identity-Aware Proxy (IAP) TCP Forwarding, create a firewall rule allowing ingress on TCP 22/3389 from Google's IAP netblock (35.235.240.0/20), and grant administrators the roles/iap.tunnelResourceAccessor role to connect via 'gcloud compute ssh --tunnel-through-iap'."
+   },
+   {
+    "letter": "B",
+    "len": 264,
+    "densidad": 2,
+    "eco": 6,
+    "text": "Put the private VMs behind a Global External Application Load Balancer with Identity-Aware Proxy enabled on the backend service, and grant the administrators roles/iap.httpsResourceAccessor so that they authenticate with their corporate Workspace accounts and MFA."
+   },
+   {
+    "letter": "C",
+    "len": 259,
+    "densidad": 1,
+    "eco": 3,
+    "text": "Enable OS Login with two-factor authentication on the project, assign ephemeral external IP addresses to the VMs, restrict the ingress firewall rules for TCP 22 and 3389 to the corporate office CIDR ranges, and rotate the SSH keys through the metadata server."
+   },
+   {
+    "letter": "D",
+    "len": 257,
+    "densidad": 0,
+    "eco": 9,
+    "text": "Deploy Cloud NAT on the subnet holding the private VMs and enable Private Google Access together with OS Login and 2FA, so that administrators reach the instances through the NAT gateway using 'gcloud compute ssh' with their corporate Workspace credentials."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-036",
+  "scenario": "An enterprise security architect wants to detect in-memory malware, rootkits, and unauthorized cryptocurrency miners running inside Compute Engine guest VMs without installing third-party agent software inside the VM OS (which could degrade CPU performance or be bypassed if root is compromised). What Google Cloud native capability provides agentless in-memory threat detection?",
+  "correct": "C",
+  "clave_len": 215,
+  "densidad_clave": 0,
+  "eco_clave": 11,
+  "explanation": "VM Threat Detection (VMTD) in Security Command Center Premium is an agentless service that scans guest VM memory from the hypervisor layer. Because it operates outside the guest OS, it cannot be tampered with or disabled by attackers who gain root access inside the VM.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-vm-threat-detection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 202,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Deploy the Ops Agent to every VM and create log-based alerting policies that match suspicious process names, unexpected outbound connections and sustained high CPU consistent with cryptocurrency mining."
+   },
+   {
+    "letter": "B",
+    "len": 198,
+    "densidad": 0,
+    "eco": 5,
+    "text": "Enable Event Threat Detection in Security Command Center, which continuously scans Cloud Logging, VPC Flow Logs and Cloud DNS records for malicious activity signatures across the whole organization."
+   },
+   {
+    "letter": "C",
+    "len": 215,
+    "densidad": 0,
+    "eco": 11,
+    "text": "Enable Virtual Machine Threat Detection (VMTD) in Security Command Center Premium, which performs agentless memory scanning directly from the underlying Google Cloud hypervisor without guest OS performance overhead."
+   },
+   {
+    "letter": "D",
+    "len": 220,
+    "densidad": 0,
+    "eco": 0,
+    "text": "Enable Shielded VM with virtual TPM, Secure Boot and Measured Boot on every instance and alert on integrity monitoring findings whenever the early or late boot measurements diverge from the recorded baseline for that VM."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-017",
+  "scenario": "A streaming financial transaction pipeline running on Cloud Dataflow writes records into BigQuery. The pipeline must guarantee strictly Exactly-Once delivery semantics (no duplicate rows inserted even during pipeline worker restarts) while supporting 500,000 rows per second at lower cost than legacy streaming insert APIs. Which BigQuery insertion mechanism should the Dataflow pipeline utilize?",
+  "correct": "A",
+  "clave_len": 220,
+  "densidad_clave": 7,
+  "eco_clave": 4,
+  "explanation": "BigQuery Storage Write API provides high-performance, cost-effective gRPC streaming ingestion with support for robust stream offsets, enabling Dataflow to achieve strict Exactly-Once semantics at scale.",
+  "doc": "https://cloud.google.com/bigquery/docs/write-api",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 220,
+    "densidad": 7,
+    "eco": 4,
+    "text": "Use Apache Beam BigQueryIO with Method.STORAGE_WRITE_API (or STORAGE_API_AT_LEAST_ONCE with deduplication), leveraging gRPC streaming with stream offsets to guarantee exactly-once persistence and 5x lower ingestion cost."
+   },
+   {
+    "letter": "B",
+    "len": 211,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Use Apache Beam BigQueryIO with Method.STREAMING_INSERTS and supply a deterministic insertId on every row, so that BigQuery itself deduplicates repeated rows when a worker is restarted in the middle of a bundle."
+   },
+   {
+    "letter": "C",
+    "len": 197,
+    "densidad": 4,
+    "eco": 0,
+    "text": "Use Method.STORAGE_API_AT_LEAST_ONCE with the default stream and no downstream deduplication, since the Storage Write API commits rows in order and therefore already yields one row per input event."
+   },
+   {
+    "letter": "D",
+    "len": 200,
+    "densidad": 2,
+    "eco": 2,
+    "text": "Drop the Dataflow stage and publish transactions straight to a Pub/Sub topic configured with a BigQuery subscription, letting Pub/Sub write each message into the table without any intermediate runner."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-058",
+  "scenario": "Each of the 20 racing aircrafts generates 100Hz telemetry (altitude, pitch, yaw, roll, rotor RPM, G-force) producing 2,000 data points per second per aircraft. Live broadcast graphics engines and mobile apps require real-time 3D flight-path visualization with sub-10ms query latency. What storage and ingestion architecture should you implement?",
+  "correct": "C",
+  "clave_len": 200,
+  "densidad_clave": 8,
+  "eco_clave": 3,
+  "explanation": "Cloud Bigtable is Google Cloud's low-latency NoSQL database engineered for high-throughput time-series and sensor data, providing sub-10ms read/write latencies at millions of operations per second. Dataflow streams live data simultaneously to Bigtable (for live graphics) and BigQuery (for analytics).",
+  "doc": "https://cloud.google.com/bigtable/docs/schema-design-time-series",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 205,
+    "densidad": 0,
+    "eco": 5,
+    "text": "Stream the telemetry into BigQuery with the Storage Write API and let the broadcast graphics engine query the last seconds through a BI Engine reservation with materialized views refreshed on every insert."
+   },
+   {
+    "letter": "B",
+    "len": 208,
+    "densidad": 2,
+    "eco": 4,
+    "text": "Write the 40,000 points per second into Cloud SQL for MySQL with a composite primary key of aircraft_id and timestamp, serving the visualization from cross-zone read replicas placed near the broadcast trucks."
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "densidad": 8,
+    "eco": 3,
+    "text": "aircraft Telemetry -> Cloud Pub/Sub -> Cloud Dataflow -> Cloud Bigtable (with SSD storage and reverse-timestamp row keys) for live sub-10ms rendering, and BigQuery for post-race analytical deep-dives."
+   },
+   {
+    "letter": "D",
+    "len": 201,
+    "densidad": 1,
+    "eco": 5,
+    "text": "Write each telemetry sample into Cloud Firestore in Native mode with one document per aircraft and second, letting the graphics engine and the mobile apps subscribe with real-time onSnapshot listeners."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-050",
+  "scenario": "HRL licenses its exclusive live 4K race streams to international media partners. To prevent unauthorized screen recording and video piracy on mobile, web, and Smart TVs, video segments must be encrypted with Common Encryption (CENC) supporting Google Widevine, Apple FairPlay, and Microsoft PlayReady Digital Rights Management (DRM). Which Google Cloud media architecture enables multi-DRM encryption?",
+  "correct": "A",
+  "clave_len": 249,
+  "densidad_clave": 2,
+  "eco_clave": 9,
+  "explanation": "Google Cloud Live Stream API and Transcoder API support AES-128 sample-level Common Encryption (CENC) with CBCS and CTR modes. Integrating with a DRM key server injects DRM signaling into HLS and DASH manifests, enabling hardware-level decryption across iOS (FairPlay), Android/Chrome (Widevine), and Windows/Edge (PlayReady).",
+  "doc": "https://cloud.google.com/livestream/docs/drm",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 249,
+    "densidad": 2,
+    "eco": 9,
+    "text": "Configure Google Cloud Live Stream API / Transcoder API with Common Encryption (CENC) encryption keys integrated with a third-party DRM Key Management Server (KMS) supporting Widevine, FairPlay, and PlayReady DRM signaling in DASH and HLS manifests."
+   },
+   {
+    "letter": "B",
+    "len": 268,
+    "densidad": 0,
+    "eco": 2,
+    "text": "Serve the HLS and DASH segments through Media CDN with signed URLs and signed cookies scoped to short lived tokens, so only an authenticated partner session can fetch the manifest and the media segments from the edge, with tokens issued per partner and rotated hourly."
+   },
+   {
+    "letter": "C",
+    "len": 262,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Encrypt the HLS segments with AES-128 clear-key encryption and publish the key URI inside the playlist, serving the key from a Cloud Run endpoint that checks the partner session cookie before returning the key bytes over TLS, logging every key request for audit."
+   },
+   {
+    "letter": "D",
+    "len": 268,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Store the mezzanine and packaged assets in a Cloud Storage bucket encrypted with Cloud KMS customer-managed keys, protected by VPC Service Controls and Cloud Armor geographic restrictions on the delivery load balancer, with object versioning and audit logging enabled."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-023",
+  "scenario": "An operator mistakenly ran a DROP TABLE command or updated all customer balances to 0 in Cloud Spanner at 14:32:15 UTC. The database administrator needs to recover the database to its exact microsecond state at 14:31:00 UTC (1 minute prior to the corruption) with minimal data loss. What feature provides this recovery capability?",
+  "correct": "D",
+  "clave_len": 240,
+  "densidad_clave": 6,
+  "eco_clave": 5,
+  "explanation": "Cloud Spanner Point-in-Time Recovery (PITR) retains historical data versions for up to 7 days (version_retention_period). Administrators can read historical data or restore the entire database to any microsecond timestamp in the retention window.",
+  "doc": "https://cloud.google.com/spanner/docs/pitr",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 223,
+    "densidad": 0,
+    "eco": 2,
+    "text": "Restore the most recent backup produced by the Spanner backup schedule, which ran at 02:00 UTC, into a new database and replay the application's request log from 02:00 up to 14:31:00 to rebuild the intervening transactions."
+   },
+   {
+    "letter": "B",
+    "len": 207,
+    "densidad": 0,
+    "eco": 3,
+    "text": "Import the most recent hourly Avro export of the database from Cloud Storage into a new Spanner database and reapply the mutations captured by the change stream reader for the remaining minutes of that hour."
+   },
+   {
+    "letter": "C",
+    "len": 222,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Fail the instance over to another region of the multi-region configuration and serve reads and writes from the replicas there, which still hold the customer balances as they were before the erroneous statement was applied."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "densidad": 6,
+    "eco": 5,
+    "text": "Use Cloud Spanner Point-in-Time Recovery (PITR) with configured version_retention_period (up to 7 days), executing a restore operation specifying the exact recovery timestamp '2026-04-17T14:31:00.000000Z' to create a new recovered database."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-001",
+  "scenario": "A retail order processing pipeline receives status updates for customer orders (e.g., 'OrderCreated', 'PaymentProcessed', 'OrderShipped'). Events for the same order_id must be delivered to subscribers in strict chronological order. However, messages for different order_ids can be processed concurrently in parallel. How should you configure Cloud Pub/Sub?",
+  "correct": "C",
+  "clave_len": 325,
+  "densidad_clave": 7,
+  "eco_clave": 3,
+  "explanation": "Cloud Pub/Sub Ordering Keys guarantee strict in-order delivery of messages sharing the same key to subscribers. Different ordering keys are partitioned and processed in parallel across multiple subscribers, combining strict per-entity ordering with horizontal scalability.",
+  "doc": "https://cloud.google.com/pubsub/docs/ordering",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 286,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Shard the pipeline into 100 topics by hashing order_id modulo 100, give each topic one subscription consumed by exactly one single-threaded subscriber process, and rely on a single consumer draining each topic's backlog serially to keep every order's events in their published sequence."
+   },
+   {
+    "letter": "B",
+    "len": 283,
+    "densidad": 3,
+    "eco": 1,
+    "text": "Publish every event with the ordering_key attribute set to the order_id and leave the subscription at its default settings, since Pub/Sub buffers messages that share an ordering key at the publisher and hands that buffer to the subscriber as one contiguous batch in publish sequence."
+   },
+   {
+    "letter": "C",
+    "len": 325,
+    "densidad": 7,
+    "eco": 3,
+    "text": "Publish messages with an 'ordering_key' set to the 'order_id' and enable 'Message Ordering' (enable_message_ordering = true) on the Pub/Sub subscription; Pub/Sub delivers messages with the same ordering key in exact publish sequence while distributing different ordering keys across concurrent subscriber threads in parallel."
+   },
+   {
+    "letter": "D",
+    "len": 367,
+    "densidad": 2,
+    "eco": 5,
+    "text": "Publish the events unordered and reorder them downstream in a Cloud Dataflow streaming pipeline, keying by order_id and applying an event-time window with thirty seconds of allowed lateness, then sorting each key's buffered events by their embedded publish timestamp in a stateful DoFn so the order's status transitions are emitted in sequence once the window closes."
+   }
+  ]
+ }
+]

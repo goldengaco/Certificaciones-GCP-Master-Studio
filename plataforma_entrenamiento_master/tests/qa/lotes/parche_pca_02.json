@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D5-025",
+  "options": {
+   "A": "Publish each pipeline as a Cloud Composer DAG that invokes DataflowRunner against a JAR or Python package staged on Cloud Storage, so analysts trigger the DAG from the Airflow UI and pass parameters as DAG run configuration.",
+   "B": "Legacy Classic Dataflow Templates, staging the serialized JSON execution graph on Cloud Storage and exposing every runtime parameter through Apache Beam ValueProvider interfaces, launched from Cloud Console or the templates.launch REST endpoint.",
+   "C": "Build each pipeline into a Docker image, push it to Artifact Registry, and run it as a long-lived Cloud Run service that starts the Beam pipeline with the DirectRunner whenever an analyst calls its parameterised HTTP endpoint."
+  },
+  "distractors": {
+   "A": "Composer builds the execution graph from source on the Airflow worker at submit time, so the versioned, immutable artifact in Artifact Registry that the requirement names never exists, and analysts still depend on the developers' code and Python dependency environment being resolvable at every launch.",
+   "B": "Classic Templates serialise the graph at build time, so only ValueProvider-wrapped values can change at launch: any parameter that alters the graph shape (dynamic sources, sinks or schemas) is impossible, arbitrary dependencies are unsupported, and the artifact is a Cloud Storage JSON file, not a versioned Artifact Registry image.",
+   "C": "The packaging is right but the runner is wrong: DirectRunner executes the whole pipeline inside the single Cloud Run container with no distributed workers, autoscaling, checkpointing or watermark handling, so an unbounded streaming pipeline dies with the request timeout instead of running on the Dataflow service."
+  }
+ },
+ {
+  "id": "PCA-D4-024",
+  "options": {
+   "A": "Configure aggressive horizontal autoscaling on the backend Managed Instance Group with a 40% CPU target and a 30-second cool-down, and raise both the Cloud SQL max_connections limit and each replica's connection pool size, so every incoming request, critical or not, is absorbed by extra stateless replicas until the spike passes.",
+   "B": "Enable client-side and sidecar retries with exponential backoff and jitter, raise the Envoy request timeout from 5 to 60 seconds, and increase the connection pool queue depth and the connection wait limit so that requests park waiting for a free database connection instead of being rejected while the spike lasts.",
+   "C": "Put Memorystore for Redis in front of every endpoint with a long TTL and a write-through policy, serving all reads from cache including cart contents, inventory counts and checkout confirmations, so that for the duration of the spike the database receives only write traffic and its CPU utilization stops climbing."
+  },
+  "distractors": {
+   "A": "Autoscaling the stateless tier multiplies the number of open connections against the database, which is the resource actually saturating: each new replica adds load to the bottleneck instead of relieving it, and the design still gives checkout no priority over recommendations, so the whole service degrades uniformly.",
+   "B": "Retries amplify the offered load against an already saturated database (retry storm), and a deeper queue with a longer timeout converts saturation into unbounded latency rather than shedding it: every request, checkout included, waits and then times out, which is the cascading failure the pattern is supposed to prevent.",
+   "C": "Checkout is a transactional read-write path whose correctness depends on current inventory and cart state, so it cannot be served from a long-TTL cache without double charges and oversells; and a uniform cache applies no prioritisation, so every recommendation miss still lands on the database."
+  }
+ },
+ {
+  "id": "PCA-D5-014",
+  "options": {
+   "B": "Rewrite the load as a single Partitioned DML statement (INSERT INTO target SELECT ... FROM staging), since Partitioned DML is executed by Spanner as many independent smaller transactions and is therefore not bound by the per-commit mutation limit.",
+   "C": "Drop the three secondary indexes before the bulk load and rebuild them with CREATE INDEX once the data is committed, then retry the same single 100,000-row transaction now that only the ten base-table columns, and no index entries, are mutated for each row.",
+   "D": "Increase the instance from 1 to 10 nodes and file a quota increase request for 'Mutations per commit' under IAM & Admin > Quotas, then retry the unchanged 100,000-row load once the larger per-transaction mutation budget has been approved for the project."
+  },
+  "distractors": {
+   "B": "Partitioned DML supports only UPDATE and DELETE statements: INSERT is explicitly unsupported, so the statement is rejected before any row is written. Partitioned transactions are also still individually subject to the mutation limit, so the premise of the option is wrong twice over.",
+   "C": "The arithmetic still fails: 100,000 rows x 10 columns is 1,000,000 mutations, more than twelve times the 80,000 limit, so the commit is rejected exactly as before. Removing indexes changes the multiplier, not the need to split the ingest into batched commits.",
+   "D": "80,000 mutations per commit is a hard system limit of the Spanner API, not a per-project quota exposed in the Quotas page, and it does not scale with compute capacity: adding nodes raises throughput and storage limits, so neither the resize nor the quota request changes the transaction outcome."
+  }
+ },
+ {
+  "id": "PCA-D3-051",
+  "options": {
+   "A": "Leave the bucket publicly readable for cache-fill performance and attach a Cloud Armor edge security policy with rate limiting to the backend bucket, so floods are dropped at the Google edge before they reach storage.",
+   "C": "Keep the bucket private and issue short-lived V4 signed URLs from a Cloud Run service, which fans hand to their players so each media segment is fetched directly from the storage.googleapis.com endpoint.",
+   "D": "Place the origin bucket inside a VPC Service Controls perimeter restricting storage.googleapis.com and add an ingress rule for the serving project, so any request coming from outside the perimeter is denied before it ever reaches an object."
+  },
+  "distractors": {
+   "A": "A publicly readable bucket is still directly addressable at storage.googleapis.com, so attackers who guess the bucket name bypass the load balancer entirely and the edge policy never sees the flood; edge security policies also do not support rate limiting.",
+   "C": "The final GET goes straight to the Cloud Storage API endpoint, which is precisely the path that must be closed: signed URLs authorise the request but route it around the load balancer, so Cloud Armor and Cloud CDN never inspect or absorb it.",
+   "D": "Wrong class of control: a service perimeter decides which principals and networks may call the Cloud Storage API, it never places Cloud Armor or the load balancer in the request path, so the mandated edge inspection is still absent. It also leaves the public IAM bindings on the bucket untouched, so the bucket name remains directly addressable."
+  }
+ },
+ {
+  "id": "PCA-D3-011",
+  "options": {
+   "A": "Create an Access Level in Access Context Manager matching source IP 203.0.113.0/24, attach it to the service perimeter's list of access levels so the partner can reach the perimeter at all, and grant that service account roles/bigquery.dataViewer on the research dataset only.",
+   "B": "Create a second service perimeter around the partner's project and join the two with a Perimeter Bridge, so both perimeters can call bigquery.googleapis.com across the boundary for the research dataset while staying closed to every other network and identity on the internet.",
+   "D": "Configure an Egress Rule on the service perimeter allowing identity 'partner-reader@external-org.iam.gserviceaccount.com', service 'bigquery.googleapis.com' and the read methods bigquery.jobs.create and bigquery.tables.get from the 203.0.113.0/24 range."
+  },
+  "distractors": {
+   "A": "A perimeter access level is evaluated for every restricted service and every method, so it cannot be narrowed to two read operations; and roles/bigquery.dataViewer already contains bigquery.tables.export, so the partner can still extract the dataset to Cloud Storage.",
+   "B": "Perimeter bridges only join perimeters within the same organization's Access Context Manager policy, so an external partner's project cannot be enrolled; a bridge also grants mutual access for all protected services with no identity, source IP or method scoping.",
+   "D": "Right rule type, wrong direction: egress rules govern calls made from principals inside the perimeter towards resources outside it. A partner calling into the perimeter is ingress traffic, so the rule never matches and the request is still denied by the perimeter."
+  }
+ },
+ {
+  "id": "PCA-D4-038",
+  "options": {
+   "A": "Configure Object Lifecycle Management rules with age-based SetStorageClass actions on the bucket (Nearline at 30 days, Coldline at 90 days, Archive at 365 days) together with a matchesPrefix condition per department, so every object is demoted automatically as it ages with no operational effort.",
+   "B": "Write a Cloud Function subscribed to the bucket's object change notifications that stamps Custom Time on every object each time it is read, then add lifecycle rules keyed on daysSinceCustomTime with 30, 90 and 365 day thresholds so that tiering tracks real access rather than creation age.",
+   "C": "Enable Autoclass on the bucket and, to guarantee that genuinely cold documents reach the cheapest tier instead of stopping at Nearline, add an Object Lifecycle Management rule with a SetStorageClass action that moves anything whose age exceeds 365 days into Archive storage."
+  },
+  "distractors": {
+   "A": "Lifecycle rules act on object age, not on access: a document read fifty times a week is still demoted on its thirtieth day, and a file untouched for two years is charged Archive retrieval fees plus the early-deletion minimum when it is finally read, which is the exact cost risk being avoided.",
+   "B": "Cloud Storage object change notifications fire on finalize, metadata update, delete and archive events but never on a read, so Custom Time can never be refreshed when an object is accessed; the mechanism collapses back to age-based tiering while adding a metadata rewrite charge per object across 20 PB.",
+   "C": "The configuration is rejected: a bucket cannot have Autoclass enabled and an Object Lifecycle Management configuration containing a SetStorageClass action or a matchesStorageClass condition at the same time. Autoclass already promotes cold objects to Archive when the terminal storage class is set to Archive."
+  }
+ },
+ {
+  "id": "PCA-D4-030",
+  "options": {
+   "A": "Create a log-based counter metric in Cloud Logging that matches severity=ERROR across the GKE and Cloud Run log sinks, and attach an alerting policy that fires whenever the daily exception count rises above its usual seven-day baseline.",
+   "B": "Route all logs to a BigQuery linked dataset and have developers run scheduled SQL queries over the jsonPayload and textPayload columns, grouping by service name and message text to rank the most frequent exceptions every morning.",
+   "C": "Enable Cloud Trace and Cloud Profiler on every GKE and Cloud Run service so distributed traces and CPU and heap profiles reveal which code paths are hot, and read the exception details from the annotated spans of the requests that failed."
+  },
+  "distractors": {
+   "A": "A counter metric collapses every exception into a single time series, so it tells you that errors went up but not which stack trace is responsible; it cannot fingerprint a signature, so a brand-new exception class introduced by a release is invisible unless it changes the total volume.",
+   "B": "SQL over raw log text has no stack-trace parser or fingerprinting, so the same defect logged with different line offsets, thread names or variable values is counted as many distinct rows; grouping is manual, retrospective and gives no notification the first time an unseen error appears.",
+   "C": "Adjacent products: Cloud Trace measures latency across sampled spans and Cloud Profiler samples CPU and heap consumption. Neither parses exception stack traces nor deduplicates them into tracked issues, and sampling means most of the 10,000 daily exceptions are never recorded at all."
+  }
+ },
+ {
+  "id": "PCA-D6-010",
+  "options": {
+   "A": "Take a snapshot of the Regional Persistent Disk from the surviving us-central1-b replica, restore it into a new zonal disk in that zone, and attach the restored disk to the standby VM before the recovery script starts the database process.",
+   "B": "Call 'gcloud compute instances detach-disk' against the unresponsive primary VM in us-central1-a to release the attachment, then attach the regional disk to the standby VM with an ordinary attach-disk call once the control plane confirms the detach completed.",
+   "D": "Pre-attach the Regional Persistent Disk to both the primary and the standby VM in read-only multi-writer mode, so the standby already has the volume mounted and only has to remount it read-write and replay the journal when the failover script runs."
+  },
+  "distractors": {
+   "A": "Snapshot and restore of a multi-terabyte disk takes tens of minutes and produces a point-in-time copy, so it reintroduces both an RTO measured in minutes and a non-zero RPO, when the synchronous replica already sitting in us-central1-b is byte-for-byte current and needs no copy at all.",
+   "B": "detach-disk is a control-plane operation targeted at the instance, and the instance is unreachable in a failed zone, so the call hangs or returns an error and the stale attachment is never released. Breaking exactly that lock without the dead VM's cooperation is why force-attach exists.",
+   "D": "Regional Persistent Disks do not support multi-writer mode, and a disk attached read-only to a second instance cannot be promoted to read-write while the first attachment still stands, so the standby can never accept database writes without the forced detach from the dead primary."
+  }
+ },
+ {
+  "id": "PCA-D3-015",
+  "options": {
+   "A": "Google default encryption, where each object and disk is encrypted with a data encryption key that is itself wrapped by a key generated, stored and automatically rotated inside Google's internal keystore with no customer action.",
+   "C": "Customer-Managed Encryption Keys (CMEK) with Cloud KMS backed by Cloud HSM at FIPS 140-2 Level 3, with the key ring in a customer-owned project, separate key custodian roles and the customer holding the destroy permission.",
+   "D": "Cloud External Key Manager (Cloud EKM), where Cloud KMS holds only a URI reference to a key hosted in the customer's own third-party HSM and brokers every wrap and unwrap operation out to that external endpoint over Private Service Connect."
+  },
+  "distractors": {
+   "A": "The key material is generated and persisted by Google in Google's keystore, which is precisely what the sovereign requirement forbids: the customer neither supplies nor controls the raw bytes, and revoking access is impossible.",
+   "C": "The key is customer-controlled but it still lives inside Google infrastructure: Cloud KMS and Cloud HSM store and use the key material on Google hardware, so it fails the requirement that raw keys never be retained on Google Cloud.",
+   "D": "EKM keeps the key material outside Google, but the customer never transmits the raw AES-256 key on the request: Cloud KMS holds an EKM key resource and calls the external manager on the customer's behalf, so it is not the per-call raw-key model mandated."
+  }
+ },
+ {
+  "id": "PCA-D6-029",
+  "options": {
+   "A": "Provision a single-region Cloud Spanner instance in us-central1 with its three read-write replicas spread across three zones, enable point-in-time recovery with a seven-day version retention window, and copy hourly backups to us-east1 to restore from if the region is lost.",
+   "B": "Provision a regional Cloud Spanner instance in us-central1 and extend it through a custom instance configuration that adds read-only replicas in us-east1 and europe-west1, routing players to their nearest replica with a global load balancer for the duration of the outage.",
+   "C": "Run two independent regional Cloud Spanner instances in us-central1 and us-east1 and keep them synchronised with a Dataflow pipeline that reads Spanner change streams from each side, swinging player traffic to the surviving instance with a global external load balancer."
+  },
+  "distractors": {
+   "A": "A regional configuration places all voting replicas in the zones of one region, so a us-central1 outage takes the whole database offline; recovery then means restoring a backup into another region, which costs tens of minutes of RTO and loses every purchase committed since the last hourly backup.",
+   "B": "Read-only replicas do not participate in the Paxos write quorum and cannot be promoted to accept writes, so the moment the read-write region fails, players can still read their inventory but every in-game purchase is rejected, which violates the zero-lost-purchase requirement outright.",
+   "C": "Change-stream replication is asynchronous, so the standby always trails the primary and purchases committed in the seconds before the outage are lost, giving a non-zero RPO; two independent instances also have no single source of truth, so writes conflict once traffic swings back."
+  }
+ },
+ {
+  "id": "PCA-D6-004",
+  "options": {
+   "A": "Convert the cluster to a multi-zonal cluster, keeping the single control plane in us-central1-a but spreading the worker node pools across us-central1-a, us-central1-b and us-central1-f, so that pods and their persistent volumes survive the loss of any one zone.",
+   "C": "Provision two independent zonal clusters in us-central1-a and us-central1-f, register both in a fleet and place them behind Multi Cluster Ingress, so traffic is sent to whichever cluster is healthy while the other one has its control plane upgraded.",
+   "D": "Keep the zonal cluster and configure a maintenance window with maintenance exclusions so that control plane upgrades only ever run at 03:00 on Sunday, and enable surge upgrades on the node pools so worker capacity is preserved during every node rollout."
+  },
+  "distractors": {
+   "A": "A multi-zonal cluster replicates only the nodes: the control plane is still a single master in us-central1-a, so it remains unavailable during master upgrades and disappears with that zone, keeping the 99.5% zonal control plane SLA instead of the required 99.95%.",
+   "C": "Each cluster still carries a single-zone control plane and the 99.5% zonal SLA, so the requirement of zero control plane interruption is unmet for whichever cluster is upgrading; Multi Cluster Ingress steers data-plane traffic only and never makes an API server highly available.",
+   "D": "This moves the outage instead of removing it: a zonal control plane is one VM, so the API server is still down during the Sunday upgrade and for the entire duration of any us-central1-a failure, and maintenance windows have no effect on the 99.5% SLA that applies."
+  }
+ },
+ {
+  "id": "PCA-D5-012",
+  "options": {
+   "A": "Deploy GPU-accelerated Compute Engine A2 instances in the nearest Google Cloud region and connect the factory with redundant 10 Gbps Dedicated Interconnect circuits, Premium Tier networking and Cloud Router VLAN attachments, eliminating the jitter and packet loss of the public internet path.",
+   "C": "Serve the classification model from a Vertex AI online prediction endpoint reached over Private Service Connect, enabling automatic request batching and A100 accelerators so that per-image inference time on the accelerator itself falls well under one millisecond per board.",
+   "D": "Terminate the camera stream at the Google edge by putting a global external Application Load Balancer with Cloud CDN in front of the inference service, so that requests are answered from the Google point of presence closest to the plant instead of travelling to the region."
+  },
+  "distractors": {
+   "A": "Dedicated Interconnect removes internet jitter and packet loss but cannot shorten the physical path: the 30 ms figure is dominated by propagation and switching delay to the region, so even a perfect private circuit leaves the round trip an order of magnitude above the 5 ms inspection budget.",
+   "C": "Optimising the accelerator attacks the wrong term of the latency budget: the network round trip to the regional endpoint is still 30 ms, and enabling request batching makes it worse because each image must now wait for the batch window to fill before the model is invoked at all.",
+   "D": "A CDN point of presence terminates connections and serves cached bytes; it cannot execute customer inference code, so every frame is still forwarded to the region for classification. Each circuit board image is unique, so there is nothing cacheable for the edge to return."
+  }
+ },
+ {
+  "id": "PCA-D5-013",
+  "options": {
+   "A": "Leave concurrency at 1 but enable CPU always allocated with startup CPU boost and set minimum instances to 20, so the event loop is never throttled and warm containers absorb the traffic without cold starts.",
+   "C": "Set concurrency to the maximum value of 1000 while keeping the default 1 vCPU and 512 MiB container, so a very small number of instances absorbs the whole request volume and billing drops accordingly.",
+   "D": "Leave concurrency at 1 and instead raise the maximum instances limit and the Cloud SQL max_connections setting, so the service is free to scale out to thousands of single-request containers during traffic peaks."
+  },
+  "distractors": {
+   "A": "CPU allocation and warm instances address cold starts, not throughput: with concurrency pinned at 1 an instance can still serve exactly one request at a time, so the instance count keeps tracking the concurrent request count, utilisation stays near 20% and the bill grows.",
+   "C": "The direction is right but the value overshoots a real limit: 1000 in-flight requests exhaust the container's memory and open far more Cloud SQL connections than the instance permits, so requests queue on connection acquisition and the container is killed for exceeding memory.",
+   "D": "Removing the scaling ceiling keeps one container and one database connection per in-flight request, so cost rises linearly with traffic while each instance still idles at 20% CPU, and the Cloud SQL connection limit becomes the next hard wall the service hits."
+  }
+ },
+ {
+  "id": "PCA-D3-038",
+  "options": {
+   "B": "Attach a Cloud Armor edge security policy to the backend service and write the rules there, combining origin.region_code allow-listing for US and CA with Google Threat Intelligence named lists, so that traffic is filtered in the caching layer before any backend is selected.",
+   "C": "Create a hierarchical firewall policy at the organization node that denies ingress from every source range except the US and Canada allocations, plus a deny rule holding the published Tor exit-node ranges, refreshed nightly by a Cloud Function that rewrites the policy.",
+   "D": "Implement the checks in application middleware on the backend VMs, resolving the client address from the X-Forwarded-For header against a MaxMind GeoIP2 database and an hourly Tor exit-node feed, and returning HTTP 403 for anything outside the US and Canada."
+  },
+  "distractors": {
+   "B": "Edge security policies can only be attached to backend buckets and Cloud CDN-enabled backend services, not to the VM-backed backend service here, and their expression set is limited to origin and request attributes: Google Threat Intelligence lists are not available in an edge policy at all.",
+   "C": "VPC firewall rules match CIDR ranges and tags, never geography or Google-curated lists. Worse, traffic arriving through a global external Application Load Balancer reaches the VMs from Google Front End ranges, so a client-IP firewall rule cannot see the real origin and blocks nothing.",
+   "D": "The enforcement point is behind the load balancer, so every hostile request still consumes backend VM capacity, which is exactly what the requirement forbids; X-Forwarded-For is also client-controllable, so an attacker prepends a US address and the middleware allows the request."
+  }
+ },
+ {
+  "id": "PCA-D3-016",
+  "options": {
+   "B": "Enable Shielded VM on N2 instances with Secure Boot, virtual TPM, Measured Boot and integrity monitoring, alerting the security team whenever the boot measurements drift from the recorded baseline for that instance.",
+   "C": "Encrypt the persistent disks and the shared datasets with CMEK keys held in Cloud HSM at FIPS 140-2 Level 3 and enforce TLS 1.3 on every service-to-service call between consortium members.",
+   "D": "Run the workloads on Sole-Tenant Nodes with node affinity labels and CPU overcommit disabled, so that the consortium's analytics VMs occupy physically dedicated hardware which no other Google Cloud customer shares."
+  },
+  "distractors": {
+   "B": "Shielded VM protects and attests the boot sequence and detects boot-level rootkits, but the guest's RAM stays in cleartext for the hypervisor, so it delivers none of the in-use memory encryption the regulator demands.",
+   "C": "This covers only encryption at rest and in transit, the two states the mandate says are already insufficient: once records are loaded for the fraud model to score, they sit decrypted in ordinary RAM where a memory scrape reads them.",
+   "D": "Sole tenancy removes other customers from the physical host but not the hypervisor, which still has plaintext access to the guest's memory pages, so it does not defend against the administrator and rootkit threat that is actually named."
+  }
+ },
+ {
+  "id": "PCA-D3-039",
+  "options": {
+   "A": "Enforce 2-Step Verification with hardware security keys (FIDO2/Titan) for every developer and administrator, shorten the Google Cloud session length in the Admin console to four hours, and require reauthentication with the key before any sensitive administrative action or role grant.",
+   "B": "Build a VPC Service Controls perimeter around every project and attach an Access Level admitting only the corporate egress ranges 198.51.100.0/22, so that any API call or Cloud Console action arriving from an address outside those ranges is refused at the perimeter boundary.",
+   "C": "Publish the administrative tooling behind Identity-Aware Proxy with an IAP access policy requiring membership in the platform-admins group and a client TLS certificate issued by the corporate certificate authority and installed only on managed laptops by the MDM agent."
+  },
+  "distractors": {
+   "A": "Strong authentication only proves who is holding the credential, not what machine it is being used from: a security key plugs into a personal laptop just as well as a corporate one, so nothing evaluates disk encryption, OS patch level or management state, and the scenario already assumes MFA is in place.",
+   "B": "An IP-only access level cannot tell a managed laptop from a personal one sitting on the same corporate Wi-Fi or VPN, so the device posture requirement is unenforced; VPC Service Controls also governs API access to resources inside the perimeter rather than sign-in to the Cloud Console.",
+   "C": "IAP guards HTTP(S) applications published behind a load balancer or on App Engine; it does not sit in front of console.cloud.google.com or the Google Cloud APIs, so an administrator on an unmanaged laptop still signs in to the Console and runs gcloud without ever passing through IAP."
+  }
+ },
+ {
+  "id": "PCA-D3-049",
+  "options": {
+   "A": "Export Cloud Asset Inventory feeds to BigQuery and build a Looker Studio dashboard with custom SQL rules that map each resource configuration to a 45 CFR 164.312 control and compute the compliance percentage.",
+   "B": "Enable Assured Workloads with the HIPAA compliance regime on the folder holding the clinical projects, so the platform continuously enforces the controls and reports the resulting compliance score to the officer.",
+   "D": "Turn on Cloud Audit Logs Data Access logging across the organization, route it to a Log Analytics bucket and build a saved dashboard that scores each HIPAA control from the observed API activity."
+  },
+  "distractors": {
+   "A": "Cloud Asset Inventory returns resource configuration snapshots, not security findings, so every misconfiguration detection, every control mapping and every scoring rule has to be written and then maintained by hand as the HIPAA benchmark and Google's resource schemas change.",
+   "B": "Assured Workloads is preventive: it constrains data residency, support personnel access and which services may be provisioned in the folder. It never evaluates the posture of resources already deployed, so unencrypted disks and public buckets produce no finding and no score.",
+   "D": "Audit logs record who invoked which API and when, which is activity rather than posture: a bucket that has been public since creation generates no audit event, so the dashboard cannot report the misconfigurations the Compliance Officer is required to attest to."
+  }
+ },
+ {
+  "id": "PCA-D3-036",
+  "options": {
+   "A": "Deploy the Ops Agent to every VM and create log-based alerting policies that match suspicious process names, unexpected outbound connections and sustained high CPU consistent with cryptocurrency mining.",
+   "B": "Enable Event Threat Detection in Security Command Center, which continuously scans Cloud Logging, VPC Flow Logs and Cloud DNS records for malicious activity signatures across the whole organization.",
+   "D": "Enable Shielded VM with virtual TPM, Secure Boot and Measured Boot on every instance and alert on integrity monitoring findings whenever the early or late boot measurements diverge from the recorded baseline for that VM."
+  },
+  "distractors": {
+   "A": "This is exactly the in-guest agent the requirement excludes: it consumes guest CPU and an attacker with root can stop it or hide the process from it, and log rules cannot observe malware that never touches disk or spawns a named process.",
+   "B": "Event Threat Detection inspects the cloud control plane through logs, so it catches suspicious IAM grants or mining pool DNS lookups; it never reads guest memory, so an in-memory rootkit making no logged API or DNS call stays invisible to it.",
+   "D": "Measured Boot attests the boot chain and catches boot-level rootkits, but it takes no further measurement once the VM is running, so code injected into an already-running process produces no integrity finding at all."
+  }
+ },
+ {
+  "id": "PCA-D3-017",
+  "options": {
+   "B": "Set the secret's rotation schedule with next_rotation_time and rotation_period = 2592000s and let Secret Manager itself generate the replacement password, apply it to the Cloud SQL user and promote the new version as the enabled one automatically every 30 days.",
+   "C": "Set version_destroy_ttl to 30 days and an expire_time on each secret version, so stale credentials are destroyed on schedule and every application is forced to request a freshly created version from Secret Manager the next time it authenticates to the Cloud SQL database.",
+   "D": "Schedule a Cloud Scheduler job every 30 days that invokes a Cloud Run job to generate a password, run ALTER USER against the Cloud SQL instance and then overwrite the payload of the existing enabled secret version in place, so consumers pinned to 'latest' need no change."
+  },
+  "distractors": {
+   "B": "Secret Manager's rotation feature only emits a notification on the configured topic when the rotation time arrives: it never generates key material and never touches the downstream system, so with no subscriber acting on the event the password is never actually changed.",
+   "C": "Destruction is not creation: version_destroy_ttl and expire_time only remove old material, so nothing generates the new password or updates the Cloud SQL user, and every consumer still bound to the destroyed version starts failing authentication instead of rolling forward.",
+   "D": "The orchestration is plausible but the last step is impossible: Secret Manager versions are immutable, so a payload cannot be overwritten in place, only added as a new version and the old one disabled or destroyed, which is also what gives the rollback path if the update fails."
+  }
+ },
+ {
+  "id": "PCA-D4-036",
+  "options": {
+   "A": "Purchase a 2,000-slot Enterprise Edition baseline on a three-year capacity commitment to capture the 40% discount, and let autoscaling add the remaining slots on top of that committed baseline whenever daytime demand climbs above 2,000 slots.",
+   "B": "Configure a BigQuery Standard Edition reservation with a baseline of 100 slots and autoscaling up to a maximum of 3,500 slots, and buy a one-year commitment on that baseline so the cheapest edition covers both the overnight floor and the daytime peak.",
+   "C": "Move every workload to on-demand pricing billed per terabyte scanned and control spend with custom query quotas per user and per project, removing reservation and slot capacity management from the platform team's responsibilities entirely."
+  },
+  "distractors": {
+   "A": "The commitment is priced against the wrong number: the workload only needs 100 slots overnight, so 1,900 committed slots sit idle for a large part of every day and the three-year term locks that waste in, which is the exact overspend the migration is meant to remove.",
+   "B": "Standard Edition supports neither baseline slots nor capacity commitments, its compute model is autoscaling only, so the reservation is rejected and the steady-state 100 slots can never earn a committed-use discount even if the peak ceiling were configurable.",
+   "C": "On-demand bills bytes scanned rather than capacity, so a 3,500-slot daytime peak becomes an unbounded and unpredictable per-terabyte bill with no reserved floor; custom quotas cap it only by hard-failing analysts' queries once the byte limit is reached."
+  }
+ },
+ {
+  "id": "PCA-D5-017",
+  "options": {
+   "B": "Use Apache Beam BigQueryIO with Method.STREAMING_INSERTS and supply a deterministic insertId on every row, so that BigQuery itself deduplicates repeated rows when a worker is restarted in the middle of a bundle.",
+   "C": "Use Method.STORAGE_API_AT_LEAST_ONCE with the default stream and no downstream deduplication, since the Storage Write API commits rows in order and therefore already yields one row per input event.",
+   "D": "Drop the Dataflow stage and publish transactions straight to a Pub/Sub topic configured with a BigQuery subscription, letting Pub/Sub write each message into the table without any intermediate runner."
+  },
+  "distractors": {
+   "B": "insertId deduplication is best effort over a short window of a few minutes, so retries after a longer worker outage insert duplicates; the legacy insertAll path is also the more expensive API the requirement is explicitly trying to move away from.",
+   "C": "The at-least-once mode deliberately trades the exactly-once guarantee for lower latency and cost, and the default stream carries no offsets, so a retried append writes the same rows again with nothing downstream to remove them.",
+   "D": "Pub/Sub BigQuery subscriptions deliver at least once, so a redelivered message becomes a duplicate row in the table, and removing the runner also removes the pipeline's transformation and windowing stage entirely."
+  }
+ },
+ {
+  "id": "PCA-D5-033",
+  "options": {
+   "B": "Configure the Cloud Run service request timeout to 7200 seconds so that a single WebSocket connection spans the whole two-hour race window, which removes the need for any client-side reconnection or state resynchronisation logic.",
+   "C": "Enable session affinity on the Cloud Run service and set minimum instances so containers stay warm and each fan is pinned to a single instance for the whole race, leaving the request timeout at its 300-second default value.",
+   "D": "Replace WebSockets with Server-Sent Events over HTTP/2 on the same Cloud Run service, since a one-way SSE stream is an ordinary HTTP response and is therefore not subject to the connection limits that apply to WebSocket upgrades."
+  },
+  "distractors": {
+   "B": "7200 seconds exceeds the maximum: a Cloud Run service request timeout can be set no higher than 3600 seconds, so the deployment is rejected and no configuration can cover two hours without the client reconnecting.",
+   "C": "Session affinity is best effort routing and does not extend the timeout at all: the 300-second default still terminates every WebSocket, so each fan is disconnected roughly twenty-four times during a two-hour race.",
+   "D": "Cloud Run treats an SSE stream as exactly the same kind of long-running HTTP request as a WebSocket, so it is cut by the identical request timeout; swapping the protocol changes nothing about how long the connection survives."
+  }
+ },
+ {
+  "id": "PCA-D3-053",
+  "options": {
+   "A": "Build authorized views over the base table that wrap the SSN and MRN columns in SAFE.SHA256, grant the analysts access only to those views through an authorized dataset, and let compliance officers query the underlying table directly.",
+   "B": "Run Sensitive Data Protection de-identification templates with format-preserving encryption over the warehouse tables and land a masked copy of every table in a separate dataset that only the epidemiology analysts are granted access to.",
+   "D": "Create a policy tag taxonomy in Dataplex, attach the tags to the SSN and MRN columns to turn on BigQuery column-level access control, and grant the Fine-Grained Reader role on that taxonomy only to the compliance officers."
+  },
+  "distractors": {
+   "A": "The control lives in the view definition rather than on the column, so a new view or a single direct grant on the base table exposes the raw values, and every additional consumer group requires yet another hand-maintained view to be kept in sync.",
+   "B": "This duplicates the warehouse instead of masking at query time: the analysts read a second, always-stale copy, storage and pipeline cost double, and the masking is fixed at write time so it cannot vary with the querying user's IAM role.",
+   "D": "Column-level access control denies the column outright, so an analyst's query returns an access-denied error rather than the masked value the requirement asks for. Dynamic masking additionally needs a data policy carrying a masking rule and the Masked Reader role."
+  }
+ },
+ {
+  "id": "PCA-D4-042",
+  "options": {
+   "A": "Apply the same Hot-Hot topology to both tiers: Active-Active multi-region compute behind a Global Load Balancer with multi-region Cloud Spanner, so that one runbook, one deployment pipeline and one failover drill cover the financial platform and the HR application alike.",
+   "B": "Apply Warm Standby to both tiers: cross-region Cloud SQL read replicas kept warm in a second region and promoted to primary by an automated runbook whenever health checks report the primary region unavailable for more than sixty seconds, with DNS swung over afterwards.",
+   "C": "For Tier-1 rely on cross-region Cloud SQL backups with five-minute point-in-time recovery granularity and an automated restore runbook; for Tier-2 keep a pilot-light environment of pre-provisioned but stopped instances rehydrated from daily snapshots when a disaster is declared."
+  },
+  "distractors": {
+   "A": "Technically it clears both sets of objectives, but it fails the cost-effectiveness constraint that the question asks about: the HR application's business requirement is a two-hour RTO, so paying for active-active multi-region Spanner for it buys recovery capability nobody asked for at several times the necessary spend.",
+   "B": "Promoting a cross-region Cloud SQL read replica is a control-plane operation measured in minutes, so Tier-1 cannot reach an RTO under five seconds, and the replication is asynchronous, so transactions committed in the final moments before the failure are lost and RPO is not zero.",
+   "C": "Point-in-time recovery still means provisioning a new instance and replaying to the chosen timestamp, an operation of tens of minutes, so Tier-1's five-second RTO and zero RPO are unreachable no matter how fine the granularity; daily snapshots also leave Tier-2 with an RPO far past one hour."
+  }
+ },
+ {
+  "id": "PCA-D6-007",
+  "options": {
+   "B": "Raise the Managed Instance Group's minimum instance count to the observed 08:00 peak size and leave the target CPU utilization autoscaler at 60%, so that it only has to handle whatever additional load appears above that permanently provisioned floor.",
+   "C": "Add a scaling schedule to the autoscaler with --set-schedule starting at 08:00, a duration of thirty minutes and a minimum required instance count equal to the peak size, leaving the reactive CPU utilization autoscaler in place around that window.",
+   "D": "Change the autoscaling signal from CPU utilization to a Cloud Monitoring metric of load balancer requests per second with a target utilization per instance, so the group reacts to the traffic actually arriving rather than to the CPU that traffic eventually causes."
+  },
+  "distractors": {
+   "B": "It removes the morning latency spike by paying for peak capacity twenty-four hours a day, so the group is massively over-provisioned through the night and the whole point of autoscaling is lost; the floor also has to be re-tuned by hand every time the peak grows.",
+   "C": "Right mechanism, wrong values: the schedule starts at 08:00, so instances only begin booting once the surge has already arrived and the first five to ten minutes still see the latency spike, and the thirty-minute window closes while the morning traffic is still elevated.",
+   "D": "Request rate is a better proxy for load than CPU, but it is still a reactive signal: traffic must arrive before the autoscaler reacts, and VM boot plus application warm-up still take minutes, so it shortens the detection lag without removing the provisioning lag that causes the spike."
+  }
+ }
+]

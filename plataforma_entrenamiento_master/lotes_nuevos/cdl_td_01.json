@@ -1,0 +1,590 @@
+[
+  {
+    "id": "CDL-TD-001",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Elegir entre nube pública, privada e híbrida",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Una normativa obliga a conservar parte de los datos en las instalaciones",
+    "scenario": "Una compañía de seguros quiere aprovechar la elasticidad de la nube pública para su portal de clientes, pero una normativa nacional la obliga a mantener determinados expedientes dentro de sus propias instalaciones. ¿Qué modelo de despliegue describe esta situación?",
+    "keywords": [
+      "obligación regulatoria",
+      "portal público",
+      "expedientes",
+      "sector asegurador"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Nube híbrida, que combina recursos alojados en las dependencias de la empresa con servicios de nube pública."
+      },
+      {
+        "letter": "B",
+        "text": "Nube pública exclusivamente, trasladando también los expedientes regulados y confiando en los certificados de cumplimiento del proveedor."
+      },
+      {
+        "letter": "C",
+        "text": "Multinube, entendida como el uso simultáneo de dos o más proveedores públicos distintos para repartir el riesgo."
+      },
+      {
+        "letter": "D",
+        "text": "Nube privada exclusivamente, renunciando a los servicios públicos para el conjunto completo de las cargas de trabajo."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La nube híbrida es precisamente la combinación de infraestructura propia con servicios de nube pública, y es la respuesta habitual cuando una parte de los datos no puede salir del centro de datos por motivos regulatorios mientras el resto se beneficia de la elasticidad pública.",
+    "distractors": {
+      "B": "Mover los expedientes regulados a la nube pública incumpliría la obligación descrita, por muchos certificados que tenga el proveedor.",
+      "C": "Multinube describe el uso de varios proveedores públicos, no la convivencia entre nube pública e instalaciones propias.",
+      "D": "Quedarse solo en nube privada renuncia a la elasticidad que la empresa buscaba para su portal de clientes."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-hybrid-cloud",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-TD-002",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Regiones y zonas: diseño para tolerar fallos",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Un corte eléctrico deja fuera la aplicación entera",
+    "scenario": "Una empresa desplegó toda su aplicación en una única zona de una región. Un incidente en esa zona dejó el servicio inaccesible durante horas. ¿Qué decisión de arquitectura habría limitado el impacto?",
+    "keywords": [
+      "única zona",
+      "incidente",
+      "servicio inaccesible",
+      "horas de corte"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Repartir la aplicación entre varias zonas de la región, que son dominios de fallo independientes entre sí."
+      },
+      {
+        "letter": "B",
+        "text": "Aumentar el tamaño de las máquinas virtuales dentro de esa misma zona para que soporten mejor la carga durante los picos."
+      },
+      {
+        "letter": "C",
+        "text": "Contratar un nivel de soporte superior con Google Cloud para acelerar la respuesta técnica cuando ocurra la incidencia."
+      },
+      {
+        "letter": "D",
+        "text": "Guardar copias de seguridad más frecuentes en la misma zona donde ya se ejecutan todos los componentes del sistema."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Una región agrupa varias zonas, y cada zona es un dominio de fallo aislado. Distribuir la aplicación entre zonas es la medida básica de alta disponibilidad: un incidente en una zona no arrastra a las demás.",
+    "distractors": {
+      "B": "Máquinas más grandes ayudan con la carga, pero si la zona entera cae, siguen cayendo con ella.",
+      "C": "Un soporte mejor acorta la conversación con el proveedor, no evita que el servicio deje de estar disponible.",
+      "D": "Copias más frecuentes mejoran la recuperación de datos, pero si están en la zona caída no permiten seguir dando servicio."
+    },
+    "officialDocUrl": "https://cloud.google.com/compute/docs/regions-zones",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "CDL-TD-003",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Elasticidad frente a aprovisionamiento para el pico",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Servidores comprados para un pico que dura tres días al año",
+    "scenario": "Un comercio compró servidores dimensionados para el pico de ventas navideño. Durante once meses esa capacidad permanece ociosa. ¿Qué ventaja económica de la nube aborda directamente este desperdicio?",
+    "keywords": [
+      "pico navideño",
+      "once meses",
+      "capacidad ociosa",
+      "comercio"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La elasticidad: la capacidad crece y se reduce con la demanda, y solo se paga por lo que se usa."
+      },
+      {
+        "letter": "B",
+        "text": "La resiliencia, que permite que el sistema siga funcionando cuando falla alguno de los componentes de la infraestructura."
+      },
+      {
+        "letter": "C",
+        "text": "La portabilidad, que facilita mover una carga de trabajo entre proveedores distintos sin tener que reescribir la aplicación."
+      },
+      {
+        "letter": "D",
+        "text": "La observabilidad, que da visibilidad detallada sobre el comportamiento interno de los sistemas ya desplegados en producción."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La elasticidad permite ajustar la capacidad a la demanda real en lugar de comprar para el pico. Es el argumento económico central del paso a la nube en negocios con estacionalidad marcada.",
+    "distractors": {
+      "B": "La resiliencia protege frente a fallos, pero no evita pagar por capacidad que nadie utiliza durante once meses.",
+      "C": "La portabilidad reduce la dependencia de un proveedor; no tiene relación con el sobredimensionamiento por estacionalidad.",
+      "D": "La observabilidad ayuda a entender el sistema, aunque por sí sola no cambia el modelo de coste de la infraestructura."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-cloud-computing",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-TD-004",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Reparto de responsabilidades entre IaaS, PaaS y SaaS",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Cuánto deja de administrar el equipo al subir de nivel",
+    "scenario": "Un equipo de sistemas evalúa pasar una aplicación de máquinas virtuales a una plataforma gestionada. Su responsable pregunta qué tareas dejará de hacer el equipo con ese cambio. ¿Cuál es la respuesta correcta?",
+    "keywords": [
+      "equipo de sistemas",
+      "plataforma gestionada",
+      "tareas que dejan de hacerse",
+      "aplicación existente"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Dejará de parchear y administrar el sistema operativo subyacente, y podrá centrarse en la aplicación y sus datos."
+      },
+      {
+        "letter": "B",
+        "text": "Dejará de ser responsable de los datos y de los permisos de acceso, que pasan a estar gestionados íntegramente por el proveedor."
+      },
+      {
+        "letter": "C",
+        "text": "Dejará de necesitar cualquier tipo de copia de seguridad, porque la plataforma garantiza por contrato que nunca se pierde información."
+      },
+      {
+        "letter": "D",
+        "text": "Dejará de poder desplegar cambios con frecuencia, ya que las plataformas gestionadas imponen ventanas de despliegue fijas."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Al subir en el nivel de abstracción, el proveedor asume más capas operativas: hardware, sistema operativo y tiempo de ejecución. Lo que nunca se transfiere es la responsabilidad sobre los datos, las identidades y la configuración de acceso.",
+    "distractors": {
+      "B": "Los datos y el control de accesos siguen siendo siempre responsabilidad del cliente, en cualquier modelo de servicio.",
+      "C": "La plataforma facilita la protección de datos, pero la política de copias y su verificación siguen correspondiendo al cliente.",
+      "D": "Las plataformas gestionadas suelen aumentar la frecuencia de despliegue, no imponer ventanas rígidas."
+    },
+    "officialDocUrl": "https://cloud.google.com/hosting-options",
+    "blockId": "BLOCK-2"
+  },
+  {
+    "id": "CDL-TD-005",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Latencia y proximidad geográfica de los usuarios",
+    "difficulty": "intermediate",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Usuarios en Asia quejándose de lentitud",
+    "scenario": "Una empresa europea aloja toda su plataforma en una región de Europa. Tras abrir mercado en Asia, los usuarios asiáticos reportan tiempos de respuesta muy superiores a los europeos. ¿Cuál es la explicación más directa?",
+    "keywords": [
+      "empresa europea",
+      "mercado asiático",
+      "tiempos de respuesta",
+      "quejas de usuarios"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "La distancia física hasta la región europea añade latencia de red adicional a cada una de las peticiones."
+      },
+      {
+        "letter": "B",
+        "text": "El número de usuarios simultáneos en Asia supera el límite máximo que una región de Google Cloud puede llegar a atender."
+      },
+      {
+        "letter": "C",
+        "text": "Las regiones de Google Cloud aplican una reducción deliberada de rendimiento cuando el tráfico procede de otro continente."
+      },
+      {
+        "letter": "D",
+        "text": "Los datos de usuarios asiáticos requieren un cifrado adicional obligatorio que ralentiza cada una de las peticiones recibidas."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La latencia depende en buena medida de la distancia que recorre el tráfico. Servir a usuarios lejanos desde una única región lo penaliza, y la solución pasa por desplegar en regiones cercanas o acercar el contenido mediante la red de borde.",
+    "distractors": {
+      "B": "Las regiones no tienen un tope de usuarios por continente; el problema es de distancia, no de capacidad agotada.",
+      "C": "Google Cloud no degrada el rendimiento en función del continente de origen del tráfico.",
+      "D": "El cifrado en tránsito se aplica de forma generalizada y su coste es despreciable frente a la latencia intercontinental."
+    },
+    "officialDocUrl": "https://cloud.google.com/about/locations",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-TD-006",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Fases de madurez en la adopción de la nube",
+    "difficulty": "intermediate",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "Migrar para ahorrar, sin cambiar nada más",
+    "scenario": "Una organización ha trasladado sus servidores a la nube tal cual estaban, con el único objetivo de cerrar su centro de datos y reducir costes. No ha modificado sus aplicaciones ni sus procesos. ¿En qué fase de madurez se encuentra?",
+    "keywords": [
+      "traslado tal cual",
+      "cerrar centro de datos",
+      "sin modificar aplicaciones",
+      "reducir costes"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Fase táctica, centrada en beneficios inmediatos de coste sin rediseñar aplicaciones ni procesos."
+      },
+      {
+        "letter": "B",
+        "text": "Fase estratégica, en la que las aplicaciones se rediseñan para aprovechar servicios gestionados y escalar de otra manera."
+      },
+      {
+        "letter": "C",
+        "text": "Fase transformacional, donde la nube redefine el modelo de negocio y habilita fuentes de ingreso completamente nuevas."
+      },
+      {
+        "letter": "D",
+        "text": "Fase de retirada, en la que la organización revierte la migración por no obtener el retorno económico que esperaba."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La fase táctica busca resultados a corto plazo, típicamente el ahorro de cerrar el centro de datos, moviendo las cargas sin rediseñarlas. Es un punto de partida válido, pero el valor mayor aparece al avanzar hacia las fases estratégica y transformacional.",
+    "distractors": {
+      "B": "La fase estratégica implica rediseñar aplicaciones para aprovechar la nube, y aquí no se ha modificado nada.",
+      "C": "La fase transformacional cambia el modelo de negocio; cerrar un centro de datos no llega a ese alcance.",
+      "D": "No existe una fase de retirada dentro del marco de madurez de adopción de la nube."
+    },
+    "officialDocUrl": "https://cloud.google.com/adoption-framework",
+    "blockId": "BLOCK-3"
+  },
+  {
+    "id": "CDL-TD-007",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Valor de negocio de acortar el tiempo de salida al mercado",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "Semanas de espera por un servidor nuevo",
+    "scenario": "En una empresa, lanzar un experimento de producto requiere solicitar hardware y esperar seis semanas a que llegue y se configure. La dirección quiere entender qué cambia con la nube más allá del coste. ¿Cuál es el argumento principal?",
+    "keywords": [
+      "solicitar hardware",
+      "seis semanas",
+      "experimento de producto",
+      "más allá del coste"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Los recursos se aprovisionan en minutos, así que la empresa puede probar más ideas en el mismo tiempo."
+      },
+      {
+        "letter": "B",
+        "text": "El personal técnico deja de ser necesario, porque el proveedor asume también el desarrollo de las aplicaciones del negocio."
+      },
+      {
+        "letter": "C",
+        "text": "Los proyectos pasan a tener un coste fijo garantizado por contrato, con independencia de los recursos que terminen consumiendo."
+      },
+      {
+        "letter": "D",
+        "text": "El proveedor asume la responsabilidad comercial si el experimento de producto no alcanza los resultados esperados."
+      }
+    ],
+    "correct": "A",
+    "explanation": "La reducción del tiempo de aprovisionamiento cambia la velocidad a la que una empresa puede experimentar. Cuando probar cuesta minutos en lugar de semanas, se pueden validar más hipótesis y descartar antes las que no funcionan.",
+    "distractors": {
+      "B": "La nube libera al equipo de tareas de infraestructura, pero el desarrollo del producto sigue siendo responsabilidad de la empresa.",
+      "C": "El modelo es de pago por consumo: el coste varía con el uso y no queda fijado por contrato.",
+      "D": "El riesgo comercial de un experimento de producto siempre lo asume la empresa que lo lanza."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-cloud-computing",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-TD-008",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Motivos de negocio para una estrategia multinube",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 95,
+    "caseStudy": "none",
+    "title": "Por qué una empresa mantiene dos proveedores de nube",
+    "scenario": "Un grupo industrial decide operar con dos proveedores de nube pública distintos de forma permanente. El consejo pregunta qué gana con esa complejidad añadida. ¿Cuál es una razón de negocio legítima?",
+    "keywords": [
+      "dos proveedores",
+      "de forma permanente",
+      "complejidad añadida",
+      "grupo industrial"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Reducir la dependencia de un único proveedor y poder elegir el mejor servicio para cada carga de trabajo."
+      },
+      {
+        "letter": "B",
+        "text": "Eliminar por completo la necesidad de aplicar controles de seguridad, ya que cada proveedor cubre las carencias del otro."
+      },
+      {
+        "letter": "C",
+        "text": "Garantizar que el coste total baje siempre, porque trabajar con dos proveedores duplica automáticamente los descuentos obtenidos."
+      },
+      {
+        "letter": "D",
+        "text": "Evitar tener que formar al equipo técnico, dado que las herramientas de ambos proveedores funcionan de manera idéntica."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Las razones habituales para multinube son reducir la dependencia de un proveedor, aprovechar servicios concretos donde cada uno destaca y cumplir requisitos de resiliencia o regulatorios. A cambio, se asume más complejidad operativa.",
+    "distractors": {
+      "B": "Usar dos proveedores multiplica la superficie que hay que asegurar; no exime de aplicar controles en ninguno de los dos.",
+      "C": "Repartir el gasto entre proveedores suele reducir el volumen con cada uno y, con ello, los descuentos por compromiso.",
+      "D": "Cada proveedor tiene sus propias herramientas y modelos: multinube exige más formación, no menos."
+    },
+    "officialDocUrl": "https://cloud.google.com/learn/what-is-multicloud",
+    "blockId": "BLOCK-4"
+  },
+  {
+    "id": "CDL-TD-009",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Sostenibilidad como argumento de transformación",
+    "difficulty": "foundational",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 85,
+    "caseStudy": "none",
+    "title": "El informe de sostenibilidad pregunta por el centro de datos",
+    "scenario": "El equipo de sostenibilidad de una empresa quiere saber si migrar a Google Cloud puede mejorar sus indicadores ambientales frente a mantener su propio centro de datos. ¿Cuál es la respuesta fundamentada?",
+    "keywords": [
+      "equipo de sostenibilidad",
+      "indicadores ambientales",
+      "centro de datos propio",
+      "informe anual"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Sí, porque los centros de datos de Google operan con alta eficiencia energética y compromisos de energía limpia."
+      },
+      {
+        "letter": "B",
+        "text": "No, porque la huella de carbono de una carga de trabajo depende únicamente del lenguaje de programación con el que se escribió."
+      },
+      {
+        "letter": "C",
+        "text": "No, porque trasladar cargas a la nube pública siempre incrementa el consumo energético total asociado a esas mismas cargas."
+      },
+      {
+        "letter": "D",
+        "text": "Sí, pero solo si la empresa compra por su cuenta certificados de energía renovable para cada uno de los proyectos desplegados."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Los centros de datos hiperescalares alcanzan eficiencias energéticas difíciles de replicar en instalaciones propias, y Google publica compromisos de abastecimiento con energía limpia. Por eso la migración suele mejorar los indicadores ambientales de la organización.",
+    "distractors": {
+      "B": "El lenguaje influye algo en el consumo, pero el factor determinante es la eficiencia de la instalación y su fuente de energía.",
+      "C": "Es lo contrario de lo que suele ocurrir: la consolidación en centros muy eficientes reduce el consumo por carga de trabajo.",
+      "D": "El cliente no necesita comprar certificados por su cuenta para beneficiarse de los compromisos energéticos del proveedor."
+    },
+    "officialDocUrl": "https://cloud.google.com/sustainability",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-TD-010",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "La red global de Google como diferenciador",
+    "difficulty": "intermediate",
+    "bloomsLevel": "understand",
+    "timeEstimateSeconds": 90,
+    "caseStudy": "none",
+    "title": "Qué aporta que el tráfico viaje por la red del proveedor",
+    "scenario": "Un arquitecto explica al negocio que buena parte del tráfico entre servicios de Google Cloud circula por la red privada de Google en lugar de por la Internet pública. ¿Qué beneficio de negocio tiene ese hecho?",
+    "keywords": [
+      "red privada",
+      "internet pública",
+      "tráfico entre servicios",
+      "explicación al negocio"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ofrece un rendimiento más predecible y menos expuesto, al no depender de la congestión de redes de terceros."
+      },
+      {
+        "letter": "B",
+        "text": "Permite prescindir por completo del cifrado del tráfico, ya que la red privada del proveedor se considera un entorno de plena confianza."
+      },
+      {
+        "letter": "C",
+        "text": "Elimina cualquier coste de salida de datos, porque el tráfico que circula por la red privada nunca se factura al cliente."
+      },
+      {
+        "letter": "D",
+        "text": "Garantiza que los datos jamás abandonarán el país donde se generaron, con independencia de cómo se configuren las regiones."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Que el tráfico viaje por la red privada del proveedor reduce la variabilidad y la exposición frente a la Internet pública, lo que se traduce en un rendimiento más estable para el usuario final.",
+    "distractors": {
+      "B": "El cifrado sigue aplicándose: la confianza cero implica no dar por seguro ningún tramo de red por el hecho de ser privado.",
+      "C": "La salida de datos se factura según su origen y destino; usar la red privada no la convierte en gratuita.",
+      "D": "La residencia de los datos depende de las regiones que se elijan, no del camino que siga el tráfico."
+    },
+    "officialDocUrl": "https://cloud.google.com/infrastructure",
+    "blockId": "BLOCK-5"
+  },
+  {
+    "id": "CDL-TD-011",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Cloud Adoption Framework como herramienta de diagnóstico",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 105,
+    "caseStudy": "none",
+    "title": "La tecnología avanza pero la organización no",
+    "scenario": "Una empresa lleva un año en la nube con buenos resultados técnicos, pero los proyectos se atascan por falta de patrocinio de la dirección y por equipos que no se ponen de acuerdo. ¿Qué pilar del Cloud Adoption Framework aborda ese bloqueo?",
+    "keywords": [
+      "buenos resultados técnicos",
+      "proyectos atascados",
+      "equipos sin acuerdo",
+      "un año en la nube"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "El pilar Lead, que trata el patrocinio ejecutivo, la estructura de equipos y la cultura."
+      },
+      {
+        "letter": "B",
+        "text": "El pilar Scale, que se ocupa del grado de automatización y del uso de servicios gestionados en las cargas desplegadas."
+      },
+      {
+        "letter": "C",
+        "text": "El pilar Secure, que evalúa los controles de protección de datos y el cumplimiento normativo de la organización."
+      },
+      {
+        "letter": "D",
+        "text": "El pilar Learn, que mide la calidad y el alcance de los programas de formación técnica del personal de la empresa."
+      }
+    ],
+    "correct": "A",
+    "explanation": "El pilar Lead del Cloud Adoption Framework evalúa el patrocinio de la dirección, la estructura organizativa y la alineación entre negocio y tecnología. Es el que corresponde cuando el freno no es técnico sino de gobierno y cultura.",
+    "distractors": {
+      "B": "El pilar Scale mira la automatización y la madurez operativa, que en este caso ya está dando buenos resultados.",
+      "C": "El pilar Secure se centra en protección y cumplimiento, algo que el escenario no señala como problema.",
+      "D": "El pilar Learn trata la formación; aquí el equipo sabe hacerlo, pero falta dirección y acuerdo entre áreas."
+    },
+    "officialDocUrl": "https://cloud.google.com/adoption-framework",
+    "blockId": "BLOCK-6"
+  },
+  {
+    "id": "CDL-TD-012",
+    "certId": "cdl",
+    "domainId": "CDL-D1",
+    "domainName": "1. Transformación digital con Google Cloud",
+    "subsectionId": "CDL-1",
+    "subtopic": "Diferencia entre digitalizar y transformar",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 100,
+    "caseStudy": "none",
+    "title": "Escanear formularios no es transformación digital",
+    "scenario": "Una administración sustituye sus formularios de papel por versiones digitales que un funcionario sigue revisando y tramitando exactamente igual que antes. ¿Cómo se describe correctamente lo que ha hecho?",
+    "keywords": [
+      "formularios de papel",
+      "versiones digitales",
+      "mismo trámite",
+      "administración"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ha digitalizado un proceso, pero no lo ha transformado, porque el flujo de trabajo sigue siendo el mismo."
+      },
+      {
+        "letter": "B",
+        "text": "Ha completado una transformación digital, dado que cualquier sustitución de soporte físico por soporte electrónico ya constituye una."
+      },
+      {
+        "letter": "C",
+        "text": "Ha realizado una migración a la nube, ya que el paso de papel a formato digital implica por definición el uso de servicios en la nube."
+      },
+      {
+        "letter": "D",
+        "text": "Ha implantado una arquitectura de microservicios, porque cada formulario digital pasa a comportarse como un servicio independiente."
+      }
+    ],
+    "correct": "A",
+    "explanation": "Digitalizar es cambiar el soporte; transformar es repensar el proceso y el valor que entrega. Cambiar papel por pantalla sin tocar el flujo de trabajo mejora poco: la transformación aparece cuando el proceso mismo se rediseña.",
+    "distractors": {
+      "B": "Cambiar el soporte es solo el primer paso; la transformación exige rediseñar cómo se hace el trabajo.",
+      "C": "Un formulario digital puede vivir perfectamente en servidores propios; digitalizar no implica migrar a la nube.",
+      "D": "Los microservicios son un estilo de arquitectura de software, sin relación con sustituir formularios de papel."
+    },
+    "officialDocUrl": "https://cloud.google.com/transform",
+    "blockId": "BLOCK-6"
+  }
+]

@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D6-033",
+  "subtopic": "EHR Healthcare: 99.99% Multi-Region Dedicated Interconnect",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "Hospital clinical systems require uninterrupted connectivity to Google Cloud for live patient telemetry and electronic charting. Network downtime risks patient lives. What physical Dedicated Interconnect topology must EHR Healthcare deploy to qualify for Google Cloud's 99.99% availability SLA?",
+  "correct": "D",
+  "clave_len": 233,
+  "explanation": "To achieve Google Cloud's 99.99% availability SLA for Dedicated Interconnect, the network must provision 4 connections across 2 separate metropolitan locations with redundant Cloud Routers, surviving both device and full facility outages.",
+  "doc": "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/high-availability#9999-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "1 cross-connect to a single colocation facility."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Transmit patient records via unencrypted Wi-Fi hotspots."
+   },
+   {
+    "letter": "C",
+    "len": 27,
+    "text": "A single consumer DSL line."
+   },
+   {
+    "letter": "D",
+    "len": 233,
+    "text": "Deploy at least 4 Dedicated Interconnect circuits across 2 separate metropolitan colocation facilities (2 circuits per metro area connected to distinct edge routers) paired with redundant Cloud Routers in Global dynamic routing mode."
+   }
+  ],
+  "ratio": 5.34
+ },
+ {
+  "id": "PCA-D5-006",
+  "subtopic": "Cloud Run: Direct VPC Egress vs Serverless VPC Access",
+  "caseStudy": "none",
+  "scenario": "A high-volume Cloud Run microservice communicates with a private Cloud SQL instance and private Memorystore Redis cluster in a Shared VPC. Previously, the service used Serverless VPC Access Connectors, but the connector VMs reached bandwidth throughput limits (max 10Gbps) and added extra VM infrastructure costs. How should the private network connection be modernized?",
+  "correct": "C",
+  "clave_len": 251,
+  "explanation": "Cloud Run Direct VPC Egress connects container instances directly to a VPC subnet without requiring Serverless VPC Access connector VMs. This delivers higher bandwidth (up to 100Gbps), lower latency, and eliminates connector VM infrastructure costs.",
+  "doc": "https://cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 31,
+    "text": "Disable all private networking."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Assign public IP addresses to Cloud SQL and Memorystore."
+   },
+   {
+    "letter": "C",
+    "len": 251,
+    "text": "Configure Cloud Run Direct VPC Egress (vpc_access.network_interfaces), attaching the Cloud Run service directly to the target VPC subnet without provisioning or paying for Serverless VPC Access connector VMs, achieving up to 100Gbps egress throughput."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Deploy 50 Serverless VPC Access Connectors in parallel."
+   }
+  ],
+  "ratio": 5.3
+ },
+ {
+  "id": "PCA-D6-031",
+  "subtopic": "Knightmotives Automotive: Bigtable Multi-Cluster 99.999% Ingestion SLA",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive ingests telemetry from 200,000 agricultural vehicles. The business SLA mandates 99.999% ingestion availability. To guarantee that telemetry ingestion never halts during zonal or regional cloud maintenance, what Cloud Bigtable topology and routing policy must be deployed?",
+  "correct": "B",
+  "clave_len": 258,
+  "explanation": "Replicating Cloud Bigtable across 2+ clusters with an App Profile using Multi-Cluster Any-Routing delivers automatic sub-second failover and qualifies for Google Cloud's 99.999% availability SLA.",
+  "doc": "https://cloud.google.com/bigtable/docs/app-profiles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "A single Bigtable cluster in a single zone with HDD disks."
+   },
+   {
+    "letter": "B",
+    "len": 258,
+    "text": "A Cloud Bigtable instance with at least two replicated clusters in different zones/regions, using SSD storage disks, and an Application Profile configured with Multi-Cluster Routing (any-cluster routing) enabled to achieve 99.999% ingestion availability SLA."
+   },
+   {
+    "letter": "C",
+    "len": 45,
+    "text": "Cloud SQL for PostgreSQL with 1 read replica."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Save telemetry to floppy disks on tractors."
+   }
+  ],
+  "ratio": 5.3
+ },
+ {
+  "id": "PCA-D3-043",
+  "subtopic": "Altostrat Media: reCAPTCHA Enterprise Bot Defense",
+  "caseStudy": "altostrat_media",
+  "scenario": "Automated scalper bots frequently flood altostrat's virtual marketplace during limited-edition virtual character auctions, buying out rare items in milliseconds and locking out real human players. How should altostrat integrate bot protection into the marketplace API?",
+  "correct": "D",
+  "clave_len": 245,
+  "explanation": "reCAPTCHA Enterprise uses advanced risk analysis engines to return granular risk scores (0.0 to 1.0) and reason codes without displaying friction-heavy visual puzzles to legitimate human users, blocking automated marketplace scalper bots.",
+  "doc": "https://cloud.google.com/recaptcha-enterprise/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "Require all players to mail a handwritten letter before bidding."
+   },
+   {
+    "letter": "B",
+    "len": 37,
+    "text": "Shut down the marketplace completely."
+   },
+   {
+    "letter": "C",
+    "len": 38,
+    "text": "Rely on standard HTTP referer headers."
+   },
+   {
+    "letter": "D",
+    "len": 245,
+    "text": "Integrate reCAPTCHA Enterprise into the mobile app and marketplace APIs, generating action tokens on bid submissions that backend services verify against the reCAPTCHA Assessment API (evaluating score 0.0 to 1.0) and blocking automated bot bids."
+   }
+  ],
+  "ratio": 5.29
+ },
+ {
+  "id": "PCA-D6-012",
+  "subtopic": "Disaster Recovery Testing: Non-Disruptive Failover Drills",
+  "caseStudy": "none",
+  "scenario": "To satisfy annual financial regulatory audits, an enterprise must conduct full disaster recovery failover testing simulating the loss of its primary datacenter and primary Google Cloud region. The DR test must validate application startup, database restore, and transaction processing without disrupting live production users. How should the DR drill be architected?",
+  "correct": "B",
+  "clave_len": 295,
+  "explanation": "Conducting DR drills in isolated sandbox environments provisioned via Terraform with restored database snapshots validates operational runbooks, verifies RTO/RPO targets, and satisfies compliance audits without impacting production users.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery-scenarios-for-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 39,
+    "text": "Test only on a single developer laptop."
+   },
+   {
+    "letter": "B",
+    "len": 295,
+    "text": "Provision an isolated Sandbox DR VPC in the failover region via Terraform, restore databases using Point-in-Time Recovery (PITR) or storage snapshots into the sandbox, execute synthetic end-to-end transaction test suites, validate RTO/RPO metrics, and destroy the sandbox environment post-audit."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Sign a statement claiming the test passed without running it."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Shut down production at noon on a business day and see what happens."
+   }
+  ],
+  "ratio": 5.27
+ },
+ {
+  "id": "PCA-D6-025",
+  "subtopic": "BigQuery High Availability & Cross-Region Dataset Replication",
+  "caseStudy": "none",
+  "scenario": "An enterprise uses BigQuery in region us-central1 as its core analytical warehouse. To satisfy business continuity and disaster recovery mandates, the data warehouse must be replicated to us-east1. In the event of a regional outage in us-central1, data analytics queries must be able to fail over to us-east1 immediately. What BigQuery feature provides cross-region disaster recovery?",
+  "correct": "A",
+  "clave_len": 267,
+  "explanation": "BigQuery Cross-Region Dataset Replication creates continuous, asynchronous replicas of datasets in secondary regions. During regional disruptions, promoting the secondary replica to primary restores query processing with minimal RTO.",
+  "doc": "https://cloud.google.com/bigquery/docs/cross-region-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 267,
+    "text": "Configure BigQuery Cross-Region Dataset Replication: Add a secondary replica in us-east1 to the primary dataset in us-central1; in a regional disaster, promote the secondary replica in us-east1 to primary using ALTER SCHEMA SET OPTIONS (primary_replica = 'us-east1')."
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "BigQuery datasets cannot be replicated across regions."
+   },
+   {
+    "letter": "C",
+    "len": 61,
+    "text": "Export tables to CSV files and reload into us-east1 manually."
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "Copy SQL queries into email messages."
+   }
+  ],
+  "ratio": 5.27
+ },
+ {
+  "id": "PCA-D6-035",
+  "subtopic": "Altostrat Media: Live Video Multi-Region Transcoder Failover",
+  "caseStudy": "altostrat_media",
+  "scenario": "To protect the live broadcast of the World Championship race against any regional Google Cloud outage, HRL provisions live video ingestion pipelines in two separate geographic regions (us-central1 and us-east1). If the primary transcoding pipeline in us-central1 fails during the live race, global viewer traffic must fail over automatically to the live backup stream in us-east1 with less than 3 seconds of viewer interruption. What architecture achieves this?",
+  "correct": "D",
+  "clave_len": 318,
+  "explanation": "Active-Active dual-region live video ingestion processes parallel streams in two independent regions. An Anycast Global Load Balancer or Cloud DNS Health-Checked Failover policy automatically redirects video playback clients to the secondary region within seconds upon primary failure.",
+  "doc": "https://cloud.google.com/livestream/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "Have aircraft pilots land and pause the race."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Broadcast the race using an analog UHF radio antenna."
+   },
+   {
+    "letter": "C",
+    "len": 83,
+    "text": "Deploy only a single transcoder in us-central1 and rebuild in us-east1 if it fails."
+   },
+   {
+    "letter": "D",
+    "len": 318,
+    "text": "Ingest redundant RTMP/SRT feeds simultaneously into Live Stream API pipelines in both us-central1 and us-east1, and use Cloud DNS Health-Checked Failover Routing Policies (or Global External Application Load Balancer Multi-Region Backend Services with health checks) to route viewers dynamically to the healthy region."
+   }
+  ],
+  "ratio": 5.27
+ },
+ {
+  "id": "PCA-D6-017",
+  "subtopic": "Multi-Region Cloud Pub/Sub High Availability",
+  "caseStudy": "none",
+  "scenario": "An enterprise messaging architecture handles 10 billion events daily. An architect asks which configuration must be enabled in Terraform to ensure that Cloud Pub/Sub topics automatically survive the failure of an entire Google Cloud region without message loss or downtime. What is the correct answer?",
+  "correct": "C",
+  "clave_len": 300,
+  "explanation": "Cloud Pub/Sub is a globally distributed service. Global topics and subscriptions automatically route traffic through Google's nearest operational endpoints and replicate message storage synchronously across multiple availability zones.",
+  "doc": "https://cloud.google.com/pubsub/docs/overview#architecture",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 41,
+    "text": "You must run Kafka on Compute Engine VMs."
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Pub/Sub does not support high availability."
+   },
+   {
+    "letter": "C",
+    "len": 300,
+    "text": "Cloud Pub/Sub is inherently a global service; topic data and message storage are automatically replicated synchronously across multiple zones within a region, and Google's global routing infrastructure automatically directs publishers and subscribers to available regions without extra configuration."
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "You must deploy two separate Pub/Sub clusters and sync them with custom Python scripts."
+   }
+  ],
+  "ratio": 5.26
+ },
+ {
+  "id": "PCA-D3-057",
+  "subtopic": "Altostrat Media: Cloud KMS Signatures for Video Integrity",
+  "caseStudy": "altostrat_media",
+  "scenario": "To ensure that official race lap times and telemetry cannot be manipulated or disputed by racing teams, the official timing system must cryptographically sign race result payloads using an asymmetric digital signature before publishing records to the public leaderboard and regulatory officials. What Cloud KMS key configuration should you use?",
+  "correct": "C",
+  "clave_len": 265,
+  "explanation": "Cloud KMS Asymmetric Signing uses public-key cryptography (RSA/ECDSA). The private key never leaves the secure Cloud KMS hardware perimeter, and third parties can verify authenticity and non-repudiation using the public key.",
+  "doc": "https://cloud.google.com/kms/docs/create-validate-signatures",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "Save race times in a plain text file on Google Drive."
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "Rely on verbal confirmation over telephone."
+   },
+   {
+    "letter": "C",
+    "len": 265,
+    "text": "Create an Asymmetric Sign/Verify CryptoKey in Cloud KMS (e.g. RSA_SIGN_PSS_4096_SHA512 or EC_SIGN_P256_SHA256); the official timing service signs race payloads using the private key inside Cloud KMS, while teams and officials verify signatures using the public key."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Symmetric AES-256 encryption key with shared passwords."
+   }
+  ],
+  "ratio": 5.26
+ },
+ {
+  "id": "PCA-D4-037",
+  "subtopic": "SRE: Dead Letter Queues & Exponential Backoff in Pub/Sub",
+  "caseStudy": "none",
+  "scenario": "A streaming payment consumer crashes whenever it receives a malformed 'poison pill' JSON message from Pub/Sub. Because the subscriber fails before acknowledging the message, Pub/Sub re-delivers the poison pill endlessly in an infinite loop, blocking all valid subsequent messages in the queue. How should the Pub/Sub subscription be configured?",
+  "correct": "C",
+  "clave_len": 300,
+  "explanation": "Dead-Letter Topics in Cloud Pub/Sub isolate un-processable 'poison pill' messages after a specified number of failed delivery attempts (max_delivery_attempts), preventing subscriber crash loops and allowing queue processing to proceed.",
+  "doc": "https://cloud.google.com/pubsub/docs/dead-letter-topics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Ignore the crashes and let the subscriber restart forever."
+   },
+   {
+    "letter": "B",
+    "len": 49,
+    "text": "Disable all data validation in the consumer code."
+   },
+   {
+    "letter": "C",
+    "len": 300,
+    "text": "Configure a Dead-Letter Topic on the Pub/Sub subscription with max_delivery_attempts = 5 and Retry Policy set to exponential backoff, automatically routing poisoned messages to the dead-letter topic for offline debugging after 5 failed attempts while allowing valid messages to process uninterrupted."
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Delete the entire Pub/Sub topic every time a bad message arrives."
+   }
+  ],
+  "ratio": 5.23
+ },
+ {
+  "id": "PCA-D5-015",
+  "subtopic": "Cloud SQL Query Insights & Performance Troubleshooting",
+  "caseStudy": "none",
+  "scenario": "A PostgreSQL database on Cloud SQL experiences intermittent CPU spikes up to 100% and connection pool exhaustion. The database administrator needs to identify the exact SQL query strings, execution plans, and client IP tags causing high database load without installing third-party monitoring agents. What Cloud SQL feature provides this?",
+  "correct": "C",
+  "clave_len": 203,
+  "explanation": "Cloud SQL Query Insights provides out-of-the-box database performance monitoring for PostgreSQL and MySQL. It tracks query load, identifies bottleneck queries using normalized SQL patterns, captures query execution plans, and links application client tags.",
+  "doc": "https://cloud.google.com/sql/docs/postgres/using-query-insights",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 28,
+    "text": "Delete all database indexes."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "SSH into the Cloud SQL virtual machine and run top."
+   },
+   {
+    "letter": "C",
+    "len": 203,
+    "text": "Enable Cloud SQL Query Insights (with query plan capture and client tag tracing enabled), visualizing top load-consuming SQL queries, execution latency, and lock contention directly in the Cloud Console."
+   },
+   {
+    "letter": "D",
+    "len": 38,
+    "text": "Restart the database every 15 minutes."
+   }
+  ],
+  "ratio": 5.21
+ },
+ {
+  "id": "PCA-D6-018",
+  "subtopic": "Cloud Spanner Leader Region Placement",
+  "caseStudy": "none",
+  "scenario": "An enterprise has an active-active multi-region Spanner database deployed across North America and Europe. 80% of write transactions originate from corporate headquarters in New York (us-east4), while 20% originate from London (europe-west2). To minimize write transaction latency, where should the Spanner Default Leader Region be placed?",
+  "correct": "B",
+  "clave_len": 236,
+  "explanation": "In multi-region Cloud Spanner, write transactions must coordinate through the Paxos leader. Placing the Default Leader Region in the geographic region where the majority of write traffic originates (us-east4) minimizes network transit latency for 80% of commits.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview#default-leader-region",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "Set default leader region to Tokyo (asia-northeast1)."
+   },
+   {
+    "letter": "B",
+    "len": 236,
+    "text": "Set the Spanner Default Leader Region to 'us-east4', ensuring that Paxos leader replicas reside physically closest to the 80% majority write traffic source, eliminating trans-Atlantic round-trips for the majority of transaction commits."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Rotate the leader region every 10 milliseconds."
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "Disable the Paxos leader completely."
+   }
+  ],
+  "ratio": 5.21
+ },
+ {
+  "id": "PCA-D6-023",
+  "subtopic": "Cloud Spanner vs Bigtable SLA Comparison",
+  "caseStudy": "none",
+  "scenario": "An enterprise architecture board is comparing managed database SLAs. They require a mission-critical database that guarantees a 99.999% ('five nines', less than 5 minutes 15 seconds of downtime per year) availability Service Level Agreement. Which Google Cloud database configurations qualify for 99.999% SLA?",
+  "correct": "C",
+  "clave_len": 245,
+  "explanation": "Multi-Region Cloud Spanner instances (with 3+ regions/witnesses) and Multi-Cluster Cloud Bigtable instances (replicated across 3+ regions with multi-cluster routing) qualify for Google's highest 99.999% availability SLA.",
+  "doc": "https://cloud.google.com/spanner/sla",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "No Google Cloud database supports 99.999% SLA."
+   },
+   {
+    "letter": "B",
+    "len": 46,
+    "text": "Cloud SQL for MySQL in High Availability mode."
+   },
+   {
+    "letter": "C",
+    "len": 245,
+    "text": "Cloud Spanner Multi-Region instance configurations (e.g. nam3, eur3) and Cloud Bigtable Multi-Cluster instance configurations replicated across 3+ regions with Multi-Cluster Routing, both of which are backed by Google's 99.999% availability SLA."
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "Single-zone Compute Engine VM running PostgreSQL."
+   }
+  ],
+  "ratio": 5.21
+ },
+ {
+  "id": "PCA-D4-039",
+  "subtopic": "SRE: Canary Traffic Splitting with Anthos Service Mesh",
+  "caseStudy": "none",
+  "scenario": "An enterprise wants to test a new version (v2) of its checkout microservice on GKE. The test version must only receive requests from internal beta testers who have the HTTP header 'X-Beta-Tester: true' or specific mobile client versions. General public traffic must remain 100% on v1. What service mesh configuration enables this granular routing?",
+  "correct": "D",
+  "clave_len": 219,
+  "explanation": "Anthos Service Mesh (managed Istio) VirtualService resources support fine-grained Layer 7 routing rules matching HTTP headers, URIs, and cookies, routing internal beta testers to canary subsets without impacting production users.",
+  "doc": "https://cloud.google.com/service-mesh/docs/traffic-management",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 44,
+    "text": "Change the public DNS record during testing."
+   },
+   {
+    "letter": "B",
+    "len": 29,
+    "text": "Deploy an unmanaged NGINX VM."
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "Create two completely separate Google Cloud projects."
+   },
+   {
+    "letter": "D",
+    "len": 219,
+    "text": "Deploy Anthos Service Mesh (ASM / Istio) and configure an Istio VirtualService with HTTP match rules routing requests with header 'X-Beta-Tester: true' to DestinationRule subset 'v2', and default traffic to subset 'v1'."
+   }
+  ],
+  "ratio": 5.21
+ },
+ {
+  "id": "PCA-D3-035",
+  "subtopic": "Cloud Audit Logs: Admin Activity vs Data Access",
+  "caseStudy": "none",
+  "scenario": "During a security audit, investigators discovered that while all administrative resource changes (e.g. creating a bucket, updating a VM) were recorded, individual read operations on objects inside Cloud Storage and SELECT queries in BigQuery were not logged. Why were data read operations missing, and how do you enable them?",
+  "correct": "A",
+  "clave_len": 270,
+  "explanation": "In Google Cloud, Admin Activity audit logs are always on and free. Data Access audit logs (recording read/write API operations on data items) are disabled by default for most services due to high volume. To capture data access for compliance, Data Access logs must be enabled in IAM Audit Config.",
+  "doc": "https://cloud.google.com/logging/docs/audit/configure-data-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 270,
+    "text": "Admin Activity logs are enabled by default and free, whereas Data Access logs (DATA_READ and DATA_WRITE) are disabled by default (except for BigQuery) to save log volume; you must explicitly enable Data Access audit logging in IAM Audit Config for the required services."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "You must reinstall the Linux kernel on all servers."
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "Data Access logs can only be viewed in printed paper books."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Google Cloud disables all logging permanently."
+   }
+  ],
+  "ratio": 5.19
+ },
+ {
+  "id": "PCA-D6-034",
+  "subtopic": "EHR Healthcare: Cloud Spanner 99.999% Clinical Charting SLA",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "Hospital emergency rooms and ICUs cannot tolerate scheduled database maintenance windows or failover downtime for clinical electronic charting. Migrating from legacy Oracle RAC to Google Cloud, EHR Healthcare requires a relational database that provides online schema updates without table locks, automated horizontal scaling, and a 99.999% availability SLA. What database meets this requirement?",
+  "correct": "A",
+  "clave_len": 199,
+  "explanation": "Cloud Spanner Multi-Region delivers 99.999% availability with zero planned maintenance windows and online, non-blocking schema migrations, ensuring 24/7/365 continuous clinical charting access for emergency hospital operations.",
+  "doc": "https://cloud.google.com/spanner/docs/schema-updates",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 199,
+    "text": "Cloud Spanner Multi-Region instance, which delivers 99.999% availability SLA, zero maintenance downtime, online non-blocking DDL schema updates, and synchronous multi-region distributed transactions."
+   },
+   {
+    "letter": "B",
+    "len": 21,
+    "text": "Single-zone MySQL VM."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Cloud SQL with weekly 4-hour scheduled downtime."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Paper charts stored in hospital file cabinets."
+   }
+  ],
+  "ratio": 5.19
+ },
+ {
+  "id": "PCA-D4-027",
+  "subtopic": "FinOps: Compute Engine Sustained Use Discounts (SUD)",
+  "caseStudy": "none",
+  "scenario": "A FinOps analyst notices that long-running Compute Engine N1 and N2 instances receive automated bill credits each month without signing any upfront 1-year or 3-year commitment contracts. What Google Cloud pricing feature automatically provides discounts for instances running a significant portion of the billing month?",
+  "correct": "A",
+  "clave_len": 222,
+  "explanation": "Sustained Use Discounts (SUD) are automatic discounts applied by Google Cloud when Compute Engine instances (N1, N2, etc.) run for more than 25% of a month. Discounts increase up to 30% for instances running 100% of the month, requiring no upfront commitments.",
+  "doc": "https://cloud.google.com/compute/docs/sustained-use-discounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 222,
+    "text": "Compute Engine Sustained Use Discounts (SUD), which automatically apply incremental discounts (up to 30%) on qualifying vCPUs and memory that run for more than 25% of a billing month, with zero upfront commitment required."
+   },
+   {
+    "letter": "B",
+    "len": 25,
+    "text": "Free trial promo credits."
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "Google Cloud Billing error that must be reported."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Committed Use Contracts signed by an unauthorized user."
+   }
+  ],
+  "ratio": 5.16
+ },
+ {
+  "id": "PCA-D2-036",
+  "subtopic": "Cloud Next-Generation Firewall (NGFW) with IPS",
+  "caseStudy": "none",
+  "scenario": "An enterprise financial application requires deep packet inspection to detect and block malware downloads, remote code execution (RCE) exploits, and command-and-control communication across all VPC networks. The architecture must provide advanced Intrusion Prevention System (IPS) capabilities powered by Palo Alto Networks threat intelligence without deploying and scaling third-party firewall VM appliances. What solution meets these requirements?",
+  "correct": "A",
+  "clave_len": 223,
+  "explanation": "Cloud NGFW Enterprise integrates an advanced Intrusion Prevention Service (IPS) powered by Palo Alto Networks directly into Google's software-defined network (Andromeda), inspecting traffic for Layer 7 exploits without managing firewall appliances.",
+  "doc": "https://cloud.google.com/firewall/docs/about-cloud-firewall-enterprise",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 223,
+    "text": "Deploy Cloud Next-Generation Firewall (NGFW) Enterprise with Intrusion Prevention Service (IPS) enabled, creating Security Profiles with Palo Alto Networks threat signatures integrated directly into Google's network fabric."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Install antivirus software on developer laptops."
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "Standard Layer 4 VPC firewall rules."
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "Unplug all network cables from the datacenter."
+   }
+  ],
+  "ratio": 5.15
+ },
+ {
+  "id": "PCA-D5-018",
+  "subtopic": "Cloud Functions Gen 2 vs Gen 1 Architecture",
+  "caseStudy": "none",
+  "scenario": "A data engineering team operates serverless ETL functions. They are hitting Cloud Functions (1st Gen) limitations: max execution timeout is 9 minutes (causing 15-minute file processing jobs to abort), instance concurrency is fixed at 1 (causing cold-start spikes during concurrent invocations), and maximum memory is 8GB. How should they modernize their serverless functions?",
+  "correct": "D",
+  "clave_len": 239,
+  "explanation": "Cloud Functions (2nd Gen) is built on top of Cloud Run and Eventarc. It expands capabilities significantly: up to 60-minute timeouts, 32GB RAM, 1000 concurrent requests per instance, and native integration with 90+ Eventarc event types.",
+  "doc": "https://cloud.google.com/functions/docs/2nd-gen/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 64,
+    "text": "Remain on 1st Gen and write complex multi-part chaining scripts."
+   },
+   {
+    "letter": "B",
+    "len": 37,
+    "text": "Run ETL jobs on an engineer's laptop."
+   },
+   {
+    "letter": "C",
+    "len": 39,
+    "text": "Deploy an unmanaged Kubernetes cluster."
+   },
+   {
+    "letter": "D",
+    "len": 239,
+    "text": "Migrate to Cloud Functions (2nd Gen), which runs on Cloud Run and Eventarc infrastructure, providing up to 60-minute execution timeouts for HTTP workloads, up to 32GB RAM / 8 vCPUs, and support for concurrent request handling per instance."
+   }
+  ],
+  "ratio": 5.12
+ },
+ {
+  "id": "PCA-D2-032",
+  "subtopic": "AlloyDB for PostgreSQL Provisioning & Storage Autoscaling",
+  "caseStudy": "none",
+  "scenario": "An enterprise e-commerce platform experiences severe database bottlenecks on standard PostgreSQL during Black Friday sales. They require 4x higher transactional throughput than standard PostgreSQL, sub-second analytical columnar engine acceleration on live data without ETL, automated storage autoscaling up to 64TB, and automated failover in under 10 seconds. What managed database should you provision?",
+  "correct": "C",
+  "clave_len": 222,
+  "explanation": "AlloyDB for PostgreSQL is Google Cloud's fully managed PostgreSQL-compatible database designed for demanding enterprise workloads. It delivers 4x the throughput of standard PostgreSQL, disaggregated compute/storage architecture with sub-10s failover, and a built-in Columnar Engine for real-time HTAP analytics.",
+  "doc": "https://cloud.google.com/alloydb/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Export database tables to flat CSV files on Cloud Storage."
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "Use Cloud Datastore in legacy mode."
+   },
+   {
+    "letter": "C",
+    "len": 222,
+    "text": "Provision Google Cloud AlloyDB for PostgreSQL with a High Availability Primary Instance (with automatic standby in another zone) and enable the AlloyDB Columnar Engine for hybrid transactional/analytical processing (HTAP)."
+   },
+   {
+    "letter": "D",
+    "len": 37,
+    "text": "Deploy SQLite on a Compute Engine VM."
+   }
+  ],
+  "ratio": 5.12
+ },
+ {
+  "id": "PCA-D3-050",
+  "subtopic": "Altostrat Media: Video DRM & Encryption",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL licenses its exclusive live 4K race streams to international media partners. To prevent unauthorized screen recording and video piracy on mobile, web, and Smart TVs, video segments must be encrypted with Common Encryption (CENC) supporting Google Widevine, Apple FairPlay, and Microsoft PlayReady Digital Rights Management (DRM). Which Google Cloud media architecture enables multi-DRM encryption?",
+  "correct": "A",
+  "clave_len": 249,
+  "explanation": "Google Cloud Live Stream API and Transcoder API support AES-128 sample-level Common Encryption (CENC) with CBCS and CTR modes. Integrating with a DRM key server injects DRM signaling into HLS and DASH manifests, enabling hardware-level decryption across iOS (FairPlay), Android/Chrome (Widevine), and Windows/Edge (PlayReady).",
+  "doc": "https://cloud.google.com/livestream/docs/drm",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 249,
+    "text": "Configure Google Cloud Live Stream API / Transcoder API with Common Encryption (CENC) encryption keys integrated with a third-party DRM Key Management Server (KMS) supporting Widevine, FairPlay, and PlayReady DRM signaling in DASH and HLS manifests."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Watermark videos with low-resolution text."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Rely on basic HTTP password authentication in the web browser."
+   },
+   {
+    "letter": "D",
+    "len": 42,
+    "text": "Broadcast unencrypted cleartext MP4 files."
+   }
+  ],
+  "ratio": 5.12
+ },
+ {
+  "id": "PCA-D4-046",
+  "subtopic": "Altostrat Media: Cost Optimization for Global Game Matchmaking",
+  "caseStudy": "altostrat_media",
+  "scenario": "altostrat's multiplayer games exchange 50 billion JSON packets daily between mobile game clients and backend game servers, generating significant network egress charges. SRE profiling shows that JSON string keys ('player_x_coordinate', 'timestamp') account for 75% of transmitted byte payload. What technical process optimization reduces bandwidth costs by over 70%?",
+  "correct": "C",
+  "clave_len": 233,
+  "explanation": "Switching from verbose text formats (JSON/XML) to compact binary Protocol Buffers (Protobuf) or FlatBuffers strips redundant text keys, shrinking network payloads by 70-80% and delivering massive cloud egress cost savings at 50B packet scale.",
+  "doc": "https://protobuf.dev/overview/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 37,
+    "text": "Stop transmitting player coordinates."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Charge mobile players an extra fee for every packet sent."
+   },
+   {
+    "letter": "C",
+    "len": 233,
+    "text": "Refactor network serialization from JSON to binary Protocol Buffers (Protobuf) or FlatBuffers over UDP/gRPC, compacting payload sizes by 70-80% and drastically reducing mobile data consumption and Google Cloud egress network billing."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Keep sending verbose XML and JSON payloads."
+   }
+  ],
+  "ratio": 5.1
+ },
+ {
+  "id": "PCA-D4-020",
+  "subtopic": "Modernization: Event-Driven Microservices Decoupling",
+  "caseStudy": "none",
+  "scenario": "An enterprise checkout system executes a synchronous HTTP call chain: Checkout Service -> Inventory Service -> Payment Service -> Shipping Service -> Notification Service. When Notification Service experiences slow latency or downtime, the entire checkout pipeline blocks and fails, preventing customers from placing orders. How should the architecture be refactored?",
+  "correct": "D",
+  "clave_len": 274,
+  "explanation": "Event-driven architecture using Cloud Pub/Sub decouples producer services from consumer services. If non-critical downstream services (such as notifications) slow down or fail, messages are safely buffered in Pub/Sub topics without impacting user checkout transactions.",
+  "doc": "https://cloud.google.com/architecture/event-driven-architecture",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Merge all services back into a single monolithic binary."
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "Disable the Notification Service completely."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Increase HTTP timeout to 600 seconds on all synchronous calls."
+   },
+   {
+    "letter": "D",
+    "len": 274,
+    "text": "Refactor to an Event-Driven Architecture: Have Checkout Service publish an 'OrderCreated' event to Cloud Pub/Sub, allowing Inventory, Payment, Shipping, and Notification services to consume events asynchronously and independently with retry buffering and dead-letter queues."
+   }
+  ],
+  "ratio": 5.07
+ },
+ {
+  "id": "PCA-D5-031",
+  "subtopic": "EHR Healthcare: Cloud Spanner Interleaved Tables for Patient Encounters",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "In EHR Healthcare's Cloud Spanner clinical database, hospital queries frequently retrieve all medical encounters, lab results, and prescriptions for a specific patient (e.g. SELECT * FROM Patients P JOIN Encounters E ON P.patient_id = E.patient_id WHERE P.patient_id = '123'). To optimize query latency by physically co-locating patient encounter records on the same server split, how should the Spanner DDL be written?",
+  "correct": "B",
+  "clave_len": 236,
+  "explanation": "Table interleaving in Cloud Spanner physically co-locates child rows (Encounters) with their parent row (Patients) in the same storage split, eliminating cross-server network hops during JOIN queries and accelerating clinical charting retrieval.",
+  "doc": "https://cloud.google.com/spanner/docs/schema-and-data-model#creating-interleaved-tables",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "Use sequential integers for patient IDs."
+   },
+   {
+    "letter": "B",
+    "len": 236,
+    "text": "Define Encounters as an Interleaved Table under Patients: PRIMARY KEY(patient_id, encounter_id), INTERLEAVE IN PARENT Patients ON DELETE CASCADE, ensuring child encounter records are stored physically adjacent to the parent patient row."
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "Create standalone un-related tables."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Store all encounter records in flat text files on Cloud Storage."
+   }
+  ],
+  "ratio": 5.06
+ },
+ {
+  "id": "PCA-D4-019",
+  "subtopic": "FinOps: Active Assist Recommender API for Idle Resources",
+  "caseStudy": "none",
+  "scenario": "Across 200 Google Cloud projects, developers frequently terminate Compute Engine instances without deleting attached persistent disks, leaving thousands of orphaned unattached disks accumulating thousands of dollars in recurring storage spend. What Google Cloud Active Assist capability automatically discovers idle resources?",
+  "correct": "B",
+  "clave_len": 263,
+  "explanation": "Google Cloud Active Assist Recommender API continuously scans projects for idle virtual machines and unattached persistent disks, providing estimated monthly cost savings and actionable recommendations to delete or snapshot idle assets.",
+  "doc": "https://cloud.google.com/recommender/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 69,
+    "text": "Delete all persistent disks across the organization indiscriminately."
+   },
+   {
+    "letter": "B",
+    "len": 263,
+    "text": "Use Google Cloud Active Assist (Recommender API) to query the 'google.compute.disk.IdleResourceRecommender' and 'google.compute.instance.IdleResourceRecommender' across the organization, automating discovery and deletion workflows for orphaned disks and idle VMs."
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Ignore orphaned disks."
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Write custom bash scripts on every project administrator's laptop."
+   }
+  ],
+  "ratio": 5.03
+ }
+]

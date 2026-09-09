@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D4-044",
+  "options": {
+   "A": "Cifrar automáticamente todos los datos del cliente en reposo en los discos del centro de datos, sustituyendo a Cloud KMS en la generación, custodia y rotación periódica de las claves de cifrado de cada bucket y de cada disco persistente.",
+   "B": "Aislar el tráfico de red entre los proyectos de distintos clientes dentro del centro de datos, aplicando las reglas de firewall de la VPC y los perímetros de VPC Service Controls directamente en el hardware de la tarjeta de red.",
+   "D": "Almacenar de forma inviolable las claves criptográficas de los clientes con certificación FIPS 140-2 nivel 3, ofreciendo el módulo de seguridad de hardware que las aplicaciones utilizan para firmar y descifrar datos en Google Cloud."
+  },
+  "distractors": {
+   "A": "El cifrado en reposo lo aplica la capa de almacenamiento con claves gestionadas por Cloud KMS: Titan no custodia claves de cliente, sino que valida la integridad del arranque del servidor.",
+   "B": "El aislamiento entre inquilinos lo impone la pila de red virtualizada de Andromeda y las políticas de VPC; Titan actúa sobre el firmware del servidor, no sobre el plano de red.",
+   "D": "Describe Cloud HSM, que es un servicio de custodia de claves que el cliente consume; Titan es un componente interno de la infraestructura sin interfaz para las aplicaciones del cliente."
+  }
+ },
+ {
+  "id": "CDL-D3-084",
+  "options": {
+   "A": "Porque Cloud Run aplica automáticamente los descuentos por uso continuado (sustained use) y los descuentos por compromiso de uso de tres años sobre la instancia, de modo que el coste por hora resulta inferior al de una máquina de Compute Engine equivalente.",
+   "B": "Porque Cloud Run permite ejecutar la API sobre máquinas virtuales interrumpibles (Spot VMs) con hasta un 91% de descuento durante las noches y los fines de semana, devolviendo esa capacidad a Google cuando el tráfico de oficina vuelve a subir.",
+   "C": "Porque Cloud Run mantiene siempre activa una instancia mínima que responde a las peticiones nocturnas sin coste alguno, evitando a la vez los arranques en frío y el pago de las máquinas virtuales ociosas durante el horario no laboral de la empresa."
+  },
+  "distractors": {
+   "A": "Los descuentos por uso continuado son un mecanismo de precio de Compute Engine sobre VMs encendidas; la ventaja de Cloud Run es no facturar tiempo ocioso porque escala a cero.",
+   "B": "Cloud Run es un servicio totalmente administrado: el cliente no elige el tipo de máquina ni contrata Spot VMs, que son una opción de aprovisionamiento de Compute Engine.",
+   "C": "Las instancias mínimas no son gratuitas: se facturan a precio de CPU inactiva y por defecto son cero, de modo que el ahorro real proviene de escalar a cero, no de mantenerlas."
+  }
+ },
+ {
+  "id": "CDL-D3-067",
+  "options": {
+   "A": "Familias de máquinas optimizadas para cómputo C3 y H3 con procesadores Intel de última generación",
+   "B": "Vertex AI Workbench con notebooks administrados y conjuntos de datos alojados en Cloud Storage",
+   "D": "Familias de máquinas con mucha memoria M3 y discos Local SSD para conjuntos de datos en memoria"
+  },
+  "distractors": {
+   "A": "Son familias de CPU de alto rendimiento por núcleo: no incorporan aceleradores diseñados por Google ni GPU para entrenar modelos de aprendizaje profundo.",
+   "B": "Es el entorno de desarrollo y experimentación de los científicos de datos, no el hardware acelerador que ejecuta el entrenamiento.",
+   "D": "Están optimizadas para cargas en memoria como SAP HANA: aportan RAM, no capacidad de cálculo matricial acelerado por hardware."
+  }
+ },
+ {
+  "id": "CDL-D3-080",
+  "options": {
+   "A": "Datastream (la captura de cambios sin servidor que replica en tiempo real las tablas de Oracle hacia BigQuery para su análisis posterior).",
+   "B": "Storage Transfer Service (la transferencia administrada de un volcado completo del esquema de Oracle hacia un bucket de Cloud Storage).",
+   "D": "Cloud Data Fusion (el integrador visual de canalizaciones ETL sin código basado en CDAP para mover los datos entre ambos motores)."
+  },
+  "distractors": {
+   "A": "Datastream hace CDC hacia destinos analíticos como BigQuery o Cloud Storage: no convierte esquemas ni procedimientos almacenados hacia un motor transaccional PostgreSQL.",
+   "B": "Traslada archivos entre repositorios de almacenamiento: deja el volcado de Oracle intacto, sin conversión de esquema ni replicación continua durante la transición.",
+   "D": "Construye canalizaciones ETL de datos, pero no traduce los procedimientos almacenados ni orquesta un corte con replicación continua y mínima indisponibilidad."
+  }
+ },
+ {
+  "id": "CDL-D3-085",
+  "options": {
+   "B": "Cloud KMS (que cifra la contraseña con una clave administrada por el cliente y la entrega descifrada al contenedor en cada arranque del servicio)",
+   "C": "Cloud Storage con cifrado CMEK (un objeto privado que el contenedor descarga y descifra al iniciarse con su cuenta de servicio administrada)",
+   "D": "Variables de entorno definidas en el despliegue del servicio de Cloud Run con la marca --set-env-vars y restringidas mediante permisos de IAM"
+  },
+  "distractors": {
+   "B": "Cloud KMS gestiona claves criptográficas, no el material secreto: no almacena, versiona ni rota la contraseña, que seguiría guardada en otro lugar por la aplicación.",
+   "C": "El bucket guarda un archivo cifrado pero no es un almacén de secretos: carece de versionado, rotación y de la inyección nativa en Cloud Run, y deja copias en el contenedor.",
+   "D": "Las variables de entorno se guardan en texto plano en la configuración del servicio y se ven en la consola: es exactamente lo que la política de seguridad prohíbe."
+  }
+ },
+ {
+  "id": "CDL-D2-028",
+  "options": {
+   "A": "Looker Studio incorpora la capa semántica gobernada (LookML) donde el equipo de datos define una única fórmula de Margen Bruto valida para toda la empresa, mientras que Looker se utiliza como visor ligero y gratuito para que cada departamento arme sus propios tableros ágiles.",
+   "C": "Looker sustituye al almacén de datos ejecutando las consultas sobre una copia de los datos importada y guardada dentro de la propia herramienta, mientras que Looker Studio se conecta en vivo a BigQuery para consultar siempre la última versión de las tablas de negocio.",
+   "D": "Looker Studio permite definir en su modelo los campos calculados compartidos que toda la organización reutiliza y Looker se limita a exportar esos informes a hojas de cálculo, de forma que la gobernanza de métricas se resuelve replicando los campos en cada informe."
+  },
+  "distractors": {
+   "A": "Intercambia los dos productos: LookML y el modelo semántico gobernado pertenecen a Looker, y Looker Studio es la herramienta ágil y gratuita de visualización.",
+   "C": "Looker no almacena los datos: traduce LookML a SQL y consulta en el almacén (in-database), de modo que la fuente única de verdad sigue siendo BigQuery y no una copia interna.",
+   "D": "Los campos calculados de Looker Studio viven en cada informe y se duplican al copiarlo: son justamente la fragmentación de definiciones que el CDO quiere eliminar."
+  }
+ },
+ {
+  "id": "CDL-D3-036",
+  "options": {
+   "A": "El Cluster Autoscaler incrementa el número de réplicas de Pods de la aplicación cuando sube el uso de CPU y, si esas réplicas no caben, el Horizontal Pod Autoscaler agrega nuevas máquinas virtuales al grupo de instancias administrado que respalda el clúster.",
+   "B": "El Vertical Pod Autoscaler eleva las peticiones de CPU y memoria de cada Pod existente durante el pico y el Cluster Autoscaler reemplaza los nodos por tipos de máquina mayores, de modo que el sitio absorbe la promoción sin crear réplicas adicionales.",
+   "D": "El HPA incrementa el número de réplicas de Pods según el uso de CPU y, cuando los nodos se quedan sin capacidad, GKE mantiene los Pods nuevos en estado pendiente hasta que pase el pico, porque el tamaño del grupo de nodos se fija manualmente al crear el clúster."
+  },
+  "distractors": {
+   "A": "Invierte las responsabilidades: el HPA ajusta réplicas de Pods y el Cluster Autoscaler ajusta nodos, nunca al revés.",
+   "B": "El VPA redimensiona Pods y los reinicia para aplicarlo, por lo que no aporta capacidad concurrente inmediata; ante un pico de usuarios lo que hace falta es escalar horizontalmente.",
+   "D": "El tamaño del grupo de nodos no es fijo: el Cluster Autoscaler agrega nodos automáticamente cuando hay Pods pendientes por falta de capacidad."
+  }
+ },
+ {
+  "id": "CDL-D3-001",
+  "options": {
+   "A": "(1) IaaS (Infraestructura como Servicio), (2) PaaS (Plataforma como Servicio), (3) Serverless (sin servidor), (4) CaaS (Contenedores como Servicio)",
+   "B": "(1) CaaS (Contenedores como Servicio), (2) IaaS (Infraestructura como Servicio), (3) PaaS (Plataforma como Servicio), (4) Serverless (Contenedores sin servidor)",
+   "C": "(1) IaaS (Infraestructura como Servicio), (2) CaaS (Contenedores como Servicio), (3) SaaS (Software como Servicio), (4) PaaS (Plataforma como Servicio)"
+  },
+  "distractors": {
+   "A": "Desplaza la clasificación a partir del segundo servicio: GKE es CaaS y no PaaS, y Cloud Run es serverless de contenedores mientras App Engine Standard es el PaaS.",
+   "B": "Intercambia los dos primeros: Compute Engine entrega máquinas virtuales (IaaS) y GKE orquesta contenedores (CaaS).",
+   "C": "App Engine Standard es PaaS, no SaaS: el SaaS es software terminado que se consume, como Google Workspace, y no un entorno donde se despliega código propio."
+  }
+ },
+ {
+  "id": "CDL-D4-042",
+  "options": {
+   "B": "Concentrar toda la inversión de seguridad en un único perímetro reforzado alrededor de la red corporativa, de modo que quien atraviese el cortafuegos y la VPN se considere de confianza dentro de la red interna y pueda alcanzar cualquier servicio sin nuevas comprobaciones.",
+   "C": "Delegar íntegramente la seguridad en Google bajo el modelo de responsabilidad compartida, ya que al operar en la nube el cliente no configura identidades, reglas de firewall ni cifrado: cada capa de defensa viene aplicada de fabrica en todos los proyectos de la organización.",
+   "D": "Aplicar el mismo control de seguridad de forma redundante en varias regiones geográficas, replicando idénticas reglas de firewall e idénticas políticas de IAM en cada región para que un fallo regional no deje desprotegida ninguna carga de trabajo de la empresa."
+  },
+  "distractors": {
+   "B": "Describe el modelo de castillo y foso, opuesto a la defensa en profundidad: una sola capa que, superada, concede confianza implícita a todo el tráfico interno.",
+   "C": "Malinterpreta la responsabilidad compartida: Google asegura la infraestructura, pero IAM, las reglas de firewall y la configuración de los datos siguen siendo capas que el cliente debe construir.",
+   "D": "Describe redundancia geográfica de un único control; la defensa en profundidad consiste en capas distintas y complementarias, no en repetir el mismo control en varios sitios."
+  }
+ },
+ {
+  "id": "CDL-D4-032",
+  "options": {
+   "A": "Cloud Source Repositories (control de versiones privado del código) + Cloud Deploy (entrega continua con aprobaciones manuales por entorno) + Cloud Monitoring (alertas sobre el comportamiento del servicio en producción).",
+   "B": "Cloud Build (compilación de las imágenes) + Container Registry con análisis de vulnerabilidades bajo demanda + Cloud Armor con reglas WAF preconfiguradas que bloquean el despliegue de contenedores sin firmar en producción.",
+   "C": "Assured Open Source Software (paquetes verificados por Google) + Artifact Registry (almacenamiento y análisis de artefactos) + Security Command Center Premium (detección de amenazas en contenedores durante la ejecución)."
+  },
+  "distractors": {
+   "A": "Cubre el flujo de entrega y la observabilidad, pero no genera procedencia verificable de la compilación ni impide desplegar un artefacto sin atestaciones firmadas.",
+   "B": "Cloud Armor filtra peticiones HTTP en el balanceador: no participa en el despliegue ni puede verificar firmas de imágenes, función que corresponde a Binary Authorization.",
+   "C": "Detecta amenazas cuando el contenedor ya se está ejecutando: llega después del despliegue y no bloquea la promoción a producción de un artefacto sin atestación de procedencia."
+  }
+ },
+ {
+  "id": "CDL-D3-045",
+  "options": {
+   "B": "A mayor nivel de abstracción el equipo de TI conserva las mismas responsabilidades operativas pero las ejecuta con herramientas de Google: sigue aplicando los parches del sistema operativo de los nodos, dimensionando la capacidad de cómputo y gestionando la alta disponibilidad, ahora desde la consola de Cloud Run.",
+   "C": "A mayor nivel de abstracción Google asume la gestión de la infraestructura y también la responsabilidad sobre los datos, las identidades y la configuración de acceso de la aplicación, de modo que el equipo de TI deja de necesitar políticas de IAM ni control de accesos propios en Cloud Run.",
+   "D": "A mayor nivel de abstracción se reduce la carga operativa pero también la libertad técnica: Cloud Run obliga a reescribir la aplicación en uno de los lenguajes admitidos por su entorno de ejecución estándar, por lo que el equipo invierte en migración lo que ahorra en administración."
+  },
+  "distractors": {
+   "B": "En Cloud Run no existen nodos ni sistema operativo que parchear ni capacidad que dimensionar: esas tareas desaparecen del ámbito del cliente, no cambian de consola.",
+   "C": "La responsabilidad compartida no se desplaza con la abstracción: los datos, las identidades y la configuración de acceso siguen siendo del cliente incluso en servicios serverless.",
+   "D": "Confunde Cloud Run con App Engine Standard: Cloud Run ejecuta cualquier contenedor, con el lenguaje, la versión y las dependencias que elija el equipo."
+  }
+ },
+ {
+  "id": "CDL-D4-052",
+  "options": {
+   "A": "Un sumidero de registros (Log Sink) que exporte los eventos a un conjunto de datos de BigQuery donde el equipo ejecute las consultas SQL de la investigación",
+   "B": "Las métricas basadas en registros (log-based metrics) con distribuciones y alertas definidas sobre un filtro de los registros de auditoría",
+   "D": "El Explorador de Registros con el lenguaje de consultas de Logging y filtros anidados por recurso, gravedad y campos del payload"
+  },
+  "distractors": {
+   "A": "Exige exportar previamente los datos a un almacén externo, que es justo lo que el escenario descarta, y además solo alcanza a los registros posteriores a crear el sumidero.",
+   "B": "Cuentan y agregan coincidencias de un filtro para generar series temporales: no permiten uniones, agregaciones multidimensionales ni consultas SQL sobre el contenido.",
+   "D": "El lenguaje de consultas de Logging filtra y busca entradas individuales, pero no soporta uniones ni funciones de agregación como pide la investigación."
+  }
+ },
+ {
+  "id": "CDL-D3-079",
+  "options": {
+   "A": "Signed URLs de Cloud Storage para autorizar temporalmente a los suscriptores y una regla de ciclo de vida del bucket que elimine el objeto del video erróneo transcurridos los días configurados.",
+   "B": "Reglas de Cloud Armor que bloqueen por dirección IP a los usuarios sin suscripción activa y una invalidación de caché (Cache Invalidation) para retirar el video erróneo de todos los puntos de presencia.",
+   "D": "Encabezados Cache-Control privados con un TTL corto en las respuestas del backend para que solo el navegador del suscriptor conserve el video, esperando a que caduque el TTL para retirar el contenido erróneo."
+  },
+  "distractors": {
+   "A": "Las reglas de ciclo de vida actúan sobre el objeto del bucket al cabo de días y no vacían las copias ya replicadas en la caché del CDN, por lo que no hay retirada inmediata.",
+   "B": "Cloud Armor filtra por atributos de red y no conoce la identidad ni el estado de suscripción del usuario: no puede distinguir a un abonado activo de quien recibió el enlace compartido.",
+   "D": "Esperar la caducidad del TTL no es retirada inmediata, y marcar la respuesta como privada desactiva el almacenamiento en la caché del CDN, perdiendo el beneficio de la distribución."
+  }
+ },
+ {
+  "id": "CDL-D3-090",
+  "options": {
+   "B": "Google Cloud aporta valor sobre todo como infraestructura de bajo coste, de modo que la recomendación al comité es rehospedar (lift and shift) las aplicaciones existentes en Compute Engine y detener ahí la modernización: adoptar contenedores, Cloud Run o una malla de servicios añadiría complejidad operativa sin beneficios medibles sobre la resiliencia del negocio.",
+   "C": "La suite de modernización garantiza por sí sola la continuidad del negocio: al desplegar en Cloud Run y GKE, Google replica automáticamente cada carga de trabajo en varias regiones y conserva copias de seguridad de los datos, por lo que la empresa no necesita fijar objetivos de RTO y RPO ni diseñar una arquitectura multirregión.",
+   "D": "La conclusión es estandarizar toda la plataforma en un único servicio de cómputo para simplificar la operación: migrar cada carga a Google Kubernetes Engine, incluidas las APIs de tráfico intermitente y los sistemas heredados retenidos en el centro de datos, porque la uniformidad tecnológica abarata la modernización y reduce la formación necesaria en los equipos de operaciones."
+  },
+  "distractors": {
+   "B": "Quedarse en el rehospedaje conserva la carga operativa y los ciclos de despliegue heredados: renuncia a la elasticidad, al escalado automático y a la reducción del time-to-market que sustentan la resiliencia.",
+   "C": "Cloud Run y GKE son servicios regionales o zonales: la resiliencia multirregión se diseña y se paga explícitamente, y los objetivos de RTO y RPO los define siempre el cliente.",
+   "D": "Fuerza un único nivel de abstracción para cargas distintas: una API intermitente desperdicia nodos encendidos en GKE y un sistema retenido por regulación no puede migrarse en absoluto."
+  }
+ },
+ {
+  "id": "CDL-D3-014",
+  "options": {
+   "B": "Ejecutando la aplicación sobre una máquina virtual de Compute Engine creada a partir de una imagen de disco personalizada (golden image), de modo que cada entorno arranque una copia idéntica del servidor de pruebas con el sistema operativo completo incluido.",
+   "C": "Estandarizando en el repositorio un archivo de dependencias bloqueado (lock file) y una guía de instalación que cada entorno ejecute al desplegar, de modo que las versiones de las librerías coincidan entre el portátil del desarrollador y el servidor de pruebas.",
+   "D": "Empaquetando la aplicación en una imagen de contenedor que incluye también el kernel completo del sistema operativo invitado, de modo que cada contenedor arranque su propio núcleo aislado y se comporte igual en cualquier servidor con independencia del anfitrión."
+  },
+  "distractors": {
+   "B": "La imagen dorada versiona el sistema operativo entero en un artefacto pesado ligado a Compute Engine: no se ejecuta en el portátil del desarrollador ni aisla las dependencias de cada aplicación.",
+   "C": "El lock file fija las dependencias del lenguaje, pero no la versión del runtime, las librerías del sistema operativo ni las variables de entorno, que son las diferencias que provocan el fallo.",
+   "D": "Los contenedores comparten el kernel del host y solo empaquetan el espacio de usuario; incluir un kernel propio describe una máquina virtual, no un contenedor."
+  }
+ },
+ {
+  "id": "CDL-D3-042",
+  "options": {
+   "A": "Premium Tier entrega el tráfico por la red pública de Internet hasta el punto de presencia más cercano al usuario y Standard Tier lo transporta por la red privada de fibra de Google hasta la región de destino, y de ahí su mayor coste por gigabyte de salida.",
+   "B": "Premium Tier incluye direcciones IP globales anycast y balanceo de carga global, mientras que Standard Tier transporta el tráfico por la misma red privada de Google pero limita el ancho de banda de salida de cada proyecto a una cuota mensual fija más económica.",
+   "D": "Premium Tier cifra el tráfico de salida en tránsito con certificados administrados por Google mientras que Standard Tier lo envía sin cifrar, por lo que las cargas reguladas deben contratar el nivel superior para cumplir los requisitos de confidencialidad de los datos en movimiento."
+  },
+  "distractors": {
+   "A": "Invierte los dos niveles: es Premium el que viaja por la red privada de Google el mayor tramo posible, y Standard el que sale pronto hacia el tránsito público de Internet.",
+   "B": "Standard Tier no usa la red privada de Google: entrega el tráfico a proveedores de tránsito público, y la diferencia no es una cuota de ancho de banda sino la ruta que sigue el tráfico.",
+   "D": "El cifrado en tránsito depende del protocolo de la aplicación y de la configuración TLS del balanceador, nunca del nivel de red contratado."
+  }
+ },
+ {
+  "id": "CDL-D4-045",
+  "options": {
+   "B": "Conceder el rol de Editor a nivel de proyecto a cada equipo para agilizar la entrega, revisar manualmente los registros de auditoría una vez al trimestre, cifrar únicamente las bases de datos que contienen datos personales y fijar los objetivos de disponibilidad después de la primera incidencia grave del servicio.",
+   "C": "Centralizar todos los recursos en un único proyecto de producción con una sola política de IAM para simplificar la gobernanza, sustituir la observabilidad de Cloud Operations por comprobaciones manuales del equipo de guardia y confiar la seguridad al perímetro de red de la VPC corporativa.",
+   "D": "Aplicar los controles de seguridad solo en el momento del despliegue mediante una revisión de arquitectura previa a producción, delegar íntegramente el cifrado y la disponibilidad en Google por tratarse de servicios administrados y medir la excelencia operativa por el número de incidencias cerradas cada mes."
+  },
+  "distractors": {
+   "B": "Sustituye el privilegio mínimo por un rol básico amplio y la observabilidad continua por revisiones trimestrales reactivas, además de definir los objetivos de nivel de servicio a posteriori.",
+   "C": "Un único proyecto elimina el límite de aislamiento y amplía el radio de impacto, y confiar en el perímetro contradice el modelo Zero Trust que verifica cada acceso de forma explícita.",
+   "D": "Convierte la seguridad en un control puntual en vez de continuo: sin evaluación permanente de la postura, cualquier cambio posterior al despliegue queda sin verificar."
+  }
+ },
+ {
+  "id": "CDL-D3-004",
+  "options": {
+   "A": "Descuentos por uso continuado (Sustained Use Discounts), aplicados automáticamente cuando la instancia supera una fracción significativa del mes en ejecución",
+   "B": "Descuentos por compromiso de uso (CUD) a uno o tres años sobre la vCPU y la memoria reservadas por adelantado en la región elegida",
+   "D": "Instancias E2 de núcleo compartido de la familia optimizada en coste, apagadas fuera del horario de trabajo mediante Cloud Scheduler"
+  },
+  "distractors": {
+   "A": "Se aplican solos por mantener la VM encendida y rondan el 30%: no alcanzan el rango del 60% al 91% ni implican que Google pueda recuperar la capacidad.",
+   "B": "Exigen comprometer gasto durante años, lo que no encaja con un presupuesto muy limitado ni con cargas por lotes esporádicas, y no contemplan interrupciones.",
+   "D": "Abaratan la instancia por su tamaño y su apagado programado, pero no ofrecen el descuento por capacidad sobrante ni el modelo de interrupción descrito."
+  }
+ },
+ {
+  "id": "CDL-D4-086",
+  "options": {
+   "A": "Porque cada proyecto de Google Cloud recibe una factura independiente y la plataforma no permite agrupar el gasto de varios proyectos en una misma cuenta de facturación, de modo que separar los entornos es la única forma de conocer el coste de desarrollo y el de producción.",
+   "B": "Porque una red VPC no puede contener recursos de entornos distintos y Google Cloud exige un proyecto por cada red VPC creada, de modo que separar Desarrollo, Pruebas y Producción es un requisito técnico obligatorio de la plataforma y no una recomendación de arquitectura.",
+   "D": "Porque la jerarquía de recursos solo aplica las políticas de la organización en el ámbito del proyecto y las carpetas no admiten restricciones heredadas, por lo que separar los entornos en proyectos distintos es la única manera de imponer guardarraíles diferentes a desarrollo y producción."
+  },
+  "distractors": {
+   "A": "Varios proyectos pueden compartir una misma cuenta de facturación y el desglose por entorno se obtiene con etiquetas: el motivo real de la separación es el aislamiento, no la factura.",
+   "B": "Un mismo proyecto admite varias redes VPC y nada impide alojar entornos distintos en uno solo: la separación es una práctica recomendada, no una imposición técnica.",
+   "D": "Las Organization Policies se fijan en la organización, en las carpetas y en los proyectos, y se heredan hacia abajo: agrupar entornos en carpetas es precisamente el patrón recomendado."
+  }
+ },
+ {
+  "id": "CDL-D3-082",
+  "options": {
+   "A": "App Engine Standard (catálogo y checkout) + Cloud Tasks (cola de pedidos con reintentos) + Cloud Scheduler (envío periódico de los correos de confirmación) + Cloud Bigtable (base de datos de pedidos).",
+   "C": "Cloud Run (microservicios web de catálogo y checkout) + Cloud Pub/Sub (cola de pedidos) + Cloud Functions (correos de confirmación) + BigQuery (registro de los pedidos y del estado del catálogo).",
+   "D": "Google Kubernetes Engine Standard (microservicios de catálogo y pago) + Cloud Pub/Sub (cola de pedidos) + Cloud Functions (correos) + Cloud SQL con alta disponibilidad regional para las transacciones."
+  },
+  "distractors": {
+   "A": "Bigtable es NoSQL de columna ancha sin transacciones entre filas ni consultas relacionales, de modo que no cubre el requisito de base de datos transaccional del comercio.",
+   "C": "BigQuery es un almacén analítico orientado a consultas masivas: no está diseñado para escrituras y actualizaciones transaccionales de pedidos con baja latencia.",
+   "D": "GKE Standard mantiene nodos encendidos y exige administrar el clúster, por lo que incumple el requisito de contenedores serverless con escalado automático a cero."
+  }
+ },
+ {
+  "id": "CDL-D3-086",
+  "options": {
+   "A": "Acceso SSH directo de los administradores a cada nodo para aplicar manualmente los parches del sistema operativo, junto con Workload Identity y nodos blindados habilitados de forma predeterminada.",
+   "B": "Cifrado de los secretos de Kubernetes en etcd con claves administradas por el cliente activado por defecto, junto con el análisis obligatorio de vulnerabilidades de toda imagen antes de admitir cualquier Pod.",
+   "C": "Aislamiento del clúster en una red privada sin dirección IP pública en el plano de control y perímetros de VPC Service Controls configurados automáticamente al crear cualquier clúster Autopilot."
+  },
+  "distractors": {
+   "A": "En Autopilot los nodos los gestiona Google y no se permite acceso SSH ni parcheo manual: el mantenimiento del sistema operativo del nodo deja de ser tarea del cliente.",
+   "B": "El cifrado de secretos en la capa de aplicación con CMEK y el control de admisión de imágenes son opciones que hay que activar y configurar, no valores predeterminados de Autopilot.",
+   "C": "El clúster privado y VPC Service Controls son decisiones de diseño de red que el cliente configura explícitamente; Autopilot no las impone al crear el clúster."
+  }
+ },
+ {
+  "id": "CDL-D4-038",
+  "options": {
+   "A": "Las políticas de la organización (Organization Policies), que aplican restricciones de plataforma sobre los recursos permitidos en cada carpeta y proyecto de la jerarquía.",
+   "C": "Los niveles de acceso de Access Context Manager aplicados con VPC Service Controls sobre el perímetro del proyecto de producción para filtrar las solicitudes por dirección IP.",
+   "D": "La suplantación de cuentas de servicio con el rol de creador de tokens, que emite credenciales de corta duración durante la sesión interactiva del ingeniero de guardia."
+  },
+  "distractors": {
+   "A": "Restringen qué configuraciones de recursos pueden crearse en la jerarquía, no quien puede actuar ni en qué franja horaria: no conceden ni acotan permisos de una identidad.",
+   "C": "Actúa en el perímetro del servicio y por atributos de la solicitud, pero no concede el rol administrativo temporal ni permite acotarlo a la ventana horaria del turno.",
+   "D": "Limita la vida del token pero no expresa condiciones: no restringe el acceso a la franja de 08:00 a 16:00 ni exige que la solicitud llegue desde una IP corporativa."
+  }
+ },
+ {
+  "id": "CDL-D3-050",
+  "options": {
+   "A": "Cloud VPN con túneles de enrutamiento estático y rutas personalizadas definidas en la VPC",
+   "B": "Cloud NAT con anuncio automático de las subredes nuevas hacia el enrutador del centro de datos",
+   "D": "Cloud DNS con zonas de reenvío privadas entre la red local y la red VPC de Google Cloud"
+  },
+  "distractors": {
+   "A": "El enrutamiento estático obliga a declarar cada subred a mano en ambos extremos, que es exactamente el trabajo manual que el equipo quiere eliminar.",
+   "B": "Cloud NAT traduce direcciones para dar salida a Internet a instancias sin IP pública; no intercambia rutas con la red local.",
+   "D": "Resuelve nombres a direcciones IP, pero no distribuye ni aprende rutas: el tráfico seguiría sin saber por donde alcanzar la subred nueva."
+  }
+ },
+ {
+  "id": "CDL-D4-014",
+  "options": {
+   "A": "SCC Premium sustituye la necesidad de configurar reglas de firewall, políticas de IAM y cifrado en cada proyecto, porque aplica automáticamente los controles correctivos sobre cualquier recurso mal configurado que detecte en la organización.",
+   "C": "SCC Premium es el único nivel que permite exportar los hallazgos hacia un sistema SIEM externo y conservar el inventario de activos, ya que el nivel Standard no registra los recursos desplegados ni sus cambios de configuración.",
+   "D": "SCC Premium extiende a la empresa las certificaciones PCI-DSS y NIST de la infraestructura de Google, de modo que hereda automáticamente el cumplimiento normativo sin auditar la configuración de sus propias cargas de trabajo."
+  },
+  "distractors": {
+   "A": "Security Command Center detecta, prioriza y recomienda, pero no corrige por sí mismo la configuración ni sustituye a los controles preventivos que el cliente debe definir.",
+   "C": "Contradice el propio enunciado: el nivel Standard ya incluye el inventario de activos, y la exportación de hallazgos no es exclusiva del nivel Premium.",
+   "D": "El cumplimiento no se hereda: Premium entrega paneles e informes que miden la conformidad de la configuración del cliente, que sigue siendo responsabilidad suya."
+  }
+ },
+ {
+  "id": "CDL-D2-071",
+  "options": {
+   "A": "Ocurre porque el clúster tiene menos nodos de los necesarios para el volumen de ingesta; se resuelve añadiendo nodos al clúster de Bigtable para repartir la carga de escritura entre más servidores y elevar así el rendimiento total de la tabla.",
+   "C": "Ocurre porque las escrituras secuenciales bloquean el índice secundario de la tabla; se resuelve creando un índice adicional sobre la columna del identificador de vehículo para que las consultas dejen de recorrer toda la marca de tiempo.",
+   "D": "Ocurre porque la marca de tiempo es un dato de baja cardinalidad; se resuelve invirtiendo la marca de tiempo o añadiendo un valor aleatorio (salt) al final de la clave de fila para distribuir las escrituras entre todos los nodos del clúster."
+  },
+  "distractors": {
+   "A": "Con una clave secuencial todas las escrituras siguen cayendo en el mismo rango contiguo: añadir nodos deja los nuevos ociosos porque el punto caliente no se reparte.",
+   "C": "Bigtable no tiene índices secundarios: la clave de fila es el único índice, y por eso el reparto de la carga se resuelve en el diseño de esa clave.",
+   "D": "Bigtable ordena lexicográficamente por la clave completa: un sufijo aleatorio no cambia el rango de destino y una marca invertida sigue siendo monótona, así que el punto caliente persiste."
+  }
+ }
+]

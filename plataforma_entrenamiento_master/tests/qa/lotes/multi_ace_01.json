@@ -1,0 +1,374 @@
+[
+ {
+  "id": "ACE-D1-008",
+  "domainId": "ACE-D1",
+  "subtopic": null,
+  "scenario": "A custom mode subnet in us-east4 has the IP range 10.10.0.0/24 (256 addresses) and is running out of available IP addresses due to rapid VM growth. You need to expand the primary IP range to accommodate at least 500 VMs with zero downtime and without re-creating existing instances. What should you do?",
+  "correct": "B",
+  "explanation": "The command gcloud compute networks subnets expand-ip-range allows increasing the size of an existing subnet IP range (e.g. from /24 to /23) without recreating the subnet, affecting running instances, or causing network downtime.",
+  "doc": "https://cloud.google.com/vpc/docs/use-vpc#expand-subnet",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 80,
+    "text": "Delete the existing subnet and recreate it with 10.10.0.0/22 in the same region."
+   },
+   {
+    "letter": "B",
+    "len": 77,
+    "text": "Run gcloud compute networks subnets expand-ip-range with prefix 10.10.0.0/23."
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "Run gcloud compute networks subnets update to shrink the prefix to 10.10.0.0/25."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "Add an alias secondary IP range of 10.20.0.0/24 to serve as the primary network."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D2-043",
+  "domainId": "ACE-D2",
+  "subtopic": null,
+  "scenario": "You need to plan the compute architecture for a batch data ingestion process that runs every night at midnight. The containerized task processes files from Cloud Storage, runs for up to 45 minutes to completion, and does not serve incoming HTTP traffic. You want a fully managed serverless solution with minimum operational overhead. What should you use?",
+  "correct": "B",
+  "explanation": "Cloud Run jobs are designed for containerized tasks that run to completion (up to 24 hours execution time) rather than serving persistent HTTP requests. Triggering a Cloud Run job via Cloud Scheduler provides a fully managed, serverless batch solution without managing VM or cluster infrastructure.",
+  "doc": "https://cloud.google.com/run/docs/create-jobs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 116,
+    "text": "Deploy a Cloud Run service triggered by Cloud Scheduler with request timeout configured to 45 minutes of processing."
+   },
+   {
+    "letter": "B",
+    "len": 106,
+    "text": "Create a Cloud Run job triggered by Cloud Scheduler to execute the container task to completion on demand."
+   },
+   {
+    "letter": "C",
+    "len": 109,
+    "text": "Deploy a Compute Engine VM with an instance schedule to run the container task and shut down after execution."
+   },
+   {
+    "letter": "D",
+    "len": 113,
+    "text": "Create a standard Google Kubernetes Engine cluster with a scheduled CronJob running across multiple worker nodes."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D3-041",
+  "domainId": "ACE-D3",
+  "subtopic": "Cloud Logging Sink Deployment",
+  "scenario": "A security policy mandates that all Google Cloud IAM administrative activity logs across project `corp-prod-101` must be streamed in real-time to a BigQuery dataset `audit_analytics` for compliance retention and SIEM queries. Which gcloud command deploys this logging sink?",
+  "correct": "D",
+  "explanation": "`gcloud logging sinks create <SINK_NAME> <DESTINATION_URI> --log-filter=<FILTER>` creates a Cloud Logging Sink that continuously routes matching log entries to BigQuery, Cloud Storage, or Pub/Sub.",
+  "doc": "https://cloud.google.com/logging/docs/export/configure-export-v2",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 158,
+    "text": "gcloud logging sinks create iam-audit-gcs-sink storage.googleapis.com/corp-prod-101-audit-archive --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'"
+   },
+   {
+    "letter": "B",
+    "len": 182,
+    "text": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='logName:\"cloudaudit.googleapis.com%2Fdata_access\"'"
+   },
+   {
+    "letter": "C",
+    "len": 168,
+    "text": "gcloud logging sinks create iam-audit-ps-sink pubsub.googleapis.com/projects/corp-prod-101/topics/iam-audit --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'"
+   },
+   {
+    "letter": "D",
+    "len": 178,
+    "text": "gcloud logging sinks create iam-audit-bq-sink bigquery.googleapis.com/projects/corp-prod-101/datasets/audit_analytics --log-filter='protoPayload.serviceName=\"iam.googleapis.com\"'"
+   }
+  ]
+ },
+ {
+  "id": "ACE-D4-034",
+  "domainId": "ACE-D4",
+  "subtopic": "Compute Engine MIG Abandon Instances Operations",
+  "scenario": "A VM instance `worker-mig-7abc` inside Managed Instance Group `worker-mig` is exhibiting an elusive memory corruption bug. A senior engineer needs to isolate this VM from the MIG so it is NOT deleted, replaced, or health-checked by the MIG, allowing offline forensic analysis while the MIG provisions a replacement. Which command should you execute?",
+  "correct": "B",
+  "explanation": "`gcloud compute instance-groups managed abandon-instances <MIG_NAME> --instances=<INSTANCE>` removes the VM from the Managed Instance Group without deleting the underlying VM. The instance becomes a standalone VM that can be inspected without being terminated or auto-healed by the MIG.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/deleting-abandoning-instances-in-migs#abandoning_instances",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 115,
+    "text": "gcloud compute instance-groups managed delete-instances worker-mig --region=us-central1 --instances=worker-mig-7abc"
+   },
+   {
+    "letter": "B",
+    "len": 116,
+    "text": "gcloud compute instance-groups managed abandon-instances worker-mig --region=us-central1 --instances=worker-mig-7abc"
+   },
+   {
+    "letter": "C",
+    "len": 117,
+    "text": "gcloud compute instance-groups managed recreate-instances worker-mig --region=us-central1 --instances=worker-mig-7abc"
+   },
+   {
+    "letter": "D",
+    "len": 124,
+    "text": "gcloud compute instances update worker-mig-7abc --zone=us-central1-a --deletion-protection --update-labels=state=quarantined"
+   }
+  ]
+ },
+ {
+  "id": "ACE-D5-032",
+  "domainId": "ACE-D5",
+  "subtopic": "Cloud IAM Resource-Level Hierarchy & Scoping",
+  "scenario": "You have 10 Cloud Storage buckets in project `corp-storage-prod`. A contractor needs read and write access to ONLY ONE specific bucket `gs://contractor-workspace`, and must NOT have access to any of the other 9 buckets in the project. At what level in the Google Cloud resource hierarchy should you bind the IAM role?",
+  "correct": "C",
+  "explanation": "Google Cloud IAM policies inherit downwards: Org -> Folder -> Project -> Resource. Binding IAM roles at the specific Resource level (the individual bucket `gs://contractor-workspace`) grants permissions exclusively to that single resource without granting access to other buckets in the project.",
+  "doc": "https://cloud.google.com/iam/docs/resource-hierarchy-access-control",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "At the project level on corp-storage-prod, using roles/storage.objectAdmin."
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "At the organization level, so the binding is inherited by the target bucket."
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "At the Cloud Storage Bucket resource level on gs://contractor-workspace."
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "At the object prefix level on gs://contractor-workspace/uploads/*."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D1-027",
+  "domainId": "ACE-D1",
+  "subtopic": null,
+  "scenario": "An enterprise connects an on-premises data center to vpc-hub via HA Cloud VPN. The vpc-hub network is peered directly with vpc-spoke1 and vpc-spoke2 using VPC Network Peering. Compute Engine VMs in vpc-spoke1 cannot reach on-premises servers. You need to identify the architectural root cause. What is the cause?",
+  "correct": "C",
+  "explanation": "Google Cloud VPC Network Peering is non-transitive. If VPC A is peered with VPC B, and VPC B is connected to an on-premises network or another VPC C, VPC A cannot communicate with on-premises or VPC C through VPC B using standard peering alone.",
+  "doc": "https://cloud.google.com/vpc/docs/vpc-peering#non-transitive",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 97,
+    "text": "Cloud Router only supports BGP route exchange with subnets located in the same geographic region."
+   },
+   {
+    "letter": "B",
+    "len": 98,
+    "text": "HA Cloud VPN tunnels automatically drop all TCP traffic originating from custom mode VPC networks."
+   },
+   {
+    "letter": "C",
+    "len": 102,
+    "text": "VPC Network Peering is non-transitive, so spoke VPCs cannot traverse hub peering to reach on-premises."
+   },
+   {
+    "letter": "D",
+    "len": 95,
+    "text": "The implied VPC egress firewall rule priority 65535 automatically blocks inter-network traffic."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D2-034",
+  "domainId": "ACE-D2",
+  "subtopic": null,
+  "scenario": "You are creating an automation script using Terraform to provision Cloud Storage buckets for multiple enterprise clients. Which naming rule is strictly enforced by Google Cloud Storage and must be accommodated in your automation logic?",
+  "correct": "D",
+  "explanation": "Cloud Storage bucket names reside in a single global namespace shared across all Google Cloud accounts worldwide. Bucket names must be globally unique, conform to DNS naming conventions (3-63 characters, lowercase letters, numbers, hyphens), and cannot be duplicated by any other project or organization globally.",
+  "doc": "https://cloud.google.com/storage/docs/buckets#naming",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 101,
+    "text": "Bucket names are private to each project and can be duplicated across separate Google Cloud projects."
+   },
+   {
+    "letter": "B",
+    "len": 102,
+    "text": "Bucket names must contain between 64 and 255 characters and include uppercase organizational prefixes."
+   },
+   {
+    "letter": "C",
+    "len": 99,
+    "text": "Bucket names must include the target GCP region and project number as mandatory semicolon suffixes."
+   },
+   {
+    "letter": "D",
+    "len": 103,
+    "text": "Bucket names share a single global namespace across all customers and must follow DNS naming standards."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D3-039",
+  "domainId": "ACE-D3",
+  "subtopic": "Cloud DNS Record Creation & Management",
+  "scenario": "You have registered the domain `api.corp.com` in a Cloud DNS Public Managed Zone named `corp-public-zone`. You need to create an `A` record pointing `api.corp.com` to the external IP address `34.120.50.80` with a TTL of 300 seconds. Which gcloud command creates this record?",
+  "correct": "C",
+  "explanation": "`gcloud dns record-sets create <FQDN> --zone=<ZONE_NAME> --type=<TYPE> --ttl=<TTL> --rrdatas=<IP_OR_VALUE>` adds DNS resource records (A, CNAME, TXT, MX) to a Cloud DNS managed zone.",
+  "doc": "https://cloud.google.com/dns/docs/records",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 109,
+    "text": "gcloud dns record-sets update api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80"
+   },
+   {
+    "letter": "B",
+    "len": 113,
+    "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=CNAME --ttl=300 --rrdatas=34.120.50.80"
+   },
+   {
+    "letter": "C",
+    "len": 109,
+    "text": "gcloud dns record-sets create api.corp.com. --zone=corp-public-zone --type=A --ttl=300 --rrdatas=34.120.50.80"
+   },
+   {
+    "letter": "D",
+    "len": 115,
+    "text": "gcloud dns record-sets transaction add 34.120.50.80 --name=api.corp.com. --ttl=300 --type=A --zone=corp-public-zone"
+   }
+  ]
+ },
+ {
+  "id": "ACE-D4-040",
+  "domainId": "ACE-D4",
+  "subtopic": "GKE Node Conditions & Troubleshooting",
+  "scenario": "A worker node in your GKE cluster is rejecting new Pod scheduling with condition `DiskPressure: True`. You need to inspect the full node condition details, allocatable resources, and recent system events on node `gke-prod-pool-1-node9`. Which command provides this detailed diagnostic output?",
+  "correct": "B",
+  "explanation": "`kubectl describe node <NODE_NAME>` outputs complete Kubernetes node metadata, including Node Conditions (`Ready`, `MemoryPressure`, `DiskPressure`, `PIDPressure`), capacity vs allocatable resources, and system event messages (e.g. image garbage collection failures).",
+  "doc": "https://kubernetes.io/docs/concepts/architecture/nodes/#condition",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 41,
+    "text": "kubectl delete node gke-prod-pool-1-node9"
+   },
+   {
+    "letter": "B",
+    "len": 43,
+    "text": "kubectl describe node gke-prod-pool-1-node9"
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "gcloud compute disks describe gke-prod-pool-1-node9"
+   },
+   {
+    "letter": "D",
+    "len": 35,
+    "text": "bq show nodes:gke-prod-pool-1-node9"
+   }
+  ]
+ },
+ {
+  "id": "ACE-D5-005",
+  "domainId": "ACE-D5",
+  "subtopic": "Cloud Audit Logs Data Access Configuration",
+  "scenario": "By default, Google Cloud enables Admin Activity logs for all services at no charge, but Data Access logs (Data Read, Data Write, Admin Read) for Cloud Storage and BigQuery are disabled. An enterprise compliance framework mandates logging every single read and write access to Cloud Storage objects across the project. How do you enable these logs?",
+  "correct": "C",
+  "explanation": "Cloud Audit Logs Data Access logs are configured via the project's IAM Audit Config (`auditConfigs`). Enabling `DATA_READ` and `DATA_WRITE` for `storage.googleapis.com` generates audit records for every `objects.get`, `objects.create`, and `objects.delete` API operation.",
+  "doc": "https://cloud.google.com/logging/docs/audit/configure-data-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 139,
+    "text": "Create a Cloud Logging sink that routes storage.googleapis.com log entries from the _Default bucket into BigQuery for compliance retention."
+   },
+   {
+    "letter": "B",
+    "len": 138,
+    "text": "Enable legacy Cloud Storage usage logs with gcloud storage buckets update --log-bucket, then load the delivered CSV reports into BigQuery."
+   },
+   {
+    "letter": "C",
+    "len": 141,
+    "text": "Update the project's IAM Audit Config in Cloud Console or via gcloud to enable DATA_READ and DATA_WRITE log types for storage.googleapis.com."
+   },
+   {
+    "letter": "D",
+    "len": 142,
+    "text": "Enable Object Versioning plus a bucket retention policy, so every object write creates a new generation recording the complete access history."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D1-011",
+  "domainId": "ACE-D1",
+  "subtopic": null,
+  "scenario": "A junior developer currently has the primitive Editor role on a production project. Security audit findings mandate adhering strictly to the principle of least privilege. The developer only needs to view project settings and manage Compute Engine instances (create, start, stop, delete), without modifying firewall rules or Cloud Storage buckets. Which IAM role should you grant?",
+  "correct": "D",
+  "explanation": "The Compute Instance Admin (v1) role (roles/compute.instanceAdmin.v1) provides full control over Compute Engine instances without granting rights to modify VPC firewalls or network configurations. Pairing it with Viewer allows viewing overall project resources.",
+  "doc": "https://cloud.google.com/iam/docs/understanding-roles#compute-engine-roles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 68,
+    "text": "Grant roles/compute.admin and roles/owner on the production project."
+   },
+   {
+    "letter": "B",
+    "len": 72,
+    "text": "Grant roles/compute.networkAdmin and roles/storage.admin on the project."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Maintain roles/editor and apply an IAM Deny rule for Cloud Storage buckets."
+   },
+   {
+    "letter": "D",
+    "len": 69,
+    "text": "Grant roles/compute.instanceAdmin.v1 and roles/viewer on the project."
+   }
+  ]
+ },
+ {
+  "id": "ACE-D2-040",
+  "domainId": "ACE-D2",
+  "subtopic": null,
+  "scenario": "A mobile gaming company is designing the backend database for a new global game with 2 million daily active users. Requirements: 1) Store player profile JSON documents and inventory items. 2) Direct integration with client-side mobile iOS and Android SDKs with offline support. 3) Support ACID multi-document transactions when players trade items. 4) Scale automatically with zero cluster provisioning. Which database should you plan?",
+  "correct": "A",
+  "explanation": "Firestore in Native mode is a serverless NoSQL document database that offers direct integration with iOS and Android client SDKs, offline data synchronization, automatic multi-region scaling, and support for ACID multi-document transactions.",
+  "doc": "https://cloud.google.com/firestore/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 68,
+    "text": "Firestore in Native mode configured with automated document scaling."
+   },
+   {
+    "letter": "B",
+    "len": 69,
+    "text": "Cloud Bigtable with SSD storage clusters and manual node autoscaling."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Cloud Spanner with multi-region replication and custom SQL schemas."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Cloud Memorystore for Redis with automated persistence snapshotting."
+   }
+  ]
+ }
+]

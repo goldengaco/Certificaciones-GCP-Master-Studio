@@ -33,6 +33,35 @@
     init() {
       if (typeof document === 'undefined') return;
 
+      // --- Atajos de teclado: A-E / 1-5 responder, Enter avanzar, flechas navegar ---
+      if (!this._kbBound) {
+        this._kbBound = true;
+        document.addEventListener('keydown', (e) => {
+          const view = document.getElementById('view-study');
+          if (!view || view.style.display === 'none' || view.offsetParent === null) return;
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          const t = e.target;
+          if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' ||
+                    t.tagName === 'SELECT' || t.isContentEditable)) return;
+
+          const k = String(e.key || '').toUpperCase();
+          if (!this.isAnswerSubmitted && k.length === 1 && 'ABCDE'.indexOf(k) > -1) {
+            e.preventDefault(); this.selectOption(k); return;
+          }
+          if (!this.isAnswerSubmitted && k.length === 1 && '12345'.indexOf(k) > -1) {
+            e.preventDefault(); this.selectOption('ABCDE'[parseInt(k, 10) - 1]); return;
+          }
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (this.isAnswerSubmitted) { this.goToNextQuestion(); }
+            else { this.submitAnswer(); }
+            return;
+          }
+          if (e.key === 'ArrowRight') { e.preventDefault(); this.goToNextQuestion(); return; }
+          if (e.key === 'ArrowLeft')  { e.preventDefault(); this.goToPrevQuestion(); return; }
+        });
+      }
+
       // Domain Filter Dropdown
       const domainFilterSelect = document.getElementById('study-domain-filter-select');
       if (domainFilterSelect) {
@@ -241,8 +270,14 @@
 
       const domainTagEl = document.getElementById('study-domain-tag');
       if (domainTagEl) {
-        domainTagEl.textContent = `${q.domainId || 'Dominio'}: ${q.domainName || ''}`;
+        domainTagEl.textContent = q.domainName
+          ? `${q.domainId || 'Dominio'}: ${q.domainName}`
+          : (q.domainId || 'Dominio');
       }
+
+      // La insignia del id estaba fija en 'ACE-D1-001' para todas las preguntas.
+      const qidBadge = document.getElementById('study-qid-badge');
+      if (qidBadge) qidBadge.textContent = q.id || '';
 
       const diffBadge = document.getElementById('study-diff-badge');
       if (diffBadge) {
@@ -286,8 +321,9 @@
       // Update Bookmark button
       this.updateBookmarkButton(q.id);
 
-      // Render Trigger Keywords Bar
-      this.renderKeywordsBar(q.keywords || []);
+      // Las palabras clave se muestran DESPUES de responder: antes filtran la respuesta
+      // (en el 88% de CDL la correcta comparte mas palabras clave que cualquier distractor).
+      this.renderKeywordsBar([]);
 
       // Render Options Container
       this.renderOptions(q);
@@ -380,15 +416,23 @@
       if (!container) return;
 
       container.innerHTML = '';
+
+      // El grupo se anuncia como radiogroup/grupo para el lector de pantalla.
+      container.setAttribute('role', question.isMultiSelect ? 'group' : 'radiogroup');
+      container.setAttribute('aria-label', question.isMultiSelect
+        ? 'Opciones de estudio, seleccion multiple'
+        : 'Opciones de estudio');
       const fragment = document.createDocumentFragment();
       const options = question.options || [];
 
-      options.forEach(opt => {
+      options.forEach((opt, optIdx) => {
         const optionCard = document.createElement('div');
         optionCard.className = 'option-card';
         optionCard.setAttribute('role', question.isMultiSelect ? 'checkbox' : 'radio');
         optionCard.setAttribute('aria-checked', 'false');
         optionCard.setAttribute('data-letter', opt.letter);
+        // Sin tabindex la tarjeta era invisible para el teclado (mismo patron que examen).
+        optionCard.setAttribute('tabindex', optIdx === 0 ? '0' : '-1');
 
         optionCard.innerHTML = `
           <div class="option-letter-badge">${opt.letter}</div>
@@ -400,10 +444,27 @@
           this.selectOption(opt.letter);
         });
 
+        optionCard.addEventListener('keydown', (e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this.selectOption(opt.letter);
+          }
+        });
+
         fragment.appendChild(optionCard);
       });
 
       container.appendChild(fragment);
+
+      // La pista de teclado refleja las opciones reales (4 o 5) y si hay que
+      // elegir varias. Antes decia siempre "A-D" aunque la pregunta tuviera cinco.
+      const pista = document.getElementById('study-kbd-hint');
+      if (pista && options.length) {
+        const ultima = options[options.length - 1].letter;
+        pista.textContent = question.isMultiSelect
+          ? `A–${ultima} marcar ${question.expectedSelectCount || 2} · Enter comprobar · ← → navegar`
+          : `A–${ultima} responder · Enter avanzar · ← → navegar`;
+      }
     },
 
     /**
@@ -480,6 +541,8 @@
       if (!q) return;
 
       this.isAnswerSubmitted = true;
+      const btnRevelar = document.getElementById('btn-study-reveal');
+      if (btnRevelar) btnRevelar.style.display = 'none';
       const app = global.GCP_APP;
       const correctAnswers = this.normalizeCorrectAnswers(q.correct);
       const uniqueChosen = Array.from(new Set(Array.from(this.selectedOptions || []).map(c => String(c).trim().toUpperCase()))).sort();
@@ -554,6 +617,8 @@
      * @param {Array<string>} correctAnswers 
      */
     renderJustificationDrawer(question, isCorrect, correctAnswers) {
+      // Ahora si: las palabras clave sirven como resumen de lo aprendido.
+      this.renderKeywordsBar((question && question.keywords) || []);
       const drawer = document.getElementById('study-justification-drawer');
       if (!drawer) return;
 

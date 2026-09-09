@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D3-025",
+  "subtopic": "Cloud IDS Network Packet Inspection",
+  "caseStudy": "none",
+  "scenario": "To satisfy PCI-DSS requirement 11.4, an enterprise must deploy an automated Network Intrusion Detection System (IDS) to inspect all East-West (inter-subnet) and North-South (internet) traffic for malware, spyware, and vulnerability exploits without installing agents on virtual machines or rerouting traffic through bottleneck third-party appliance VMs. What service should you deploy?",
+  "correct": "C",
+  "clave_len": 209,
+  "explanation": "Google Cloud IDS is a fully managed cloud-native intrusion detection system. It uses Google's native Packet Mirroring to transparently inspect network traffic using Palo Alto Networks threat detection technologies without latency impact or VM agent maintenance.",
+  "doc": "https://cloud.google.com/intrusion-detection-system/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "Deploy Snort software on a single Compute Engine instance with port mirroring."
+   },
+   {
+    "letter": "B",
+    "len": 73,
+    "text": "Inspect network packets manually by running tcpdump on developer laptops."
+   },
+   {
+    "letter": "C",
+    "len": 209,
+    "text": "Deploy Google Cloud IDS (Intrusion Detection System) endpoints in the VPC, backed by Packet Mirroring that transparently mirrors network traffic to a Google-managed Palo Alto Networks threat inspection engine."
+   },
+   {
+    "letter": "D",
+    "len": 28,
+    "text": "Disable all network logging."
+   }
+  ],
+  "ratio": 3.5
+ },
+ {
+  "id": "PCA-D2-002",
+  "subtopic": "GitOps & Config Controller",
+  "caseStudy": "none",
+  "scenario": "An enterprise wants to manage all Google Cloud infrastructure (Pub/Sub topics, BigQuery datasets, GKE clusters) declaratively using Kubernetes Custom Resource Definitions (CRDs) stored in a GitLab repository. When a PR merges, changes must automatically reconcile in Google Cloud with continuous drift detection. Which service should you deploy?",
+  "correct": "A",
+  "clave_len": 204,
+  "explanation": "Config Controller is a hosted Google Cloud service combining Config Connector and Config Sync (Anthos Config Management) that lets you manage GCP resources as declarative Kubernetes objects sourced directly from Git repositories with continuous drift reconciliation.",
+  "doc": "https://cloud.google.com/anthos-config-management/docs/concepts/config-controller-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 204,
+    "text": "Deploy Google Cloud Config Controller (Anthos Config Management with Config Connector) to continuously synchronize declarative Kubernetes Resource Model (KRM) manifests from Git to Google Cloud resources."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Deploy an unmanaged Jenkins VM in a single zone."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Manage all infrastructure manually via the Google Cloud Console."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Write custom bash scripts on a cron job running gcloud commands."
+   }
+  ],
+  "ratio": 3.48
+ },
+ {
+  "id": "PCA-D1-062",
+  "subtopic": "Altostrat Media: Ticket Sales & Fan Shop on Cloud Spanner",
+  "caseStudy": "altostrat_media",
+  "scenario": "When tickets for the HRL Championship Grand Prix go on sale, 100,000 fans attempt to purchase seat allocations simultaneously in the first 60 seconds. The ticketing system must scale horizontally without deadlocks, guarantee zero double-booked seats with strict serializable ACID transactions, and support global purchases across North America, Europe, and Asia. What database architecture meets these requirements?",
+  "correct": "B",
+  "clave_len": 205,
+  "explanation": "Cloud Spanner provides horizontally scalable distributed transactions with external consistency (TrueTime). Designing Spanner schemas with UUIDv4/bit-reversed keys and interleaved tables prevents split hotspotting while guaranteeing zero double-bookings.",
+  "doc": "https://cloud.google.com/spanner/docs/schema-and-data-model",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Cloud SQL for MySQL with optimistic locking and asynchronous read replicas."
+   },
+   {
+    "letter": "B",
+    "len": 205,
+    "text": "Cloud Spanner with a Multi-Region Instance configuration, using interleaved child tables for seat reservations, bit-reversed or UUIDv4 primary keys to prevent hotspotting, and Read-Write ACID transactions."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Use Cloud Memorystore Memcached without persistence."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Store ticket inventory in Cloud Storage JSON files."
+   }
+  ],
+  "ratio": 3.46
+ },
+ {
+  "id": "PCA-D4-026",
+  "subtopic": "Modernization: API Monetization & Developer Portals with Apigee",
+  "caseStudy": "none",
+  "scenario": "An enterprise financial institution wants to package its credit scoring APIs into commercial API products with tiered subscription rate plans (e.g. Free Tier: 1,000 calls/mo; Gold Tier: $0.05 per API call), automated billing integration, self-service developer portal registration, and API key management. What Google Cloud platform delivers API monetization and developer management?",
+  "correct": "B",
+  "clave_len": 191,
+  "explanation": "Apigee X includes enterprise API Monetization and integrated Developer Portals. It allows organizations to package APIs into commercial products, define flexible pricing models (subscriptions, per-call billing, revenue sharing), and provide self-service developer onboarding.",
+  "doc": "https://cloud.google.com/apigee/docs/api-platform/monetization/concepts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "Write custom billing scripts on a single Compute Engine instance."
+   },
+   {
+    "letter": "B",
+    "len": 191,
+    "text": "Deploy Google Cloud Apigee X with Apigee Monetization and Integrated Developer Portals, creating API Products with rate plans (freemium, prepaid, postpaid) and automated developer onboarding."
+   },
+   {
+    "letter": "C",
+    "len": 50,
+    "text": "Offer all APIs completely free to all competitors."
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Send invoices by postal mail manually every quarter."
+   }
+  ],
+  "ratio": 3.43
+ },
+ {
+  "id": "PCA-D2-023",
+  "subtopic": "Internal Application Load Balancer with Cross-Region Backends",
+  "caseStudy": "none",
+  "scenario": "An enterprise internal microservice deployed in us-central1 and us-east1 must be accessible via a single private internal IP address from anywhere in the global VPC. If backend pods in us-central1 become unhealthy or saturated, traffic must seamlessly fail over to healthy backends in us-east1. What load balancer architecture should you deploy?",
+  "correct": "A",
+  "clave_len": 177,
+  "explanation": "Regional Internal Application Load Balancers with Global Access enabled allow clients in any Google Cloud region to send private traffic to the load balancer, while cross-region backend services provide automated failover between backend instance groups across regions.",
+  "doc": "https://cloud.google.com/load-balancing/docs/l7-internal",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 177,
+    "text": "Deploy a Regional Internal Application Load Balancer with Global Access enabled, configured with multi-region backend services and health checks across us-central1 and us-east1."
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "An unmanaged HAProxy VM in us-central1."
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "External Network Load Balancer with public Anycast IPs."
+   },
+   {
+    "letter": "D",
+    "len": 62,
+    "text": "Round-robin DNS entries pointing to individual VM private IPs."
+   }
+  ],
+  "ratio": 3.4
+ },
+ {
+  "id": "PCA-D3-058",
+  "subtopic": "Knightmotives Automotive: Cloud Audit Logging to Locked Storage Sinks",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "To settle multi-million dollar equipment warranty disputes with agricultural corporations, knightmotives_automotive must record every engine modification, diagnostic clearing event, and telemetry access into an immutable audit trail that cannot be deleted or modified by dealers, tractor owners, or knightmotives_automotive employees for 10 years. What architecture guarantees tamper-proof audit storage?",
+  "correct": "B",
+  "clave_len": 197,
+  "explanation": "Exporting Cloud Audit Logs to a Cloud Storage bucket with a locked Retention Policy (Bucket Lock) enforces immutable Write-Once-Read-Many (WORM) storage, mathematically and legally preventing log deletion or modification for 10 years.",
+  "doc": "https://cloud.google.com/storage/docs/bucket-lock",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "Store logs in a MySQL database with root passwords shared among engineers."
+   },
+   {
+    "letter": "B",
+    "len": 197,
+    "text": "Create an aggregated Cloud Logging Sink exporting all vehicle audit events to a Cloud Storage bucket configured with an immutable locked Retention Policy (Bucket Lock) set to 3,650 days (10 years)."
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "Rely on standard 30-day log retention in Cloud Logging."
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "Print logs on paper and store in a warehouse."
+   }
+  ],
+  "ratio": 3.4
+ },
+ {
+  "id": "PCA-D5-026",
+  "subtopic": "Cloud Spanner Change Streams for Downstream Triggers",
+  "caseStudy": "none",
+  "scenario": "Whenever a new customer order or balance update is committed in Cloud Spanner, the change must be streamed immediately to a downstream fraud detection pipeline and an external search index in Elasticsearch. Modifying the application transaction code to write to multiple databases simultaneously creates dual-write consistency bugs. What native Spanner feature provides transactional change capture?",
+  "correct": "D",
+  "clave_len": 252,
+  "explanation": "Cloud Spanner Change Streams capture insert, update, and delete changes in real-time with transactional ordering. Integrating with Cloud Dataflow streams changes to downstream systems (Elasticsearch, BigQuery, Pub/Sub) without dual-write inconsistencies.",
+  "doc": "https://cloud.google.com/spanner/docs/change-streams",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 89,
+    "text": "Write application code that writes to Spanner and Elasticsearch inside a try/catch block."
+   },
+   {
+    "letter": "B",
+    "len": 99,
+    "text": "Poll the Spanner database with SELECT * FROM Orders WHERE updated_at > NOW() - 10s every 5 seconds."
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Disable search indexing completely."
+   },
+   {
+    "letter": "D",
+    "len": 252,
+    "text": "Create a Cloud Spanner Change Stream (CREATE CHANGE STREAM order_stream FOR Orders), which outputs transactional mutations in real-time, consumed by a Cloud Dataflow connector that routes changes reliably to Elasticsearch and fraud detection pipelines."
+   }
+  ],
+  "ratio": 3.39
+ },
+ {
+  "id": "PCA-D1-046",
+  "subtopic": "EHR Healthcare: Cloud Audit Logs & WORM Compliance",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "HIPAA and legal regulatory audits require EHR Healthcare to record every data access attempt to patient records (both read and write). Audit logs must be stored immutably in a Write-Once-Read-Many (WORM) storage configuration for exactly 7 years, ensuring that neither malicious actors nor rogue cloud administrators (including project owners) can modify or delete log files before the retention period expires. What architecture guarantees this?",
+  "correct": "C",
+  "clave_len": 240,
+  "explanation": "Enabling Data Access audit logs captures all read/write events. Exporting via Log Sinks to Cloud Storage with a locked Retention Policy (Bucket Lock) enforces SEC Rule 17a-4 / HIPAA compliant WORM retention, preventing any deletion—even by Google Cloud Project Owners—until the retention period expires.",
+  "doc": "https://cloud.google.com/storage/docs/bucket-lock",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 70,
+    "text": "Write logs to an external USB hard drive stored in a manager's office."
+   },
+   {
+    "letter": "B",
+    "len": 72,
+    "text": "Rely on the default 30-day Cloud Logging retention window without sinks."
+   },
+   {
+    "letter": "C",
+    "len": 240,
+    "text": "Enable Cloud Audit Logs (Admin Activity + Data Access logs for Healthcare, BigQuery, GCS), configure an aggregated Log Sink to a Cloud Storage bucket, and apply a Bucket Lock Retention Policy set to 7 years (2,555 days) and lock the policy."
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "Store logs in a text file on a Compute Engine VM with root permissions."
+   }
+  ],
+  "ratio": 3.38
+ },
+ {
+  "id": "PCA-D1-066",
+  "subtopic": "Altostrat Media: Social Authentication & Firebase Auth",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL is launching its global fan engagement mobile app. To maximize user onboarding, fans must be able to sign in with one click using Apple, Google, Facebook, or Twitter credentials. The authentication layer must issue short-lived JWT tokens that backend Cloud Run APIs can verify statelessly without calling an external authentication database on every API request. What solution should you deploy?",
+  "correct": "C",
+  "clave_len": 244,
+  "explanation": "Firebase Authentication / Identity Platform provides turnkey client SDKs for social identity federation. Signed OIDC JWT tokens can be verified statelessly by backend Cloud Run services using cached JWKS public keys without database lookups.",
+  "doc": "https://cloud.google.com/identity-platform/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "Require all fans to create an official Google Cloud IAM administrator account."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Store user passwords in plaintext inside a Cloud SQL database."
+   },
+   {
+    "letter": "C",
+    "len": 244,
+    "text": "Use Firebase Authentication / Google Cloud Identity Platform to handle multi-provider OAuth federation on mobile clients, issuing signed OIDC JWT tokens that Cloud Run microservices verify locally using Google's public JSON Web Key Sets (JWKS)."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Deploy a custom PHP authentication server on a single Compute Engine instance."
+   }
+  ],
+  "ratio": 3.36
+ },
+ {
+  "id": "PCA-D2-003",
+  "subtopic": "Shared VPC Host & Service Project Delegation",
+  "caseStudy": "none",
+  "scenario": "An enterprise central network team manages a Shared VPC Host Project with dedicated subnets for analytics (10.10.0.0/20) and web tiers (10.20.0.0/20). Developers in Service Project 'Analytics-Dev' must be able to spin up Compute Engine instances and GKE clusters in the analytics subnet, but must strictly be prevented from attaching instances to the web subnet. How should you assign IAM permissions?",
+  "correct": "C",
+  "clave_len": 204,
+  "explanation": "In Google Cloud Shared VPC, the roles/compute.networkUser role can be granted at the individual subnet level. Granting it on the analytics subnet allows service project developers to use that subnet while preventing unauthorized attachment to other subnets.",
+  "doc": "https://cloud.google.com/vpc/docs/shared-vpc#iam_in_shared_vpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 62,
+    "text": "Grant the developers the roles/owner role on the Host Project."
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "Grant roles/compute.networkAdmin at the Organization level."
+   },
+   {
+    "letter": "C",
+    "len": 204,
+    "text": "Grant the developers and their service accounts the roles/compute.networkUser role scoped specifically to the analytics subnet resource in the Host Project, and do not grant permissions on the web subnet."
+   },
+   {
+    "letter": "D",
+    "len": 62,
+    "text": "Disable Shared VPC and create isolated VPCs with external IPs."
+   }
+  ],
+  "ratio": 3.34
+ },
+ {
+  "id": "PCA-D3-013",
+  "subtopic": "Cloud DLP: Sensitive Data Discovery & Profiling",
+  "caseStudy": "none",
+  "scenario": "An enterprise enterprise data lake in BigQuery contains 10,000 tables across 100 datasets. Security auditors require automated discovery and risk classification of Personally Identifiable Information (PII), payment card data (PCI), and healthcare data (HIPAA) across all tables with continuous profiling as new tables and columns are created. What managed solution should you deploy?",
+  "correct": "A",
+  "clave_len": 246,
+  "explanation": "Sensitive Data Protection (Cloud DLP) provides automated data profiling for BigQuery. It continuously scans tables, identifies built-in and custom infoTypes (PII, PCI, HIPAA), calculates data risk and sensitivity metrics, and updates Data Catalog / Dataplex tags automatically.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/data-profiles",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 246,
+    "text": "Enable Sensitive Data Protection (Cloud DLP) automated data profiling for BigQuery at the Organization or Project level, generating continuous risk scores, data sensitivity profiles, and infoType classifications across all datasets automatically."
+   },
+   {
+    "letter": "B",
+    "len": 68,
+    "text": "Delete all BigQuery tables and recreate them without sensitive data."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Require all data analysts to manually tag columns in an Excel sheet."
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "Write custom Python regex scripts that query every table daily using on-demand slots."
+   }
+  ],
+  "ratio": 3.34
+ },
+ {
+  "id": "PCA-D5-021",
+  "subtopic": "GKE Fleet Management & Multi-Cluster Features",
+  "caseStudy": "none",
+  "scenario": "An enterprise operates 30 GKE clusters across North America, Europe, and Asia. Managing cluster configurations, security policies, and service mesh configurations individually across 30 separate Kubernetes control planes is creating massive operational toil and configuration drift. What Google Cloud capability logically groups clusters for unified management?",
+  "correct": "B",
+  "clave_len": 226,
+  "explanation": "GKE Fleets (formerly Anthos GKE Hub) logically group multiple Kubernetes clusters into a unified administrative domain, enabling fleet-level capabilities like GitOps Config Sync, multi-cluster service discovery, and unified policy management.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/fleets-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "Disable all Kubernetes configuration management."
+   },
+   {
+    "letter": "B",
+    "len": 226,
+    "text": "Create a Google Kubernetes Engine Fleet (GKE Fleet) and register all 30 clusters as Fleet Members, enabling Fleet-level features such as Config Sync (GitOps across all clusters), Anthos Service Mesh, and Multi-Cluster Ingress."
+   },
+   {
+    "letter": "C",
+    "len": 74,
+    "text": "Delete 29 clusters and run all global workloads in a single zonal cluster."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "text": "Manage each of the 30 clusters independently via manual kubectl context switching."
+   }
+  ],
+  "ratio": 3.32
+ },
+ {
+  "id": "PCA-D1-057",
+  "subtopic": "Altostrat Media: AI Highlight Generation & Vertex AI",
+  "caseStudy": "altostrat_media",
+  "scenario": "During live aircraft races, HRL wants to automatically generate 15-second social media highlight clips whenever an exciting event occurs (e.g. an aggressive overtaking maneuver, a near-miss, or a crash). The system must analyze live video streams with computer vision, detect the event timestamp within 5 seconds of occurrence, trigger video segmentation, and publish the clip to social channels. Which Google Cloud pipeline achieves this?",
+  "correct": "B",
+  "clave_len": 250,
+  "explanation": "Vertex AI Video Intelligence API and custom vision models on Cloud Run GPUs process video streams to detect shot changes, object tracking, and custom action events in real-time. Integrating with Transcoder API automates clip clipping and social distribution.",
+  "doc": "https://cloud.google.com/video-intelligence/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "Query BigQuery every hour to check if any aircraft crashed."
+   },
+   {
+    "letter": "B",
+    "len": 250,
+    "text": "Stream video segments to Cloud Storage -> trigger Vertex AI Video Intelligence API / custom object detection model on Cloud Run GPUs -> detect action events -> invoke Transcoder API to render 15-second clips -> publish via Cloud Tasks to social APIs."
+   },
+   {
+    "letter": "C",
+    "len": 98,
+    "text": "Hire 50 video editors to watch screens and manually cut video clips with desktop editing software."
+   },
+   {
+    "letter": "D",
+    "len": 70,
+    "text": "Send raw video frames to Cloud Logging and create metric-based alerts."
+   }
+  ],
+  "ratio": 3.3
+ },
+ {
+  "id": "PCA-D1-027",
+  "subtopic": "Knightmotives Automotive: Over-the-Air (OTA) Firmware Updates",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive needs to distribute critical ECU firmware updates to 20 million vehicles globally. Updates must be cryptographically signed, downloaded only over verified depot Wi-Fi (to prevent cellular data charges), staged in a 1% -> 10% -> 100% canary deployment ring, and automatically halted if error rates exceed 0.05%. How should you architect the OTA delivery platform?",
+  "correct": "A",
+  "clave_len": 286,
+  "explanation": "Secure OTA firmware distribution requires cryptographically signed artifacts in Cloud Storage, fine-grained access control with Signed URLs, phased canary rollout tracking in a consistent database (Spanner), and automated telemetry monitoring for automatic rollback.",
+  "doc": "https://cloud.google.com/storage/docs/access-control/signed-urls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 286,
+    "text": "Store signed binary packages in Cloud Storage, serve download links via time-limited Cloud Storage Signed URLs restricted to depot Wi-Fi IP ranges, manage vehicle rollout rings in Cloud Spanner, and monitor error rates via Cloud Monitoring alert policies with automated rollout pausing."
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Host the firmware on an unauthenticated public FTP server."
+   },
+   {
+    "letter": "C",
+    "len": 113,
+    "text": "Push firmware binaries directly inside Pub/Sub message payloads over cellular to all 20 million vehicles at once."
+   },
+   {
+    "letter": "D",
+    "len": 90,
+    "text": "Email the binary to dealers and instruct them to manually flash vehicles using USB cables."
+   }
+  ],
+  "ratio": 3.29
+ },
+ {
+  "id": "PCA-D3-044",
+  "subtopic": "Knightmotives Automotive: IoT X.509 Client Certificate Authentication",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive connects 200,000 agricultural tractors via cellular modems. To prevent malicious actors from spoofing vehicle telemetry or injecting false sensor readings, each vehicle must authenticate cryptographically to the Google Cloud ingestion endpoint using hardware-backed mutual TLS (mTLS) with individual device X.509 certificates. How should the device ingestion gateway be architected?",
+  "correct": "A",
+  "clave_len": 261,
+  "explanation": "Google Cloud Certificate Authority Service (CAS) manages private PKI at scale. Installing individual device X.509 certificates in hardware TPMs allows the ingestion gateway to verify device identity via mTLS, preventing telemetry spoofing.",
+  "doc": "https://cloud.google.com/certificate-authority-service/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 261,
+    "text": "Deploy Google Cloud Certificate Authority Service (CAS) to issue unique X.509 device certificates installed in vehicle hardware secure elements (TPM/HSM), terminating mTLS at an IoT Gateway on GKE or Application Load Balancer with client certificate validation."
+   },
+   {
+    "letter": "B",
+    "len": 90,
+    "text": "Require tractor drivers to type a password into the steering wheel screen every 2 minutes."
+   },
+   {
+    "letter": "C",
+    "len": 90,
+    "text": "Hardcode a single shared API key in plaintext inside the firmware of all 200,000 tractors."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Allow unauthenticated HTTP requests from all IP addresses."
+   }
+  ],
+  "ratio": 3.29
+ },
+ {
+  "id": "PCA-D2-006",
+  "subtopic": "Cloud NAT & Endpoint-Independent Mapping",
+  "caseStudy": "none",
+  "scenario": "A fleet of 500 private Compute Engine instances without public IPs runs microservices making thousands of concurrent outbound API calls to external payment gateways. During peak hours, instances experience connection drops and 10-second TCP timeouts. Cloud Monitoring shows Cloud NAT 'dropped_sent_packets_count' spiking due to port exhaustion. How should you fix the Cloud NAT configuration?",
+  "correct": "C",
+  "clave_len": 221,
+  "explanation": "Cloud NAT port exhaustion occurs when VMs exhaust their allocated source ports. Enabling Dynamic Port Allocation allows Cloud NAT to dynamically increase port allocations based on usage, while adding external NAT IPs expands total available translation ports (64,512 ports per IP).",
+  "doc": "https://cloud.google.com/nat/docs/ports-and-addresses#dynamic-port-allocation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "Assign public IP addresses to all 500 Compute Engine instances."
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Reduce the number of VMs to 5 so fewer instances need NAT."
+   },
+   {
+    "letter": "C",
+    "len": 221,
+    "text": "Configure Cloud NAT to enable Dynamic Port Allocation (with appropriate min_ports_per_vm and max_ports_per_vm), allocate additional static external NAT IP addresses, and configure Endpoint-Independent Mapping if required."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Disable Cloud NAT and route all internet traffic through a single squid proxy VM."
+   }
+  ],
+  "ratio": 3.28
+ },
+ {
+  "id": "PCA-D3-026",
+  "subtopic": "Access Transparency & Google Personnel Auditing",
+  "caseStudy": "none",
+  "scenario": "A sovereign government and financial enterprise requires an immutable audit trail whenever Google Cloud support engineers or site reliability engineers access customer data or infrastructure during support ticket investigations or system maintenance. What feature must be enabled to receive near real-time logs of Google staff actions?",
+  "correct": "B",
+  "clave_len": 187,
+  "explanation": "Access Transparency generates near real-time audit logs whenever Google personnel access customer content during support or maintenance. Access Approval allows customers to explicitly approve or dismiss access requests before Google engineers can access data.",
+  "doc": "https://cloud.google.com/access-transparency/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 78,
+    "text": "Call Google customer support and ask them to send an email after every ticket."
+   },
+   {
+    "letter": "B",
+    "len": 187,
+    "text": "Enable Google Cloud Access Transparency at the Organization level (and optionally Access Approval to require explicit customer authorization before Google staff can access customer data)."
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "Standard Cloud Audit Logs Admin Activity."
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Disable all Google Cloud customer support contracts."
+   }
+  ],
+  "ratio": 3.28
+ },
+ {
+  "id": "PCA-D2-024",
+  "subtopic": "Altostrat Media: Direct Server Return UDP Ingress",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media is optimizing the network ingress for its fast-paced multiplayer FPS game server fleet on GKE. The game server UDP packets require minimum latency jitter. Game servers must receive incoming player UDP packets and respond directly to player mobile IPs without outbound packets traversing a middle-box load balancer proxy. Which Google Cloud load balancer architecture delivers Direct Server Return (DSR)?",
+  "correct": "C",
+  "clave_len": 175,
+  "explanation": "External Passthrough Network Load Balancers operate at Layer 4 (TCP/UDP) using Maglev Anycast without proxying. Packets pass directly to VM instances with client source IPs preserved, and outbound responses bypass the load balancer (Direct Server Return), minimizing latency for real-time multiplayer gaming.",
+  "doc": "https://cloud.google.com/load-balancing/docs/network",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Internal Application Load Balancer with SSL termination."
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "Global External Application Load Balancer with HTTP/2 proxy."
+   },
+   {
+    "letter": "C",
+    "len": 175,
+    "text": "External Passthrough Network Load Balancer (Layer 4 backend) routing UDP packets directly to backend VM NICs with client source IP preservation and Direct Server Return (DSR)."
+   },
+   {
+    "letter": "D",
+    "len": 44,
+    "text": "Cloud NAT with manual port forwarding rules."
+   }
+  ],
+  "ratio": 3.28
+ },
+ {
+  "id": "PCA-D2-015",
+  "subtopic": "Filestore Enterprise NFS for GKE ReadWriteMany",
+  "caseStudy": "none",
+  "scenario": "A legacy content management system (CMS) running on GKE requires a shared POSIX file system accessible simultaneously by hundreds of pods across multiple availability zones in us-central1 (ReadWriteMany PVC). The storage system must provide 99.99% availability with synchronous multi-zone replication. What managed storage solution meets these requirements?",
+  "correct": "C",
+  "clave_len": 170,
+  "explanation": "Filestore Enterprise provides fully managed NFS storage with synchronous multi-zone replication, delivering 99.99% SLA. It integrates natively with GKE via the Filestore CSI driver for multi-zone ReadWriteMany volume mounts.",
+  "doc": "https://cloud.google.com/filestore/docs/enterprise-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Deploy a single-node NFS server on an e2-micro VM."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Use Cloud Bigtable as a POSIX file system."
+   },
+   {
+    "letter": "C",
+    "len": 170,
+    "text": "Deploy Google Cloud Filestore Enterprise tier, creating a PersistentVolumeClaim with the Filestore CSI driver configured for multi-zone high availability (ReadWriteMany)."
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Standard Persistent Disk attached with ReadWriteOnce access mode."
+   }
+  ],
+  "ratio": 3.25
+ },
+ {
+  "id": "PCA-D1-064",
+  "subtopic": "Altostrat Media: Real-Time Crash Detection with Cloud Run GPUs",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL safety officials require an automated crash and collision detection system. Video streams from track-side cameras and cockpit accelerometers must be analyzed continuously by a deep learning PyTorch model running on NVIDIA GPUs. If an impact (>10G or sudden fuselage disorientation) is detected, emergency rescue dispatch alerts must trigger within 500 milliseconds. What compute architecture satisfies this low-latency ML workload?",
+  "correct": "A",
+  "clave_len": 221,
+  "explanation": "Cloud Run supports GPU acceleration (NVIDIA L4) for containerized ML inference. Combining GPU acceleration with min-instances and gRPC streaming achieves sub-100ms model inference latency for real-time safety-critical incident response.",
+  "doc": "https://cloud.google.com/run/docs/configuring/services/gpu",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 221,
+    "text": "Deploy the PyTorch collision detection container on Cloud Run with NVIDIA L4 GPU acceleration and min-instances configured during race hours, receiving streaming telemetry via gRPC and triggering Pub/Sub emergency alerts."
+   },
+   {
+    "letter": "B",
+    "len": 62,
+    "text": "Rely on spectator tweets to notify emergency medical services."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Run the PyTorch model on a CPU-only Compute Engine micro instance."
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "Upload 4K videos to Cloud Storage and run batch Dataproc jobs every morning."
+   }
+  ],
+  "ratio": 3.25
+ },
+ {
+  "id": "PCA-D1-068",
+  "subtopic": "Altostrat Media: Cockpit-to-Ground gRPC Streaming",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL flight control requires bidirectional real-time communication with racing aircrafts for audio team radio, telemetry adjustments, and digital race flag commands (e.g. yellow flag cautions). The transport layer must support multiplexed bidirectional streaming, binary payload efficiency, and maintain persistent connections over HTTP/2. What communication protocol and compute backend should you deploy?",
+  "correct": "A",
+  "clave_len": 218,
+  "explanation": "gRPC over HTTP/2 provides efficient binary Protocol Buffer serialization and native bidirectional streaming with multiplexing over a single TCP connection, ideal for low-latency audio and critical telemetry commands.",
+  "doc": "https://cloud.google.com/load-balancing/docs/https/grpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 218,
+    "text": "Bidirectional streaming gRPC with Protocol Buffers (Protobuf) running on Google Kubernetes Engine (GKE) or Cloud Run with HTTP/2 end-to-end enabled behind an External Network Load Balancer or Application Load Balancer."
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "Store audio files on FTP servers and poll with bash scripts."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Unidirectional HTTP/1.1 polling every 5 seconds using verbose XML payloads."
+   },
+   {
+    "letter": "D",
+    "len": 66,
+    "text": "Send text messages via SMS gateways over consumer mobile networks."
+   }
+  ],
+  "ratio": 3.25
+ },
+ {
+  "id": "PCA-D6-008",
+  "subtopic": "Cloud DNS Anycast & 100% Availability SLA",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires a global Domain Name System (DNS) infrastructure that provides a 100% availability SLA backed by Google, sub-millisecond query routing from global edge POPs, and immunity to regional cloud outages. What DNS service fulfills this requirement?",
+  "correct": "B",
+  "clave_len": 208,
+  "explanation": "Google Cloud DNS is a global, authoritative DNS service that uses Anycast name servers deployed across Google's worldwide edge points of presence. It is backed by a 100% availability Service Level Agreement.",
+  "doc": "https://cloud.google.com/dns/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 68,
+    "text": "Deploy BIND DNS software on two Compute Engine VMs in us-central1-a."
+   },
+   {
+    "letter": "B",
+    "len": 208,
+    "text": "Use Google Cloud DNS Public Managed Zones, which uses Google's global Anycast network across hundreds of worldwide POPs, delivering automated geo-routing, massive DDoS absorption, and a 100% availability SLA."
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "Disable DNS and have customers memorize IP addresses."
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "Host DNS on an on-premises physical server connected via residential DSL."
+   }
+  ],
+  "ratio": 3.22
+ },
+ {
+  "id": "PCA-D2-025",
+  "subtopic": "Altostrat Media: Spot VM Graceful Drain Lifecycle",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media operates 1,000 GKE nodes powered by Spot VMs to slash compute costs. When Google Cloud reclaims a Spot VM, the instance receives a 30-second ACPI preemption notice. altostrat needs an automated mechanism to catch this signal, mark the Kubernetes node as unschedulable (cordon), notify the Agones game server allocation controller to redirect new matches to healthy nodes, and allow active 20-second game rounds to finish cleanly. How should you implement this?",
+  "correct": "D",
+  "clave_len": 213,
+  "explanation": "The Node Termination Handler listens for the Compute Engine metadata preemption notice (http://metadata.google.internal/computeMetadata/v1/instance/preempted). It cordons the node immediately, preventing new pod assignments and triggering graceful game server draining before VM termination.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "Ignore the notice and allow game servers to crash abruptly."
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "Write a bash script on an external laptop that pings instances continuously."
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Disable Spot VMs and purchase on-demand instances at full price."
+   },
+   {
+    "letter": "D",
+    "len": 213,
+    "text": "Deploy the Kubernetes Node Termination Handler / GKE Graceful Node Taint controller as a DaemonSet to listen for metadata preemption notices, taint the node as Terminating, and trigger Agones game server draining."
+   }
+  ],
+  "ratio": 3.21
+ },
+ {
+  "id": "PCA-D1-050",
+  "subtopic": "EHR Healthcare: Insurance Claims Processing & Cloud Tasks",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare processes 5 million insurance claims every Monday morning. Claims are submitted by hospitals in batch X12 EDI 837 files. Each claim must undergo eligibility verification against external state Medicaid clearinghouse APIs, which enforce a strict maximum rate of 200 requests/sec per API key. How should the claims processing pipeline be architected?",
+  "correct": "B",
+  "clave_len": 234,
+  "explanation": "Cloud Tasks allows precise rate limiting (maxDispatchesPerSecond = 200) and concurrency throttling, perfectly matching external state clearinghouse API rate caps while handling retries and failure queues automatically.",
+  "doc": "https://cloud.google.com/tasks/docs/managing-queues",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 68,
+    "text": "Print out claims on paper and fax them to the state Medicaid office."
+   },
+   {
+    "letter": "B",
+    "len": 234,
+    "text": "Parse batch EDI files using Cloud Run, enqueue individual claims into Cloud Tasks queues configured with maxDispatchesPerSecond = 200 and automated exponential backoff, dispatching to worker microservices that call Medicaid endpoints."
+   },
+   {
+    "letter": "C",
+    "len": 70,
+    "text": "Fire 5 million synchronous HTTP requests simultaneously from GKE pods."
+   },
+   {
+    "letter": "D",
+    "len": 81,
+    "text": "Store all claims in a single MySQL table and query with SELECT * in a tight loop."
+   }
+  ],
+  "ratio": 3.21
+ },
+ {
+  "id": "PCA-D1-051",
+  "subtopic": "EHR Healthcare: Multi-Tenant Resource Hierarchy & Shared VPC",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare operates 5 distinct business divisions (Hospitals, Clinical Labs, Insurance Services, Research, and Corporate IT). They require a Google Cloud resource hierarchy that enforces centralized network administration, strict billing segregation, organizational policy inheritance, and isolated workload projects while allowing secure internal IP connectivity across divisions. What structure should you design?",
+  "correct": "A",
+  "clave_len": 278,
+  "explanation": "The Google Cloud enterprise landing zone architecture uses an Organization with departmental Folders for policy inheritance, combined with Shared VPC (Host Project + Service Projects) to separate network administration from application development while enabling private RFC 1918 communication.",
+  "doc": "https://cloud.google.com/vpc/docs/shared-vpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 278,
+    "text": "Create an Organization with Folders for each business division, provision a central Host Project with Shared VPC managed by central NetOps, and attach divisional Service Projects containing workload resources (GKE, Cloud SQL) using distinct service subnets and billing accounts."
+   },
+   {
+    "letter": "B",
+    "len": 101,
+    "text": "Create 5 completely independent Google Cloud Organizations that have no relationship with each other."
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "Use personal @gmail.com accounts to create individual project instances."
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "Place all 5,000 VMs, databases, and buckets into a single default Google Cloud project."
+   }
+  ],
+  "ratio": 3.21
+ }
+]

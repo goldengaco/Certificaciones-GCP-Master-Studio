@@ -1,0 +1,1276 @@
+[
+ {
+  "id": "PCA-D4-029",
+  "scenario": "An enterprise bank runs critical core banking analytics on an IBM z/OS Mainframe. Mainframe Million Instructions Per Second (MIPS) consumption charges for business intelligence queries are costing $5,000,000 annually. The bank wants to offload analytical queries to Google Cloud while keeping the transactional OLTP core on the mainframe. What modernization pipeline achieves this?",
+  "correct": "A",
+  "clave_len": 262,
+  "explanation": "Google Cloud Mainframe Connector and CDC streaming offload expensive batch analytical queries from mainframes into BigQuery. This slashes mainframe MIPS operating expenses by millions while providing faster analytical querying in BigQuery.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 262,
+    "densidad": 2,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Use Google Cloud Mainframe Connector (or CDC replication via IBM MQ / Datastream) to stream mainframe VSAM/Db2 datasets into BigQuery, redirecting business intelligence and analytical queries to BigQuery to eliminate analytical MIPS consumption on the mainframe."
+   },
+   {
+    "letter": "B",
+    "len": 289,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run a nightly z/OS batch job that unloads the core banking Db2 tables and VSAM datasets to sequential files, FTPs them to Cloud Storage, and loads them into BigQuery so business intelligence dashboards read yesterday's snapshot instead of querying the mainframe, reducing MIPS consumption."
+   },
+   {
+    "letter": "C",
+    "len": 292,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Keep the enterprise core banking data on the mainframe and expose it to BigQuery through a federated external connection, so analysts write BigQuery SQL pushed down and executed against Db2 on z/OS at query time, avoiding the annual MIPS consumption charges without any modernization changes."
+   },
+   {
+    "letter": "D",
+    "len": 273,
+    "densidad": 0,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Replatform the entire enterprise core banking system, both OLTP transactions and business intelligence analytics, onto Compute Engine using a COBOL runtime with an emulated CICS layer, then decommission the mainframe once the annual MIPS consumption charges are eliminated."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-035",
+  "scenario": "An enterprise wants to eliminate human subjectivity from deployment approvals. When a new container canary is deployed (10% traffic), the system must run an automated statistical analysis (Mann-Whitney U test) comparing the canary version against the baseline version across 50 SLI metrics (latency, error rate, CPU, memory). If statistically significant regression is detected, the deployment must abort immediately. What architecture fulfills this?",
+  "correct": "D",
+  "clave_len": 280,
+  "explanation": "Automated Canary Analysis (ACA) uses statistical algorithms (such as Kayenta / Cloud Deploy verification jobs) to compare real-time telemetry between baseline and canary instances, objectively determining if a release is healthy without human error.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 252,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure a Cloud Deploy canary phase that holds ten percent of traffic for thirty minutes and promotes automatically to the next phase if no Cloud Monitoring alert policy has fired on the service's latency and error-rate thresholds during that window."
+   },
+   {
+    "letter": "B",
+    "len": 251,
+    "densidad": 4,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Split traffic ninety-ten between baseline and canary with Cloud Service Mesh and page the on-call engineer with an SLO burn-rate alert, so a human compares the two dashboards and decides whether to promote or roll back within the thirty-minute window."
+   },
+   {
+    "letter": "C",
+    "len": 271,
+    "densidad": 1,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy the new version blue-green behind weighted backend services and run a suite of synthetic smoke tests and uptime checks against the green environment, cutting all traffic over once every check has passed for thirty minutes and shifting the weight back if one fails."
+   },
+   {
+    "letter": "D",
+    "len": 280,
+    "densidad": 3,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Integrate Automated Canary Analysis (e.g. Kayenta / Cloud Deploy automated verification hooks) with Cloud Monitoring, executing automated statistical metric comparisons between baseline and canary pods over a 30-minute evaluation window to trigger automated promotion or rollback."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-022",
+  "scenario": "An enterprise financial trading firm connects on-premises datacenters to Google Cloud using Dedicated Interconnects. Default BGP keepalive timers take up to 60-90 seconds to detect a physical fiber link break, during which trade packets are dropped. How can you configure Cloud Router to detect link failures and reroute traffic in under 1 second?",
+  "correct": "C",
+  "clave_len": 246,
+  "explanation": "Bidirectional Forwarding Detection (BFD) provides sub-second link failure detection for BGP sessions on Cloud Router. Configuring BFD intervals (e.g. 300ms * 3 = 900ms) triggers fast failover to redundant Interconnect links without waiting for 60-second BGP hold timers.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 242,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Lower the BGP keepalive interval on the Cloud Router peer to twenty seconds so the hold timer expires after sixty seconds, and add a second Interconnect attachment with equal-cost multipath so traffic is already balanced across both circuits."
+   },
+   {
+    "letter": "B",
+    "len": 229,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Alert on the interconnect operational status metric in Cloud Monitoring with a sixty-second alignment period and trigger a Cloud Function that withdraws the affected routes and shifts the trading traffic onto the standby circuit."
+   },
+   {
+    "letter": "C",
+    "len": 246,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Enable Bidirectional Forwarding Detection (BFD) on the Cloud Router BGP peer configuration, setting receive and transmit intervals to 300ms (detect multiplier = 3), enabling sub-second physical link failure detection and instant route withdrawal."
+   },
+   {
+    "letter": "D",
+    "len": 215,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Enable BGP graceful restart on the Cloud Router session so the peer keeps forwarding along the established paths while the BGP session is re-established after the failure, avoiding traffic loss during reconvergence."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-023",
+  "scenario": "An enterprise architecture board is comparing managed database SLAs. They require a mission-critical database that guarantees a 99.999% ('five nines', less than 5 minutes 15 seconds of downtime per year) availability Service Level Agreement. Which Google Cloud database configurations qualify for 99.999% SLA?",
+  "correct": "C",
+  "clave_len": 245,
+  "explanation": "Multi-Region Cloud Spanner instances (with 3+ regions/witnesses) and Multi-Cluster Cloud Bigtable instances (replicated across 3+ regions with multi-cluster routing) qualify for Google's highest 99.999% availability SLA.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 271,
+    "densidad": 2,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "A regional Cloud Spanner instance configuration such as us-central1, which keeps three read-write replicas in three separate zones, serves writes through a Paxos quorum and survives the loss of any single zone with no operator intervention or a planned maintenance event."
+   },
+   {
+    "letter": "B",
+    "len": 220,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Cloud SQL for PostgreSQL Enterprise Plus with regional high availability, a synchronous standby in a second zone, near-zero downtime maintenance and cross-region read replicas that are promoted during a regional failure."
+   },
+   {
+    "letter": "C",
+    "len": 245,
+    "densidad": 4,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Cloud Spanner Multi-Region instance configurations (e.g. nam3, eur3) and Cloud Bigtable Multi-Cluster instance configurations replicated across 3+ regions with Multi-Cluster Routing, both of which are backed by Google's 99.999% availability SLA."
+   },
+   {
+    "letter": "D",
+    "len": 219,
+    "densidad": 4,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "AlloyDB for PostgreSQL with a high-availability primary, a standby in a second zone, read pools for reporting and a cross-region secondary cluster that can be promoted, backed by sub-ten-second automatic zonal failover."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-024",
+  "scenario": "An enterprise operates legacy worker VMs on Compute Engine. Occasionally, an internal queue processing daemon freezes without crashing the VM. The operations team wants an automated self-healing remediation pipeline: When a Cloud Monitoring alert detects zero queue message processing for 10 minutes, the alert must automatically trigger an automated workflow to safely restart the systemd service on the affected VM without human intervention. How should this be built?",
+  "correct": "A",
+  "clave_len": 276,
+  "explanation": "Cloud Monitoring Alert Webhooks trigger automated remediation handlers (Cloud Functions/Run). The handler parses the alert JSON payload (containing the affected VM ID) and executes targeted remediation (e.g. OS Config agent execution or VM restart) automatically.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 276,
+    "densidad": 2,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Attach a Webhook Notification Channel to the Cloud Monitoring Alert Policy, invoking a Cloud Function / Cloud Run service authenticated via OIDC token, which uses the Compute Engine OS Config / Cloud Workflows API to execute a remote systemd restart script on the specific VM."
+   },
+   {
+    "letter": "B",
+    "len": 272,
+    "densidad": 1,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Place the worker VMs in a regional managed instance group with an autohealing health check probing the daemon's TCP port every 30 seconds, so that the MIG automatically recreates any instance whose health check has been failing for longer than the 10-minute initial delay."
+   },
+   {
+    "letter": "C",
+    "len": 256,
+    "densidad": 0,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Cloud Scheduler job that invokes an OS Config patch deployment every hour to restart the queue processing daemon on every worker VM through the guest agent, keeping the whole fleet healthy regardless of when an individual daemon happens to freeze."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create an Eventarc trigger on the Cloud Audit Logs events for compute.instances.* that routes to a Cloud Run remediation service, which authenticates with a service account and restarts the systemd unit on the VM named in the event payload."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-054",
+  "scenario": "In an automated clinical laboratory system, blood test result status updates ('Sample Collected' -> 'In Analysis' -> 'Preliminary Result' -> 'Final Doctor Sign-off') for a patient must be processed strictly in the exact order they occurred. Processing updates out-of-order could cause preliminary results to overwrite final doctor verifications. How should Pub/Sub be configured to guarantee sequential processing per patient?",
+  "correct": "B",
+  "clave_len": 159,
+  "explanation": "Cloud Pub/Sub Ordering Keys guarantee that messages published with the same ordering key (e.g. lab_order_id) are delivered to subscribers in the exact order they were received by Pub/Sub, while allowing high horizontal concurrency across different keys.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 176,
+    "densidad": 4,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create one Pub/Sub topic per patient_id, each with a single push subscription, so one Pub/Sub consumer handles that patient's events serially as the lab_gateway publishes them."
+   },
+   {
+    "letter": "B",
+    "len": 159,
+    "densidad": 6,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Publish messages to Cloud Pub/Sub with the patient_id or lab_order_id set as the message ordering_key, and enable Message Ordering on the Pub/Sub subscription."
+   },
+   {
+    "letter": "C",
+    "len": 179,
+    "densidad": 4,
+    "eco": 0,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Stamp every message with an event_time attribute and have the subscriber drop any message whose event_time is older than the last state written for that lab_order_id in Firestore."
+   },
+   {
+    "letter": "D",
+    "len": 181,
+    "densidad": 5,
+    "eco": 0,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Enqueue every event into a Cloud Tasks queue named after the lab_order_id with max_concurrent_dispatches=1, so the queue hands the transitions of a case to the worker one at a time."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-055",
+  "scenario": "Altostrat Media (HRL) streams high-definition 4K 60FPS video feeds from 20 racing aircrafts during global tournaments to over 30 million concurrent viewers worldwide. Viewers demand sub-2 second glass-to-glass latency and multi-angle camera switching. To minimize egress network costs while guaranteeing global playback stability, how should you architect the video ingestion, transcoding, and content delivery pipeline?",
+  "correct": "A",
+  "clave_len": 278,
+  "explanation": "Google Cloud Live Stream API provides broadcast-grade live stream encoding into LL-HLS and DASH formats. Paired with Cloud CDN and Media CDN (which leverages Google's global video edge infrastructure used by YouTube), this architecture delivers 4K live streams to 30M+ concurrent viewers with sub-2s latency and minimal origin egress costs.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 278,
+    "densidad": 4,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Ingest live camera RTMP/SRT feeds into Google Cloud Live Stream API to transcode into multi-bitrate Low-Latency HLS (LL-HLS) and DASH formats, store segments in Cloud Storage, and deliver via a Global External Application Load Balancer with Cloud CDN and Media CDN edge caching."
+   },
+   {
+    "letter": "B",
+    "len": 253,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Ingest the RTMP camera feeds into a Compute Engine relay, write two-second chunks to Cloud Storage, and process each chunk with the Transcoder API into multi-bitrate HLS renditions delivered by a Global External Application Load Balancer with Cloud CDN."
+   },
+   {
+    "letter": "C",
+    "len": 241,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Terminate all the camera RTMP feeds on a regional managed instance group in us-central1 running the NGINX RTMP module and FFmpeg for the bitrate ladder, serving the HLS playlists and segments straight from the instances to viewers worldwide."
+   },
+   {
+    "letter": "D",
+    "len": 241,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Distribute the raw camera feeds to viewers as individual WebRTC peer connections negotiated through a signalling service on GKE, with TURN relay instance groups deployed in each continent to traverse the viewers' network address translation."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-058",
+  "scenario": "Each of the 20 racing aircrafts generates 100Hz telemetry (altitude, pitch, yaw, roll, rotor RPM, G-force) producing 2,000 data points per second per aircraft. Live broadcast graphics engines and mobile apps require real-time 3D flight-path visualization with sub-10ms query latency. What storage and ingestion architecture should you implement?",
+  "correct": "C",
+  "clave_len": 200,
+  "explanation": "Cloud Bigtable is Google Cloud's low-latency NoSQL database engineered for high-throughput time-series and sensor data, providing sub-10ms read/write latencies at millions of operations per second. Dataflow streams live data simultaneously to Bigtable (for live graphics) and BigQuery (for analytics).",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 224,
+    "densidad": 7,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Stream telemetry via bigquery.googleapis.com Storage-Write-API into BigQuery, letting the graphics-engine query the last seconds through a BI-Engine reservation with materialized-views refreshed on every insert for sub-10ms."
+   },
+   {
+    "letter": "B",
+    "len": 221,
+    "densidad": 6,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Write the 2,000 points/sec per aircraft into Cloud SQL for MySQL with a composite primary-key of aircraft-id and timestamp, serving flight-path visualization from cross-zone read-replicas placed near the broadcast trucks."
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "densidad": 8,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "aircraft Telemetry -> Cloud Pub/Sub -> Cloud Dataflow -> Cloud Bigtable (with SSD storage and reverse-timestamp row keys) for live sub-10ms rendering, and BigQuery for post-race analytical deep-dives."
+   },
+   {
+    "letter": "D",
+    "len": 211,
+    "densidad": 7,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Write each sample into Firestore (mode=NATIVE) as one doc-per-vehicle-per-second under /telemetry/{id}, letting the rendering engine and companion apps subscribe via onSnapshot() listeners for live path updates."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-032",
+  "scenario": "An enterprise e-commerce platform experiences severe database bottlenecks on standard PostgreSQL during Black Friday sales. They require 4x higher transactional throughput than standard PostgreSQL, sub-second analytical columnar engine acceleration on live data without ETL, automated storage autoscaling up to 64TB, and automated failover in under 10 seconds. What managed database should you provision?",
+  "correct": "C",
+  "clave_len": 222,
+  "explanation": "AlloyDB for PostgreSQL is Google Cloud's fully managed PostgreSQL-compatible database designed for demanding enterprise workloads. It delivers 4x the throughput of standard PostgreSQL, disaggregated compute/storage architecture with sub-10s failover, and a built-in Columnar Engine for real-time HTAP analytics.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 230,
+    "densidad": 0,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Cloud SQL for PostgreSQL Enterprise Plus on a 128 vCPU machine with the data cache enabled and read replicas absorbing the reporting queries that run alongside the Black Friday checkout peak, with automatic storage growth enabled."
+   },
+   {
+    "letter": "B",
+    "len": 240,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Cloud SQL for PostgreSQL with Datastream change data capture streaming into BigQuery, so analytical queries run in the warehouse while transactional traffic stays on the operational database, with Looker Studio pointed at the BigQuery copy."
+   },
+   {
+    "letter": "C",
+    "len": 222,
+    "densidad": 1,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Provision Google Cloud AlloyDB for PostgreSQL with a High Availability Primary Instance (with automatic standby in another zone) and enable the AlloyDB Columnar Engine for hybrid transactional/analytical processing (HTAP)."
+   },
+   {
+    "letter": "D",
+    "len": 233,
+    "densidad": 1,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Memorystore for Redis Cluster in front of the existing PostgreSQL instance, caching the product catalogue and session reads so that the database only handles checkout writes during the peak, with read-through caching in the API tier."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-035",
+  "scenario": "An enterprise requires strict egress security for private VMs and GKE pods without public IPs. Workloads must only be allowed to make outbound HTTPS connections to specific approved external partner domains (e.g., api.partner.com, *.github.com). Standard IP-based firewall rules are ineffective because SaaS providers use dynamic CDNs with constantly shifting IP addresses. Which Google Cloud service solves this?",
+  "correct": "C",
+  "clave_len": 205,
+  "explanation": "Google Cloud Secure Web Proxy is a fully managed, serverless egress proxy that enforces granular Layer 7 egress policies based on hostnames, URLs, and methods without requiring third-party proxy VM maintenance.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 230,
+    "densidad": 2,
+    "eco": 9,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure Cloud NAT for the private subnets and attach a network firewall policy egress rule whose destination uses FQDN objects for api.partner.com and *.github.com, allowing outbound HTTPS only to the resolved partner addresses."
+   },
+   {
+    "letter": "B",
+    "len": 231,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy a fleet of self-managed Squid proxy VMs in a managed instance group behind an internal passthrough load balancer and force all workload egress through it, allowlisting the approved partner domains in the Squid configuration."
+   },
+   {
+    "letter": "C",
+    "len": 205,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Deploy Google Cloud Secure Web Proxy (SWP), defining policy rules with URL lists and domain patterns (e.g. *.github.com) to enforce granular Layer 7 egress filtering without managing third-party proxy VMs."
+   },
+   {
+    "letter": "D",
+    "len": 223,
+    "densidad": 1,
+    "eco": 9,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Enable a Cloud DNS response policy that resolves only the approved partner domains, combine it with a default-deny egress firewall rule, and keep Private Google Access on so workloads cannot look up any unapproved hostname."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-044",
+  "scenario": "knightmotives_automotive connects 200,000 agricultural tractors via cellular modems. To prevent malicious actors from spoofing vehicle telemetry or injecting false sensor readings, each vehicle must authenticate cryptographically to the Google Cloud ingestion endpoint using hardware-backed mutual TLS (mTLS) with individual device X.509 certificates. How should the device ingestion gateway be architected?",
+  "correct": "A",
+  "clave_len": 261,
+  "explanation": "Google Cloud Certificate Authority Service (CAS) manages private PKI at scale. Installing individual device X.509 certificates in hardware TPMs allows the ingestion gateway to verify device identity via mTLS, preventing telemetry spoofing.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 261,
+    "densidad": 1,
+    "eco": 7,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Deploy Google Cloud Certificate Authority Service (CAS) to issue unique X.509 device certificates installed in vehicle hardware secure elements (TPM/HSM), terminating mTLS at an IoT Gateway on GKE or Application Load Balancer with client certificate validation."
+   },
+   {
+    "letter": "B",
+    "len": 253,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Generate a unique API key per tractor, store the keys in Secret Manager and validate them at an Apigee proxy that rejects unknown keys, rotating each key every ninety days with a Cloud Scheduler job that pushes the new value down over the cellular link."
+   },
+   {
+    "letter": "C",
+    "len": 248,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Issue each tractor a signed JSON Web Token minted with a shared Cloud KMS asymmetric key embedded in the firmware image, and have the ingestion service on Cloud Run verify the token signature before accepting any telemetry payload from the vehicle."
+   },
+   {
+    "letter": "D",
+    "len": 232,
+    "densidad": 0,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Contract a private cellular APN with the mobile operator, terminate it on an HA VPN gateway into the ingestion VPC, and accept telemetry only from the operator's assigned IP range using VPC firewall rules and Cloud Armor allowlists."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-042",
+  "scenario": "An enterprise architect is evaluating DR strategies for a Tier-1 financial platform requiring RTO < 5 seconds and RPO = 0 vs a Tier-2 internal HR application requiring RTO < 2 hours and RPO < 1 hour. What disaster recovery architectures meet these respective business tiers cost-effectively?",
+  "correct": "D",
+  "clave_len": 302,
+  "explanation": "Tiered DR alignment matches technical architecture to business recovery objectives. Tier-1 requires Hot-Hot multi-region with Cloud Spanner for instant zero-loss failover. Tier-2 uses Warm Standby with Cloud SQL cross-region replicas to achieve 2-hour RTO at a fraction of the infrastructure cost.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 271,
+    "densidad": 4,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Apply the same Hot-Hot topology to both tiers: Active-Active multi-region compute behind a Global Load Balancer with multi-region Cloud Spanner, so that one runbook, one deployment pipeline and one failover drill cover the financial platform and the HR application alike."
+   },
+   {
+    "letter": "B",
+    "len": 269,
+    "densidad": 1,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Apply Warm Standby to both tiers: cross-region Cloud SQL read replicas kept warm in a second region and promoted to primary by an automated runbook whenever health checks report the primary region unavailable for more than sixty seconds, with DNS swung over afterwards."
+   },
+   {
+    "letter": "C",
+    "len": 279,
+    "densidad": 8,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "For Tier-1 rely on cross-region Cloud SQL backups with five-minute point-in-time recovery granularity and an automated restore runbook; for Tier-2 keep a pilot-light environment of pre-provisioned but stopped instances rehydrated from daily snapshots when a disaster is declared."
+   },
+   {
+    "letter": "D",
+    "len": 302,
+    "densidad": 9,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "For Tier-1: Deploy Active-Active (Hot-Hot) multi-region compute behind a Global Load Balancer with Cloud Spanner multi-region (RTO < 5s, RPO 0). For Tier-2: Deploy Warm Standby / Backup & Restore using Cloud SQL with cross-region read replicas promoted on-demand (RTO < 2h, RPO < 1h), optimizing costs."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-023",
+  "scenario": "An operator mistakenly ran a DROP TABLE command or updated all customer balances to 0 in Cloud Spanner at 14:32:15 UTC. The database administrator needs to recover the database to its exact microsecond state at 14:31:00 UTC (1 minute prior to the corruption) with minimal data loss. What feature provides this recovery capability?",
+  "correct": "D",
+  "clave_len": 240,
+  "explanation": "Cloud Spanner Point-in-Time Recovery (PITR) retains historical data versions for up to 7 days (version_retention_period). Administrators can read historical data or restore the entire database to any microsecond timestamp in the retention window.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 265,
+    "densidad": 4,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Restore the most recent backup produced by the Spanner backup-schedule, which ran at 02:00-UTC, into a new database via 'gcloud spanner backups restore', then replay the request-log from 02:00 up to 14:31:00 to rebuild the intervening customer-balance transactions."
+   },
+   {
+    "letter": "B",
+    "len": 240,
+    "densidad": 6,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Import the most recent hourly Avro export from a gs://spanner-exports/ Cloud Storage bucket into a new spanner.googleapis.com database and reapply the mutations captured by the change-stream reader for the remaining minutes before 14:31:00."
+   },
+   {
+    "letter": "C",
+    "len": 245,
+    "densidad": 4,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Fail the instance over to another region of the multi-region config (nam6) and serve reads-and-writes from the us-east1 replica, which still holds the customer balances as of 14:31:00 UTC, before the DROP TABLE statement was applied at 14:32:15."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "densidad": 6,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Use Cloud Spanner Point-in-Time Recovery (PITR) with configured version_retention_period (up to 7 days), executing a restore operation specifying the exact recovery timestamp '2026-04-17T14:31:00.000000Z' to create a new recovered database."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-027",
+  "scenario": "An ad-tech telemetry table in Cloud Bigtable stores 100TB of user impression click events. Compliance policy mandates that impression records older than 30 days must be permanently expunged, and no column family should retain more than 3 historical versions per cell. How should this data retention policy be enforced?",
+  "correct": "B",
+  "clave_len": 261,
+  "explanation": "Bigtable Garbage Collection Policies define automated rules (max_age, max_versions, or combinations) per column family. Bigtable automatically ignores and purges expired cells during background storage compaction without manual scripting.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 248,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Set a garbage collection policy of max_age = '2592000s' at the table level so that every column family inherits the 30-day expiry, and rely on Bigtable's default cell versioning behaviour to retain only the three newest values per column qualifier."
+   },
+   {
+    "letter": "B",
+    "len": 261,
+    "densidad": 4,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure a Bigtable Garbage Collection Policy on the column family using an Intersection or Union rule specifying max_age = '2592000s' (30 days) and max_versions = 3; Bigtable automatically purges expired cells during compaction with zero application overhead."
+   },
+   {
+    "letter": "C",
+    "len": 248,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Schedule a nightly Dataflow job that scans the whole table with a timestamp range filter and issues DeleteFromColumn mutations for every impression cell older than 30 days, trimming each qualifier down to its three newest versions in the same pass."
+   },
+   {
+    "letter": "D",
+    "len": 241,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Enable Bigtable managed backups on the impression table with a 30-day backup retention period and a daily backup schedule, keeping three backup copies per table so that expired impression data drops out of the retention window automatically."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-029",
+  "scenario": "Altostrat Media operates its global player identity and inventory database on Cloud Spanner. During a major regional network outage affecting us-central1, the game must remain 100% playable for millions of active mobile players worldwide with zero lost in-game purchases and zero database failover downtime. What Spanner instance configuration guarantees this resiliency?",
+  "correct": "D",
+  "clave_len": 291,
+  "explanation": "The nam3 multi-region Spanner configuration provides 5 replicas across 3 distinct regions (us-central1, us-east1, us-east4). If us-central1 fails, the remaining 3 replicas maintain Paxos quorum, guaranteeing continuous zero-loss transactions and 99.999% SLA.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 273,
+    "densidad": 7,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Provision a single-region Cloud Spanner instance in us-central1 with its three read-write replicas spread across three zones, enable point-in-time recovery with a seven-day version retention window, and copy hourly backups to us-east1 to restore from if the region is lost."
+   },
+   {
+    "letter": "B",
+    "len": 272,
+    "densidad": 4,
+    "eco": 8,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Provision a regional Cloud Spanner instance in us-central1 and extend it through a custom instance configuration that adds read-only replicas in us-east1 and europe-west1, routing players to their nearest replica with a global load balancer for the duration of the outage."
+   },
+   {
+    "letter": "C",
+    "len": 270,
+    "densidad": 2,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run two independent regional Cloud Spanner instances in us-central1 and us-east1 and keep them synchronised with a Dataflow pipeline that reads Spanner change streams from each side, swinging player traffic to the surviving instance with a global external load balancer."
+   },
+   {
+    "letter": "D",
+    "len": 291,
+    "densidad": 9,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Deploy Cloud Spanner with multi-region configuration 'nam3' (dual-region with witness: 2 read-write in us-central1, 2 read-write in us-east1, 1 witness in us-east4), ensuring that if us-central1 fails completely, Paxos consensus continues uninterrupted in us-east1 with 99.999% availability."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-061",
+  "scenario": "To guarantee zero broadcast disruption for millions of global viewers during the World Championship race, HRL utilizes Cloud CDN as primary video delivery alongside a third-party commercial CDN provider. If Cloud CDN edge POPs experience localized degradation in a specific country, video player traffic for that country must automatically fail over to the secondary CDN within 10 seconds. How should you design the DNS routing policy?",
+  "correct": "A",
+  "clave_len": 237,
+  "explanation": "Google Cloud DNS supports Geolocation and Failover Routing Policies integrated with Cloud Monitoring health checks. If health check probes detect failure on primary CDN endpoints, Cloud DNS automatically diverts DNS responses to backup CDN endpoints in seconds.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 237,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Configure Cloud DNS Routing Policies using Geolocation and Health-Checked Failover Routing Policies, targeting Cloud CDN as the primary endpoint and the third-party CDN as the backup endpoint based on automated HTTPS health check probes."
+   },
+   {
+    "letter": "B",
+    "len": 240,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Put a Global External Application Load Balancer in front of both providers, defining the Cloud CDN backend bucket as the primary backend service and an internet network endpoint group pointing at the third-party CDN as the failover backend."
+   },
+   {
+    "letter": "C",
+    "len": 209,
+    "densidad": 1,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Publish both CDN hostnames as weighted round robin records in Cloud DNS with an 86,400-second TTL, letting the video player retry the second hostname whenever a segment request against the first one times out."
+   },
+   {
+    "letter": "D",
+    "len": 218,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Embed a multi-CDN selection library in the video player that measures the throughput of the first segments from each provider and switches manifests whenever the primary falls below a quality threshold during playback."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-063",
+  "scenario": "In live aircraft racing, video streams and aircraft sensor telemetry travel over separate physical uplinks. Video frames arrive with an embedded Presentation Time Stamp (PTS) while sensor packets arrive with GPS atomic clock timestamps. When fans switch camera angles, the on-screen telemetry overlay (speedometer, G-meter) must align perfectly with the visual frame within 20 milliseconds. How should you design the synchronization pipeline?",
+  "correct": "C",
+  "clave_len": 290,
+  "explanation": "Apache Beam on Cloud Dataflow enables event-time windowed joins (CoGroupByKey) across distinct streaming sources. Correlating video frame Presentation Time Stamps (PTS) with GPS atomic telemetry within a 20ms window guarantees broadcast-grade frame-accurate synchronization.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 279,
+    "densidad": 3,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Publish video PTS metadata and telemetry into Cloud Pub/Sub and run a Dataflow pipeline that joins the two streams with fixed 20ms processing-time windows based on when each element reaches the worker, writing merged packets to Bigtable for the Cloud Run WebSocket fan-out layer."
+   },
+   {
+    "letter": "B",
+    "len": 281,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Buffer the latest telemetry reading per aircraft in Cloud Memorystore for Redis behind a short TTL and have the Cloud Run WebSocket service read whichever cached value is current for the selected aircraft at the instant each video frame is decoded and rendered on the fan's device."
+   },
+   {
+    "letter": "C",
+    "len": 290,
+    "densidad": 4,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Ingest video PTS metadata and telemetry streams into Cloud Pub/Sub, execute a Cloud Dataflow pipeline using CoGroupByKey or Side Inputs with a 20ms event-time window to join video frame PTS to GPS telemetry, and write synchronized frame-data packets to Bigtable/Cloud Run WebSocket streams."
+   },
+   {
+    "letter": "D",
+    "len": 265,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Stream video PTS metadata and telemetry into BigQuery through the Storage Write API and run scheduled queries every minute that join frames to GPS telemetry on a 20ms range condition, serving the joined rows to the overlay renderer through BI Engine cached results."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-051",
+  "scenario": "Attackers attempt to discover HRL's backend Cloud Storage origin bucket names to bypass CDN caching and launch direct HTTP flood attacks on storage APIs. HRL must ensure that storage buckets reject all direct public internet requests and only accept requests routed through the Global External Application Load Balancer with Cloud Armor edge security policies applied. How should you secure the origin bucket?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "Keeping Cloud Storage buckets private and serving them exclusively through Global External Application Load Balancers (Backend Buckets) ensures all incoming traffic is inspected by Cloud Armor at Google's edge, preventing direct bucket access attacks.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 233,
+    "densidad": 0,
+    "eco": 11,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Leave the bucket publicly readable, and attach a Cloud Armor policy with rate limiting to the backend; the bucket stays public, so attackers who discover its name send direct requests straight to storage, bypassing the load balancer."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "densidad": 1,
+    "eco": 12,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Keep the Cloud Storage bucket private (remove all public IAM roles), attach it as a Backend Bucket to the Global External Application Load Balancer, and enforce Cloud CDN / Cloud Armor security policies at the edge."
+   },
+   {
+    "letter": "C",
+    "len": 244,
+    "densidad": 0,
+    "eco": 10,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Keep the bucket private and have Cloud Run issue signed URLs to fetch objects from storage instead of accepting public internet requests; every download still bypasses the load balancer, so Cloud Armor's edge security policies never inspect it."
+   },
+   {
+    "letter": "D",
+    "len": 244,
+    "densidad": 0,
+    "eco": 10,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Place the bucket inside a VPC Service Controls perimeter, with an ingress rule for it; public internet requests from inside the perimeter reach the bucket's storage directly, bypassing the load balancer and Cloud Armor's edge security policies."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-053",
+  "scenario": "In EHR Healthcare's centralized BigQuery data warehouse, data analysts need to query patient demographics (age, state, diagnosis) for epidemiology studies, but patient Social Security Numbers and Medical Record Numbers must be automatically masked (displaying only 'XXX-XX-1234' or a SHA-256 hash) for users without the 'Fine-Grained Security Reader' IAM role. How should you configure BigQuery?",
+  "correct": "C",
+  "clave_len": 250,
+  "explanation": "BigQuery dynamic Data Masking uses Policy Tags to transform sensitive column values at query runtime (e.g. displaying only last 4 digits or SHA-256 hash) based on the querying user's IAM role, without duplicating data or altering underlying tables.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 234,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Build authorized views over the base table that wrap the SSN and MRN columns in SAFE.SHA256, grant the analysts access only to those views through an authorized dataset, and let compliance officers query the underlying table directly."
+   },
+   {
+    "letter": "B",
+    "len": 236,
+    "densidad": 2,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run Sensitive Data Protection de-identification templates with format-preserving encryption over the warehouse tables and land a masked copy of every table in a separate dataset that only the epidemiology analysts are granted access to."
+   },
+   {
+    "letter": "C",
+    "len": 250,
+    "densidad": 3,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a Policy Tag Taxonomy in Dataplex / Data Catalog with a Data Masking Rule (e.g., Last 4 characters unmasked, Hash, or Nullify), tag the SSN column, and grant 'Masked Reader' to general analysts and 'Fine-Grained Reader' to compliance officers."
+   },
+   {
+    "letter": "D",
+    "len": 222,
+    "densidad": 2,
+    "eco": 3,
+    "tiene_absoluto": true,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Create a policy tag taxonomy in Dataplex, attach the tags to the SSN and MRN columns to turn on BigQuery column-level access control, and grant the Fine-Grained Reader role on that taxonomy only to the compliance officers."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-056",
+  "scenario": "EHR Healthcare transmits continuous streams of uncompressed radiology imaging and patient vital records across 100Gbps Dedicated Interconnect circuits between hospitals and Google Cloud. IPsec VPN tunnels introduce high CPU encryption latency and packet fragmentation on 100Gbps links. What hardware-level encryption standard should you configure directly on the physical fiber cross-connects?",
+  "correct": "D",
+  "clave_len": 237,
+  "explanation": "MACsec (IEEE 802.1AE) provides line-rate, hardware-accelerated Layer 2 encryption directly on Dedicated Interconnect physical links between on-premises edge routers and Google Cloud edge routers, securing hybrid transport without IPsec latency penalties.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 219,
+    "densidad": 0,
+    "eco": 8,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run HA VPN over Cloud Interconnect, building IPsec tunnels on top of the Dedicated Interconnect VLAN attachments so that the radiology imaging traffic is encrypted between the hospital edge routers and the Cloud Router."
+   },
+   {
+    "letter": "B",
+    "len": 217,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Rely on Google's default encryption in transit, since traffic is automatically encrypted at Layer 3 the moment it reaches the Google edge from the hospital routers, and document that fact in the HIPAA risk assessment."
+   },
+   {
+    "letter": "C",
+    "len": 216,
+    "densidad": 0,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Terminate TLS 1.3 at the application layer for every DICOM and HL7v2 transfer so the payloads are encrypted end to end between hospital and cloud, regardless of what happens on the physical fiber between the routers."
+   },
+   {
+    "letter": "D",
+    "len": 237,
+    "densidad": 1,
+    "eco": 10,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": true,
+    "text": "Configure IEEE 802.1AE MACsec (Media Access Control Security) on the Cloud Interconnect attachments, enabling hardware line-rate Layer 2 encryption directly on physical router interfaces without latency overhead or IPsec packet overhead."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-060",
+  "scenario": "EHR Healthcare shares structured patient laboratory records with external academic research databases. Patient Social Security Numbers (9 digits: NNN-NN-NNNN) must be encrypted such that the resulting ciphertext retains the exact same 9-digit format (allowing legacy statistical tools expecting 9-digit inputs to parse records without crashing) and can be decrypted back to plaintext by authorized compliance officers using a Cloud KMS key. What Cloud DLP transformation fulfills this?",
+  "correct": "D",
+  "clave_len": 241,
+  "explanation": "Format-Preserving Encryption (FPE) using the FFX mode in Cloud DLP encrypts data while preserving its format and length (e.g. a 9-digit SSN encrypts to a different 9-digit number). It is fully reversible by authorized users with access to the Cloud KMS key.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 229,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Use Cloud DLP CryptoHashConfig with a Cloud KMS wrapped key to replace every SSN with a keyed HMAC-SHA256 surrogate, so that the same SSN always produces the same token in every record exported to the academic research databases."
+   },
+   {
+    "letter": "B",
+    "len": 233,
+    "densidad": 1,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Use Cloud DLP CryptoDeterministicConfig (AES-SIV) with a Cloud KMS wrapped key so that each SSN is deterministically encrypted into a stable surrogate which the compliance team can decrypt back to plaintext when an audit requires it."
+   },
+   {
+    "letter": "C",
+    "len": 225,
+    "densidad": 3,
+    "eco": 6,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Apply a Cloud DLP CharacterMaskConfig that replaces the first five digits with '*' and keeps the last four (***-**-1234), preserving the nine-character layout that the legacy statistical tools expect when parsing the records."
+   },
+   {
+    "letter": "D",
+    "len": 241,
+    "densidad": 4,
+    "eco": 4,
+    "tiene_absoluto": false,
+    "verbo_configurar": true,
+    "tiene_cifra": false,
+    "text": "Use Cloud DLP Format-Preserving Encryption (CryptoReplaceFfxFpeConfig / FFX mode) with a Cloud KMS wrapped key and radix set to numeric, encrypting 9-digit SSNs into reversible 9-digit ciphertext while preserving character length and format."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-048",
+  "scenario": "knightmotives_automotive is pushing a critical ECU engine control firmware update to 200,000 tractors globally. If a firmware bug causes tractors to stall, agricultural operations could halt across thousands of farms. How should the OTA deployment pipeline be structured to maximize safety and minimize blast radius?",
+  "correct": "C",
+  "clave_len": 294,
+  "explanation": "Phased canary rollouts for IoT/automotive firmware limit failure blast radius. Telemetry is monitored after each stage, with automated halt thresholds preventing buggy firmware from spreading to the global fleet.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 276,
+    "densidad": 2,
+    "eco": 1,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Ship the firmware to every tractor at once but write it to the inactive A/B partition, leave the fleet on the current image for a twenty-four hour soak, then flip all two hundred thousand vehicles to the new partition and roll the whole fleet back together if failures appear."
+   },
+   {
+    "letter": "B",
+    "len": 258,
+    "densidad": 2,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run a fifty-fifty split test across the global fleet, giving half the tractors the new firmware and half the current one, and have the reliability team compare the two cohorts after a two-week observation period before deciding whether to move the remainder."
+   },
+   {
+    "letter": "C",
+    "len": 294,
+    "densidad": 5,
+    "eco": 1,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Execute a phased progressive rollout: Stage 1: 100 internal test tractors -> Stage 2: 1% dealer loaner fleet -> Stage 3: 10% regional fleet -> Stage 4: 100% global fleet; monitor tractor CAN-bus error telemetry in BigQuery in real-time and automatically halt rollout if error rates exceed 0.1%."
+   },
+   {
+    "letter": "D",
+    "len": 271,
+    "densidad": 3,
+    "eco": 0,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Roll out region by region with a manual go/no-go from the release manager between regions, using dealer warranty claims and service-centre tickets from the previous region as the health signal and pausing two weeks between regions so those claims have time to accumulate."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-049",
+  "scenario": "EHR Healthcare processes 10,000 whole genome sequencing pipelines monthly. The compute jobs are stateless, containerized, fault-tolerant, and write checkpoints to Cloud Storage every 10 minutes. The existing infrastructure runs on on-demand GKE node pools costing $100,000/month. How should the data engineering team optimize compute costs?",
+  "correct": "B",
+  "clave_len": 218,
+  "explanation": "Spot VMs offer 60-91% discounts compared to on-demand VMs. For stateless, checkpointed batch workloads (genomics, bioinformatics), running on Spot VMs via Google Cloud Batch delivers massive FinOps savings with automated task recovery.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 203,
+    "densidad": 3,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Purchase three-year resource-based committed use discounts sized to the peak vCPU and memory of the genomics node pools, converting the on-demand bill into a committed rate for the entire pipeline fleet."
+   },
+   {
+    "letter": "B",
+    "len": 218,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Migrate genomic workloads to Google Cloud Batch or GKE Spot VM node pools with checkpoint recovery from Cloud Storage, reducing compute costs by 60-91% while automatically rescheduling preempted batch tasks seamlessly."
+   },
+   {
+    "letter": "C",
+    "len": 199,
+    "densidad": 2,
+    "eco": 1,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Move the pipelines to GKE Autopilot with vertical pod autoscaling and cluster autoscaler scale-to-zero, so each genomics task is billed only for the CPU and memory it actually requests while it runs."
+   },
+   {
+    "letter": "D",
+    "len": 201,
+    "densidad": 1,
+    "eco": 5,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Keep the on-demand node pools and rely on the sustained use discounts Compute Engine applies automatically to instances that run for most of the month, consolidating all pipelines into a single region."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-032",
+  "scenario": "When a race winner crosses the finish line, HRL sends push notifications (via Apple APNs and Firebase Cloud Messaging) to 20 million mobile fan apps. Firing 20 million HTTP requests simultaneously would exhaust server connection pools and trigger APNs rate limiting. What Google Cloud architecture paces the notification fan-out smoothly?",
+  "correct": "C",
+  "clave_len": 314,
+  "explanation": "Cloud Tasks push queues manage high-volume asynchronous task fan-out, pacing dispatches to third-party push gateways (Apple APNs / FCM) across scalable Cloud Run workers without connection pool exhaustion.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 294,
+    "densidad": 3,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Publish one Pub/Sub message per fan token to a notifications topic and attach a push subscription that delivers each message straight to the Apple APNs and Firebase Cloud Messaging endpoints, letting Pub/Sub flow control pace delivery and retrying any non-2xx response with exponential backoff."
+   },
+   {
+    "letter": "B",
+    "len": 284,
+    "densidad": 1,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Run a Dataflow streaming pipeline that reads the twenty million tokens from Firestore and calls the APNs and FCM APIs inside a ParDo, scaling to five hundred workers with the pipeline's default retry policy so the whole fan-out completes within a couple of minutes of the finish line."
+   },
+   {
+    "letter": "C",
+    "len": 314,
+    "densidad": 5,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Use Cloud Tasks push queues configured with high dispatch throughput (e.g. max_dispatches_per_second = 5000) pulling batches of user tokens from Firestore, distributing notification delivery tasks across scalable Cloud Run workers to deliver notifications to 20M users in minutes without crashing APNs connections."
+   },
+   {
+    "letter": "D",
+    "len": 276,
+    "densidad": 0,
+    "eco": 2,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Have Cloud Scheduler trigger a Cloud Run job every minute that reads a slice of two hundred thousand tokens from Firestore and loops through the APNs and FCM calls inside a single execution, tracking progress in a Firestore cursor document until the whole audience is covered."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-032",
+  "scenario": "Agricultural tractors frequently operate in rural remote farm fields with zero cellular connectivity for 12 to 18 hours at a time. The onboard vehicle telemetry system must continue logging fine-grained sensor data (100+ parameters) locally without buffer overflow, and automatically synchronize the buffered batch records to Google Cloud Storage / Pub/Sub once cellular coverage or farm Wi-Fi is restored. What architecture ensures zero data loss?",
+  "correct": "A",
+  "clave_len": 304,
+  "explanation": "Edge Store-and-Forward buffers sensor data on local vehicle hardware during cellular disconnects. When connectivity returns, data is securely batched, compressed, and uploaded to Google Cloud Storage/Pub/Sub without data loss.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 304,
+    "densidad": 8,
+    "eco": 9,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Implement an Edge Store-and-Forward architecture: Buffer sensor readings locally on encrypted vehicle solid-state storage (eMMC/NVMe) with FIFO rotation; upon detecting network connectivity, compress and batch-upload files to Cloud Storage / Pub/Sub with SHA-256 checksum verification and retry policies."
+   },
+   {
+    "letter": "B",
+    "len": 336,
+    "densidad": 6,
+    "eco": 11,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Buffer sensor readings from the onboard unit in an in-memory ring buffer sized to the vehicle's RAM, and publish to Pub/Sub using exponential-backoff retry so the buffer drains once cellular connectivity or farm Wi-Fi returns; 12-18 hours of 100+ parameters overflows the RAM-backed buffer before coverage is restored, dropping records."
+   },
+   {
+    "letter": "C",
+    "len": 347,
+    "densidad": 6,
+    "eco": 8,
+    "tiene_absoluto": true,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Publish every sensor reading from the onboard vehicle unit to Pub/Sub (pubsub.googleapis.com) as produced, relying on seven-day retention and a subscription seek to replay what was missed during the 12-18 hour zero-connectivity window; without a live link the publish call fails outright, so fine-grained parameters are never produced or buffered."
+   },
+   {
+    "letter": "D",
+    "len": 320,
+    "densidad": 6,
+    "eco": 7,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Mount the destination bucket gs://farm-telemetry/raw on the onboard computer with Cloud Storage FUSE and let the logger write sensor files straight into the mount, so the OS syncs once farm Wi-Fi or cellular coverage returns; FUSE needs an active link to flush writes, so during the 12-18 hour outage writes simply fail."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-034",
+  "scenario": "Hospital emergency rooms and ICUs cannot tolerate scheduled database maintenance windows or failover downtime for clinical electronic charting. Migrating from legacy Oracle RAC to Google Cloud, EHR Healthcare requires a relational database that provides online schema updates without table locks, automated horizontal scaling, and a 99.999% availability SLA. What database meets this requirement?",
+  "correct": "A",
+  "clave_len": 199,
+  "explanation": "Cloud Spanner Multi-Region delivers 99.999% availability with zero planned maintenance windows and online, non-blocking schema migrations, ensuring 24/7/365 continuous clinical charting access for emergency hospital operations.",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 199,
+    "densidad": 3,
+    "eco": 7,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": true,
+    "text": "Cloud Spanner Multi-Region instance, which delivers 99.999% availability SLA, zero maintenance downtime, online non-blocking DDL schema updates, and synchronous multi-region distributed transactions."
+   },
+   {
+    "letter": "B",
+    "len": 213,
+    "densidad": 2,
+    "eco": 5,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Cloud SQL for PostgreSQL Enterprise Plus with regional high availability, a synchronous standby in a second zone, near-zero downtime maintenance and cross-region read replicas for clinical reporting and analytics."
+   },
+   {
+    "letter": "C",
+    "len": 191,
+    "densidad": 2,
+    "eco": 2,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "AlloyDB for PostgreSQL with a high-availability primary, a standby in a second zone, read pools for clinical reporting and a cross-region secondary cluster promoted during a regional failure."
+   },
+   {
+    "letter": "D",
+    "len": 188,
+    "densidad": 1,
+    "eco": 3,
+    "tiene_absoluto": false,
+    "verbo_configurar": false,
+    "tiene_cifra": false,
+    "text": "Oracle RAC rehosted on Bare Metal Solution attached to the VPC by Dedicated Interconnect, preserving the existing clinical schema, PL/SQL packages and cluster licensing entirely unchanged."
+   }
+  ]
+ }
+]

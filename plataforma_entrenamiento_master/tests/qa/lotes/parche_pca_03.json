@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D6-033",
+  "options": {
+   "A": "Provision two Dedicated Interconnect connections in a single metropolitan area, placing each in a different edge availability domain of that facility, with one Cloud Router per VLAN attachment running BGP in regional dynamic routing mode.",
+   "B": "Replace the circuits with two HA VPN gateways over the public internet, each terminating two IPsec tunnels on redundant on-premises peers, with BGP sessions on a Cloud Router advertising the hospital prefixes and equal-cost multipath across tunnels.",
+   "C": "Provision four Dedicated Interconnect connections split across two metropolitan areas, but terminate every VLAN attachment on one Cloud Router left in regional dynamic routing mode in the primary region, advertising a single aggregate prefix."
+  },
+  "distractors": {
+   "A": "This is Google's documented 99.9% topology, not the 99.99% one: both circuits share a single metropolitan area, so a power event, fire or metro fiber cut removes all connectivity at once. The 99.99% SLA requires four connections spread over two separate metros.",
+   "B": "HA VPN does carry its own 99.99% SLA, which is what makes this tempting, but the question asks for a physical Dedicated Interconnect topology and the case requires MACsec hardware-layer encryption on dedicated circuits; IPsec over the public internet caps per-tunnel throughput and cannot hold the jitter budget live telemetry needs.",
+   "C": "The physical topology is right and the routing is anchored wrong: one Cloud Router is a single point of failure, and regional dynamic routing mode advertises only subnets in the router's own region, so on-premises loses reachability to the second region during failover. 99.99% requires redundant Cloud Routers in global dynamic routing mode."
+  }
+ },
+ {
+  "id": "PCA-D5-006",
+  "options": {
+   "A": "Keep Serverless VPC Access but resize the connector to e2-standard-4 instances with a minimum of 3 and a maximum of 10, widen the connector /28 subnet, and spread the service across two connectors attached to the same Shared VPC subnet to raise aggregate throughput.",
+   "B": "Publish the Cloud SQL instance and the Memorystore Redis cluster as Private Service Connect service attachments and have the Cloud Run service resolve and call the PSC endpoint addresses directly, with no VPC egress setting configured on the Cloud Run service itself.",
+   "D": "Expose Cloud SQL and Memorystore behind an internal passthrough Network Load Balancer and reach that address from Cloud Run through VPC Network Peering established between the Google-managed serverless tenant project and the Shared VPC host project."
+  },
+  "distractors": {
+   "A": "Raises the ceiling without removing it: connector throughput scales with the VM fleet and still tops out in the low tens of Gbps, and you keep paying connector instance-hours plus the reserved /28. The requirement was to eliminate the connector VMs, not to buy more of them.",
+   "B": "A Private Service Connect endpoint is an internal IP address inside the consumer VPC. A Cloud Run service with no VPC egress configured has no route into that VPC at all, so the endpoint is unreachable; PSC changes how the producer is exposed, not whether Cloud Run can enter the network.",
+   "D": "VPC Network Peering is not transitive and the serverless tenant network is Google-managed, so a customer cannot peer with it. Cloud SQL and Memorystore already sit behind a service-producer peering, so this path would require transitive peering, which VPC peering does not provide."
+  }
+ },
+ {
+  "id": "PCA-D6-031",
+  "options": {
+   "A": "A Bigtable instance with two replicated clusters in different zones on SSD storage, fronted by an application profile using single-cluster routing to the primary cluster with single-row transactions enabled for read-modify-write telemetry counters.",
+   "C": "Two independent single-cluster Bigtable instances in different regions, with the Dataflow ingestion pipeline dual-writing every telemetry record to both and an hourly reconciliation job comparing row counts per vehicle_id prefix to repair divergence.",
+   "D": "A single autoscaled Bigtable cluster on SSD storage, protected by a Pub/Sub subscription with seven-day message retention in front of it, so telemetry accumulates safely during an outage and is replayed by Dataflow once the cluster becomes writable again, with autoscaling raised for replay."
+  },
+  "distractors": {
+   "A": "Replication is present and the routing policy defeats it: single-cluster routing pins every read and write to one cluster, so a zonal outage halts ingestion until an operator edits the app profile. Single-cluster routing is precisely what enables single-row transactions, which is why it is mutually exclusive with automatic failover.",
+   "C": "There is no Bigtable replication here at all: each instance is a single cluster carrying only the single-cluster availability tier, and the dual-write burden moves consistency and failure handling into the pipeline, which becomes the new single point of failure.",
+   "D": "Pub/Sub buffering protects durability, not availability: the Bigtable write path is still down for the duration of the zonal outage, so the ingestion SLA is breached and the replay backlog competes with live traffic afterwards. A single cluster stays in the lowest availability tier whatever sits in front of it."
+  }
+ },
+ {
+  "id": "PCA-D3-043",
+  "options": {
+   "A": "Attach a Cloud Armor security policy to the marketplace load balancer with rate-limit rules throttling each source IP to 100 requests per minute, banning offenders for ten minutes during auction windows, and enable the preconfigured OWASP core rule set.",
+   "B": "Embed the reCAPTCHA v2 checkbox widget on the bid confirmation screen so that every buyer must clear an image challenge before a bid is accepted, and reject any submission whose token fails verification against the siteverify endpoint on the backend.",
+   "C": "Put the marketplace API behind Apigee X and enforce OAuth 2.0 client credentials with a spike arrest of 30 requests per second and a per-developer quota, rejecting bid calls from any application key that exceeds its allotment during the auction."
+  },
+  "distractors": {
+   "A": "IP-based rate limiting is the wrong signal for this attacker: scalper farms spread bids over thousands of residential proxy addresses, each staying under the threshold, while a tight limit starts blocking shared-NAT households of real players. Nothing in the policy scores whether a client is human.",
+   "B": "Right vendor, wrong tier: v2 returns only a pass or fail, so there is no score or reason code to tune per auction, and it injects a visual puzzle into a millisecond-latency bid path, which is exactly the friction the requirement rules out for legitimate players.",
+   "C": "Quotas and OAuth govern how much an authenticated client may call, never whether the caller is human. The scalpers hold valid accounts and valid tokens, so they consume their quota legitimately, and a spike arrest throttles genuine bursts when a rare item drops."
+  }
+ },
+ {
+  "id": "PCA-D6-012",
+  "options": {
+   "A": "Run the drill inside the live production project during a low-traffic maintenance window: trigger a manual failover of the Cloud SQL high-availability primary onto its standby, repoint the DNS records at the failover region, execute the transaction suite against live services, record the observed recovery time and then fail back.",
+   "C": "Hold a tabletop exercise in which the platform team walks the auditors through the runbook, the architecture diagrams and the most recent backup completion report, then records the agreed theoretical RTO and RPO for each application tier and each database in the compliance evidence pack signed by the service owners.",
+   "D": "Restore the production database backup into the existing staging environment, which shares the same VPC, service accounts and Interconnect VLAN attachment as production, run the end-to-end transaction suite there against the restored data, and delete the restored instance once the auditors have seen the results."
+  },
+  "distractors": {
+   "A": "It disrupts exactly the users the requirement protects: an HA failover drops in-flight connections and the DNS repoint moves live customers into the failover region, so a drill that goes wrong becomes a real outage. The scenario asks for validation without touching production traffic.",
+   "C": "A walkthrough produces no measured evidence: nothing is restored, no transaction is processed and the RTO and RPO figures remain assumptions on a page. The auditors asked for full failover testing, and untested runbooks are what fails during a genuine regional loss.",
+   "D": "It is not isolated: sharing the VPC, the service accounts and the Interconnect attachment with production lets the drill collide with live address ranges and IAM state, and it never proves the failover region can be built from nothing, which is the capability the audit is testing."
+  }
+ },
+ {
+  "id": "PCA-D6-025",
+  "options": {
+   "B": "Schedule a BigQuery Data Transfer Service cross-region dataset copy from us-central1 to us-east1 every hour, and repoint the analytics service accounts, scheduled queries and BI connections at the us-east1 copy once the primary region has been declared unavailable by the incident commander.",
+   "C": "Export every table nightly to Avro files in a dual-region Cloud Storage bucket spanning us-central1 and us-east1, and on a regional outage run load jobs from the most recent export to rebuild the dataset and its partitioning in us-east1 before reopening analytics.",
+   "D": "Create a dataset in us-east1 holding authorized views that reference the production tables in us-central1, so analysts keep issuing the same SQL through the us-east1 dataset and their queries continue to resolve if the primary region becomes unavailable."
+  },
+  "distractors": {
+   "B": "A scheduled copy is discrete, not continuous: the RPO is a full transfer interval, up to an hour of lost data, and the copy job itself runs against the source region, so the last transfer before the outage may never complete. Failover is manual repointing rather than a replica promotion.",
+   "C": "Rebuilding a warehouse from nightly exports gives an RPO of up to 24 hours and an RTO measured in the hours the load jobs take to run. The requirement is that analytics fail over immediately, which rules out any restore-from-export path.",
+   "D": "BigQuery queries cannot cross region boundaries: a view in a us-east1 dataset cannot read a table in us-central1, so the view creation fails outright. Even if it were permitted, a view stores no data and would be unreadable while the primary region is down."
+  }
+ },
+ {
+  "id": "PCA-D6-035",
+  "options": {
+   "A": "Run one Live Stream API channel in us-central1 and write the HLS and DASH segments into a dual-region Cloud Storage bucket spanning us-central1 and us-east1, serving playback worldwide through Media CDN with the bucket configured as a redundant origin, so segments stay retrievable from us-east1 if the primary region is lost.",
+   "B": "Keep a second Live Stream API channel provisioned but stopped in us-east1, and use a Cloud Monitoring alert on the primary channel's segment-emission metric to invoke a Cloud Function that starts the standby channel, tells the contribution encoder to redirect its feed and rewrites the playback DNS record.",
+   "C": "Ingest the same RTMP contribution feed into pipelines in both regions and publish the two playback hostnames through a Cloud DNS weighted round-robin record with a 300 second TTL, letting player clients re-resolve and settle on the healthy region once operations updates the weights after an incident is confirmed."
+  },
+  "distractors": {
+   "A": "Storage redundancy is not transcoder redundancy: the us-central1 pipeline is still the only thing producing new segments, so when it fails the manifest stops advancing and every viewer stalls within one segment duration, no matter how many regions hold the bytes already written.",
+   "B": "Cold standby cannot meet a three second budget: starting a Live Stream channel, re-establishing the contribution feed and filling the first segments takes tens of seconds at best, and the DNS change on top of that is honoured by client resolvers on their own schedule, not by Google.",
+   "C": "Weighted round-robin carries no health signal, so the record keeps handing out the failed region's address until a human edits the weights, and the 300 second TTL pins already-resolved players to the dead endpoint for up to five minutes. Automatic failover needs a health-checked routing policy."
+  }
+ },
+ {
+  "id": "PCA-D6-017",
+  "options": {
+   "A": "Set a message storage policy on every topic in Terraform, restricting allowed_persistence_regions to us-central1 and us-east1 so that message storage is pinned to two regions and Pub/Sub can move stored messages between them when one of the two becomes unavailable during a regional incident, with topic message retention set to seven days.",
+   "B": "Create matching topics in two regions and run a Dataflow Pub/Sub-to-Pub/Sub streaming job that mirrors every published message into the secondary topic, with subscribers deduplicating on message_id so that either topic can serve the whole fleet after a regional failure.",
+   "D": "Pin publishers and subscribers to the regional service endpoints, for example us-central1-pubsub.googleapis.com, in the Terraform-managed client configuration, and set the client libraries to retry against the us-east1 endpoint whenever the primary regional endpoint returns UNAVAILABLE."
+  },
+  "distractors": {
+   "A": "A message storage policy is a data-residency control and it constrains availability rather than adding it: narrowing allowed_persistence_regions shrinks the set of regions Pub/Sub may use, so a publish that cannot be stored in an allowed region is rejected instead of being absorbed elsewhere. Retention length does not change which regions are permitted to hold the data.",
+   "B": "It rebuilds by hand what the service already does, and the mirroring job is itself regional: a Dataflow pipeline pinned to one region dies with that region, so the replication the design depends on stops exactly when it is needed, while duplicates and lag are added in normal operation.",
+   "D": "Locational endpoints are the opposite of high availability: they opt the client out of the global routing layer and bind it to one region's Pub/Sub service, so a regional failure surfaces as errors handled by hand-written retry logic. The global endpoint already performs that routing."
+  }
+ },
+ {
+  "id": "PCA-D3-057",
+  "options": {
+   "A": "Create a Cloud KMS MAC key (HMAC_SHA256), have the timing service call macSign on each result payload and publish the tag next to the lap times, so teams and officials call macVerify with the same key to confirm the record has not been altered.",
+   "B": "Encrypt the result payloads with a Cloud HSM backed customer-managed key and store them in a Cloud Storage bucket with Bucket Lock and a retention policy, so published records cannot be deleted or rewritten and are readable only by principals holding the decrypt role.",
+   "D": "Create an asymmetric CryptoKey with the ASYMMETRIC_DECRYPT purpose (RSA_DECRYPT_OAEP_4096_SHA256), publish its public key to the racing teams, and have the official timing service transform every race payload with the private key that stays inside Cloud KMS."
+  },
+  "distractors": {
+   "A": "HMAC is a shared-secret scheme, so it delivers integrity but no non-repudiation: every party able to verify a tag is equally able to mint one. A team disputing a lap time could have produced the same tag, which is exactly the dispute this design has to settle.",
+   "B": "Encryption and retention protect confidentiality and prevent deletion, but they say nothing about authorship: officials outside the project cannot prove who produced a record, and anyone holding the decrypt role can re-encrypt a modified payload under the very same key.",
+   "D": "Right product, wrong key purpose: an ASYMMETRIC_DECRYPT key can only be used with asymmetricDecrypt, and Cloud KMS rejects an asymmetricSign call against it. Signing requires the ASYMMETRIC_SIGN purpose with an RSA-PSS, RSA-PKCS1 or elliptic-curve signing algorithm."
+  }
+ },
+ {
+  "id": "PCA-D4-037",
+  "options": {
+   "A": "Raise the subscription ack deadline to the 600 second maximum and enable exactly-once delivery, giving the consumer more time to finish processing before Pub/Sub treats the delivery as failed and hands the same message to another subscriber instance for a further attempt, and set the subscription to retain acknowledged messages for replay.",
+   "B": "Configure the subscription retry policy with exponential backoff from a 10 second minimum to a 600 second maximum delay, so that redelivery of the failing message is spaced further and further apart and the subscriber has time to restart cleanly between attempts.",
+   "D": "Reduce the subscription message_retention_duration to the ten minute minimum so the malformed message ages out of the backlog on its own, and enable message ordering with an ordering key per payment account so valid messages behind it are delivered in sequence."
+  },
+  "distractors": {
+   "A": "The message is malformed, not slow: the consumer crashes during parsing, so no ack deadline is long enough to change the outcome. Exactly-once delivery only tightens duplicate semantics; the same payload returns when the deadline expires and the crash loop continues. Retaining acknowledged messages only preserves copies of what already succeeded.",
+   "B": "Half the answer: backoff spreads the redeliveries out, but with no dead-letter topic and no max_delivery_attempts the poison message is retried forever and keeps returning to the head of the queue, while the longer delays now also postpone every valid message behind it.",
+   "D": "Retention applies to every unacknowledged message, not just the bad one, so a ten minute window silently deletes any legitimate payment backlog built up during a consumer outage, and the subscriber still crash-loops for those ten minutes. Ordering keys make the head-of-line block worse."
+  }
+ },
+ {
+  "id": "PCA-D5-015",
+  "options": {
+   "A": "Set log_min_duration_statement to 1000 ms on the instance, route the PostgreSQL slow query log into Cloud Logging, and build a log-based metric counting the slowest statements per hour.",
+   "B": "Build a Cloud Monitoring dashboard on database/cpu/utilization, postgresql/num_backends and memory metrics, with an alerting policy that fires whenever CPU stays above 90 percent for five minutes, paging the on-call DBA.",
+   "D": "Connect with psql, create the pg_stat_statements extension and poll pg_stat_activity in a loop, saving periodic snapshots of the running statements into a table for later offline analysis."
+  },
+  "distractors": {
+   "A": "Catches statements that are individually slow, while the load here comes from a high-frequency query that is fast on each execution; it also emits no execution plan and no client tag, and logging every statement during a CPU spike adds load to the instance you are trying to relieve.",
+   "B": "Instance-level metrics confirm the symptom and never name the cause: CPU utilization and backend counts show the saturation but cannot be broken down per SQL statement, so the DBA still does not know which query to fix.",
+   "D": "Sampling instead of measurement: a polling loop misses the short-lived statements that fire between snapshots, and pg_stat_statements aggregates normalized counters without capturing execution plans or the client tags the requirement names."
+  }
+ },
+ {
+  "id": "PCA-D6-018",
+  "options": {
+   "A": "Set the default leader region to europe-west2 so London writes commit locally and the leader replica sits inside the European Union, letting the New York traffic absorb the wide-area latency on its commits instead.",
+   "C": "Keep the current leader placement and add read-only replicas in us-east4, directing the New York application tier at those replicas so headquarters traffic is served by the geographically closest set of Spanner servers, using bounded-staleness reads.",
+   "D": "Replace the multi-region instance with two regional Spanner instances, one in us-east4 and one in europe-west2, route each office to its local instance and reconcile the two datasets with a nightly synchronization job."
+  },
+  "distractors": {
+   "A": "Optimizes the minority: 80 percent of commits would then pay a trans-Atlantic round-trip to reach the Paxos leader, so aggregate write latency rises rather than falls. Data residency is not a stated constraint in this scenario; minimizing write latency is.",
+   "C": "Read-only replicas never accept writes. Every commit is still routed to the leader region wherever it sits, so the write latency the scenario asks about is unchanged; read-only replicas help only read-only transactions and stale reads.",
+   "D": "Two instances are two databases: the single active-active dataset, external consistency across offices and globally unique constraints are all lost, and a nightly sync reintroduces conflicting writes that Spanner would otherwise have serialized for you."
+  }
+ },
+ {
+  "id": "PCA-D6-023",
+  "options": {
+   "A": "A regional Cloud Spanner instance configuration such as us-central1, which keeps three read-write replicas in three separate zones, serves writes through a Paxos quorum and survives the loss of any single zone with no operator intervention or a planned maintenance event.",
+   "B": "Cloud SQL for PostgreSQL Enterprise Plus with regional high availability, a synchronous standby in a second zone, near-zero downtime maintenance and cross-region read replicas that are promoted during a regional failure.",
+   "D": "AlloyDB for PostgreSQL with a high-availability primary, a standby in a second zone, read pools for reporting and a cross-region secondary cluster that can be promoted, backed by sub-ten-second automatic zonal failover."
+  },
+  "distractors": {
+   "A": "Regional Spanner is covered by the 99.99% SLA, one nine short: three zonal replicas survive a zone failure but the whole configuration lives in one region, so a regional event takes the database with it. Five nines requires a multi-region configuration.",
+   "B": "Cloud SQL's highest availability commitment is 99.99% on Enterprise Plus, and an HA failover is a measurable interruption of client connections rather than a transparent one; a cross-region replica additionally needs a manual promotion, adding minutes to the outage budget.",
+   "D": "AlloyDB is also a 99.99% SLA service, so it cannot be presented to the board as five nines. Fast zonal failover does not change the SLA tier, and the cross-region secondary cluster is an asynchronous replica that must be promoted by an operator."
+  }
+ },
+ {
+  "id": "PCA-D4-039",
+  "options": {
+   "A": "Create a second Service and backend for v2 and split traffic with a weighted backend service on the GKE Gateway, sending 5 percent of all checkout requests to v2 and the remaining 95 percent to v1.",
+   "B": "Deploy the v2 pods behind the same Kubernetes Service as v1 with matching label selectors, and rely on the Service clientIP session affinity to keep each beta tester pinned to the new version once reached.",
+   "C": "Create an Istio DestinationRule for the checkout service with a consistentHash load balancer keyed on the 'X-Beta-Tester' HTTP header, so that requests carrying the header hash deterministically onto the v2 subset, while other requests hash onto v1."
+  },
+  "distractors": {
+   "A": "A weighted split is probabilistic and identity-blind: 5 percent of ordinary customers land on v2, which the requirement forbids, and beta testers reach v1 most of the time. Header matching is what makes the selection deterministic.",
+   "B": "A Kubernetes Service load-balances at Layer 4 through kube-proxy and cannot read an HTTP header, so adding v2 pods to the same Service sends a share of public checkout traffic to the untested version; clientIP affinity only pins a source address to whichever pod it happened to reach first.",
+   "C": "Correct resource, wrong anchor point: a DestinationRule defines subsets and the load-balancing policy for traffic that has already been routed to it, and consistent hashing spreads requests across the healthy endpoints it is given. Only a VirtualService match rule selects which subset receives a request."
+  }
+ },
+ {
+  "id": "PCA-D3-035",
+  "options": {
+   "B": "The entries were generated but discarded on the way out: the organization's aggregated log sink to BigQuery carries an exclusion filter matching logName data_access, so recreate the sink without that exclusion filter and the object reads and BigQuery jobs reappear in the audit dataset.",
+   "C": "The entries exist but aged out: the _Default log bucket retains entries for only 30 days, so extend its retention to 400 days or route the audit logs to a user-defined bucket with a longer retention period before the next compliance audit cycle begins.",
+   "D": "The logs were written but hidden from the investigators, who held only roles/logging.viewer; Data Access entries are restricted log entries, so granting roles/logging.privateLogViewer at the organization level makes the Cloud Storage object reads and BigQuery SELECT jobs visible."
+  },
+  "distractors": {
+   "B": "Exclusions only drop entries from a sink's export path and cannot explain the gap: with DATA_READ switched off in the IAM audit config the entries are never produced in the first place, so no sink change, and nothing retroactive, can recover reads that were never logged.",
+   "C": "Retention governs how long existing entries are kept, and would have produced a truncated history rather than a selective absence of read operations while admin writes remained intact. Logs that were never enabled leave nothing to retain.",
+   "D": "roles/logging.privateLogViewer genuinely is required to read Data Access entries, which is what makes this tempting, but a permission only gates visibility. With Data Access logging disabled by default for Cloud Storage there is nothing for the role to reveal."
+  }
+ },
+ {
+  "id": "PCA-D6-034",
+  "options": {
+   "B": "Cloud SQL for PostgreSQL Enterprise Plus with regional high availability, a synchronous standby in a second zone, near-zero downtime maintenance and cross-region read replicas for clinical reporting and analytics.",
+   "C": "AlloyDB for PostgreSQL with a high-availability primary, a standby in a second zone, read pools for clinical reporting and a cross-region secondary cluster promoted during a regional failure.",
+   "D": "Oracle RAC rehosted on Bare Metal Solution attached to the VPC by Dedicated Interconnect, preserving the existing clinical schema, PL/SQL packages and cluster licensing entirely unchanged."
+  },
+  "distractors": {
+   "B": "Its highest commitment is 99.99%, one nine short of the requirement, and PostgreSQL DDL such as adding a NOT NULL column still locks the table; write capacity grows only by resizing the single primary.",
+   "C": "AlloyDB is a 99.99% SLA service and keeps a single primary for writes: schema changes are standard PostgreSQL DDL, so they take ACCESS EXCLUSIVE locks that would block emergency charting.",
+   "D": "A rehost keeps the maintenance windows the requirement forbids: the customer still patches the OS, Grid Infrastructure and database, and no managed availability SLA covers the cluster."
+  }
+ },
+ {
+  "id": "PCA-D4-027",
+  "options": {
+   "B": "Resource-based Committed Use Discounts, which apply an automatic discount to vCPU and memory usage in a region for the life of the commitment, with no per-instance configuration and no change to how the instances are deployed.",
+   "C": "Spot VM pricing, which cuts Compute Engine list prices sharply with no commitment and applies automatically to any instance running under the qualifying provisioning model for the whole billing month.",
+   "D": "Active Assist machine type rightsizing recommendations, which continuously analyze utilization and apply the resulting credits automatically to instances that have been running below their provisioned capacity."
+  },
+  "distractors": {
+   "B": "Right discount family, wrong trigger: a resource-based CUD only exists once someone signs a one or three year commitment, which the scenario explicitly says never happened, and it appears on the invoice as a commitment charge plus a credit rather than an automatic usage discount.",
+   "C": "Spot is a lower list price, not a monthly credit, and it applies only to instances provisioned as Spot, which Compute Engine may preempt at short notice. The scenario describes long-running instances that are never interrupted.",
+   "D": "Recommender emits recommendations; it never changes the bill by itself. A person or an automation must apply the resize, and the saving then comes from running a smaller machine rather than from a credit line on the invoice."
+  }
+ },
+ {
+  "id": "PCA-D2-036",
+  "options": {
+   "B": "Deploy Cloud IDS with packet mirroring policies on every VPC subnet, forwarding a copy of the traffic to Palo Alto powered inspection endpoints and surfacing the findings in Security Command Center.",
+   "C": "Attach a Cloud Armor security policy with the preconfigured OWASP ModSecurity core rule set and Adaptive Protection to the external Application Load Balancer that fronts the financial application.",
+   "D": "Deploy Palo Alto VM-Series next-generation firewall appliances as a managed instance group behind an internal passthrough load balancer, with custom routes steering all VPC traffic through the appliances, with Panorama pushing the threat signature updates."
+  },
+  "distractors": {
+   "B": "Cloud IDS is detection only: packet mirroring gives it a copy of the traffic, so it can alert on an exploit or a command-and-control beacon but it never sits in the forwarding path and cannot drop the session. The requirement is prevention, not detection.",
+   "C": "Cloud Armor inspects only HTTP(S) requests arriving at the load balancer, so it never sees east-west traffic between VPC subnets or the non-HTTP command-and-control channels the requirement names; it is a WAF, not an intrusion prevention engine.",
+   "D": "This delivers the right inspection engine by exactly the means the requirement excludes: the team must size, license, patch and autoscale third-party firewall VMs, and the appliance instance group becomes a throughput bottleneck and a failure domain of its own."
+  }
+ },
+ {
+  "id": "PCA-D5-018",
+  "options": {
+   "A": "Stay on 1st Gen and orchestrate the pipeline with Cloud Workflows, splitting the 15 minute job into checkpointed stages that each finish inside the 9 minute ceiling and hand intermediate state to the next stage through Cloud Storage, retrying any stage that overruns.",
+   "B": "Stay on 1st Gen and redeploy the functions with --timeout=3600s and --memory=32768MB, lifting the execution ceiling and the memory ceiling so that the 15 minute file processing job completes inside a single invocation.",
+   "C": "Move the ETL functions onto a GKE Autopilot CronJob, sizing the pods at 32 GB of memory and letting the cluster autoscaler add capacity for concurrent runs while Cloud Storage notifications feed the jobs through a Pub/Sub queue."
+  },
+  "distractors": {
+   "A": "Works around the timeout and leaves the other two limits untouched: 1st Gen still serves one request per instance, so concurrent invocations still cold-start a new instance each, and memory remains capped at 8 GB. It also adds checkpoint state to a job that was stateless.",
+   "B": "The values exceed what 1st Gen accepts: its maximum timeout is 540 seconds and its maximum memory is 8192 MB, so gcloud rejects the deployment. Those ceilings are a property of the 1st Gen runtime, not a quota that support can raise.",
+   "C": "Solves the limits by giving up the serverless model: the team now owns cluster upgrades and node quota, pays for a cluster that idles between ETL runs, and has to rebuild the native Cloud Storage event trigger as a Pub/Sub consumer."
+  }
+ },
+ {
+  "id": "PCA-D2-032",
+  "options": {
+   "A": "Cloud SQL for PostgreSQL Enterprise Plus on a 128 vCPU machine with the data cache enabled and read replicas absorbing the reporting queries that run alongside the Black Friday checkout peak, with automatic storage growth enabled.",
+   "B": "Cloud SQL for PostgreSQL with Datastream change data capture streaming into BigQuery, so analytical queries run in the warehouse while transactional traffic stays on the operational database, with Looker Studio pointed at the BigQuery copy.",
+   "D": "Memorystore for Redis Cluster in front of the existing PostgreSQL instance, caching the product catalogue and session reads so that the database only handles checkout writes during the peak, with read-through caching in the API tier."
+  },
+  "distractors": {
+   "A": "Vertical scaling gets closer on transactions but there is no columnar engine, so sub-second analytics on live data still needs an export; Enterprise Plus failover is measured in tens of seconds rather than under ten.",
+   "B": "This is precisely the ETL hop the requirement rules out: change data capture carries replication lag, so analytics run against data that is seconds to minutes stale, and the pipeline is one more component to operate during the peak.",
+   "D": "Caching addresses read pressure only. The Black Friday bottleneck is transactional write throughput, which still lands on the same PostgreSQL primary, and the cache adds an invalidation problem for inventory counts that must be exact at checkout."
+  }
+ },
+ {
+  "id": "PCA-D3-050",
+  "options": {
+   "B": "Serve the HLS and DASH segments through Media CDN with signed URLs and signed cookies scoped to short lived tokens, so only an authenticated partner session can fetch the manifest and the media segments from the edge, with tokens issued per partner and rotated hourly.",
+   "C": "Encrypt the HLS segments with AES-128 clear-key encryption and publish the key URI inside the playlist, serving the key from a Cloud Run endpoint that checks the partner session cookie before returning the key bytes over TLS, logging every key request for audit.",
+   "D": "Store the mezzanine and packaged assets in a Cloud Storage bucket encrypted with Cloud KMS customer-managed keys, protected by VPC Service Controls and Cloud Armor geographic restrictions on the delivery load balancer, with object versioning and audit logging enabled."
+  },
+  "distractors": {
+   "B": "Signed URLs stop hotlinking and unauthorized fetches, but the bytes that reach the player are unencrypted, so any authorized partner can capture and redistribute the stream. There is no CENC key exchange, no licence policy and no output protection.",
+   "C": "Clear-key AES-128 hands the raw key to any client that passes the cookie check, so it lands in software where it can be scraped, and it emits none of the CENC licence signalling that FairPlay and PlayReady require, so iOS and Windows devices cannot play the stream at all. TLS protects the key in transit, not once it has reached the device.",
+   "D": "CMEK protects objects at rest and Cloud Storage decrypts them before delivery, so the player still receives plaintext video. Perimeter and geographic controls decide who may fetch a segment but issue no per-device licence, which is what DRM adds."
+  }
+ },
+ {
+  "id": "PCA-D4-046",
+  "options": {
+   "A": "Enable gzip or Brotli compression on the JSON payloads at the Global External Application Load Balancer, so the repeated string keys are compressed away before the packets leave Google's network toward the mobile clients and enabling HTTP/2 header compression.",
+   "B": "Move the game backends from Premium to Standard Network Tier and put the matchmaking responses behind Cloud CDN, cutting the price per gigabyte of egress instead of changing the payload the clients exchange.",
+   "D": "Shorten the JSON field names to two-character abbreviations, strip all whitespace and omit null fields, keeping the format human readable while removing most of the bytes the verbose key strings currently consume."
+  },
+  "distractors": {
+   "A": "Per-message compression does not pay for itself at this shape: these are small realtime state packets where dictionary and header overhead can exceed the saving, and load balancer compression applies to HTTP responses, not to the packets the clients send upstream.",
+   "B": "Cuts the unit price, not the 75 percent of bytes that are wasted, and Standard Tier carries traffic over the public internet for most of the path, adding the latency and jitter a realtime multiplayer session cannot absorb; per-player packets are not cacheable.",
+   "D": "A real but partial saving: the field names shrink, yet every message still carries them along with quotes, commas and numbers encoded as text. It also destroys the self-describing property that made JSON tolerable without gaining a schema or a binary encoding."
+  }
+ },
+ {
+  "id": "PCA-D4-020",
+  "options": {
+   "A": "Keep the synchronous chain and wrap every hop in Envoy retries with exponential backoff and outlier detection, so the Notification Service is ejected from the load-balancing pool as soon as it starts failing and the call fails open instead of blocking the checkout once the ejection threshold is reached.",
+   "B": "Have the Checkout Service return HTTP 200 to the customer first and then call the Notification Service from a background thread after the response has been written, so the notification no longer sits on the critical path of the checkout request.",
+   "C": "Replace the hard-coded call chain with a Cloud Workflows orchestration that invokes Inventory, Payment, Shipping and Notification in sequence, with per-step retry policies and compensation steps that roll back an order when a downstream step fails."
+  },
+  "distractors": {
+   "A": "Circuit breaking hides the failure instead of removing the coupling: the request is still synchronous end to end, so its latency remains the sum of every hop and a slow Payment or Shipping service still blocks the customer, while ejected notifications are dropped with no buffer to replay them from.",
+   "B": "A background thread is not durable: if the process is evicted or the pod is rescheduled before the call completes, the notification is lost with no retry and no record of it. It also fixes only the last hop and leaves Inventory, Payment and Shipping temporally coupled.",
+   "C": "Orchestration adds retries and keeps the coupling: Workflows invokes each step synchronously and waits for it, so an execution stays open while Notification is slow and every service must be available for the order to complete. It centralizes the chain rather than breaking it."
+  }
+ },
+ {
+  "id": "PCA-D5-031",
+  "options": {
+   "A": "Create a secondary index on Encounters keyed by patient_id with a STORING clause covering the columns the clinical query reads, so the join is answered from the index without touching the base table at all.",
+   "C": "Give both tables randomly generated UUID primary keys to avoid write hotspots, and let Spanner's automatic split rebalancing place related patient and encounter rows onto the same server as load evens out over time.",
+   "D": "Denormalize the child records into the Patients table as ARRAY<STRUCT> columns holding the encounters, lab results and prescriptions, so a single point read returns the entire patient chart with no join required and no interleaving to maintain."
+  },
+  "distractors": {
+   "A": "Right family, wrong mechanism: a secondary index lives in its own key space and is split independently of Patients, so the join still crosses server boundaries. Only INTERLEAVE IN PARENT guarantees the child rows sit in the same split as their parent row.",
+   "C": "Spanner splits by primary key range, so co-location follows the key prefix and not the access pattern. Random UUIDs on both tables scatter a patient's encounters across arbitrary splits, and Spanner never relocates rows to match join behaviour.",
+   "D": "Co-locates the data at the cost of the row: every new encounter rewrites the entire patient row, so an active patient becomes a write hotspot with lock contention, and a long clinical history pushes against Spanner's 10 MiB per-row limit."
+  }
+ },
+ {
+  "id": "PCA-D4-019",
+  "options": {
+   "A": "Export Cloud Asset Inventory to BigQuery on a schedule and run SQL over the compute.googleapis.com/Disk assets whose users field is empty, joining the result against the billing export to estimate the monthly spend of every orphaned disk per project and open a cleanup ticket for each owner.",
+   "C": "Set the auto-delete flag on attached persistent disks so Compute Engine removes each disk when its instance is deleted, and add an organization policy requiring that flag on every new instance created across the 200 projects from now on.",
+   "D": "Configure Cloud Billing budget alerts with threshold rules on the Compute Engine storage SKUs and build a billing export dashboard grouped by project and SKU, so the growing persistent disk spend surfaces to the FinOps team each month."
+  },
+  "distractors": {
+   "A": "Inventory reports state, not waste: you get an accurate list of unattached disks but you own the detection logic, the thresholds and the pipeline forever, and there is no idle-resource insight or Google-computed saving estimate to hand the project owner as justification.",
+   "C": "Helps only disks created from now on: auto-delete is set at attach time, so it does nothing about the thousands of orphans already accruing charges, and applied broadly it destroys data disks that were deliberately retained after an instance was retired.",
+   "D": "Billing data aggregates by SKU and project, so it shows the spend rising without naming a single disk to delete, and a budget alert fires only after the money is committed. There is no per-resource recommendation to act on."
+  }
+ }
+]

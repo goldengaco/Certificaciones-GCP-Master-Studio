@@ -1,0 +1,728 @@
+[
+ {
+  "id": "PCA-D1-034",
+  "subtopic": "Knightmotives Automotive: Driver PII & Cloud DLP Pseudonymization",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive captures vehicle operator names, employee IDs, and high-precision GPS coordinates alongside mechanical sensor data. To comply with global privacy regulations, data shared with third-party researchers must have operator identities cryptographically pseudonymized (deterministic hashing with a salt) and GPS coordinates coarsened to a 5-kilometer grid. What service provides this transformation?",
+  "correct": "B",
+  "clave_len": 188,
+  "explanation": "Google Cloud Sensitive Data Protection (formerly Cloud DLP) offers native de-identification transformations including cryptographic hashing (pseudonymization), date shifting, and geographic coordinate bucketing/generalization.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/deidentification-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 47,
+    "text": "Delete all GPS data from the database entirely."
+   },
+   {
+    "letter": "B",
+    "len": 188,
+    "text": "Use Sensitive Data Protection (Cloud DLP) in the Dataflow pipeline to execute CryptoHashConfig tokenization on operator IDs and bucketing/generalization transformations on GPS coordinates."
+   },
+   {
+    "letter": "C",
+    "len": 76,
+    "text": "Ask researchers to sign a promise that they will not look at operator names."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "Write custom regular expressions in a spreadsheet before sending to researchers."
+   }
+  ],
+  "ratio": 2.78
+ },
+ {
+  "id": "PCA-D3-005",
+  "subtopic": "Org Policy: Disable Service Account Key Creation",
+  "caseStudy": "none",
+  "scenario": "To eliminate leaked credential risks, an enterprise mandates that developers and CI/CD pipelines must never create downloadable user-managed Service Account private keys (JSON/P12 files). What Organization Policy constraint must be enforced at the root organization node?",
+  "correct": "B",
+  "clave_len": 128,
+  "explanation": "Enforcing constraints/iam.disableServiceAccountKeyCreation prevents any user from creating or uploading external private keys for service accounts, forcing the adoption of Workload Identity Federation, GKE Workload Identity, and IAM short-lived credentials.",
+  "doc": "https://cloud.google.com/iam/docs/understanding-service-accounts#managing_service_account_keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "Delete all service accounts across all projects."
+   },
+   {
+    "letter": "B",
+    "len": 128,
+    "text": "Enforce the Organization Policy boolean constraint 'constraints/iam.disableServiceAccountKeyCreation' at the Organization level."
+   },
+   {
+    "letter": "C",
+    "len": 44,
+    "text": "constraints/storage.uniformBucketLevelAccess"
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "constraints/compute.disableNestedVirtualization"
+   }
+  ],
+  "ratio": 2.76
+ },
+ {
+  "id": "PCA-D1-036",
+  "subtopic": "Knightmotives Automotive: Dual-Region GCS & Turbo Replication",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive stores golden master ECU firmware images and vehicle cryptographic certificates in Cloud Storage. The disaster recovery team has established a strict Recovery Point Objective (RPO) of under 15 minutes across two distant geographic regions (e.g. us-central1 and us-east1) to guarantee business continuity during a regional disaster. What Cloud Storage configuration meets this SLA?",
+  "correct": "D",
+  "clave_len": 199,
+  "explanation": "Dual-Region Cloud Storage with Turbo Replication provides an SLA-backed guarantee that 100% of newly written objects are replicated across paired regions within 15 minutes, satisfying strict RPO < 15-minute compliance requirements.",
+  "doc": "https://cloud.google.com/storage/docs/turbo-replication",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 60,
+    "text": "Write firmware binaries directly into Cloud DNS TXT records."
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "text": "Create a standard Single-Region bucket and schedule a daily gsutil rsync cron job."
+   },
+   {
+    "letter": "C",
+    "len": 76,
+    "text": "Store images on local NFS storage and copy them to tape backup once a month."
+   },
+   {
+    "letter": "D",
+    "len": 199,
+    "text": "Create a Dual-Region Cloud Storage bucket (e.g. nam4: us-central1 and us-east1) and enable Turbo Replication to guarantee 100% of objects replicate across regions within 15 minutes with a backed SLA."
+   }
+  ],
+  "ratio": 2.74
+ },
+ {
+  "id": "PCA-D2-009",
+  "subtopic": "GKE Autopilot vs Standard Cluster Provisioning",
+  "caseStudy": "none",
+  "scenario": "A startup engineering team wants to deploy microservices on Kubernetes without managing node pools, sizing virtual machines, managing OS security patches, or configuring Kubernetes control plane scaling. They want Google SRE to manage cluster health and only pay for the exact CPU and memory requested by running pods. Which GKE mode should you select?",
+  "correct": "C",
+  "clave_len": 177,
+  "explanation": "GKE Autopilot is a fully managed, turnkey Kubernetes environment where Google manages all node infrastructure, control plane scaling, and security hardening. Users focus entirely on workloads and pay per-second only for pod resource requests.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 84,
+    "text": "Deploy Kubernetes from scratch using kubeadm on bare-metal Compute Engine instances."
+   },
+   {
+    "letter": "B",
+    "len": 51,
+    "text": "GKE Standard with custom Compute Engine node pools."
+   },
+   {
+    "letter": "C",
+    "len": 177,
+    "text": "GKE Autopilot mode, allowing Google to manage node provisioning, auto-scaling, OS upgrades, and security hardening according to GKE best practices with per-pod resource billing."
+   },
+   {
+    "letter": "D",
+    "len": 63,
+    "text": "Run containers on an unmanaged single VM running Docker Engine."
+   }
+  ],
+  "ratio": 2.68
+ },
+ {
+  "id": "PCA-D2-011",
+  "subtopic": "Cloud Spanner Capacity Sizing: Processing Units vs Nodes",
+  "caseStudy": "none",
+  "scenario": "A development team wants to deploy a development and staging database on Cloud Spanner. The workload requires less than 500 IOPS and 100GB of storage. Sizing a full 1-node instance ($0.90/hr) is cost-prohibitive for dev environments. How can the team provision Spanner with granular fractional compute capacity?",
+  "correct": "C",
+  "clave_len": 190,
+  "explanation": "Cloud Spanner supports granular sizing via Processing Units (PUs). Instances can be provisioned in increments of 100 PUs (100 PUs = 10% of a node), allowing low-throughput development and production workloads to scale cost-effectively.",
+  "doc": "https://cloud.google.com/spanner/docs/compute-capacity",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Cloud Spanner does not support instances smaller than 3 full nodes."
+   },
+   {
+    "letter": "B",
+    "len": 86,
+    "text": "Deploy Cloud Spanner emulator inside a single Docker container on a VM for production."
+   },
+   {
+    "letter": "C",
+    "len": 190,
+    "text": "Provision the Cloud Spanner instance using Processing Units (PUs) in increments of 100 PUs (e.g. 100 PUs = 0.1 node, scaling up to 1000 PUs = 1 node), providing fractional cost and capacity."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Share a single SQLite file across multiple developer laptops."
+   }
+  ],
+  "ratio": 2.66
+ },
+ {
+  "id": "PCA-D2-016",
+  "subtopic": "Google Cloud Batch for HPC & Gene Sequencing",
+  "caseStudy": "none",
+  "scenario": "A biotechnology research lab runs 10,000 parallel DNA alignment jobs daily. Each job executes a containerized bioinformatics binary that runs for 15 minutes, reads a 5GB file from GCS, processes on 4 vCPUs, and writes output back to GCS. The lab wants a fully managed, serverless batch scheduling service that provisions Spot VMs, handles retries, and scales to 0 when no jobs are pending. What service should you recommend?",
+  "correct": "C",
+  "clave_len": 175,
+  "explanation": "Google Cloud Batch is a fully managed service that provisions compute resources (including Spot VMs), schedules task arrays, manages job dependencies, mounts Cloud Storage buckets, and terminates instances upon completion with zero cluster management.",
+  "doc": "https://cloud.google.com/batch/docs/get-started",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Maintain a permanent 100-node Slurm cluster running 24/7 on standard VMs."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Execute jobs manually on developer workstations."
+   },
+   {
+    "letter": "C",
+    "len": 175,
+    "text": "Use Google Cloud Batch to submit containerized job arrays, configuring task groups to execute on Spot VMs with automatic retry policies and direct Cloud Storage volume mounts."
+   },
+   {
+    "letter": "D",
+    "len": 77,
+    "text": "Run jobs inside Cloud Functions (1st gen) with 540-second execution timeouts."
+   }
+  ],
+  "ratio": 2.65
+ },
+ {
+  "id": "PCA-D1-061",
+  "subtopic": "Altostrat Media: Multi-CDN Video Resiliency & Cloud DNS",
+  "caseStudy": "altostrat_media",
+  "scenario": "To guarantee zero broadcast disruption for millions of global viewers during the World Championship race, HRL utilizes Cloud CDN as primary video delivery alongside a third-party commercial CDN provider. If Cloud CDN edge POPs experience localized degradation in a specific country, video player traffic for that country must automatically fail over to the secondary CDN within 10 seconds. How should you design the DNS routing policy?",
+  "correct": "A",
+  "clave_len": 237,
+  "explanation": "Google Cloud DNS supports Geolocation and Failover Routing Policies integrated with Cloud Monitoring health checks. If health check probes detect failure on primary CDN endpoints, Cloud DNS automatically diverts DNS responses to backup CDN endpoints in seconds.",
+  "doc": "https://cloud.google.com/dns/docs/routing-policies",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 237,
+    "text": "Configure Cloud DNS Routing Policies using Geolocation and Health-Checked Failover Routing Policies, targeting Cloud CDN as the primary endpoint and the third-party CDN as the backup endpoint based on automated HTTPS health check probes."
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "Manually edit DNS A records in the Google Cloud Console during an ongoing broadcast failure."
+   },
+   {
+    "letter": "C",
+    "len": 94,
+    "text": "Hardcode both CDN IP addresses into client apps and use round-robin DNS with 86400-second TTL."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "text": "Disable DNS entirely and have video players connect directly via raw IP addresses."
+   }
+  ],
+  "ratio": 2.65
+ },
+ {
+  "id": "PCA-D2-028",
+  "subtopic": "EHR Healthcare: Private GKE Master Authorized Networks",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare is auditing access to its production GKE clusters processing HIPAA workloads. While the cluster is configured as a Private GKE cluster, the Kubernetes API Server endpoint must be protected so that only authorized corporate admin jump-boxes (10.240.0.0/24) and on-premises NOC CIDR blocks (192.168.10.0/24) can execute kubectl commands, blocking all other internal and external networks. What feature enforces this control?",
+  "correct": "A",
+  "clave_len": 146,
+  "explanation": "Master Authorized Networks provides Layer 3/4 CIDR-based access filtering for the GKE Kubernetes API Server (both public and private endpoints), ensuring only specified trusted IP blocks can communicate with kubectl.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/authorized-networks",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 146,
+    "text": "Enable Master Authorized Networks on the GKE cluster, specifying only the trusted corporate admin and NOC CIDR ranges in the authorized CIDR list."
+   },
+   {
+    "letter": "B",
+    "len": 67,
+    "text": "Share a single admin password in a plain text file on Google Drive."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Disable the Kubernetes control plane completely."
+   },
+   {
+    "letter": "D",
+    "len": 51,
+    "text": "Open port 443 to 0.0.0.0/0 on the cluster firewall."
+   }
+  ],
+  "ratio": 2.64
+ },
+ {
+  "id": "PCA-D1-039",
+  "subtopic": "EHR Healthcare: Cloud Healthcare API & FHIR / HL7v2 / DICOM",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare receives clinical data from 50 regional hospital systems in disparate healthcare formats: HL7v2 messages for patient admissions, FHIR (R4) JSON resources for modern patient portals, and DICOM binary imaging files for radiology studies. EHR needs a scalable, HIPAA-compliant managed platform to ingest, parse, search, and store all three modalities with built-in audit logging. What is the recommended architecture?",
+  "correct": "D",
+  "clave_len": 206,
+  "explanation": "Google Cloud Healthcare API is a purpose-built, HIPAA-compliant managed service that provides native multi-modal healthcare data stores (FHIR, HL7v2, DICOM), standardized APIs, automated Pub/Sub streaming notifications, and deep integration with BigQuery for analytics.",
+  "doc": "https://cloud.google.com/healthcare-api/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "Store all clinical records in Cloud Memorystore Redis."
+   },
+   {
+    "letter": "B",
+    "len": 112,
+    "text": "Deploy self-hosted MongoDB clusters on Compute Engine VMs to parse raw HL7v2 strings with custom Python scripts."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Upload all HL7 and DICOM files into a single public Cloud Storage bucket."
+   },
+   {
+    "letter": "D",
+    "len": 206,
+    "text": "Use Google Cloud Healthcare API datasets comprising dedicated FHIR Stores, HL7v2 Stores (with automated MLLP ingestion and Pub/Sub notifications), and DICOM Stores with native Web (WADO-RS) viewing support."
+   }
+  ],
+  "ratio": 2.59
+ },
+ {
+  "id": "PCA-D1-045",
+  "subtopic": "EHR Healthcare: Anthos Service Mesh & Zero-Trust Security",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare is deploying 100+ microservices on GKE across multiple clusters. To satisfy Zero-Trust architecture mandates, all pod-to-pod communications must enforce mutual TLS (mTLS) with automatic certificate rotation, cryptographic service identity verification (SPIFFE), and granular Layer 7 AuthorizationPolicies restricting which services can call the patient billing API. What solution should you implement?",
+  "correct": "D",
+  "clave_len": 190,
+  "explanation": "Managed Anthos Service Mesh (ASM) injects Envoy sidecar proxies that handle transparent, hardware-accelerated mutual TLS (mTLS in STRICT mode) with Google Cloud Certificate Authority Service (CAS) integration, and enforces Layer 7 AuthorizationPolicies based on SPIFFE service identities.",
+  "doc": "https://cloud.google.com/service-mesh/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Rely on standard unencrypted HTTP traffic inside the Kubernetes cluster."
+   },
+   {
+    "letter": "B",
+    "len": 74,
+    "text": "Deploy a separate hardware firewall appliance inside every Kubernetes Pod."
+   },
+   {
+    "letter": "C",
+    "len": 74,
+    "text": "Hardcode client certificates in every microservice source code repository."
+   },
+   {
+    "letter": "D",
+    "len": 190,
+    "text": "Deploy Anthos Service Mesh (Managed ASM) with STRICT mTLS PeerAuthentication mode enabled across all namespaces, using Istio AuthorizationPolicy resources to enforce service-to-service RBAC."
+   }
+  ],
+  "ratio": 2.59
+ },
+ {
+  "id": "PCA-D1-058",
+  "subtopic": "Altostrat Media: 100Hz Telemetry & Bigtable",
+  "caseStudy": "altostrat_media",
+  "scenario": "Each of the 20 racing aircrafts generates 100Hz telemetry (altitude, pitch, yaw, roll, rotor RPM, G-force) producing 2,000 data points per second per aircraft. Live broadcast graphics engines and mobile apps require real-time 3D flight-path visualization with sub-10ms query latency. What storage and ingestion architecture should you implement?",
+  "correct": "C",
+  "clave_len": 200,
+  "explanation": "Cloud Bigtable is Google Cloud's low-latency NoSQL database engineered for high-throughput time-series and sensor data, providing sub-10ms read/write latencies at millions of operations per second. Dataflow streams live data simultaneously to Bigtable (for live graphics) and BigQuery (for analytics).",
+  "doc": "https://cloud.google.com/bigtable/docs/schema-design-time-series",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 76,
+    "text": "Save readings to CSV files on Cloud Storage and poll every 100 milliseconds."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Write 100Hz telemetry directly into Cloud SQL for MySQL with InnoDB tables."
+   },
+   {
+    "letter": "C",
+    "len": 200,
+    "text": "aircraft Telemetry -> Cloud Pub/Sub -> Cloud Dataflow -> Cloud Bigtable (with SSD storage and reverse-timestamp row keys) for live sub-10ms rendering, and BigQuery for post-race analytical deep-dives."
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "Store telemetry readings in Google Cloud Memorystore for Memcached without replication."
+   }
+  ],
+  "ratio": 2.52
+ },
+ {
+  "id": "PCA-D1-038",
+  "subtopic": "EHR Healthcare: Private GKE, Shielded Nodes & Workload Identity",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare is migrating containerized patient charting microservices to Google Kubernetes Engine (GKE). To comply with HIPAA security controls, the cluster must ensure that worker nodes and the control plane have zero public IP exposure, VM boot integrity is cryptographically verified, and Kubernetes pods authenticate to Google Cloud services without using static, long-lived JSON service account keys. What configuration implements these controls?",
+  "correct": "A",
+  "clave_len": 277,
+  "explanation": "Private GKE eliminates public IP attack surfaces on nodes and control plane. Shielded Nodes protect against kernel rootkits and boot-level tampering. Workload Identity replaces dangerous long-lived JSON keys with short-lived, automatically rotated OAuth2 tokens tied directly to Kubernetes Service Accounts.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 277,
+    "text": "Deploy a Private GKE Cluster (private nodes, private endpoint with Master Authorized Networks), enable Shielded GKE Nodes (Secure Boot, vTPM, Integrity Monitoring), and configure GKE Workload Identity binding Kubernetes Service Accounts directly to Google IAM Service Accounts."
+   },
+   {
+    "letter": "B",
+    "len": 102,
+    "text": "Use Compute Engine instances with default compute engine service accounts granting Editor permissions."
+   },
+   {
+    "letter": "C",
+    "len": 91,
+    "text": "Disable node auto-upgrades and store credentials in Docker container environment variables."
+   },
+   {
+    "letter": "D",
+    "len": 138,
+    "text": "Deploy a Standard GKE cluster with public node IPs and download service account JSON keys into Kubernetes Secrets mounted as volume files."
+   }
+  ],
+  "ratio": 2.51
+ },
+ {
+  "id": "PCA-D1-030",
+  "subtopic": "Knightmotives Automotive: Legacy Data Migration with Storage Transfer Service",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive has 100TB of historical vehicle CSV logs stored across 50 legacy on-premises SFTP servers in regional datacenters. knightmotives_automotive wants to migrate all files to Cloud Storage multi-region buckets rapidly, reliably, and with automatic checksum verification and incremental delta syncs. What is the recommended managed service?",
+  "correct": "B",
+  "clave_len": 200,
+  "explanation": "Google Cloud Storage Transfer Service for on-premises data uses lightweight Docker agents to transfer petabytes of data securely over HTTPS, handling bandwidth throttling, incremental syncing, and automatic data integrity verification.",
+  "doc": "https://cloud.google.com/storage-transfer/docs/on-prem-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 91,
+    "text": "Have employees download files to laptops and re-upload via the Google Cloud Console web UI."
+   },
+   {
+    "letter": "B",
+    "len": 200,
+    "text": "Use Google Cloud Storage Transfer Service with on-premises Transfer Agents installed in each datacenter, configuring scheduled incremental transfer jobs with end-to-end MD5/CRC32C checksum validation."
+   },
+   {
+    "letter": "C",
+    "len": 98,
+    "text": "Write custom bash scripts on each SFTP server that run curl -X POST to the Cloud Storage JSON API."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Ship 50 individual consumer USB flash drives via postal courier."
+   }
+  ],
+  "ratio": 2.37
+ },
+ {
+  "id": "PCA-D1-054",
+  "subtopic": "EHR Healthcare: In-Order Lab Results with Pub/Sub Ordering Keys",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "In an automated clinical laboratory system, blood test result status updates ('Sample Collected' -> 'In Analysis' -> 'Preliminary Result' -> 'Final Doctor Sign-off') for a patient must be processed strictly in the exact order they occurred. Processing updates out-of-order could cause preliminary results to overwrite final doctor verifications. How should Pub/Sub be configured to guarantee sequential processing per patient?",
+  "correct": "B",
+  "clave_len": 159,
+  "explanation": "Cloud Pub/Sub Ordering Keys guarantee that messages published with the same ordering key (e.g. lab_order_id) are delivered to subscribers in the exact order they were received by Pub/Sub, while allowing high horizontal concurrency across different keys.",
+  "doc": "https://cloud.google.com/pubsub/docs/ordering",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 80,
+    "text": "Store all updates in a single global text log and read sequentially from line 1."
+   },
+   {
+    "letter": "B",
+    "len": 159,
+    "text": "Publish messages to Cloud Pub/Sub with the patient_id or lab_order_id set as the message ordering_key, and enable Message Ordering on the Pub/Sub subscription."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Publish messages without attributes and sleep for 5 seconds in worker pods."
+   },
+   {
+    "letter": "D",
+    "len": 48,
+    "text": "Use Cloud Storage files named with random UUIDs."
+   }
+  ],
+  "ratio": 2.35
+ },
+ {
+  "id": "PCA-D1-029",
+  "subtopic": "Knightmotives Automotive: Malformed CAN-Bus Telemetry & Dead-Letter Queues",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "Due to occasional hardware glitches in older harvesters, 0.01% of CAN-bus telemetry packets contain corrupted binary headers that cause downstream Dataflow parsing jobs to fail and enter endless retry loops. The ingestion pipeline must isolate corrupted messages without halting the real-time processing of valid packets. What architecture solves this?",
+  "correct": "A",
+  "clave_len": 186,
+  "explanation": "Cloud Pub/Sub Dead-Letter Topics automatically move poison-pill messages after N failed delivery attempts, preventing pipeline blockage while saving corrupted records for offline debugging.",
+  "doc": "https://cloud.google.com/pubsub/docs/dead-letter-topics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 186,
+    "text": "Configure a Dead-Letter Topic on the Cloud Pub/Sub subscription with maxDeliveryAttempts set to 5, and route unparseable messages to a quarantine GCS bucket for diagnostic investigation."
+   },
+   {
+    "letter": "B",
+    "len": 89,
+    "text": "Disable all validation in Dataflow and write corrupted binary data into BigQuery columns."
+   },
+   {
+    "letter": "C",
+    "len": 77,
+    "text": "Send an SMS message to the tractor operator asking them to reboot the engine."
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "Restart the Dataflow job manually whenever an unhandled exception occurs."
+   }
+  ],
+  "ratio": 2.33
+ },
+ {
+  "id": "PCA-D2-018",
+  "subtopic": "Storage Transfer Service for Cross-Cloud Sync",
+  "caseStudy": "none",
+  "scenario": "A media analytics enterprise receives 10TB of video assets daily in Amazon S3 buckets. They need to continuously mirror these assets into Google Cloud Storage for AI processing in BigQuery and Vertex AI. The synchronization must run automatically every 6 hours, copy only new or modified objects, and encrypt all data in transit. What service should you configure?",
+  "correct": "C",
+  "clave_len": 178,
+  "explanation": "Google Cloud Storage Transfer Service provides fully managed, scalable, serverless cross-cloud data transfers from Amazon S3 and Azure Blob to Cloud Storage with automatic retries, checksum validation, and scheduled incremental delta synchronization.",
+  "doc": "https://cloud.google.com/storage-transfer/docs/cloud-storage-transfer",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 115,
+    "text": "Write a python script on a Compute Engine VM using boto3 and google-cloud-storage libraries running in a cron loop."
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "Make the AWS S3 bucket public and scrape files with wget."
+   },
+   {
+    "letter": "C",
+    "len": 178,
+    "text": "Configure Google Cloud Storage Transfer Service with a recurring scheduled transfer job from the source AWS S3 bucket to the destination GCS bucket using AWS IAM Role federation."
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Download all files to an on-premises laptop and re-upload to GCS."
+   }
+  ],
+  "ratio": 2.25
+ },
+ {
+  "id": "PCA-D1-031",
+  "subtopic": "Knightmotives Automotive: Secure Dealer Data Sharing with Analytics Hub",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive wants to share curated regional equipment health datasets with 5,000 independent dealer organizations who also use Google Cloud BigQuery. knightmotives_automotive wants dealers to query aggregated metrics directly in BigQuery without knightmotives_automotive having to copy or export petabytes of data into dealer projects, while ensuring knightmotives_automotive retains centralized governance and access revocation. What feature delivers this?",
+  "correct": "C",
+  "clave_len": 209,
+  "explanation": "BigQuery Analytics Hub enables organizations to securely share data assets (tables, views, ML models) across organizations without data replication. Subscribers query shared data in place while publishers retain full access control and telemetry tracking.",
+  "doc": "https://cloud.google.com/bigquery/docs/analytics-hub-introduction",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 105,
+    "text": "Export daily data to Cloud Storage and grant dealer Google Accounts storage.objectViewer IAM permissions."
+   },
+   {
+    "letter": "B",
+    "len": 81,
+    "text": "Build a custom web portal with PHP that queries BigQuery and renders HTML tables."
+   },
+   {
+    "letter": "C",
+    "len": 209,
+    "text": "Create Private Data Exchanges in BigQuery Analytics Hub, publish curated listings with Authorized Datasets / Views, and allow dealers to subscribe to the listings in their own projects with zero data movement."
+   },
+   {
+    "letter": "D",
+    "len": 96,
+    "text": "Give all 5,000 dealers the BigQuery Admin role on knightmotives_automotive's production project."
+   }
+  ],
+  "ratio": 2.22
+ },
+ {
+  "id": "PCA-D1-035",
+  "subtopic": "Knightmotives Automotive: Real-Time Fleet Tracking & BI Engine",
+  "caseStudy": "knightmotives_automotive",
+  "scenario": "knightmotives_automotive fleet managers monitor the live status, location, and diagnostic health of 200,000 connected vehicles on a centralized Looker Studio map dashboard. Over 2,000 managers refresh the dashboard concurrently every morning. To achieve sub-second dashboard rendering without incurring massive BigQuery on-demand query costs, what should you configure?",
+  "correct": "B",
+  "clave_len": 156,
+  "explanation": "BigQuery BI Engine is an in-memory analysis service that accelerates SQL queries in Looker and Looker Studio to sub-second response times while drastically reducing query costs by caching query plans and scanned columns in memory.",
+  "doc": "https://cloud.google.com/bigquery/docs/bi-engine-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Have Looker Studio query Cloud Storage raw JSON files directly via external tables."
+   },
+   {
+    "letter": "B",
+    "len": 156,
+    "text": "Provision a BigQuery BI Engine memory reservation in the analytics project and create materialized views of current fleet status for Looker Studio to query."
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "Run unindexed SELECT * queries every 5 seconds from every browser client."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Export data to Microsoft Access on a shared network drive."
+   }
+  ],
+  "ratio": 2.19
+ },
+ {
+  "id": "PCA-D3-007",
+  "subtopic": "Service Account Impersonation & Token Creator",
+  "caseStudy": "none",
+  "scenario": "A developer needs to run a local script that writes test records to a BigQuery table. Instead of downloading a service account JSON key to their laptop, the developer wants to use their corporate user identity to impersonate the service account 'bq-writer@project.iam.gserviceaccount.com' directly via the gcloud CLI. What IAM role must be granted to the developer on the service account?",
+  "correct": "A",
+  "clave_len": 105,
+  "explanation": "Granting roles/iam.serviceAccountTokenCreator on a specific service account allows a user to generate short-lived OAuth2 tokens or use the '--impersonate-service-account' gcloud flag, eliminating the need to download private keys.",
+  "doc": "https://cloud.google.com/iam/docs/impersonating-service-accounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 105,
+    "text": "Grant the developer the roles/iam.serviceAccountTokenCreator role on the target Service Account resource."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Disable all authentication requirements in BigQuery."
+   },
+   {
+    "letter": "C",
+    "len": 40,
+    "text": "roles/owner on the Google Cloud project."
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "roles/iam.serviceAccountKeyAdmin at the Organization level."
+   }
+  ],
+  "ratio": 2.09
+ },
+ {
+  "id": "PCA-D1-067",
+  "subtopic": "Altostrat Media: Real-Time Fantasy League & Redis Sorted Sets",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL runs a live fantasy league where 5 million concurrent fans earn points based on their chosen pilots' real-time race maneuvers (fastest lap, successful overtakes, fuel efficiency). Global fan rankings must update after every lap and be rendered in the mobile app with sub-millisecond query response times. How should the live ranking service be architected?",
+  "correct": "C",
+  "clave_len": 179,
+  "explanation": "Redis Sorted Sets (ZSET) natively maintain ordered data structures in memory with O(log N) updates and retrieval, delivering sub-millisecond ranking queries for millions of fantasy league players.",
+  "doc": "https://cloud.google.com/memorystore/docs/redis/redis-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 128,
+    "text": "Execute SELECT user_id, SUM(points) FROM fantasy_scores GROUP BY user_id ORDER BY 2 DESC LIMIT 100 on Cloud SQL every 2 seconds."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Send fantasy ranks via postal mail to user addresses."
+   },
+   {
+    "letter": "C",
+    "len": 179,
+    "text": "Use Cloud Memorystore for Redis Cluster and manage live player point totals using Redis Sorted Sets (ZINCRBY to increment scores and ZREVRANGE to fetch top ranks in microseconds)."
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "Write point updates to Cloud Storage text files and parse with a Python script."
+   }
+  ],
+  "ratio": 2.07
+ },
+ {
+  "id": "PCA-D1-059",
+  "subtopic": "Altostrat Media: Mobile Fan Engagement & Firestore",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL's mobile fan app allows millions of viewers to track live race positions, vote for 'Pilot of the Day', and chat with other fans during live races. Race position updates occur every second. The app must push real-time updates to mobile devices instantly with offline support when fans enter crowded race stadium tunnels. What database powers this experience?",
+  "correct": "C",
+  "clave_len": 143,
+  "explanation": "Cloud Firestore in Native mode provides turnkey real-time data synchronization to iOS, Android, and Web clients via WebSockets, with native client SDK offline persistence handling intermittent stadium cellular connectivity seamlessly.",
+  "doc": "https://cloud.google.com/firestore/docs/query-data/listen",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 62,
+    "text": "Store leaderboards in flat text files on an Apache web server."
+   },
+   {
+    "letter": "B",
+    "len": 68,
+    "text": "Deploy Apache Cassandra across 50 Compute Engine instances manually."
+   },
+   {
+    "letter": "C",
+    "len": 143,
+    "text": "Cloud Firestore in Native Mode utilizing real-time document listeners (onSnapshot) and built-in offline local cache persistence on mobile SDKs."
+   },
+   {
+    "letter": "D",
+    "len": 82,
+    "text": "Cloud SQL for PostgreSQL with polling queries every 500ms from all mobile clients."
+   }
+  ],
+  "ratio": 2.02
+ },
+ {
+  "id": "PCA-D2-042",
+  "subtopic": "Managed Instance Group Rolling Updates",
+  "caseStudy": "none",
+  "scenario": "An enterprise is rolling out a new version of its backend application across a 100-node Managed Instance Group. To maintain 100% service capacity during the deployment, the update must provision new instances with the updated template before terminating old instances (max_surge = 20, max_unavailable = 0) and verify health checks before progressing. How should the update policy be configured in Terraform?",
+  "correct": "D",
+  "clave_len": 133,
+  "explanation": "Setting max_unavailable = 0 and max_surge > 0 ensures that new healthy instances are created and pass health checks before any old instances are removed, maintaining 100% capacity throughout the rolling update.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "Delete the Managed Instance Group and recreate it manually."
+   },
+   {
+    "letter": "B",
+    "len": 85,
+    "text": "Deploy software changes by directly editing files in /var/www on live production VMs."
+   },
+   {
+    "letter": "C",
+    "len": 69,
+    "text": "Set max_unavailable = 100% to terminate all instances simultaneously."
+   },
+   {
+    "letter": "D",
+    "len": 133,
+    "text": "Configure the update_policy with type = 'PROACTIVE', minimal_action = 'REPLACE', max_surge_fixed = 20, and max_unavailable_fixed = 0."
+   }
+  ],
+  "ratio": 1.87
+ }
+]

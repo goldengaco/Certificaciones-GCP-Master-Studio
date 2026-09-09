@@ -1,0 +1,80 @@
+[
+ {
+  "id": "PCA-D4-030",
+  "options": {
+   "A": "Create a counter metric in Cloud Logging that matches the ERROR severity level across the GKE and Cloud Run log sinks of the fleet, and attach an alerting policy that notifies developers automatically whenever the daily exception count rises above its usual weekly baseline.",
+   "B": "Route the application logs of every GKE and Cloud Run service into a BigQuery linked dataset, and have developers run scheduled SQL queries that group identical message strings so the most frequent exceptions across the whole fleet are ranked every morning.",
+   "C": "Enable Cloud Trace and Cloud Profiler on the GKE and Cloud Run fleet so distributed traces and heap profiles automatically reveal which code paths dominate, and read each unhandled exception from the annotated spans of the requests that returned a server error."
+  },
+  "distractors": {
+   "A": "Una metrica de contador solo mide el VOLUMEN de errores: no parsea la traza ni agrupa por firma, asi que no dice cual es el bug mas frecuente ni cual es nuevo tras la release.",
+   "B": "Agrupar por texto crudo del mensaje no normaliza la traza (lineas, direcciones, IDs variables), asi que un mismo bug se fragmenta en decenas de filas y no hay aviso al aparecer uno nuevo.",
+   "C": "Trace y Profiler miden latencia y consumo de recursos por muestreo; no deduplican excepciones en grupos de incidencias ni notifican cuando aparece una firma de error inedita."
+  }
+ },
+ {
+  "id": "PCA-D4-034",
+  "options": {
+   "A": "Grant the NOC team roles/monitoring.viewer at the organization level so a single set of credentials opens the built in Cloud Monitoring dashboards and metrics of all 100 different projects, and bookmark each project console URL in one shared browser profile.",
+   "B": "Build an export pipeline that reads the time series of every project through the Cloud Monitoring API into one centralized BigQuery dataset, and rebuild the NOC dashboards in Looker Studio over those metrics tables to get a unified view of the 100 projects.",
+   "D": "Move the 100 projects under a single monitoring folder and turn on folder level dashboards and folder level alerting policies in Cloud Monitoring, so the metrics of every child project roll up automatically into one unified console view of the enterprise."
+  },
+  "distractors": {
+   "A": "El IAM solo quita la friccion de login: cada proyecto sigue pintando su propio dashboard, asi que el NOC continua saltando entre 100 pestanas sin un solo grafico ni alerta que cruce proyectos.",
+   "B": "La copia en BigQuery llega con minutos de retraso y deja fuera el motor de alertas de Cloud Monitoring: hay que reconstruir alertas y dashboards desde cero y pagar el export de las series.",
+   "D": "Cloud Monitoring no tiene dashboards ni politicas de alerta a nivel de carpeta: las metricas no escalan por la jerarquia de recursos, el unico limite de agregacion es el metrics scope de un proyecto."
+  }
+ },
+ {
+  "id": "PCA-D1-054",
+  "options": {
+   "A": "Create one Pub/Sub topic per patient_id, each with a single push subscription, so one Pub/Sub consumer handles that patient's events serially as the lab_gateway publishes them.",
+   "C": "Stamp every message with an event_time attribute and have the subscriber drop any message whose event_time is older than the last state written for that lab_order_id in Firestore.",
+   "D": "Enqueue every event into a Cloud Tasks queue named after the lab_order_id with max_concurrent_dispatches=1, so the queue hands the transitions of a case to the worker one at a time."
+  },
+  "distractors": {
+   "A": "Un topic por paciente choca con el limite de 10.000 topics por proyecto y, aun asi, dentro de un topic sin ordering key Pub/Sub no garantiza el orden: un reintento reentrega el mensaje detras de otro posterior.",
+   "C": "Descartar lo viejo no es procesar en orden: se pierden las transiciones intermedias del flujo y dos hilos del suscriptor pueden leer el mismo ultimo estado y escribir ambos, asi que la carrera sigue abierta.",
+   "D": "Cloud Tasks entrega at-least-once y no garantiza el orden de ejecucion: limitar la concurrencia a 1 serializa el despacho, pero un reintento vuelve a la cola detras de una transicion mas nueva."
+  }
+ },
+ {
+  "id": "PCA-D1-071",
+  "options": {
+   "A": "Serve the two second segments with Cache-Control: public, max-age=86400, immutable so the edge POPs hold each segment for a whole day and no later request ever reaches the gs://hrl-live/segments origin again.",
+   "C": "Enable Cloud CDN on the backend bucket in CACHE_ALL_STATIC mode with a negative-caching policy for 404s, and let heuristic TTLs derived from Last-Modified decide how long each gs://hrl-live segment stays at the edge.",
+   "D": "Front the origin with a Memorystore for Redis cluster in us-east4 plus a Cloud Run service that reads each segment from redis.googleapis.com, falling back to gs://hrl-live and repopulating the key on a miss."
+  },
+  "distractors": {
+   "A": "Un TTL largo no ayuda a un segmento que nace y se pide en los mismos 2 segundos: el primer fallo de cache sigue siendo simultaneo en cada POP y todas esas peticiones caen a la vez sobre el bucket.",
+   "C": "CACHE_ALL_STATIC cachea, pero sin Origin Shielding cada POP abre su propia peticion al origen en el primer fallo, y un TTL heuristico es impredecible para un segmento que vive 2 segundos.",
+   "D": "Sustituye el borde de Google por una unica cache regional: los 30 millones de clientes terminan en una region en vez de en los POPs, y el servicio de Cloud Run pasa a ser el nuevo punto de estampida."
+  }
+ },
+ {
+  "id": "PCA-D6-030",
+  "options": {
+   "A": "Give each GKE cluster its own regional Application Load Balancer and create a Cloud DNS routing policy of type GEO with --enable-health-checking over the forwarding rules in us-east4, europe-west1 and asia-northeast1.",
+   "B": "Enable multiclusterservicediscovery.googleapis.com on the fleet and export the matchmaking Service with a ServiceExport, so the gke-mcs-importer in us-east4 resolves the ClusterSetIP of every member and traffic reaches any surviving cluster.",
+   "C": "Attach the zonal NEGs of each cluster to its own backend service, and have a Cloud Build job run gcloud compute url-maps set-default-service --global to repoint the Global Application Load Balancer when an on-call engineer declares us-east4 down."
+  },
+  "distractors": {
+   "A": "El failover por DNS depende del TTL cacheado en resolvers y clientes, no de segundos: los moviles siguen resolviendo a la region caida durante minutos aunque el health check ya la haya marcado mal.",
+   "B": "El ClusterSetIP de MCS es una IP virtual interna, equivalente a un ClusterIP: solo se alcanza desde dentro de los clusters y la VPC, asi que no puede ser la puerta de entrada del trafico movil de internet.",
+   "C": "El failover deja de ser automatico: con un backend service por region y el urlMap apuntando a uno solo, nada conmuta hasta que una persona lo declara y el job de Cloud Build reescribe la ruta."
+  }
+ },
+ {
+  "id": "PCA-D1-052",
+  "options": {
+   "A": "Create one authorized view per team inside a separate ehr_curated dataset: the billing view projects only the finance fields, and each admin view carries a WHERE hospital_id predicate. Grant the billing-analysts group roles/bigquery.dataViewer on those views only, never on the base table.",
+   "B": "Split the source table into ehr_finance and ehr_clinical, grant the billing team roles/bigquery.dataViewer on ehr_finance only, and materialise one table per branch that holds just that branch's rows, refreshed nightly by a scheduled query for its own admins.",
+   "C": "Attach Dataplex policy tags to the ssn and diagnosis fields for documentation purposes only, and let the Looker semantic layer enforce isolation with a sql_always_where clause that injects the analyst's own hospital_id into every generated SQL query."
+  },
+  "distractors": {
+   "A": "La proteccion vive en la definicion de cada vista, no en la columna: cada sucursal y cada combinacion de campos exige una vista y un binding nuevos, y una columna sensible anadida despues queda expuesta.",
+   "B": "Duplica el dato por sucursal: las copias divergen entre refrescos y se pierde el analisis cruzado sobre el conjunto unificado; ademas nada tapa el SSN a quien necesite cualquier campo clinico.",
+   "C": "La regla se aplica en la capa de BI, no en BigQuery: cualquiera con dataViewer esquiva Looker desde bq, la API o el conector de Sheets y lee todas las filas y el SSN, porque los tags no restringen IAM."
+  }
+ }
+]

@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D4-006",
+  "subtopic": "Google Groups: Administración Eficiente de Permisos Basada en Roles (RBAC)",
+  "caseStudy": "none",
+  "scenario": "Una empresa tiene 50 ingenieros en su equipo de DevOps. Constantemente ingresan nuevos empleados y otros cambian de departamento. En lugar de asignar manualmente 15 roles de IAM a la dirección de correo individual de cada ingeniero en cada uno de los 30 proyectos de la empresa, ¿cuál es la mejor práctica de administración de accesos?",
+  "correct": "C",
+  "clave_len": 181,
+  "explanation": "Asignar roles de IAM a Google Groups en lugar de a usuarios individuales es una mejor práctica fundamental en Google Cloud: simplifica la administración de identidades, reduce el error humano y garantiza que cuando un empleado cambia de rol o deja la empresa, revocar sus accesos solo requiera removerlo del grupo central.",
+  "doc": "https://cloud.google.com/iam/docs/groups-in-cloud-console",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 97,
+    "text": "Asignar permisos manualmente usuario por usuario en cada proyecto todos los días durante 4 horas."
+   },
+   {
+    "letter": "B",
+    "len": 90,
+    "text": "Prohibir el acceso a la consola de Google Cloud a todos los empleados para evitar cambios."
+   },
+   {
+    "letter": "C",
+    "len": 181,
+    "text": "Crear un Grupo de Google (ej. `devops-team@tuempresa.com`), asignarle los roles de IAM necesarios y simplemente agregar o remover a los ingenieros del grupo según cambien de puesto."
+   },
+   {
+    "letter": "D",
+    "len": 78,
+    "text": "Darle a todos los empleados una sola contraseña maestra compartida por correo."
+   }
+  ],
+  "ratio": 2.05
+ },
+ {
+  "id": "CDL-D3-069",
+  "subtopic": "Cloud Run: Montaje de Almacenamiento Persistente y Volúmenes de Red",
+  "caseStudy": "none",
+  "scenario": "Un servicio serverless en Cloud Run procesa documentos de diseño generados por usuarios y necesita leer y escribir en un sistema de archivos persistente compartido por todos los contenedores activos. ¿Qué capacidad de Cloud Run permite conectar almacenamiento persistente?",
+  "correct": "C",
+  "clave_len": 167,
+  "explanation": "Cloud Run soporta el montaje directo de volúmenes de almacenamiento, permitiendo a los contenedores serverless acceder de forma transparente a buckets de Cloud Storage (vía Cloud Storage FUSE) o a recursos compartidos NFS de Cloud Filestore como directorios locales.",
+  "doc": "https://cloud.google.com/run/docs/configuring/services/volumes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 69,
+    "text": "Borrar todos los archivos de los usuarios tan pronto como se generen."
+   },
+   {
+    "letter": "B",
+    "len": 89,
+    "text": "Cloud Run no puede conectarse a ningún tipo de almacenamiento bajo ninguna circunstancia."
+   },
+   {
+    "letter": "C",
+    "len": 167,
+    "text": "Montar buckets de Cloud Storage (mediante Cloud Storage FUSE) o volúmenes de Cloud Filestore como sistemas de archivos locales dentro de los contenedores de Cloud Run."
+   },
+   {
+    "letter": "D",
+    "len": 87,
+    "text": "Conectar cables de disco duro externos mediante Bluetooth al centro de datos de Google."
+   }
+  ],
+  "ratio": 2.04
+ },
+ {
+  "id": "CDL-D4-074",
+  "subtopic": "Cloud Billing: Alertas de Anomalías de Costos (Cost Anomaly Detection)",
+  "caseStudy": "none",
+  "scenario": "Un desarrollador despliega accidentalmente un script con un bucle infinito que invoca millones de funciones serverless, provocando un aumento súbito e inusual en la tasa de facturación en pocas horas. ¿Qué capacidad de Cloud Billing detecta automáticamente estos picos inusuales de gasto en comparación con el patrón de consumo histórico y envía alertas tempranas?",
+  "correct": "A",
+  "clave_len": 87,
+  "explanation": "La detección de anomalías de costos en Cloud Billing utiliza modelos de Machine Learning para analizar las tendencias de gasto histórico y alertar a los administradores cuando se identifica un gasto inesperadamente alto en un proyecto o servicio, permitiendo intervenir de inmediato.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/cost-anomalies",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 87,
+    "text": "Detección de anomalías de costos en Cloud Billing (Cost Anomaly Detection basado en ML)"
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "Desinstalar las computadoras de la empresa"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "Esperar a recibir la factura final 30 días después y sorprenderse"
+   }
+  ],
+  "ratio": 2.04
+ },
+ {
+  "id": "CDL-D4-024",
+  "subtopic": "Cuentas de Facturación (Cloud Billing Accounts) y Enlace de Proyectos",
+  "caseStudy": "none",
+  "scenario": "Una empresa multinacional tiene 10 divisiones de negocio independientes. Desean entender cómo se vinculan los proyectos de Google Cloud con la facturación financiera. ¿Cuál es la relación estructural entre proyectos y cuentas de facturación (Cloud Billing Accounts)?",
+  "correct": "C",
+  "clave_len": 206,
+  "explanation": "En Google Cloud, una Cuenta de Facturación (Billing Account) es un recurso raíz que define quién paga por el consumo. Tiene una relación de uno a muchos con los proyectos: una cuenta de facturación puede pagar los costos de cientos de proyectos, pero cada proyecto solo puede estar asociado a una cuenta de facturación en un momento dado.",
+  "doc": "https://cloud.google.com/billing/docs/concepts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 112,
+    "text": "Google Cloud no tiene cuentas de facturación porque todos los servicios son gratuitos e ilimitados para siempre."
+   },
+   {
+    "letter": "B",
+    "len": 110,
+    "text": "Un solo proyecto debe estar vinculado obligatoriamente a 50 cuentas de facturación diferentes simultáneamente."
+   },
+   {
+    "letter": "C",
+    "len": 206,
+    "text": "Una Cuenta de Facturación (Cloud Billing Account) puede estar vinculada a uno o varios Proyectos; sin embargo, cada Proyecto individual solo puede estar vinculado a una única Cuenta de Facturación a la vez."
+   },
+   {
+    "letter": "D",
+    "len": 85,
+    "text": "Las cuentas de facturación solo aceptan pagos en cheques de papel enviados por barco."
+   }
+  ],
+  "ratio": 2.01
+ },
+ {
+  "id": "CDL-D2-036",
+  "subtopic": "BigQuery ML: Machine Learning con SQL Estándar",
+  "caseStudy": "none",
+  "scenario": "Un equipo de analistas de datos domina perfectamente el lenguaje SQL y gestiona todos sus datos de clientes en BigQuery. La dirección les pide predecir qué clientes tienen probabilidad de cancelar su suscripción (Customer Churn). Los analistas no saben programar en Python ni exportar datos a herramientas externas. ¿Qué capacidad nativa de Google Cloud deben aprovechar?",
+  "correct": "D",
+  "clave_len": 138,
+  "explanation": "BigQuery ML democratiza el machine learning al permitir a los profesionales de SQL crear, entrenar, evaluar y ejecutar predicciones de modelos de ML directamente dentro de BigQuery, sin necesidad de mover datos fuera del data warehouse ni aprender lenguajes como Python.",
+  "doc": "https://cloud.google.com/bigquery/docs/bqml-introduction",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Reescribir toda la base de datos en hojas de cálculo de Excel"
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Cancelar el proyecto de predicción de abandono de clientes"
+   },
+   {
+    "letter": "C",
+    "len": 87,
+    "text": "Exportar todos los datos a archivos CSV y enviarlos por correo a un programador externo"
+   },
+   {
+    "letter": "D",
+    "len": 138,
+    "text": "BigQuery ML (que permite entrenar y evaluar modelos de ML directamente en BigQuery utilizando sentencias SQL estándar como `CREATE MODEL`)"
+   }
+  ],
+  "ratio": 2.01
+ },
+ {
+  "id": "CDL-D1-019",
+  "subtopic": "Gestión del Cambio Organizacional en la Nube",
+  "caseStudy": "none",
+  "scenario": "Durante la migración a Google Cloud, varios equipos de operaciones tradicionales temen perder relevancia y muestran resistencia a adoptar herramientas automatizadas de autoservicio. ¿Cuál es la estrategia de gestión del cambio recomendada para facilitar esta transición?",
+  "correct": "D",
+  "clave_len": 201,
+  "explanation": "La gestión exitosa del cambio organizacional requiere invertir en las personas a través de programas de desarrollo de habilidades (re-skilling), comunicación transparente y la creación de un CCoE que empodere a los equipos para adoptar nuevas responsabilidades de mayor valor.",
+  "doc": "https://cloud.google.com/adoption-framework",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 103,
+    "text": "Cancelar el proyecto de transformación digital para mantener la comodidad de los equipos tradicionales."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Reemplazar inmediatamente a todo el personal existente sin ofrecerles opciones de aprendizaje."
+   },
+   {
+    "letter": "C",
+    "len": 106,
+    "text": "Ocultar el uso de la nube a los empleados y fingir que continúan trabajando en servidores físicos locales."
+   },
+   {
+    "letter": "D",
+    "len": 201,
+    "text": "Implementar un plan estructurado de capacitación y re-especialización (re-skilling), comunicar los beneficios estratégicos y establecer un Centro de Excelencia en la Nube (CCoE) como guía colaborativa."
+   }
+  ],
+  "ratio": 1.99
+ },
+ {
+  "id": "CDL-D4-071",
+  "subtopic": "Gestión de Permisos de Facturación: Billing Account Administrator vs Billing Account User",
+  "caseStudy": "none",
+  "scenario": "En una empresa: (1) El Director de Finanzas debe tener control total para modificar métodos de pago y gestionar presupuestos de la Cuenta de Facturación, y (2) Los líderes de proyecto solo deben tener permiso para vincular proyectos nuevos a la cuenta de facturación sin poder alterar los métodos de pago ni ver datos bancarios. ¿Qué roles de IAM de facturación deben asignarse?",
+  "correct": "B",
+  "clave_len": 142,
+  "explanation": "`roles/billing.admin` permite la administración total de la cuenta de facturación (tarjetas de crédito, presupuestos, permisos). `roles/billing.user` permite únicamente asociar proyectos a la cuenta de facturación sin acceso a modificar información bancaria ni detalles financieros confidenciales.",
+  "doc": "https://cloud.google.com/billing/docs/how-to/billing-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "Director de Finanzas: `roles/billing.viewer`; Líderes: `roles/billing.admin`."
+   },
+   {
+    "letter": "B",
+    "len": 142,
+    "text": "Director de Finanzas: `roles/billing.admin` (Billing Account Administrator); Líderes de proyecto: `roles/billing.user` (Billing Account User)."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Desactivar la facturación para que nadie tenga que pagar nada."
+   },
+   {
+    "letter": "D",
+    "len": 77,
+    "text": "Asignar `roles/owner` de la organización a todos los empleados de la empresa."
+   }
+  ],
+  "ratio": 1.97
+ },
+ {
+  "id": "CDL-D2-039",
+  "subtopic": "Cloud Translation API y Speech APIs: Globalización y Accesibilidad",
+  "caseStudy": "none",
+  "scenario": "Una empresa de comercio internacional necesita: (1) Traducir dinámicamente descripciones de productos a más de 100 idiomas en su sitio web, y (2) Transcribir automáticamente las llamadas grabadas de su centro de soporte telefónico a texto. ¿Qué combinación de servicios de IA de Google Cloud deben utilizar?",
+  "correct": "D",
+  "clave_len": 127,
+  "explanation": "Cloud Translation API proporciona traducción automática neural entre más de 100 idiomas, y Cloud Speech-to-Text convierte audio grabado o en vivo a texto con alta precisión utilizando modelos avanzados de reconocimiento de voz de Google.",
+  "doc": "https://cloud.google.com/translate/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 37,
+    "text": "Google Cloud Armor y Google Cloud VPC"
+   },
+   {
+    "letter": "B",
+    "len": 90,
+    "text": "Contratar traductores humanos para escuchar manualmente todas las llamadas en tiempo real."
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Cloud SQL para traducir texto y Cloud Storage para transcribir voz."
+   },
+   {
+    "letter": "D",
+    "len": 127,
+    "text": "Cloud Translation API para la traducción de texto y Cloud Speech-to-Text para la transcripción de grabaciones de audio a texto."
+   }
+  ],
+  "ratio": 1.96
+ },
+ {
+  "id": "CDL-D3-051",
+  "subtopic": "Certificados SSL Administrados por Google (Google-Managed SSL Certificates)",
+  "caseStudy": "none",
+  "scenario": "Un equipo web despliega un portal de comercio electrónico detrás de Cloud Load Balancing. En el pasado, los certificados SSL expiraban por descuido humano, haciendo que los navegadores mostraran advertencias de seguridad a los clientes. Desean que Google Cloud aprovisione, configure y renueve automáticamente los certificados SSL/TLS para sus dominios de forma gratuita. ¿Qué característica deben activar?",
+  "correct": "D",
+  "clave_len": 75,
+  "explanation": "Los Google-Managed SSL Certificates son aprovisionados, vinculados al balanceador de carga y renovados automáticamente por Google Cloud de forma gratuita antes de su vencimiento, eliminando el riesgo operativo de expiración de certificados HTTPS.",
+  "doc": "https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 56,
+    "text": "Desactivar HTTPS y transmitir contraseñas en texto plano"
+   },
+   {
+    "letter": "B",
+    "len": 37,
+    "text": "Certificados autofirmados sin validar"
+   },
+   {
+    "letter": "C",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "D",
+    "len": 75,
+    "text": "Certificados SSL administrados por Google (Google-Managed SSL Certificates)"
+   }
+  ],
+  "ratio": 1.96
+ },
+ {
+  "id": "CDL-D2-073",
+  "subtopic": "Seguridad de Datos: Cifrado en Reposo y en Tránsito",
+  "caseStudy": "none",
+  "scenario": "El oficial de seguridad de una empresa pregunta qué configuraciones adicionales de cifrado deben activarse en Cloud Storage, BigQuery y Cloud SQL para asegurar que los datos no se almacenen en texto plano en los discos físicos de Google. ¿Cuál es la respuesta correcta?",
+  "correct": "C",
+  "clave_len": 204,
+  "explanation": "Por diseño de seguridad en profundidad, Google Cloud cifra todos los datos de los clientes en reposo de forma predeterminada utilizando el estándar de cifrado avanzado AES-256 con claves gestionadas por Google, además de cifrar automáticamente los datos en tránsito sobre redes fuera de las instalaciones físicas de Google.",
+  "doc": "https://cloud.google.com/security/encryption-at-rest",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 107,
+    "text": "Los datos nunca se cifran en la nube a menos que el cliente programe su propio algoritmo de cifrado en C++."
+   },
+   {
+    "letter": "B",
+    "len": 95,
+    "text": "El cliente debe pagar una tarifa de $10,000 mensuales por cada archivo para activar el cifrado."
+   },
+   {
+    "letter": "C",
+    "len": 204,
+    "text": "Google Cloud cifra automáticamente todos los datos de los clientes en reposo (utilizando AES-256) y en tránsito de forma predeterminada sin requerir ninguna acción o costo adicional por parte del cliente."
+   },
+   {
+    "letter": "D",
+    "len": 110,
+    "text": "Solo los datos de prueba se cifran; los datos de producción permanecen en texto plano visible para cualquiera."
+   }
+  ],
+  "ratio": 1.96
+ },
+ {
+  "id": "CDL-D1-011",
+  "subtopic": "Estrategia de Código Abierto y Prevención de Vendor Lock-in",
+  "caseStudy": "none",
+  "scenario": "El Director de Tecnología (CTO) de una startup desea migrar a la nube pero le preocupa quedar atrapado con tecnologías propietarias que impidan mover sus cargas de trabajo en el futuro. ¿Cómo aborda Google Cloud esta preocupación en su estrategia de plataforma?",
+  "correct": "D",
+  "clave_len": 193,
+  "explanation": "Google Cloud tiene un compromiso profundo con el código abierto y la interoperabilidad, habiendo creado y donado tecnologías fundamentales como Kubernetes y TensorFlow. Esto permite a los clientes ejecutar sus aplicaciones en cualquier entorno compatible sin bloqueo de proveedor.",
+  "doc": "https://cloud.google.com/open-cloud",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 115,
+    "text": "Google Cloud solo permite el uso de lenguajes de programación propietarios desarrollados exclusivamente por Google."
+   },
+   {
+    "letter": "B",
+    "len": 95,
+    "text": "Google bloquea las conexiones de red con otros proveedores de nube para evitar la portabilidad."
+   },
+   {
+    "letter": "C",
+    "len": 93,
+    "text": "Google obliga contractualmente a los clientes a permanecer al menos 10 años en su plataforma."
+   },
+   {
+    "letter": "D",
+    "len": 193,
+    "text": "Google Cloud construye sus servicios sobre estándares abiertos y tecnologías de código abierto líderes (como Kubernetes, TensorFlow y Apache Beam), garantizando la portabilidad de aplicaciones."
+   }
+  ],
+  "ratio": 1.91
+ },
+ {
+  "id": "CDL-D1-023",
+  "subtopic": "Experiencia de Cliente (CX) Personalizada con IA",
+  "caseStudy": "none",
+  "scenario": "Una tienda en línea de moda desea ofrecer recomendaciones personalizadas en tiempo real a cada usuario según su historial de navegación y compras, además de soporte al cliente automatizado con lenguaje natural. ¿Cómo contribuye Google Cloud a este objetivo?",
+  "correct": "C",
+  "clave_len": 211,
+  "explanation": "Las soluciones de IA de Google Cloud permiten procesar señales de comportamiento en tiempo real a escala masiva, ofreciendo recomendaciones altamente precisas y agentes virtuales conversacionales que elevan la satisfacción y fidelidad del cliente.",
+  "doc": "https://cloud.google.com/solutions/retail",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 116,
+    "text": "Obliga a los clientes a completar una encuesta de 100 preguntas obligatorias antes de permitirles ver la página web."
+   },
+   {
+    "letter": "B",
+    "len": 102,
+    "text": "Envía un catálogo físico impreso semanal por correo postal a la dirección de cada visitante del sitio."
+   },
+   {
+    "letter": "C",
+    "len": 211,
+    "text": "Proporciona servicios de inteligencia artificial como Vertex AI Search and Conversation y Contact Center AI para generar recomendaciones contextuales e interacciones conversacionales inteligentes en tiempo real."
+   },
+   {
+    "letter": "D",
+    "len": 114,
+    "text": "Muestra exactamente los mismos tres productos genéricos a todos los usuarios del mundo sin importar sus intereses."
+   }
+  ],
+  "ratio": 1.91
+ },
+ {
+  "id": "CDL-D3-053",
+  "subtopic": "Malla de Servicios (Anthos / Cloud Service Mesh) y Cifrado mTLS",
+  "caseStudy": "none",
+  "scenario": "En una arquitectura con cientos de microservicios en GKE, la dirección exige que: (1) Todo el tráfico de red entre microservicios esté cifrado con TLS mutuo (mTLS) de forma transparente, (2) Se apliquen políticas de autenticación y autorización basadas en identidad de servicio, y (3) Se obtengan métricas de latencia y trazabilidad distribuida sin modificar el código de las aplicaciones. ¿Qué solución proporciona estas capacidades?",
+  "correct": "B",
+  "clave_len": 71,
+  "explanation": "Cloud Service Mesh proporciona una malla de servicios administrada basada en Istio que inyecta proxies en los contenedores para gestionar el cifrado mTLS automático entre servicios, aplicar políticas de control de acceso de Zero Trust y recopilar métricas detalladas de observabilidad y dependencias.",
+  "doc": "https://cloud.google.com/service-mesh/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 39,
+    "text": "Desactivar la red interna de Kubernetes"
+   },
+   {
+    "letter": "B",
+    "len": 71,
+    "text": "Cloud Service Mesh (anteriormente Anthos Service Mesh, basado en Istio)"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Pedir a los desarrolladores que reescriban todo en código C puro"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud DNS"
+   }
+  ],
+  "ratio": 1.9
+ },
+ {
+  "id": "CDL-D3-055",
+  "subtopic": "Google Distributed Cloud Hosted (GDCH): Soberanía de Datos y Entornos Aislados (Air-Gapped)",
+  "caseStudy": "none",
+  "scenario": "Un organismo gubernamental de seguridad nacional requiere utilizar tecnologías modernas de Kubernetes, contenedores e inteligencia artificial en sus propias instalaciones físicas, pero la ley prohíbe de forma absoluta cualquier conexión a la Internet pública o a la nube pública de Google (entorno desconectado o 'air-gapped' con soberanía total). ¿Qué solución de infraestructura de Google satisface este requisito?",
+  "correct": "B",
+  "clave_len": 38,
+  "explanation": "Google Distributed Cloud Hosted (GDCH) es una solución de nube y hardware completamente aislada (air-gapped) que permite a entidades gubernamentales y sectores altamente regulados operar servicios de Google Cloud e IA en sus instalaciones locales sin requerir ninguna conexión a la red pública ni a Google Cloud.",
+  "doc": "https://cloud.google.com/distributed-cloud/docs/hosted",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 17,
+    "text": "Cloud Run público"
+   },
+   {
+    "letter": "B",
+    "len": 38,
+    "text": "Google Distributed Cloud Hosted (GDCH)"
+   },
+   {
+    "letter": "C",
+    "len": 17,
+    "text": "Cloud DNS público"
+   },
+   {
+    "letter": "D",
+    "len": 26,
+    "text": "Google Workspace comercial"
+   }
+  ],
+  "ratio": 1.9
+ },
+ {
+  "id": "CDL-D4-056",
+  "subtopic": "Modo de Prueba (Dry-Run Mode) en Políticas de Organización",
+  "caseStudy": "none",
+  "scenario": "Un equipo de seguridad desea implementar una nueva política de organización estricta que restrinja la creación de recursos fuera de ciertas regiones. Antes de imponerla y arriesgarse a romper canalizaciones de producción activas, desean probar la política en un modo silencioso que registre en los logs qué recursos violarían la política sin bloquear su ejecución real. ¿Qué funcionalidad deben usar?",
+  "correct": "A",
+  "clave_len": 87,
+  "explanation": "El modo Dry-Run en Organization Policies permite a los administradores probar y auditar el impacto de nuevas restricciones de gobernanza registrando las posibles violaciones en Cloud Logging sin bloquear las operaciones de los desarrolladores ni causar tiempos de inactividad inesperados en producción.",
+  "doc": "https://cloud.google.com/resource-manager/docs/organization-policy/dry-run-policy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 87,
+    "text": "Modo de Prueba (Dry-Run Mode / Dry-run policy enforcement) en Políticas de Organización"
+   },
+   {
+    "letter": "B",
+    "len": 47,
+    "text": "Desactivar toda la seguridad de la organización"
+   },
+   {
+    "letter": "C",
+    "len": 70,
+    "text": "Imponer la política directamente a ciegas en producción a las 11:00 AM"
+   },
+   {
+    "letter": "D",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   }
+  ],
+  "ratio": 1.88
+ },
+ {
+  "id": "CDL-D2-085",
+  "subtopic": "Vertex AI Search: Indexación de Datos Multimodales y Búsqueda Vectorial",
+  "caseStudy": "none",
+  "scenario": "Una tienda de muebles en línea desea que sus usuarios puedan buscar productos no solo por palabras clave exactas, sino subiendo una foto de su sala de estar o buscando conceptos abstractos como 'sillón acogedor para lectura nórdica'. ¿Qué tecnología de Google Cloud habilita búsquedas semánticas y multimodales de ultra alta velocidad a través de incrustaciones vectoriales (embeddings)?",
+  "correct": "B",
+  "clave_len": 55,
+  "explanation": "Vertex AI Vector Search (construido sobre la tecnología Matching Engine de Google) es una base de datos vectorial líder en la industria capaz de buscar entre miles de millones de elementos vectoriales (embeddings) con latencia de milisegundos a escala masiva para búsquedas semánticas y recomendaciones.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/vector-search/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "Vertex AI Vector Search (anteriormente Matching Engine)"
+   },
+   {
+    "letter": "C",
+    "len": 18,
+    "text": "Google Cloud Armor"
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "Cloud SQL for MySQL con comandos LIKE '%palabra%'"
+   }
+  ],
+  "ratio": 1.88
+ },
+ {
+  "id": "CDL-D3-007",
+  "subtopic": "Google Kubernetes Engine (GKE): Modos Autopilot vs Standard",
+  "caseStudy": "none",
+  "scenario": "Una empresa desea desplegar microservicios en Kubernetes pero su equipo de operaciones no quiere administrar el aprovisionamiento de nodos, la configuración del sistema operativo de los nodos ni el escalado de la infraestructura subyacente, buscando pagar solo por los recursos de CPU y memoria solicitados por sus Pods. ¿Qué modo de GKE deben elegir?",
+  "correct": "C",
+  "clave_len": 147,
+  "explanation": "GKE Autopilot es el modo de operación recomendado de Kubernetes donde Google gestiona toda la infraestructura del clúster (plano de control y nodos de trabajo), optimiza la seguridad según las mejores prácticas y factura exclusivamente por los recursos de CPU, memoria y almacenamiento solicitados por los Pods activos.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "Instalar Kubernetes en servidores físicos locales en la oficina"
+   },
+   {
+    "letter": "B",
+    "len": 120,
+    "text": "GKE Standard (modo donde el cliente gestiona manualmente los grupos de nodos (Node Pools) y la configuración de las VMs)"
+   },
+   {
+    "letter": "C",
+    "len": 147,
+    "text": "GKE Autopilot (modo totalmente administrado donde Google gestiona los nodos y la infraestructura, y el cliente solo paga por los Pods en ejecución)"
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Reescribir toda la aplicación en lenguaje ensamblador"
+   }
+  ],
+  "ratio": 1.87
+ },
+ {
+  "id": "CDL-D1-027",
+  "subtopic": "Valor de APIs de IA Preentrenadas para Experimentación Rápida",
+  "caseStudy": "none",
+  "scenario": "Una startup de tecnología legal necesita extraer automáticamente texto y entidades de miles de contratos escaneados en PDF. No cuentan con científicos de datos especializados en visión artificial o procesamiento de lenguaje natural. ¿Cuál es el camino más eficiente?",
+  "correct": "D",
+  "clave_len": 201,
+  "explanation": "Las APIs de IA preentrenadas de Google Cloud (como Document AI, Cloud Vision y Translation API) encapsulan años de investigación de Google y están listas para integrarse inmediatamente en aplicaciones empresariales sin requerir experiencia en Machine Learning.",
+  "doc": "https://cloud.google.com/document-ai",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 88,
+    "text": "Escribir a mano cada contrato en un bloc de notas físico antes de ingresarlo al sistema."
+   },
+   {
+    "letter": "B",
+    "len": 137,
+    "text": "Contratar a 20 investigadores de PhD para construir y entrenar una red neuronal convolucional personalizada desde cero durante tres años."
+   },
+   {
+    "letter": "C",
+    "len": 97,
+    "text": "Comprar servidores físicos GPU locales y esperar a que el personal aprenda matemáticas avanzadas."
+   },
+   {
+    "letter": "D",
+    "len": 201,
+    "text": "Utilizar APIs de IA preentrenadas y listas para usar de Google Cloud, como Document AI y Vision API, que procesan documentos mediante simples llamadas REST sin necesidad de entrenar modelos desde cero."
+   }
+  ],
+  "ratio": 1.87
+ },
+ {
+  "id": "CDL-D3-087",
+  "subtopic": "Cloud Run: Despliegues Graduales (Traffic Rolling Updates)",
+  "caseStudy": "none",
+  "scenario": "Un equipo despliega una nueva versión (Revisión 2) de un microservicio en Cloud Run. Desean enrutar inicialmente el 10% de las solicitudes de usuarios a la Revisión 2 y el 90% restante a la Revisión 1. Al comprobar que no hay errores en los registros de Cloud Logging, desean cambiar el tráfico al 100% en la Revisión 2 con un solo comando. ¿Qué capacidad nativa de Cloud Run facilita este flujo?",
+  "correct": "B",
+  "clave_len": 87,
+  "explanation": "Cada despliegue en Cloud Run crea una Revisión inmutable. Cloud Run permite dividir el tráfico por porcentajes exactos entre múltiples revisiones, facilitando despliegues graduales, pruebas canarias y reversiones instantáneas a revisiones anteriores.",
+  "doc": "https://cloud.google.com/run/docs/rollouts-rollbacks-traffic-split",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Gestión de Revisiones inmutables y División de Tráfico (Traffic Splitting) en Cloud Run"
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Pedir a los clientes que reinicien sus enrutadores Wi-Fi domésticos"
+   },
+   {
+    "letter": "D",
+    "len": 52,
+    "text": "Eliminar el servicio y esperar 3 días para recrearlo"
+   }
+  ],
+  "ratio": 1.86
+ },
+ {
+  "id": "CDL-D2-062",
+  "subtopic": "Gemini para Google Cloud (Duet AI): Asistencia Inteligente en la Nube",
+  "caseStudy": "none",
+  "scenario": "Los desarrolladores de software y operadores de infraestructura de una empresa desean asistencia de IA integrada en la consola de Google Cloud y sus entornos de desarrollo (IDEs) para generar código, escribir consultas SQL en BigQuery, solucionar errores de despliegue y optimizar configuraciones de seguridad. ¿Qué producto proporciona este asistente inteligente?",
+  "correct": "C",
+  "clave_len": 48,
+  "explanation": "Gemini para Google Cloud es el colaborador impulsado por IA generativa que asiste a desarrolladores, administradores de nube y analistas de datos en la redacción de código, generación de SQL en BigQuery, resolución de problemas de infraestructura y cumplimiento de mejores prácticas de seguridad.",
+  "doc": "https://cloud.google.com/gemini/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 39,
+    "text": "Cloud Logging Agent de 2012 sin soporte"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Standard"
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Gemini para Google Cloud (anteriormente Duet AI)"
+   },
+   {
+    "letter": "D",
+    "len": 17,
+    "text": "Cloud NAT Gateway"
+   }
+  ],
+  "ratio": 1.85
+ },
+ {
+  "id": "CDL-D1-026",
+  "subtopic": "Velocidad de Innovación y Reducción del Costo de Falla (Fail Fast)",
+  "caseStudy": "none",
+  "scenario": "Una empresa de medios digitales desea fomentar que sus equipos prueben nuevas ideas de productos sin temor a que un experimento fallido resulte en una pérdida financiera masiva de infraestructura. ¿Cómo respalda Google Cloud este enfoque cultural?",
+  "correct": "B",
+  "clave_len": 201,
+  "explanation": "La computación elástica y los entornos serverless democratizan la innovación: las organizaciones pueden probar decenas de ideas en paralelo con costos mínimos; si una idea funciona se escala al instante, y si falla se apaga en segundos sin costos residuales.",
+  "doc": "https://cloud.google.com/serverless",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 102,
+    "text": "Impidiendo apagar o eliminar cualquier recurso que haya sido desplegado en la consola de Google Cloud."
+   },
+   {
+    "letter": "B",
+    "len": 201,
+    "text": "Al permitir crear prototipos rápidamente con servicios administrados y serverless pagando solo por los minutos utilizados, reduciendo a casi cero el costo financiero de descartar una hipótesis fallida."
+   },
+   {
+    "letter": "C",
+    "len": 105,
+    "text": "Obligando a los equipos a firmar contratos de 5 años antes de poder encender una sola función serverless."
+   },
+   {
+    "letter": "D",
+    "len": 121,
+    "text": "Sancionando económicamente a los desarrolladores cuyos prototipos no alcancen un millón de usuarios en su primera semana."
+   }
+  ],
+  "ratio": 1.84
+ },
+ {
+  "id": "CDL-D1-029",
+  "subtopic": "Impacto del Trabajo Remoto y Colaboración Moderna con Google Workspace",
+  "caseStudy": "none",
+  "scenario": "Una empresa con oficinas en 15 países tiene problemas de productividad porque los empleados envían múltiples versiones de archivos por correo electrónico, generando discrepancias de datos y pérdida de tiempo. ¿Cómo resuelve Google Workspace este problema de colaboración?",
+  "correct": "C",
+  "clave_len": 176,
+  "explanation": "Google Workspace es una suite de productividad nativa de la nube que permite a equipos globales colaborar de forma sincrónica en una única fuente de verdad documental, con historial de versiones instantáneo y seguridad empresarial.",
+  "doc": "https://workspace.google.com",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 79,
+    "text": "Impidiendo que más de una persona abra un documento en el mismo mes calendario."
+   },
+   {
+    "letter": "B",
+    "len": 120,
+    "text": "Obligando a los empleados a viajar semanalmente a la sede central para sincronizar sus discos duros mediante cables USB."
+   },
+   {
+    "letter": "C",
+    "len": 176,
+    "text": "Permitiendo la edición simultánea y en tiempo real de documentos en la nube con guardado automático, control de versiones integrado y acceso seguro desde cualquier dispositivo."
+   },
+   {
+    "letter": "D",
+    "len": 89,
+    "text": "Eliminando todos los respaldos y versiones previas de los documentos de forma permanente."
+   }
+  ],
+  "ratio": 1.83
+ },
+ {
+  "id": "CDL-D2-015",
+  "subtopic": "Database Migration Service (DMS)",
+  "caseStudy": "none",
+  "scenario": "Una compañía necesita migrar 50 bases de datos MySQL locales a Cloud SQL con mínimo tiempo de inactividad para no interrumpir las operaciones del negocio. ¿Qué servicio nativo y sin servidor facilita esta migración continua?",
+  "correct": "A",
+  "clave_len": 32,
+  "explanation": "Database Migration Service (DMS) de Google Cloud es una solución sin servidor, sencilla y de alta fidelidad para migrar bases de datos relacionales (como MySQL y PostgreSQL) a Cloud SQL con replicación continua que minimiza el tiempo de inactividad durante el corte final.",
+  "doc": "https://cloud.google.com/database-migration",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 32,
+    "text": "Database Migration Service (DMS)"
+   },
+   {
+    "letter": "B",
+    "len": 17,
+    "text": "Cloud Data Fusion"
+   },
+   {
+    "letter": "C",
+    "len": 25,
+    "text": "Transfer Appliance físico"
+   },
+   {
+    "letter": "D",
+    "len": 11,
+    "text": "Cloud Trace"
+   }
+  ],
+  "ratio": 1.81
+ },
+ {
+  "id": "CDL-D4-009",
+  "subtopic": "Workload Identity Federation: Eliminación de Llaves de Servicio Estáticas",
+  "caseStudy": "none",
+  "scenario": "Una canalización de CI/CD alojada en GitHub Actions fuera de Google Cloud necesita desplegar contenedores en GKE. El equipo de seguridad prohíbe terminantemente crear archivos de claves privadas JSON de Service Account debido a filtraciones recurrentes en repositorios de código. ¿Qué mecanismo moderno permite que GitHub Actions se autentique de forma federada intercambiando tokens OIDC efímeros por credenciales temporales de Google Cloud?",
+  "correct": "D",
+  "clave_len": 79,
+  "explanation": "Workload Identity Federation permite que aplicaciones que se ejecutan fuera de Google Cloud (en GitHub Actions, AWS, Azure o centros de datos locales) utilicen identidades externas (OIDC/SAML) para suplantar una Service Account y obtener credenciales de acceso de corta duración sin necesidad de crear, descargar ni gestionar claves de servicio JSON de larga vida.",
+  "doc": "https://cloud.google.com/iam/docs/workload-identity-federation",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "B",
+    "len": 79,
+    "text": "Descargar una clave JSON con permisos de Owner y subirla al repositorio público"
+   },
+   {
+    "letter": "C",
+    "len": 30,
+    "text": "Desactivar la seguridad de GKE"
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "Workload Identity Federation (Federación de Identidades para Cargas de Trabajo)"
+   }
+  ],
+  "ratio": 1.81
+ },
+ {
+  "id": "CDL-D3-064",
+  "subtopic": "Patrón Strangler Fig para Modernización Progresiva de Monolitos",
+  "caseStudy": "none",
+  "scenario": "Una empresa desea modernizar su sistema ERP monolítico crítico. Saben que un intento de reescribir todo el sistema en un solo proyecto masivo (Big Bang) conlleva un riesgo de fracaso del 80%. En su lugar, desean extraer funcionalidades individuales una por una (como el módulo de facturación) y redirigir el tráfico a los nuevos microservicios en la nube mediante un proxy hasta reemplazar gradualmente todo el monolito. ¿Cómo se conoce este patrón arquitectónico?",
+  "correct": "A",
+  "clave_len": 58,
+  "explanation": "El patrón Strangler Fig (Higuera Estranguladora) es la estrategia recomendada por Google Cloud para modernizar sistemas legados: reemplaza gradualmente componentes específicos del monolito por nuevos microservicios en la nube detrás de una capa de enrutamiento (como Apigee o Cloud Load Balancing), reduciendo drásticamente el riesgo operativo.",
+  "doc": "https://cloud.google.com/architecture/modernizing-legacy-applications",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 58,
+    "text": "Patrón Strangler Fig (Patrón de la Higuera Estranguladora)"
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "Patrón de apagado total permanente"
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Patrón de copia manual en diskettes"
+   },
+   {
+    "letter": "D",
+    "len": 27,
+    "text": "Patrón Big Bang destructivo"
+   }
+  ],
+  "ratio": 1.81
+ }
+]

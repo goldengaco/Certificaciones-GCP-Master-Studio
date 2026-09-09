@@ -1,0 +1,827 @@
+[
+ {
+  "id": "CDL-D4-029",
+  "subtopic": "Presupuesto de Errores (Error Budget) en SRE",
+  "caseStudy": "none",
+  "scenario": "Un equipo de desarrollo desea lanzar nuevas funcionalidades comerciales diariamente, mientras que el equipo de operaciones exige congelar los despliegues para evitar fallos. En la metodología SRE de Google, ¿cómo resuelve el 'Presupuesto de Errores' (Error Budget) esta tensión entre innovación y estabilidad?",
+  "correct": "A",
+  "clave_len": 300,
+  "explanation": "El Presupuesto de Errores (Error Budget) es la base de la colaboración en SRE: reconoce que la confiabilidad del 100% es un objetivo erróneo y antieconómico. Utiliza el margen de fallo permitido (100% - SLO) como una moneda de cambio compartida para equilibrar la velocidad de innovación con la estabilidad del servicio.",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 300,
+    "text": "El Error Budget (calculado como 100% menos el SLO, ej. 0.1% de margen de fallo) define la cantidad tolerable de riesgo e inestabilidad permitida: si sobra presupuesto de errores, los desarrolladores pueden lanzar cambios rápidos; si el presupuesto se agota, se prioriza la estabilización del sistema."
+   },
+   {
+    "letter": "B",
+    "len": 144,
+    "text": "El Error Budget es una cantidad de dinero en dólares que se entrega a los desarrolladores para pagar multas personales cuando rompen producción."
+   },
+   {
+    "letter": "C",
+    "len": 107,
+    "text": "Exige que ningún sistema en el mundo tenga más del 0.000000% de margen de error bajo ninguna circunstancia."
+   },
+   {
+    "letter": "D",
+    "len": 61,
+    "text": "Prohíbe que los desarrolladores y operadores hablen entre sí."
+   }
+  ],
+  "ratio": 2.88
+ },
+ {
+  "id": "CDL-D4-063",
+  "subtopic": "Gestión de Cuotas y Límites de Servicio (Quotas and System Limits)",
+  "caseStudy": "none",
+  "scenario": "Un proyecto nuevo de Google Cloud tiene un límite máximo inicial de 24 vCPUs en una región. El equipo necesita desplegar 50 vCPUs para una prueba. ¿Por qué Google Cloud impone cuotas de recursos predeterminadas en los proyectos y cómo puede solicitarse un aumento?",
+  "correct": "B",
+  "clave_len": 236,
+  "explanation": "Las cuotas son límites preventivos que protegen a los clientes de facturas descontroladas (por ejemplo, si un script cae en un bucle infinito creando recursos) y aseguran la disponibilidad compartida de la nube. Los incrementos se solicitan directamente desde la consola de Quotas de forma digital.",
+  "doc": "https://cloud.google.com/docs/quota",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 99,
+    "text": "Las cuotas existen para obligar a las empresas a pagar una multa de $1,000 por cada vCPU adicional."
+   },
+   {
+    "letter": "B",
+    "len": 236,
+    "text": "Las cuotas protegen al cliente contra gastos accidentales o ataques imprevistos y previenen la saturación de la infraestructura; los aumentos de cuota pueden solicitarse de forma rápida y gratuita a través de la consola de Google Cloud."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Las cuotas solo pueden cambiarse enviando un fax notariado en papel."
+   },
+   {
+    "letter": "D",
+    "len": 80,
+    "text": "No es posible aumentar ninguna cuota en Google Cloud bajo ninguna circunstancia."
+   }
+  ],
+  "ratio": 2.87
+ },
+ {
+  "id": "CDL-D2-022",
+  "subtopic": "Conceptos de Lago de Datos (Data Lake) vs Almacén de Datos (Data Warehouse)",
+  "caseStudy": "none",
+  "scenario": "Durante una sesión de planificación estratégica de datos, un arquitecto explica la diferencia entre almacenar datos crudos en un Data Lake frente a consolidar datos limpios y modelados en un Data Warehouse. ¿Cómo se mapean estos conceptos a los servicios de Google Cloud?",
+  "correct": "C",
+  "clave_len": 250,
+  "explanation": "Un Data Lake (Cloud Storage) almacena volúmenes masivos de datos en su formato nativo crudo (estructurado, no estructurado o semi-estructurado). Un Data Warehouse (BigQuery) organiza y optimiza datos limpios y transformados para consultas analíticas estructuradas de negocio.",
+  "doc": "https://cloud.google.com/solutions/smart-analytics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 92,
+    "text": "Cloud Storage es únicamente un Data Warehouse y BigQuery solo sirve para guardar videos MP4."
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "Un Data Lake solo puede construirse con máquinas virtuales Windows apagadas."
+   },
+   {
+    "letter": "C",
+    "len": 250,
+    "text": "Cloud Storage actúa típicamente como el Data Lake (almacenando datos crudos en cualquier formato), mientras que BigQuery funciona como el Data Warehouse empresarial (almacenando datos estructurados y modelados para analítica SQL de alto rendimiento)."
+   },
+   {
+    "letter": "D",
+    "len": 94,
+    "text": "No existe ninguna diferencia; ambos son nombres comerciales para discos duros físicos locales."
+   }
+  ],
+  "ratio": 2.86
+ },
+ {
+  "id": "CDL-D4-018",
+  "subtopic": "Cloud Logging: Sumideros de Registros (Log Sinks) para Exportación y Cumplimiento",
+  "caseStudy": "none",
+  "scenario": "Una empresa requiere conservar todos los registros de seguridad y transacciones durante 7 años para cumplir con regulaciones financieras, además de analizarlos mediante consultas SQL avanzadas en BigQuery y enviarlos a un sistema SIEM externo en tiempo real vía Pub/Sub. ¿Qué mecanismo de Cloud Logging permite enrutar y exportar registros hacia estos destinos?",
+  "correct": "A",
+  "clave_len": 193,
+  "explanation": "El enrutador de registros (Log Router) y los Log Sinks (Sumideros de Registros) en Cloud Logging permiten filtrar y dirigir flujos de registros hacia Cloud Storage (para retención de bajo costo a largo plazo), BigQuery (para análisis analítico SQL avanzado) o Pub/Sub (para streaming hacia herramientas SIEM como Splunk o Chronicle).",
+  "doc": "https://cloud.google.com/logging/docs/routing/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 193,
+    "text": "Sumideros de Registros (Log Sinks / Log Router) configurados para exportar registros a Cloud Storage (archivo de 7 años), BigQuery (análisis SQL) y Cloud Pub/Sub (integración con SIEM externo)."
+   },
+   {
+    "letter": "B",
+    "len": 69,
+    "text": "Borrar todos los registros cada 24 horas para no pagar almacenamiento"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Imprimir todos los registros en papel continuo todas las mañanas"
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "Guardar los registros en la memoria RAM temporal de una sola VM pequeña"
+   }
+  ],
+  "ratio": 2.84
+ },
+ {
+  "id": "CDL-D4-022",
+  "subtopic": "Herencia de Políticas de IAM y Políticas de Organización (Organization Policies)",
+  "caseStudy": "none",
+  "scenario": "Un administrador de seguridad asigna el rol `roles/viewer` a un grupo de auditores a nivel del nodo de la Organización. Posteriormente, un equipo crea un nuevo proyecto dentro de una carpeta nueva de esa organización. ¿Qué permisos tendrán los auditores en ese nuevo proyecto?",
+  "correct": "C",
+  "clave_len": 194,
+  "explanation": "En la jerarquía de recursos de Google Cloud, las políticas de IAM se heredan transitivamente hacia abajo: los permisos otorgados a nivel de Organización o Carpeta se aplican automáticamente a todas las carpetas, proyectos y recursos contenidos debajo de ese nodo.",
+  "doc": "https://cloud.google.com/iam/docs/understanding-roles#policy_inheritance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 65,
+    "text": "El rol se convierte automáticamente en `roles/owner` destructivo."
+   },
+   {
+    "letter": "B",
+    "len": 91,
+    "text": "No tendrán ningún acceso hasta que el director general firme un documento físico notariado."
+   },
+   {
+    "letter": "C",
+    "len": 194,
+    "text": "Heredan automáticamente el rol `roles/viewer` en el nuevo proyecto y en todos sus recursos sin requerir ninguna configuración adicional, debido a la herencia hacia abajo de las políticas de IAM."
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "La organización borra el proyecto inmediatamente."
+   }
+  ],
+  "ratio": 2.84
+ },
+ {
+  "id": "CDL-D4-060",
+  "subtopic": "Cultura FinOps: Prácticas de Optimización Financiera Continua en la Nube",
+  "caseStudy": "none",
+  "scenario": "Una corporación adopta la disciplina de FinOps (Cloud Financial Operations) para maximizar el valor de negocio de sus inversiones en Google Cloud. ¿Cuáles son las tres fases iterativas fundamentales del marco FinOps?",
+  "correct": "C",
+  "clave_len": 177,
+  "explanation": "El marco de la FinOps Foundation establece tres fases continuas e iterativas: (1) Informar (crear visibilidad, etiquetado y presupuestos), (2) Optimizar (aprovechar CUDs, SUDs y redimensionamiento de recursos ociosos), y (3) Operar (integrar métricas de costo por unidad de negocio en las decisiones diarias de ingeniería).",
+  "doc": "https://cloud.google.com/learn/what-is-finops",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 67,
+    "text": "Comprar servidores físicos, usarlos 20 años y tirarlos a la basura."
+   },
+   {
+    "letter": "B",
+    "len": 49,
+    "text": "Cloud Storage Coldline para todo el ciclo de vida"
+   },
+   {
+    "letter": "C",
+    "len": 177,
+    "text": "Informar (visibilidad de costos y atribución), Optimizar (identificar ahorros y dimensionamiento) y Operar (alinear procesos continuos y gobernanza entre finanzas e ingeniería)."
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "Ignorar la facturación, no pagar y esperar que no cancelen el servicio."
+   }
+  ],
+  "ratio": 2.84
+ },
+ {
+  "id": "CDL-D4-028",
+  "subtopic": "Métricas de Confiabilidad SRE: SLI, SLO y SLA",
+  "caseStudy": "none",
+  "scenario": "En un taller de Site Reliability Engineering (SRE), un consultor explica tres conceptos fundamentales: (1) La medición cuantitativa real del rendimiento en tiempo real (como latencia o tasa de éxito), (2) La meta interna deseada que el equipo busca alcanzar, y (3) El compromiso contractual formal con el cliente que incluye penalizaciones o créditos financieros si no se cumple. ¿Cuáles son estos tres conceptos?",
+  "correct": "D",
+  "clave_len": 103,
+  "explanation": "SLI (Indicador) es la métrica real observada (ej. 99.92% de peticiones exitosas); SLO (Objetivo) es la meta interna que el equipo de ingeniería se fija para mantener la calidad (ej. 99.9%); y SLA (Acuerdo) es el compromiso legal vinculante con los clientes que acarrea consecuencias financieras si se incumple (ej. 99.5%).",
+  "doc": "https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Todos son sinónimos exactos de la velocidad de CPU en GHz"
+   },
+   {
+    "letter": "B",
+    "len": 25,
+    "text": "(1) SLA; (2) SLI; (3) SLO"
+   },
+   {
+    "letter": "C",
+    "len": 27,
+    "text": "(1) TCO; (2) ROI; (3) CAPEX"
+   },
+   {
+    "letter": "D",
+    "len": 103,
+    "text": "(1) SLI (Service Level Indicator); (2) SLO (Service Level Objective); (3) SLA (Service Level Agreement)"
+   }
+  ],
+  "ratio": 2.83
+ },
+ {
+  "id": "CDL-D4-079",
+  "subtopic": "Monitoreo de Cuentas de Servicio Huérfanas y Llaves Inactivas",
+  "caseStudy": "none",
+  "scenario": "Un análisis de seguridad revela que existen 40 Service Accounts en el proyecto que no han realizado ninguna llamada a la API en los últimos 180 días, y varias tienen claves privadas JSON activas. ¿Cuál es la mejor práctica de higiene de seguridad recomendada por Google Cloud?",
+  "correct": "B",
+  "clave_len": 171,
+  "explanation": "Mantener cuentas de servicio inactivas y claves huérfanas incrementa innecesariamente la superficie de ataque. La mejor práctica de seguridad es deshabilitarlas, auditar su impacto y eliminarlas para prevenir accesos no autorizados mediante credenciales olvidadas.",
+  "doc": "https://cloud.google.com/iam/docs/best-practices-for-managing-service-account-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 45,
+    "text": "Ignorar las cuentas inactivas y no hacer nada"
+   },
+   {
+    "letter": "B",
+    "len": 171,
+    "text": "Desactivar o eliminar las Service Accounts y claves de servicio que no se utilicen, siguiendo las recomendaciones del IAM Recommender para reducir la superficie de ataque."
+   },
+   {
+    "letter": "C",
+    "len": 41,
+    "text": "Publicar las claves inactivas en Internet"
+   },
+   {
+    "letter": "D",
+    "len": 95,
+    "text": "Otorgarles permisos de Owner a todas las cuentas inactivas por si acaso se necesitan algún día."
+   }
+  ],
+  "ratio": 2.83
+ },
+ {
+  "id": "CDL-D3-003",
+  "subtopic": "Compute Engine: Migración en Vivo (Live Migration)",
+  "caseStudy": "none",
+  "scenario": "Google necesita realizar un mantenimiento crítico de hardware y actualizar el software del hipervisor en el servidor físico donde se ejecuta la máquina virtual de producción de un cliente. ¿Cómo garantiza Google Cloud que la VM del cliente no sufra reinicios ni tiempos de inactividad durante este mantenimiento?",
+  "correct": "A",
+  "clave_len": 230,
+  "explanation": "Live Migration es una capacidad exclusiva y diferenciadora de Compute Engine de Google Cloud que mantiene las máquinas virtuales de los clientes en funcionamiento continuo migrándolas en caliente a otros servidores físicos durante mantenimientos rutinarios de hardware, parches de seguridad y actualizaciones de la infraestructura de Google.",
+  "doc": "https://cloud.google.com/compute/docs/instances/live-migration",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 230,
+    "text": "A través de la Migración en Vivo (Live Migration), que traslada automáticamente la máquina virtual en ejecución a otro host físico sin reiniciar la VM ni interrumpir las conexiones de red ni las cargas de trabajo de la aplicación."
+   },
+   {
+    "letter": "B",
+    "len": 93,
+    "text": "Enviando un técnico con un cable a la oficina del cliente para sostener la energía eléctrica."
+   },
+   {
+    "letter": "C",
+    "len": 62,
+    "text": "Apagando la máquina virtual durante 12 horas sin previo aviso."
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Borrando todos los discos y pidiendo al cliente que vuelva a instalar su sistema operativo."
+   }
+  ],
+  "ratio": 2.8
+ },
+ {
+  "id": "CDL-D3-041",
+  "subtopic": "Redes VPC: Emparejamiento de Redes (VPC Network Peering) vs Shared VPC",
+  "caseStudy": "none",
+  "scenario": "Una corporación necesita estructurar sus redes en Google Cloud: (1) Quieren que el equipo central de redes administre una única red troncal compartida con subredes asignadas a múltiples proyectos de diferentes departamentos, y (2) Quieren conectar dos redes VPC independientes pertenecientes a organizaciones distintas con baja latencia interna. ¿Qué soluciones corresponden?",
+  "correct": "B",
+  "clave_len": 128,
+  "explanation": "Shared VPC permite a una organización centralizada gestionar la red en un proyecto Host y delegar la creación de recursos (como VMs en subredes específicas) a proyectos de servicio departamentales. VPC Network Peering conecta dos VPCs distintas de forma bidireccional permitiendo conectividad IP privada con baja latencia sin intermediarios.",
+  "doc": "https://cloud.google.com/vpc/docs/shared-vpc",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 39,
+    "text": "(1) VPC Network Peering; (2) Shared VPC"
+   },
+   {
+    "letter": "B",
+    "len": 128,
+    "text": "(1) Shared VPC (VPC Compartida con Proyecto Host y Proyectos de Servicio); (2) VPC Network Peering (Emparejamiento de redes VPC)"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 77,
+    "text": "Ambos requieren cables de red físicos conectados manualmente entre servidores"
+   }
+  ],
+  "ratio": 2.8
+ },
+ {
+  "id": "CDL-D4-077",
+  "subtopic": "Cloud Data Loss Prevention: Desidentificación y Seudonimización con Tokenización",
+  "caseStudy": "none",
+  "scenario": "Un banco necesita permitir que un equipo de científicos de datos analice patrones de compras con tarjetas de crédito. Por regulaciones de privacidad, los números de tarjeta reales no pueden estar visibles, pero los análisis requieren que el mismo número de tarjeta siempre se transforme en el mismo token seudonimizado consistente (para poder rastrear compras del mismo usuario a lo largo del tiempo) de forma reversible para usuarios autorizados. ¿Qué técnica de transformación de Sensitive Data Protection (Cloud DLP) cumple esto?",
+  "correct": "C",
+  "clave_len": 155,
+  "explanation": "Sensitive Data Protection admite transformaciones avanzadas de desidentificación como la seudonimización criptográfica determinista con preservación de formato (FPE). Esto reemplaza el dato sensible (ej. tarjeta de crédito) por un token seguro y consistente que permite análisis relacional sin exponer el valor original.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/pseudonymization",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 82,
+    "text": "Borrar todos los números y reemplazarlos por la palabra 'HOLA' en todas las filas."
+   },
+   {
+    "letter": "B",
+    "len": 75,
+    "text": "Enviar los datos de las tarjetas en texto plano a un canal de chat público."
+   },
+   {
+    "letter": "C",
+    "len": 155,
+    "text": "Tokenización criptográfica con preservación de formato (Crypto-Deterministic Format-Preserving Encryption / Pseudonymization) en Sensitive Data Protection."
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud DNS"
+   }
+  ],
+  "ratio": 2.8
+ },
+ {
+  "id": "CDL-D3-037",
+  "subtopic": "GKE: Identidad de Cargas de Trabajo (Workload Identity)",
+  "caseStudy": "none",
+  "scenario": "Una aplicación que se ejecuta dentro de un Pod en GKE necesita leer archivos de un bucket privado de Cloud Storage. La empresa no desea descargar ni almacenar archivos de claves de Service Account en formato JSON dentro de los contenedores por riesgo de robo de credenciales. ¿Cuál es la mejor práctica de seguridad recomendada por Google Cloud?",
+  "correct": "B",
+  "clave_len": 224,
+  "explanation": "Workload Identity es la forma recomendada y más segura para que las cargas de trabajo en GKE accedan a los servicios de Google Cloud (Cloud Storage, BigQuery, Secret Manager), vinculando cuentas de Kubernetes con cuentas de servicio de IAM sin necesidad de generar ni rotar claves JSON de servicio de larga duración.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Asignar permisos de Owner a todos los contenedores de forma predeterminada."
+   },
+   {
+    "letter": "B",
+    "len": 224,
+    "text": "Habilitar Workload Identity en GKE para vincular de forma segura la Kubernetes Service Account (KSA) del Pod con una Google Service Account (GSA) de IAM, eliminando por completo el uso de claves de servicio en archivos JSON."
+   },
+   {
+    "letter": "C",
+    "len": 92,
+    "text": "Incrustar la clave privada JSON de la Service Account en el código fuente de GitHub público."
+   },
+   {
+    "letter": "D",
+    "len": 76,
+    "text": "Hacer público el bucket de Cloud Storage para que no requiera autenticación."
+   }
+  ],
+  "ratio": 2.77
+ },
+ {
+  "id": "CDL-D2-089",
+  "subtopic": "Arquitectura de Datos para IA Generativa: Embeddings y Modelos de Lenguaje",
+  "caseStudy": "none",
+  "scenario": "Un arquitecto de soluciones diseña un sistema de asistencia legal con IA generativa utilizando Google Cloud. Los documentos legales se convierten en vectores numéricos (embeddings), se almacenan en una base de datos vectorial, y cuando un abogado hace una pregunta, el sistema recupera los fragmentos más relevantes y se los entrega al modelo Gemini para generar la respuesta final fundamentada. ¿Qué componentes de Google Cloud completan este flujo RAG?",
+  "correct": "C",
+  "clave_len": 189,
+  "explanation": "El patrón RAG (Retrieval-Augmented Generation) en Google Cloud se implementa mediante la API de Embeddings de Vertex AI para transformar texto en vectores, Vertex AI Vector Search para la búsqueda ultrarrápida de similitud de los documentos relevantes, y los modelos Gemini de Vertex AI para sintetizar la respuesta final fundamentada.",
+  "doc": "https://cloud.google.com/vertex-ai/docs/generative-ai/rag-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 73,
+    "text": "Compute Engine sin conexión a Internet -> Guardar en diskettes magnéticos"
+   },
+   {
+    "letter": "B",
+    "len": 61,
+    "text": "Cloud SQL para MySQL -> Imprimir en papel -> Escanear con fax"
+   },
+   {
+    "letter": "C",
+    "len": 189,
+    "text": "Vertex AI Text Embeddings API (generación de vectores) -> Vertex AI Vector Search (búsqueda de fragmentos por similitud) -> Gemini en Vertex AI (generación de la respuesta contextualizada)."
+   },
+   {
+    "letter": "D",
+    "len": 71,
+    "text": "Cloud Storage Coldline -> Cloud Logging -> Cloud Trace -> Cloud Billing"
+   }
+  ],
+  "ratio": 2.77
+ },
+ {
+  "id": "CDL-D4-081",
+  "subtopic": "Métricas Basadas en Registros (Log-Based Metrics): Convertir Texto en Gráficas",
+  "caseStudy": "none",
+  "scenario": "Una aplicación heredada no exporta métricas nativas, pero escribe en sus registros de texto líneas como `PAYMENT_LATENCY: 450ms` o `ORDER_COUNT: 1`. El equipo de operaciones desea convertir estos eventos de texto en métricas numéricas continuas que puedan graficarse en paneles de Cloud Monitoring y usarse para disparar alertas. ¿Qué funcionalidad de Cloud Logging deben utilizar?",
+  "correct": "C",
+  "clave_len": 111,
+  "explanation": "Las Log-Based Metrics permiten extraer datos cuantitativos y valores numéricos a partir del contenido de los registros de Cloud Logging, transformando mensajes de texto no estructurados en métricas de series temporales de Cloud Monitoring para gráficos y alertas.",
+  "doc": "https://cloud.google.com/logging/docs/logs-based-metrics",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "B",
+    "len": 44,
+    "text": "Contar las palabras a mano con lápiz y papel"
+   },
+   {
+    "letter": "C",
+    "len": 111,
+    "text": "Métricas basadas en registros (Log-Based Metrics: métricas de recuento o de distribución extraídas de los logs)"
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Desinstalar la aplicación para que no escriba registros"
+   }
+  ],
+  "ratio": 2.77
+ },
+ {
+  "id": "CDL-D4-007",
+  "subtopic": "Cloud Identity e Inicio de Sesión Único (SSO / SAML 2.0)",
+  "caseStudy": "none",
+  "scenario": "Una corporación utiliza Microsoft Active Directory / Azure AD (Entra ID) o Okta como su proveedor de identidad corporativo principal. Desean que los empleados utilicen sus mismas credenciales empresariales existentes y su sistema de autenticación de dos factores para acceder a la consola de Google Cloud sin tener que crear ni gestionar cuentas de correo independientes. ¿Qué servicio de Google Cloud permite esta federación?",
+  "correct": "D",
+  "clave_len": 104,
+  "explanation": "Cloud Identity es la solución Identity as a Service (IDaaS) de Google que permite a las empresas gestionar usuarios y dispositivos centralizadamente, federando el inicio de sesión único (SSO con SAML 2.0/OIDC) con proveedores existentes como Active Directory, Azure AD u Okta.",
+  "doc": "https://cloud.google.com/identity/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "Crear cuentas personales de @gmail.com no administradas para cada empleado"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "C",
+    "len": 18,
+    "text": "Cloud Interconnect"
+   },
+   {
+    "letter": "D",
+    "len": 104,
+    "text": "Cloud Identity federado con el proveedor de identidad existente mediante SAML 2.0 / Single Sign-On (SSO)"
+   }
+  ],
+  "ratio": 2.74
+ },
+ {
+  "id": "CDL-D4-088",
+  "subtopic": "Security Command Center: Detección de Amenazas en Contenedores (Container Threat Detection)",
+  "caseStudy": "none",
+  "scenario": "Un atacante logra explotar una vulnerabilidad en una aplicación web y ejecuta un shell inverso (reverse shell) dentro de un contenedor en ejecución en GKE o descarga un binario malicioso no autorizado en tiempo de ejecución. ¿Qué componente de Security Command Center detecta estas anomalías en el comportamiento de los contenedores en tiempo real?",
+  "correct": "D",
+  "clave_len": 53,
+  "explanation": "Container Threat Detection en SCC supervisa continuamente el comportamiento de los contenedores en GKE en tiempo real, detectando ejecuciones de binarios no autorizados, scripts maliciosos, shells inversos y accesos anómalos dentro de los Pods.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-container-threat-detection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 22,
+    "text": "Cloud Storage Nearline"
+   },
+   {
+    "letter": "B",
+    "len": 27,
+    "text": "Desactivar los contenedores"
+   },
+   {
+    "letter": "C",
+    "len": 9,
+    "text": "Cloud DNS"
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Container Threat Detection en Security Command Center"
+   }
+  ],
+  "ratio": 2.74
+ },
+ {
+  "id": "CDL-D4-061",
+  "subtopic": "Sistemas SIEM y SOAR Modernos: Google Chronicle Security Operations",
+  "caseStudy": "none",
+  "scenario": "Un centro de operaciones de seguridad (SOC) empresarial ingiere petabytes de telemetría de red, registros de autenticación y eventos de seguridad diarios. Necesitan un sistema SIEM/SOAR de hiperescala impulsado por inteligencia de amenazas de Mandiant que permita buscar en petabytes de registros en segundos y automatizar la respuesta a incidentes con flujos de trabajo de orquestación. ¿Qué plataforma de Google Cloud cumple este rol?",
+  "correct": "A",
+  "clave_len": 86,
+  "explanation": "Chronicle Security Operations es la plataforma de operaciones de seguridad en la nube de Google que combina capacidades avanzadas de SIEM (ingesta y búsqueda de telemetría masiva a velocidad de Google) y SOAR (automatización y respuesta a incidentes), enriquecida con la inteligencia de amenazas de clase mundial de Mandiant.",
+  "doc": "https://cloud.google.com/chronicle",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 86,
+    "text": "Google Chronicle Security Operations (Chronicle SIEM / SOAR con inteligencia Mandiant)"
+   },
+   {
+    "letter": "B",
+    "len": 22,
+    "text": "Cloud Storage Coldline"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "Revisar los registros en hojas de cálculo impresas en papel bond"
+   },
+   {
+    "letter": "D",
+    "len": 9,
+    "text": "Cloud DNS"
+   }
+  ],
+  "ratio": 2.72
+ },
+ {
+  "id": "CDL-D4-085",
+  "subtopic": "Cloud Logging: Registros de Transparencia de Acceso (Access Transparency Logs)",
+  "caseStudy": "none",
+  "scenario": "Durante una auditoría externa de seguridad, los auditores solicitan evidencia verificable de que ningún empleado de soporte o ingeniería de Google puede acceder a los datos de la empresa sin que quede un registro inalterable. ¿Qué tipo de registros en Cloud Logging demuestran cuándo y por qué el personal de Google interactuó con los recursos del cliente durante una solicitud de soporte?",
+  "correct": "B",
+  "clave_len": 76,
+  "explanation": "Los registros de Access Transparency capturan registros casi en tiempo real de las acciones administrativas manuales realizadas por el personal de soporte o ingeniería de Google sobre los datos de los clientes, proporcionando el motivo comercial, la referencia al ticket de soporte y la ubicación del empleado.",
+  "doc": "https://cloud.google.com/logging/docs/audit/access-transparency-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 43,
+    "text": "Notas manuscritas en post-its de la oficina"
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "Registros de Access Transparency (Access Transparency Logs en Cloud Logging)"
+   },
+   {
+    "letter": "C",
+    "len": 21,
+    "text": "Cloud Storage Archive"
+   },
+   {
+    "letter": "D",
+    "len": 20,
+    "text": "Cloud DNS Query Logs"
+   }
+  ],
+  "ratio": 2.71
+ },
+ {
+  "id": "CDL-D3-006",
+  "subtopic": "Compute Engine: VMs Blindadas (Shielded VMs) y VMs Confidenciales (Confidential VMs)",
+  "caseStudy": "none",
+  "scenario": "Una institución financiera requiere proteger sus máquinas virtuales contra ataques a nivel de firmware (rootkits de arranque) y garantizar que los datos estén cifrados en la memoria RAM mientras se procesan en la CPU, protegiéndolos incluso de accesos no autorizados a nivel de hipervisor. ¿Qué tecnologías de Compute Engine proporcionan estas protecciones?",
+  "correct": "B",
+  "clave_len": 134,
+  "explanation": "Shielded VMs ofrecen integridad verificable de arranque (Secure Boot, vTPM y monitoreo de integridad contra malware a nivel de kernel/firmware), mientras que Confidential VMs cifran los datos en uso en la memoria RAM utilizando aislamiento criptográfico por hardware (AMD SEV).",
+  "doc": "https://cloud.google.com/confidential-computing",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Utilizar máquinas virtuales sin sistema operativo"
+   },
+   {
+    "letter": "B",
+    "len": 134,
+    "text": "Shielded VMs (con Secure Boot y vTPM para integridad de arranque) y Confidential VMs (con cifrado de memoria en uso mediante AMD SEV)."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Desactivar todas las contraseñas de los servidores para facilitar el acceso"
+   },
+   {
+    "letter": "D",
+    "len": 25,
+    "text": "Cloud DNS y Cloud Domains"
+   }
+  ],
+  "ratio": 2.7
+ },
+ {
+  "id": "CDL-D3-089",
+  "subtopic": "Migración de Aplicaciones Web a Cloud Run",
+  "caseStudy": "none",
+  "scenario": "Una empresa tiene una aplicación web tradicional en Node.js alojada en un servidor físico local. Desean modernizarla a la nube con el menor esfuerzo posible, obteniendo autoescalado, HTTPS automático y reducción de costos operativos. ¿Cuál es la secuencia de modernización más simple y efectiva?",
+  "correct": "D",
+  "clave_len": 201,
+  "explanation": "El camino más directo para modernizar aplicaciones web estándar hacia Google Cloud es la contenedorización: empaquetar el código en un contenedor OCI/Docker y desplegarlo en Cloud Run, obteniendo automáticamente escalabilidad, certificados HTTPS administrados y cero mantenimiento de servidores.",
+  "doc": "https://cloud.google.com/run/docs/quickstarts/build-and-deploy",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 72,
+    "text": "Guardar el código en un bucket de Cloud Storage Coldline y no ejecutarlo"
+   },
+   {
+    "letter": "B",
+    "len": 85,
+    "text": "Comprar un servidor físico idéntico y enviarlo por paquetería a una oficina de Google"
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "Reescribir toda la aplicación en código binario puro durante 4 años"
+   },
+   {
+    "letter": "D",
+    "len": 201,
+    "text": "Empaquetar la aplicación en un contenedor Docker, compilar la imagen con Cloud Build y desplegarla directamente en Cloud Run para obtener autoescalado, URL HTTPS segura y alta disponibilidad inmediata."
+   }
+  ],
+  "ratio": 2.69
+ },
+ {
+  "id": "CDL-D4-011",
+  "subtopic": "Cloud Key Management Service (Cloud KMS) y Tipos de Llaves Criptográficas",
+  "caseStudy": "none",
+  "scenario": "Un oficial de cumplimiento normativo solicita conocer las opciones disponibles para la gestión de claves de cifrado en Google Cloud. ¿Cuáles son los tres niveles principales de gestión de claves que soporta la plataforma?",
+  "correct": "C",
+  "clave_len": 220,
+  "explanation": "Google Cloud ofrece tres niveles de control de claves: (1) Google-Managed (cifrado por defecto sin gestión), (2) CMEK (Customer-Managed Encryption Keys gestionadas en Cloud KMS o módulos de seguridad física Cloud HSM con FIPS 140-2 Nivel 3), y (3) CSEK (Customer-Supplied Encryption Keys donde el cliente custodia las claves fuera de Google).",
+  "doc": "https://cloud.google.com/kms/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 101,
+    "text": "Solo existe un tipo de clave única compartida por todos los 8,000 millones de habitantes del planeta."
+   },
+   {
+    "letter": "B",
+    "len": 81,
+    "text": "Google Cloud solo admite guardar contraseñas en archivos de texto TXT sin cifrar."
+   },
+   {
+    "letter": "C",
+    "len": 220,
+    "text": "(1) Claves gestionadas por Google (predeterminadas y transparentes); (2) Claves de cifrado gestionadas por el cliente (CMEK a través de Cloud KMS / Cloud HSM); y (3) Claves de cifrado suministradas por el cliente (CSEK)."
+   },
+   {
+    "letter": "D",
+    "len": 64,
+    "text": "Cloud Storage Coldline es el único servicio que permite cifrado."
+   }
+  ],
+  "ratio": 2.68
+ },
+ {
+  "id": "CDL-D4-064",
+  "subtopic": "Rotación Segura de Llaves de Cuentas de Servicio (Service Account Keys)",
+  "caseStudy": "none",
+  "scenario": "En los casos excepcionales donde una aplicación externa heredada requiere utilizar una clave privada JSON de Service Account, ¿cuál es la mejor práctica de seguridad obligatoria para gestionar el ciclo de vida de estas claves?",
+  "correct": "A",
+  "clave_len": 205,
+  "explanation": "Cuando el uso de claves estáticas de Service Account es inevitable, la mejor práctica de seguridad exige establecer un proceso automatizado de rotación periódica (crear clave nueva -> actualizar aplicación -> verificar -> eliminar clave antigua) y evitar a toda costa almacenar claves en repositorios de código.",
+  "doc": "https://cloud.google.com/iam/docs/best-practices-for-managing-service-account-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 205,
+    "text": "Rotar las claves periódicamente (ej. cada 90 días) creando una nueva clave antes de eliminar la anterior para no interrumpir el servicio, almacenar las claves cifradas y monitorear su uso en Cloud Logging."
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Enviar la clave JSON por correo electrónico masivo a todos los empleados de la empresa."
+   },
+   {
+    "letter": "C",
+    "len": 70,
+    "text": "Crear una sola clave una vez y mantenerla sin cambios durante 50 años."
+   },
+   {
+    "letter": "D",
+    "len": 74,
+    "text": "Publicar la clave en un foro de Internet para que no se pierda el archivo."
+   }
+  ],
+  "ratio": 2.66
+ },
+ {
+  "id": "CDL-D3-077",
+  "subtopic": "Patrón de Aplicaciones de Doce Factores (12-Factor App)",
+  "caseStudy": "none",
+  "scenario": "Un equipo de desarrollo diseña una nueva aplicación nativa de nube para ejecutarse en Cloud Run y GKE. Para asegurar portabilidad y escalabilidad, siguen los principios de la metodología de las 12 Factores (12-Factor App). ¿Cuál de las siguientes prácticas ejemplifica correctamente uno de estos principios?",
+  "correct": "B",
+  "clave_len": 224,
+  "explanation": "La metodología 12-Factor App prescribe separar estrictamente la configuración del código mediante variables de entorno y ejecutar aplicaciones como procesos sin estado (stateless) que delegan la persistencia a servicios de respaldo (como Firestore, Cloud SQL o Memorystore), permitiendo un escalado elástico perfecto.",
+  "doc": "https://12factor.net",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Compilar el código únicamente una vez cada 10 años."
+   },
+   {
+    "letter": "B",
+    "len": 224,
+    "text": "Almacenar las configuraciones y credenciales en variables de entorno (separando código de configuración) y diseñar los procesos de la aplicación para que sean sin estado (stateless), persistiendo datos en almacenes externos."
+   },
+   {
+    "letter": "C",
+    "len": 114,
+    "text": "Guardar las sesiones de usuario en la memoria RAM del contenedor para que se pierdan si el contenedor se reinicia."
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "Incrustar las contraseñas de producción en el código fuente de forma fija e inalterable."
+   }
+  ],
+  "ratio": 2.66
+ },
+ {
+  "id": "CDL-D4-041",
+  "subtopic": "Reglas de Firewall de VPC: Control de Tráfico Ingress y Egress",
+  "caseStudy": "none",
+  "scenario": "Un administrador de red en Google Cloud configura una regla de firewall de VPC para permitir el tráfico web entrante en el puerto TCP 443 (HTTPS) hacia sus servidores web. ¿Cómo maneja el firewall de VPC de Google Cloud las respuestas de retorno de tráfico hacia los clientes?",
+  "correct": "D",
+  "clave_len": 228,
+  "explanation": "Las reglas de firewall de VPC de Google Cloud son 'con estado' (stateful). Cuando una conexión es permitida por una regla de Ingress o Egress, todos los paquetes de respuesta bidireccionales asociados a esa sesión TCP/UDP se autorizan de forma automática.",
+  "doc": "https://cloud.google.com/firewall/docs/firewalls",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 101,
+    "text": "El firewall solo funciona si se conecta un dispositivo físico por cable a la computadora del usuario."
+   },
+   {
+    "letter": "B",
+    "len": 82,
+    "text": "Google Cloud no tiene firewalls y todo el tráfico de red está abierto sin control."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "El firewall no tiene estado y bloquea todas las respuestas automáticamente."
+   },
+   {
+    "letter": "D",
+    "len": 228,
+    "text": "El firewall de VPC de Google Cloud tiene estado (stateful): si una conexión entrante (Ingress) es permitida, el tráfico de respuesta saliente correspondiente se permite automáticamente sin requerir una regla de Egress explícita."
+   }
+  ],
+  "ratio": 2.65
+ },
+ {
+  "id": "CDL-D4-031",
+  "subtopic": "Gestión de Secretos con Secret Manager vs Variables de Entorno en Texto Plano",
+  "caseStudy": "none",
+  "scenario": "Un desarrollador necesita conectar una aplicación en GKE a una pasarela de pagos con una clave de API confidencial. ¿Por qué es una mejor práctica utilizar Secret Manager en lugar de guardar la clave en texto plano en el repositorio de código o en un ConfigMap de Kubernetes?",
+  "correct": "D",
+  "clave_len": 216,
+  "explanation": "Secret Manager ofrece almacenamiento centralizado, seguro y auditable para datos sensibles. Permite rotar credenciales sin redesplegar código, restringir quién o qué servicio puede leer el secreto mediante IAM y auditar cada lectura en los registros de seguridad.",
+  "doc": "https://cloud.google.com/secret-manager/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 114,
+    "text": "Guardar contraseñas en texto plano en GitHub es más seguro porque todos los usuarios de Internet pueden vigilarla."
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "No existe ninguna diferencia de seguridad."
+   },
+   {
+    "letter": "C",
+    "len": 89,
+    "text": "Secret Manager es un servicio que publica las contraseñas en Twitter de forma automática."
+   },
+   {
+    "letter": "D",
+    "len": 216,
+    "text": "Secret Manager cifra los secretos en reposo, controla el acceso mediante permisos granulares de IAM, mantiene un historial de versiones del secreto para rotación y registra cada acceso individual en Cloud Audit Logs."
+   }
+  ],
+  "ratio": 2.64
+ }
+]

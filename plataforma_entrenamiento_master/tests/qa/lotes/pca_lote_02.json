@@ -1,0 +1,827 @@
+[
+ {
+  "id": "PCA-D5-025",
+  "subtopic": "Cloud Dataflow: Custom Streaming Templates with Flex Templates",
+  "caseStudy": "none",
+  "scenario": "A centralized data platform team authors complex Apache Beam streaming pipelines in Python and Java. They need to package these pipelines into parameterized, versioned artifacts stored in Artifact Registry so that non-developer business analysts can launch custom streaming pipelines via CI/CD, Terraform, or Cloud Console with dynamic runtime parameters. What packaging standard should they use?",
+  "correct": "D",
+  "clave_len": 250,
+  "explanation": "Dataflow Flex Templates package Beam pipelines into Docker container images. Unlike legacy Classic Templates, Flex Templates construct the execution graph dynamically at launch time, supporting dynamic parameter parsing and arbitrary dependencies.",
+  "doc": "https://cloud.google.com/dataflow/docs/guides/templates/using-flex-templates",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Run pipelines directly from developer laptops."
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "Legacy Classic Dataflow Templates."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Email the Python source code file to analysts."
+   },
+   {
+    "letter": "D",
+    "len": 250,
+    "text": "Dataflow Flex Templates, packaging the pipeline code and dependencies into Docker container images in Artifact Registry with a template-launcher JSON specification on Cloud Storage, enabling dynamic graph construction and flexible runtime parameters."
+   }
+  ],
+  "ratio": 5.95
+ },
+ {
+  "id": "PCA-D4-024",
+  "subtopic": "SRE: Graceful Degradation & Shedding Load",
+  "caseStudy": "none",
+  "scenario": "During an unexpected 10x traffic spike, a retail backend service is overwhelmed and its database is approaching CPU saturation. To prevent a catastrophic total outage, the system must prioritize critical revenue transactions (completing checkout purchases) while automatically shedding non-critical traffic (recommendations, personalized banners, review loading). What architectural patterns implement this graceful degradation?",
+  "correct": "D",
+  "clave_len": 320,
+  "explanation": "Google SRE resilience patterns utilize load shedding, circuit breakers, and graceful degradation. Dropping non-essential background features and returning fallbacks preserves database capacity for mission-critical core revenue transactions.",
+  "doc": "https://sre.google/sre-book/addressing-cascading-failures/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 36,
+    "text": "Shut down the payment gateway first."
+   },
+   {
+    "letter": "B",
+    "len": 58,
+    "text": "Reboot all database servers during the peak traffic spike."
+   },
+   {
+    "letter": "C",
+    "len": 68,
+    "text": "Allow all requests to queue up indefinitely until all servers crash."
+   },
+   {
+    "letter": "D",
+    "len": 320,
+    "text": "Implement Load Shedding and Circuit Breakers (e.g. using Envoy / Cloud Armor / Istio): Return cached or fallback default responses for non-critical services (recommendations), prioritize checkout traffic via separate priority threadpools/queues, and drop low-priority requests with HTTP 429/503 before backends saturate."
+   }
+  ],
+  "ratio": 5.93
+ },
+ {
+  "id": "PCA-D5-014",
+  "subtopic": "Cloud Spanner Mutation Limits & Commit Batches",
+  "caseStudy": "none",
+  "scenario": "A batch ingestion job attempting to insert 100,000 rows into Cloud Spanner in a single transaction fails with error 'INVALID_ARGUMENT: The transaction contains too many mutations (limit is 80,000)'. The table has 10 columns and 3 secondary indexes. Why did the transaction fail, and how should the implementation be corrected?",
+  "correct": "A",
+  "clave_len": 273,
+  "explanation": "In Cloud Spanner, a mutation is counted for each column write plus each secondary index update per row. Inserting 100,000 rows with 10 columns and 3 indexes generates over 1.3 million mutations, exceeding the hard 80,000 mutation limit per commit. Batching into chunks of 2,000-5,000 rows resolves the issue.",
+  "doc": "https://cloud.google.com/spanner/docs/quotas#limits-for-creating-reading-updating-and-deleting-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 273,
+    "text": "Recognize that total mutations equal (Number of Rows * (Columns Updated + Secondary Indexes)); partition the bulk ingest into smaller commit batches (e.g. 2,000 to 5,000 rows per transaction) using Dataflow or partitioned DML to remain well below the 80,000 mutation limit."
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "Disable all database transactions."
+   },
+   {
+    "letter": "C",
+    "len": 36,
+    "text": "Delete Cloud Spanner and use SQLite."
+   },
+   {
+    "letter": "D",
+    "len": 68,
+    "text": "Increase Spanner nodes from 1 to 100 to increase the mutation limit."
+   }
+  ],
+  "ratio": 5.93
+ },
+ {
+  "id": "PCA-D3-051",
+  "subtopic": "Altostrat Media: Cloud Armor Edge Protection",
+  "caseStudy": "altostrat_media",
+  "scenario": "Attackers attempt to discover HRL's backend Cloud Storage origin bucket names to bypass CDN caching and launch direct HTTP flood attacks on storage APIs. HRL must ensure that storage buckets reject all direct public internet requests and only accept requests routed through the Global External Application Load Balancer with Cloud Armor edge security policies applied. How should you secure the origin bucket?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "Keeping Cloud Storage buckets private and serving them exclusively through Global External Application Load Balancers (Backend Buckets) ensures all incoming traffic is inspected by Cloud Armor at Google's edge, preventing direct bucket access attacks.",
+  "doc": "https://cloud.google.com/armor/docs/cloud-armor-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 25,
+    "text": "Disable HTTPS encryption."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "text": "Keep the Cloud Storage bucket private (remove all public IAM roles), attach it as a Backend Bucket to the Global External Application Load Balancer, and enforce Cloud CDN / Cloud Armor security policies at the edge."
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Rename the bucket every 10 seconds."
+   },
+   {
+    "letter": "D",
+    "len": 50,
+    "text": "Grant allUsers storage.objectViewer on the bucket."
+   }
+  ],
+  "ratio": 5.86
+ },
+ {
+  "id": "PCA-D3-011",
+  "subtopic": "VPC Service Controls: Ingress & Egress Rules",
+  "caseStudy": "none",
+  "scenario": "A sensitive research BigQuery dataset resides inside a VPC Service Controls perimeter in Project Research. An external partner service account 'partner-reader@external-org.iam.gserviceaccount.com' needs to execute BigQuery read-only queries (bigquery.jobs.create and bigquery.tables.get) from a specific corporate IP range (203.0.113.0/24), but must be strictly blocked from writing or exporting data. What VPC-SC configuration enforces this?",
+  "correct": "C",
+  "clave_len": 284,
+  "explanation": "VPC-SC Ingress and Egress rules allow fine-grained, context-aware exceptions to service perimeters. An Ingress Rule can evaluate the caller identity, source IP access level, destination service, and specific API methods/operations.",
+  "doc": "https://cloud.google.com/vpc-service-controls/docs/ingress-egress-rules",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "Disable the VPC-SC perimeter completely."
+   },
+   {
+    "letter": "B",
+    "len": 66,
+    "text": "Write custom bash scripts on an unmanaged VM to proxy SQL queries."
+   },
+   {
+    "letter": "C",
+    "len": 284,
+    "text": "Configure an Ingress Rule on the Service Perimeter specifying an Access Level (matching source IP 203.0.113.0/24), identity 'partner-reader@external-org.iam.gserviceaccount.com', service 'bigquery.googleapis.com', and selected read methods (bigquery.jobs.create, bigquery.tables.get)."
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Make the dataset public on the internet."
+   }
+  ],
+  "ratio": 5.84
+ },
+ {
+  "id": "PCA-D4-038",
+  "subtopic": "FinOps: Cloud Storage Autoclass for Automated Tiering",
+  "caseStudy": "none",
+  "scenario": "An enterprise stores 20 Petabytes of unstructured document data with completely unpredictable access patterns (some files accessed 50 times in a week, others unaccessed for 2 years). Manually managing lifecycle transition rules is complex and risks unexpected retrieval/transition charges when older files are accessed. What Cloud Storage feature automates tier transitions with zero retrieval fees?",
+  "correct": "D",
+  "clave_len": 292,
+  "explanation": "Cloud Storage Autoclass automatically transitions objects between Standard, Nearline, Coldline, and Archive storage classes based on access patterns. Unlike standard lifecycle rules, Autoclass charges no retrieval fees or transition fees when colder objects are accessed.",
+  "doc": "https://cloud.google.com/storage/docs/autoclass",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "Keep all 20PB in Standard tier manually."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Download all data to an on-premises USB thumb drive."
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Move all data to Archive storage and never touch it again."
+   },
+   {
+    "letter": "D",
+    "len": 292,
+    "text": "Enable Cloud Storage Autoclass on the bucket, which automatically transitions objects to Nearline, Coldline, or Archive based on each individual object's last access time, and instantly transitions objects back to Standard upon access with zero retrieval fees or lifecycle transition charges."
+   }
+  ],
+  "ratio": 5.84
+ },
+ {
+  "id": "PCA-D4-030",
+  "subtopic": "Observability: Cloud Error Reporting & Issue Grouping",
+  "caseStudy": "none",
+  "scenario": "A fleet of microservices across GKE and Cloud Run generates 10,000 unhandled exceptions daily in application logs. Developers struggle to identify which bug is the most frequent or which new exception appeared after the latest release. What Google Cloud observability tool automatically parses stack traces, groups identical exceptions into discrete issues, and sends notifications when new bugs appear?",
+  "correct": "D",
+  "clave_len": 256,
+  "explanation": "Google Cloud Error Reporting analyzes application logs, parses stack traces across major programming languages, groups identical exceptions, tracks resolution status, and triggers alerts when novel error signatures appear.",
+  "doc": "https://cloud.google.com/error-reporting/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Delete all error logs before they are written."
+   },
+   {
+    "letter": "B",
+    "len": 49,
+    "text": "Read raw JSON logs in Logs Explorer line by line."
+   },
+   {
+    "letter": "C",
+    "len": 37,
+    "text": "Disable all try/catch blocks in code."
+   },
+   {
+    "letter": "D",
+    "len": 256,
+    "text": "Enable Google Cloud Error Reporting, which automatically extracts stack traces from Cloud Logging (for Java, Python, Go, Node.js, .NET), groups duplicate stack traces into tracked issue groups, calculates error frequencies, and alerts on new error classes."
+   }
+  ],
+  "ratio": 5.82
+ },
+ {
+  "id": "PCA-D6-010",
+  "subtopic": "Regional Persistent Disk (repd) Force-Attach Failover",
+  "caseStudy": "none",
+  "scenario": "A stateful database instance runs on a single Compute Engine VM in us-central1-a attached to a Regional Persistent Disk (repd) synchronously replicated to us-central1-b. When zone us-central1-a crashes, the primary VM becomes unresponsive. An automated recovery script launches a standby VM in us-central1-b. How should the script attach the regional disk to the standby VM when the original VM cannot be cleanly detached?",
+  "correct": "C",
+  "clave_len": 260,
+  "explanation": "Compute Engine supports force-attaching a Regional Persistent Disk to a new instance in the secondary replica zone. This breaks the stale lock from the dead VM and attaches the synchronously replicated disk to the failover VM instantly.",
+  "doc": "https://cloud.google.com/compute/docs/disks/regional-persistent-disk#force_attaching_a_regional_disk",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 57,
+    "text": "Wait 48 hours for zone us-central1-a to come back online."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Create a new blank empty disk and start with no data."
+   },
+   {
+    "letter": "C",
+    "len": 260,
+    "text": "Attach the Regional Persistent Disk to the standby VM using the '--force-attach' flag (or force_attach API parameter), which forcefully detaches the disk from the unreachable dead VM in zone A and attaches it to the healthy standby VM in zone B within seconds."
+   },
+   {
+    "letter": "D",
+    "len": 25,
+    "text": "Delete the regional disk."
+   }
+  ],
+  "ratio": 5.78
+ },
+ {
+  "id": "PCA-D3-015",
+  "subtopic": "Customer-Supplied Encryption Keys (CSEK)",
+  "caseStudy": "none",
+  "scenario": "A sovereign government client requires that raw AES-256 encryption keys protecting Compute Engine persistent disks and Cloud Storage buckets must never be stored, cached, or retained on Google Cloud infrastructure under any circumstances. The customer provides raw key strings in every API call. What encryption model is required?",
+  "correct": "B",
+  "clave_len": 250,
+  "explanation": "Customer-Supplied Encryption Keys (CSEK) requires the client to supply raw AES-256 keys in every API request. Google uses the key in ephemeral RAM to encrypt/decrypt data and discards it immediately without storing it in Cloud KMS or any database.",
+  "doc": "https://cloud.google.com/compute/docs/disks/customer-supplied-encryption",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 48,
+    "text": "Google Default Encryption (Google-managed keys)."
+   },
+   {
+    "letter": "B",
+    "len": 250,
+    "text": "Customer-Supplied Encryption Keys (CSEK), where the client supplies the raw 256-bit AES key in the headers of every read/write API call, and Google retains the key only in ephemeral memory during the request without ever persisting it to disk or KMS."
+   },
+   {
+    "letter": "C",
+    "len": 28,
+    "text": "Disable encryption entirely."
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "Customer-Managed Encryption Keys (CMEK) with Cloud KMS."
+   }
+  ],
+  "ratio": 5.73
+ },
+ {
+  "id": "PCA-D6-029",
+  "subtopic": "Altostrat Media: Multi-Region Spanner Disaster Recovery",
+  "caseStudy": "altostrat_media",
+  "scenario": "Altostrat Media operates its global player identity and inventory database on Cloud Spanner. During a major regional network outage affecting us-central1, the game must remain 100% playable for millions of active mobile players worldwide with zero lost in-game purchases and zero database failover downtime. What Spanner instance configuration guarantees this resiliency?",
+  "correct": "D",
+  "clave_len": 291,
+  "explanation": "The nam3 multi-region Spanner configuration provides 5 replicas across 3 distinct regions (us-central1, us-east1, us-east4). If us-central1 fails, the remaining 3 replicas maintain Paxos quorum, guaranteeing continuous zero-loss transactions and 99.999% SLA.",
+  "doc": "https://cloud.google.com/spanner/docs/multi-region-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "Single-region Spanner instance in us-central1 with hourly backups."
+   },
+   {
+    "letter": "B",
+    "len": 53,
+    "text": "Store player data in local mobile phone storage only."
+   },
+   {
+    "letter": "C",
+    "len": 35,
+    "text": "Cloud SQL for MySQL on a single VM."
+   },
+   {
+    "letter": "D",
+    "len": 291,
+    "text": "Deploy Cloud Spanner with multi-region configuration 'nam3' (dual-region with witness: 2 read-write in us-central1, 2 read-write in us-east1, 1 witness in us-east4), ensuring that if us-central1 fails completely, Paxos consensus continues uninterrupted in us-east1 with 99.999% availability."
+   }
+  ],
+  "ratio": 5.67
+ },
+ {
+  "id": "PCA-D6-004",
+  "subtopic": "GKE Regional Cluster vs Zonal Cluster Reliability",
+  "caseStudy": "none",
+  "scenario": "A fintech production application on GKE experiences downtime during regular Kubernetes master maintenance upgrades because the cluster was provisioned as a Zonal Cluster with a single master control plane VM. To achieve a 99.95% control plane SLA and survive the loss of any single availability zone with zero control plane interruption, what GKE architecture must be provisioned?",
+  "correct": "B",
+  "clave_len": 267,
+  "explanation": "GKE Regional Clusters deploy 3 replicated control plane master instances across 3 separate zones in a region. This provides high availability during master upgrades and zonal outages, backed by Google's 99.95% SLA.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/regional-clusters",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Deploy a single-zone cluster with 100 worker nodes."
+   },
+   {
+    "letter": "B",
+    "len": 267,
+    "text": "Provision a GKE Regional Cluster, which replicates the Kubernetes control plane (API server, etcd) across 3 distinct zones in the region and distributes worker node pools across multiple zones, delivering a 99.95% SLA and zero-downtime rolling control plane upgrades."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Disable all Kubernetes cluster upgrades forever."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Deploy Kubernetes on a single Raspberry Pi."
+   }
+  ],
+  "ratio": 5.64
+ },
+ {
+  "id": "PCA-D5-012",
+  "subtopic": "Google Distributed Cloud Edge (GDC Edge) Implementation",
+  "caseStudy": "none",
+  "scenario": "A high-speed manufacturing assembly line requires optical computer vision defect inspection on circuit boards moving at 5 meters per second. Image classification latency must remain strictly under 5 milliseconds. Cellular or internet round-trips to the nearest Google Cloud region take 30ms, which is too slow. What Google Cloud edge infrastructure should you deploy on factory premises?",
+  "correct": "B",
+  "clave_len": 298,
+  "explanation": "Google Distributed Cloud Edge (GDC Edge) brings fully managed Google Cloud infrastructure and services directly to customer on-premises edge locations, enabling local GPU-accelerated Kubernetes workloads to execute sub-5ms low-latency inference.",
+  "doc": "https://cloud.google.com/distributed-cloud/edge/docs",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 53,
+    "text": "Route all images over public internet to us-central1."
+   },
+   {
+    "letter": "B",
+    "len": 298,
+    "text": "Deploy Google Distributed Cloud Edge (GDC Edge) hardware appliances on factory premises, running local GPU-accelerated Kubernetes clusters managed via Google Cloud Console, executing real-time ML inference locally with sub-5ms latency and uploading aggregated telemetry to the cloud asynchronously."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Have human workers inspect circuit boards with magnifying glasses."
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Install a desktop PC running Windows 95."
+   }
+  ],
+  "ratio": 5.62
+ },
+ {
+  "id": "PCA-D5-013",
+  "subtopic": "Cloud Run Concurrency & Performance Tuning",
+  "caseStudy": "none",
+  "scenario": "A Node.js REST API on Cloud Run makes asynchronous database calls to Cloud SQL. By default, Cloud Run sets concurrency = 80 (allowing up to 80 concurrent requests per container instance). SREs notice that under high concurrency, CPU utilization remains low (20%), but container instances scale up prematurely because concurrency was lowered to 1 by a novice developer. How should concurrency be tuned for optimal cost and throughput?",
+  "correct": "B",
+  "clave_len": 215,
+  "explanation": "For asynchronous, non-blocking I/O workloads (Node.js, Go, Async Python), higher concurrency (80-250) allows each container instance to handle multiple simultaneous requests while waiting on database responses, reducing container instance counts and cloud spend.",
+  "doc": "https://cloud.google.com/run/docs/about-instance-concurrency",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 30,
+    "text": "Disable all asynchronous code."
+   },
+   {
+    "letter": "B",
+    "len": 215,
+    "text": "Configure Cloud Run concurrency to a higher value (e.g., 80 to 250) suited for non-blocking I/O async event loops, maximizing throughput per container instance and reducing total running instances and billing costs."
+   },
+   {
+    "letter": "C",
+    "len": 32,
+    "text": "Deploy 1,000 Compute Engine VMs."
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Keep concurrency = 1 to force 1 instance per request."
+   }
+  ],
+  "ratio": 5.61
+ },
+ {
+  "id": "PCA-D3-038",
+  "subtopic": "Cloud Armor: Named IP Lists & Geo-Blocking",
+  "caseStudy": "none",
+  "scenario": "An enterprise web service is only licensed to operate in the United States and Canada. Furthermore, traffic from known malicious Tor exit nodes and suspicious IP ranges must be blocked before reaching backend VMs. How should you configure Cloud Armor Security Policies?",
+  "correct": "A",
+  "clave_len": 277,
+  "explanation": "Google Cloud Armor natively supports geographic filtering via origin.region_code expressions and Google-curated Threat Intelligence Named IP Lists (e.g. Tor exit nodes, search engine crawlers, threat actors) evaluated directly at Google's global Anycast edge.",
+  "doc": "https://cloud.google.com/armor/docs/rules-language-reference",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 277,
+    "text": "Configure Cloud Armor Security Policy rules using geographic expressions (e.g., origin.region_code != 'US' && origin.region_code != 'CA') and integrate Google-managed Named IP Lists (e.g. evaluatePreconfiguredExpr('anon-threat-intel')) to drop traffic at Google's edge network."
+   },
+   {
+    "letter": "B",
+    "len": 56,
+    "text": "Use static iptables rules on a single VM in us-central1."
+   },
+   {
+    "letter": "C",
+    "len": 47,
+    "text": "Disable all incoming network traffic worldwide."
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "Inspect user passports manually over webcams."
+   }
+  ],
+  "ratio": 5.61
+ },
+ {
+  "id": "PCA-D3-016",
+  "subtopic": "Confidential VMs & AMD SEV",
+  "caseStudy": "none",
+  "scenario": "A banking consortium wants to run multi-party financial fraud detection algorithms on shared datasets containing sensitive financial transactions. The regulatory mandate requires that data must remain encrypted not only at rest (on disk) and in transit (over network), but also in-use (while loaded in physical CPU and RAM registers), preventing hypervisor administrators or memory scraping rootkits from inspecting plaintext memory. What Compute Engine feature enables this?",
+  "correct": "A",
+  "clave_len": 209,
+  "explanation": "Google Cloud Confidential VMs use AMD SEV (Secure Encrypted Virtualization) hardware features to encrypt VM memory with dedicated hardware keys generated inside the CPU, ensuring that data is encrypted while in-use (in RAM) with zero code changes.",
+  "doc": "https://cloud.google.com/confidential-computing/confidential-vm/docs/about-cvm",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 209,
+    "text": "Deploy Google Cloud Confidential VMs (powered by AMD Secure Encrypted Virtualization / SEV), which encrypts memory contents with hardware-generated per-VM cryptographic keys generated inside the CPU processor."
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "Run VMs on local developer laptops."
+   },
+   {
+    "letter": "C",
+    "len": 37,
+    "text": "Standard Compute Engine N1 instances."
+   },
+   {
+    "letter": "D",
+    "len": 40,
+    "text": "Compress memory with gzip in user-space."
+   }
+  ],
+  "ratio": 5.6
+ },
+ {
+  "id": "PCA-D3-039",
+  "subtopic": "Context-Aware Access for Google Cloud Console & APIs",
+  "caseStudy": "none",
+  "scenario": "An enterprise CISO mandates that developers and administrators can only access the Google Cloud Console and execute gcloud CLI commands if they are using corporate-managed laptops running an encrypted disk, current OS patch level, and connecting from authorized corporate IP addresses. Access from personal, unmanaged devices must be blocked even if valid user passwords and MFA are provided. What solution enforces this?",
+  "correct": "D",
+  "clave_len": 302,
+  "explanation": "Context-Aware Access (BeyondCorp Enterprise) uses Access Context Manager to evaluate contextual signals (user identity, device management state, disk encryption, OS patch level, geographic location) before granting access to Google Cloud Console, APIs, and SAML applications.",
+  "doc": "https://cloud.google.com/context-aware-access/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 59,
+    "text": "Lock developers in a physical room without internet access."
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "Rely on standard username and passwords."
+   },
+   {
+    "letter": "C",
+    "len": 63,
+    "text": "Disable the Google Cloud Console for all employees permanently."
+   },
+   {
+    "letter": "D",
+    "len": 302,
+    "text": "Configure Context-Aware Access (Access Context Manager) in Google Cloud / Google Workspace, deploying Endpoint Verification on corporate laptops and creating Access Levels that evaluate device posture (OS version, disk encryption, screen lock) and IP subnet before granting access to Google Cloud APIs."
+   }
+  ],
+  "ratio": 5.59
+ },
+ {
+  "id": "PCA-D3-049",
+  "subtopic": "EHR Healthcare: Security Posture Dashboard & SCC",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "EHR Healthcare's Chief Compliance Officer requires an executive dashboard that continuously evaluates all Google Cloud resources against the HIPAA Security Rule (45 CFR § 164.312), reporting misconfigurations (e.g. unencrypted disks, public buckets, open firewall ports) in real-time with compliance percentage scores. What Google Cloud native dashboard provides this capability?",
+  "correct": "C",
+  "clave_len": 218,
+  "explanation": "Security Command Center (SCC) includes native Compliance Dashboards and the Security Posture Service with predefined regulatory benchmarks (HIPAA, PCI-DSS, CIS, ISO 27001), continuously mapping findings to regulatory requirements.",
+  "doc": "https://cloud.google.com/security-command-center/docs/compliance-dashboard",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "Install custom nagios plugins on developer laptops."
+   },
+   {
+    "letter": "B",
+    "len": 32,
+    "text": "Disable all security monitoring."
+   },
+   {
+    "letter": "C",
+    "len": 218,
+    "text": "Security Command Center (SCC) Security Health Analytics and Security Posture Service, applying the built-in 'HIPAA' compliance profile to continuously evaluate resource posture and report compliance drift in real-time."
+   },
+   {
+    "letter": "D",
+    "len": 34,
+    "text": "A spreadsheet updated once a year."
+   }
+  ],
+  "ratio": 5.59
+ },
+ {
+  "id": "PCA-D3-036",
+  "subtopic": "Security Command Center: VM Threat Detection",
+  "caseStudy": "none",
+  "scenario": "An enterprise security architect wants to detect in-memory malware, rootkits, and unauthorized cryptocurrency miners running inside Compute Engine guest VMs without installing third-party agent software inside the VM OS (which could degrade CPU performance or be bypassed if root is compromised). What Google Cloud native capability provides agentless in-memory threat detection?",
+  "correct": "C",
+  "clave_len": 215,
+  "explanation": "VM Threat Detection (VMTD) in Security Command Center Premium is an agentless service that scans guest VM memory from the hypervisor layer. Because it operates outside the guest OS, it cannot be tampered with or disabled by attackers who gain root access inside the VM.",
+  "doc": "https://cloud.google.com/security-command-center/docs/concepts-vm-threat-detection-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Install 5 competing antivirus agents on every VM."
+   },
+   {
+    "letter": "B",
+    "len": 29,
+    "text": "Disable all virtual machines."
+   },
+   {
+    "letter": "C",
+    "len": 215,
+    "text": "Enable Virtual Machine Threat Detection (VMTD) in Security Command Center Premium, which performs agentless memory scanning directly from the underlying Google Cloud hypervisor without guest OS performance overhead."
+   },
+   {
+    "letter": "D",
+    "len": 38,
+    "text": "Reboot VMs every hour to clear memory."
+   }
+  ],
+  "ratio": 5.56
+ },
+ {
+  "id": "PCA-D3-017",
+  "subtopic": "Secret Manager Automatic Rotation",
+  "caseStudy": "none",
+  "scenario": "An enterprise requires that all database passwords and API tokens stored in Secret Manager must be rotated automatically every 30 days. When rotation occurs, Secret Manager must trigger a service that generates a new password, updates the Cloud SQL database user, tests the connection, and publishes the new active secret version. How should you design this automated workflow?",
+  "correct": "A",
+  "clave_len": 281,
+  "explanation": "Secret Manager supports automatic rotation schedules. When a rotation period triggers, Secret Manager sends a notification to a Pub/Sub topic, which triggers a Cloud Function to orchestrate updating the external system (e.g. Cloud SQL) and activating the new secret version.",
+  "doc": "https://cloud.google.com/secret-manager/docs/rotating-secrets",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 281,
+    "text": "Configure a rotation schedule (rotation_period = '2592000s') on the Secret Manager secret, configuring a Cloud Pub/Sub topic subscription that triggers a Cloud Function (or Cloud Run) to execute the rotation lifecycle (create new version -> update database -> destroy old version)."
+   },
+   {
+    "letter": "B",
+    "len": 31,
+    "text": "Disable all database passwords."
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "Hardcode passwords directly in application container Dockerfiles."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Write passwords on sticky notes and replace them monthly."
+   }
+  ],
+  "ratio": 5.51
+ },
+ {
+  "id": "PCA-D4-036",
+  "subtopic": "FinOps: BigQuery Editions vs Flat-Rate Migration",
+  "caseStudy": "none",
+  "scenario": "An enterprise is migrating away from legacy BigQuery annual Flat-Rate commitments. Their legacy workload used 2,000 fixed slots 24/7, but usage graphs show that overnight slot usage drops to 100 slots, while daytime peaks reach 3,500 slots. How should you architect the new BigQuery Editions reservation structure to lower annual costs while supporting daytime peak surges?",
+  "correct": "D",
+  "clave_len": 268,
+  "explanation": "BigQuery Editions decouples baseline capacity from peak bursting. Setting a low baseline (100 slots) with dynamic autoscaling up to 3,500 slots ensures peak performance during business hours while eliminating waste on idle slots overnight.",
+  "doc": "https://cloud.google.com/bigquery/docs/editions-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Switch to on-demand pricing with no slot controls."
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "Purchase 3,500 fixed baseline slots 24/7."
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "Delete BigQuery and build a database in Microsoft Excel."
+   },
+   {
+    "letter": "D",
+    "len": 268,
+    "text": "Configure BigQuery Enterprise Edition with a Baseline of 100 slots (committed capacity for steady-state minimums) and configure dynamic Autoscaling up to a maximum of 3,500 slots during peak business hours, billing for surge slots only during active execution seconds."
+   }
+  ],
+  "ratio": 5.47
+ },
+ {
+  "id": "PCA-D5-017",
+  "subtopic": "Dataflow: Exactly-Once Processing with BigQuery IO Storage Write API",
+  "caseStudy": "none",
+  "scenario": "A streaming financial transaction pipeline running on Cloud Dataflow writes records into BigQuery. The pipeline must guarantee strictly Exactly-Once delivery semantics (no duplicate rows inserted even during pipeline worker restarts) while supporting 500,000 rows per second at lower cost than legacy streaming insert APIs. Which BigQuery insertion mechanism should the Dataflow pipeline utilize?",
+  "correct": "A",
+  "clave_len": 220,
+  "explanation": "BigQuery Storage Write API provides high-performance, cost-effective gRPC streaming ingestion with support for robust stream offsets, enabling Dataflow to achieve strict Exactly-Once semantics at scale.",
+  "doc": "https://cloud.google.com/bigquery/docs/write-api",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 220,
+    "text": "Use Apache Beam BigQueryIO with Method.STORAGE_WRITE_API (or STORAGE_API_AT_LEAST_ONCE with deduplication), leveraging gRPC streaming with stream offsets to guarantee exactly-once persistence and 5x lower ingestion cost."
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "Write raw CSV files to local disk."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Execute INSERT INTO SQL queries inside a loop."
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "Legacy tabledata.insertAll streaming API."
+   }
+  ],
+  "ratio": 5.45
+ },
+ {
+  "id": "PCA-D5-033",
+  "subtopic": "Altostrat Media: Cloud Run WebSockets for Cockpit Telemetry",
+  "caseStudy": "altostrat_media",
+  "scenario": "HRL fan web apps connect via persistent WebSockets to receive real-time 3D flight coordinate streams (10 updates/sec). Cloud Run natively supports WebSockets with HTTP/1.1 and HTTP/2. How should Cloud Run timeout settings be configured to maintain persistent, long-lived WebSocket sessions during a 2-hour live race window?",
+  "correct": "A",
+  "clave_len": 247,
+  "explanation": "Cloud Run natively supports persistent WebSocket connections with request timeouts up to 3600 seconds (60 minutes). Combining max timeout with client-side heartbeat ping/pong maintains persistent real-time streaming.",
+  "doc": "https://cloud.google.com/run/docs/triggering/websockets",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 247,
+    "text": "Configure the Cloud Run service timeout to 3600 seconds (60 minutes, the maximum supported timeout for HTTP/WebSocket requests on Cloud Run) and implement client-side heartbeat ping/pong to keep WebSocket connections open and reconnect seamlessly."
+   },
+   {
+    "letter": "B",
+    "len": 52,
+    "text": "Use Cloud Functions 1st gen with 60-second timeouts."
+   },
+   {
+    "letter": "C",
+    "len": 52,
+    "text": "Disable WebSockets and use HTTP polling every 100ms."
+   },
+   {
+    "letter": "D",
+    "len": 32,
+    "text": "Set request timeout to 1 second."
+   }
+  ],
+  "ratio": 5.45
+ },
+ {
+  "id": "PCA-D3-053",
+  "subtopic": "EHR Healthcare: BigQuery De-Identification with Policy Tags",
+  "caseStudy": "ehr_healthcare",
+  "scenario": "In EHR Healthcare's centralized BigQuery data warehouse, data analysts need to query patient demographics (age, state, diagnosis) for epidemiology studies, but patient Social Security Numbers and Medical Record Numbers must be automatically masked (displaying only 'XXX-XX-1234' or a SHA-256 hash) for users without the 'Fine-Grained Security Reader' IAM role. How should you configure BigQuery?",
+  "correct": "C",
+  "clave_len": 250,
+  "explanation": "BigQuery dynamic Data Masking uses Policy Tags to transform sensitive column values at query runtime (e.g. displaying only last 4 digits or SHA-256 hash) based on the querying user's IAM role, without duplicating data or altering underlying tables.",
+  "doc": "https://cloud.google.com/bigquery/docs/column-data-masking-intro",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Delete the SSN column from all hospital databases."
+   },
+   {
+    "letter": "B",
+    "len": 54,
+    "text": "Create duplicate tables manually for every user group."
+   },
+   {
+    "letter": "C",
+    "len": 250,
+    "text": "Create a Policy Tag Taxonomy in Dataplex / Data Catalog with a Data Masking Rule (e.g., Last 4 characters unmasked, Hash, or Nullify), tag the SSN column, and grant 'Masked Reader' to general analysts and 'Fine-Grained Reader' to compliance officers."
+   },
+   {
+    "letter": "D",
+    "len": 34,
+    "text": "Grant BigQuery Admin to all users."
+   }
+  ],
+  "ratio": 5.43
+ },
+ {
+  "id": "PCA-D4-042",
+  "subtopic": "SRE: Disaster Recovery Topologies: Warm Standby vs Hot-Hot",
+  "caseStudy": "none",
+  "scenario": "An enterprise architect is evaluating DR strategies for a Tier-1 financial platform requiring RTO < 5 seconds and RPO = 0 vs a Tier-2 internal HR application requiring RTO < 2 hours and RPO < 1 hour. What disaster recovery architectures meet these respective business tiers cost-effectively?",
+  "correct": "D",
+  "clave_len": 302,
+  "explanation": "Tiered DR alignment matches technical architecture to business recovery objectives. Tier-1 requires Hot-Hot multi-region with Cloud Spanner for instant zero-loss failover. Tier-2 uses Warm Standby with Cloud SQL cross-region replicas to achieve 2-hour RTO at a fraction of the infrastructure cost.",
+  "doc": "https://cloud.google.com/architecture/disaster-recovery-scenarios-for-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 33,
+    "text": "Use paper backups for both tiers."
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Deploy Active-Active multi-region Cloud Spanner for all Tier-1 and Tier-2 applications."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Do not implement any disaster recovery strategy."
+   },
+   {
+    "letter": "D",
+    "len": 302,
+    "text": "For Tier-1: Deploy Active-Active (Hot-Hot) multi-region compute behind a Global Load Balancer with Cloud Spanner multi-region (RTO < 5s, RPO 0). For Tier-2: Deploy Warm Standby / Backup & Restore using Cloud SQL with cross-region read replicas promoted on-demand (RTO < 2h, RPO < 1h), optimizing costs."
+   }
+  ],
+  "ratio": 5.39
+ },
+ {
+  "id": "PCA-D6-007",
+  "subtopic": "MIG Auto-Scaling: Predictive Autoscaling vs Target CPU",
+  "caseStudy": "none",
+  "scenario": "An enterprise streaming media platform experiences massive, predictable morning traffic surges every day at 08:00 AM. Reactive CPU-based autoscaling takes 5 to 10 minutes to detect high CPU and spin up new VMs, causing morning latency spikes. How should the Managed Instance Group autoscaler be optimized to provision capacity in advance of recurring surges?",
+  "correct": "A",
+  "clave_len": 275,
+  "explanation": "Predictive Autoscaling for Compute Engine MIGs analyzes historical load metrics to forecast future traffic surges and scales out instances ahead of time, eliminating cold-start latency spikes for predictable recurring daily workloads.",
+  "doc": "https://cloud.google.com/compute/docs/autoscaler/predictive-autoscaling",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 275,
+    "text": "Enable Predictive Autoscaling (mode = 'PREDICTIVE_ONLY' or 'OPTIMIZE_AVAILABILITY') on the Managed Instance Group autoscaler, which uses machine learning to analyze historical daily and weekly traffic patterns and scales up VM capacity minutes before forecasted surges begin."
+   },
+   {
+    "letter": "B",
+    "len": 30,
+    "text": "Lower the CPU threshold to 1%."
+   },
+   {
+    "letter": "C",
+    "len": 81,
+    "text": "Have an engineer wake up at 07:30 AM every day to click 'add instances' manually."
+   },
+   {
+    "letter": "D",
+    "len": 43,
+    "text": "Disable autoscaling and run 1,000 VMs 24/7."
+   }
+  ],
+  "ratio": 5.36
+ }
+]

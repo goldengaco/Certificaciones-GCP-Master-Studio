@@ -1,0 +1,202 @@
+[
+ {
+  "id": "PCA-D6-017",
+  "scenario": "An enterprise messaging architecture handles 10 billion events daily. An architect asks which configuration must be enabled in Terraform to ensure that Cloud Pub/Sub topics automatically survive the failure of an entire Google Cloud region without message loss or downtime. What is the correct answer?",
+  "correct": "C",
+  "clave_len": 300,
+  "densidad_clave": 1,
+  "eco_clave": 7,
+  "explanation": "Cloud Pub/Sub is a globally distributed service. Global topics and subscriptions automatically route traffic through Google's nearest operational endpoints and replicate message storage synchronously across multiple availability zones.",
+  "doc": "https://cloud.google.com/pubsub/docs/overview#architecture",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 340,
+    "densidad": 5,
+    "eco": 2,
+    "text": "Set a message storage policy on every topic in Terraform, restricting allowed_persistence_regions to us-central1 and us-east1 so that message storage is pinned to two regions and Pub/Sub can move stored messages between them when one of the two becomes unavailable during a regional incident, with topic message retention set to seven days."
+   },
+   {
+    "letter": "B",
+    "len": 270,
+    "densidad": 5,
+    "eco": 3,
+    "text": "Create matching topics in two regions and run a Dataflow Pub/Sub-to-Pub/Sub streaming job that mirrors every published message into the secondary topic, with subscribers deduplicating on message_id so that either topic can serve the whole fleet after a regional failure."
+   },
+   {
+    "letter": "C",
+    "len": 300,
+    "densidad": 1,
+    "eco": 7,
+    "text": "Cloud Pub/Sub is inherently a global service; topic data and message storage are automatically replicated synchronously across multiple zones within a region, and Google's global routing infrastructure automatically directs publishers and subscribers to available regions without extra configuration."
+   },
+   {
+    "letter": "D",
+    "len": 287,
+    "densidad": 5,
+    "eco": 2,
+    "text": "Pin publishers and subscribers to the regional service endpoints, for example us-central1-pubsub.googleapis.com, in the Terraform-managed client configuration, and set the client libraries to retry against the us-east1 endpoint whenever the primary regional endpoint returns UNAVAILABLE."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-048",
+  "scenario": "EHR Healthcare extracts millions of unstructured free-text clinical notes dictated by physicians (e.g., 'Patient John Doe, born 05/12/1975, presented with acute bronchitis'). Before these notes can be used to train clinical NLP models, all embedded patient names, dates, phone numbers, and addresses must be masked (replaced with '[REDACTED_NAME]', '[REDACTED_DATE]'). What service performs this automated inspection and transformation?",
+  "correct": "D",
+  "clave_len": 283,
+  "densidad_clave": 7,
+  "eco_clave": 1,
+  "explanation": "Sensitive Data Protection (Cloud DLP) utilizes machine learning and pattern matching to detect unstructured PHI infoTypes in free-text clinical notes, replacing sensitive entities with infoType placeholders or surrogate tokens.",
+  "doc": "https://cloud.google.com/sensitive-data-protection/docs/transforming-sensitive-data",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 306,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Load the notes into a Cloud Healthcare API FHIR store as DocumentReference resources and run the store-level de-identify operation with a FhirConfig and DicomConfig that strip identifying resource elements and DICOM tags, writing the results into a second FHIR store for the clinical NLP training pipeline."
+   },
+   {
+    "letter": "B",
+    "len": 270,
+    "densidad": 0,
+    "eco": 2,
+    "text": "Run every clinical note through the Healthcare Natural Language API, whose entity extraction returns medical concepts, relations and their character offsets mapped to standard clinical vocabularies, and feed those annotations straight into the NLP model training corpus."
+   },
+   {
+    "letter": "C",
+    "len": 253,
+    "densidad": 2,
+    "eco": 2,
+    "text": "Load the notes into BigQuery, tag the note_text column with a policy taxonomy tag and apply a dynamic data masking rule using the SHA256 masking routine, so that any principal without the Fine-Grained Reader role receives a masked value for that column."
+   },
+   {
+    "letter": "D",
+    "len": 283,
+    "densidad": 7,
+    "eco": 1,
+    "text": "Use Sensitive Data Protection (Cloud DLP) InspectTemplates and DeidentifyTemplates configured with healthcare infoTypes (PERSON_NAME, DATE_OF_BIRTH, PHONE_NUMBER, US_STREET_ADDRESS) and CharacterMaskConfig / ReplaceWithInfoTypeConfig primitive transformations in a Dataflow pipeline."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-038",
+  "scenario": "An enterprise stores 20 Petabytes of unstructured document data with completely unpredictable access patterns (some files accessed 50 times in a week, others unaccessed for 2 years). Manually managing lifecycle transition rules is complex and risks unexpected retrieval/transition charges when older files are accessed. What Cloud Storage feature automates tier transitions with zero retrieval fees?",
+  "correct": "D",
+  "clave_len": 292,
+  "densidad_clave": 0,
+  "eco_clave": 8,
+  "explanation": "Cloud Storage Autoclass automatically transitions objects between Standard, Nearline, Coldline, and Archive storage classes based on access patterns. Unlike standard lifecycle rules, Autoclass charges no retrieval fees or transition fees when colder objects are accessed.",
+  "doc": "https://cloud.google.com/storage/docs/autoclass",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 296,
+    "densidad": 1,
+    "eco": 2,
+    "text": "Configure Object Lifecycle Management rules with age-based SetStorageClass actions on the bucket (Nearline at 30 days, Coldline at 90 days, Archive at 365 days) together with a matchesPrefix condition per department, so every object is demoted automatically as it ages with no operational effort."
+   },
+   {
+    "letter": "B",
+    "len": 289,
+    "densidad": 0,
+    "eco": 4,
+    "text": "Write a Cloud Function subscribed to the bucket's object change notifications that stamps Custom Time on every object each time it is read, then add lifecycle rules keyed on daysSinceCustomTime with 30, 90 and 365 day thresholds so that tiering tracks real access rather than creation age."
+   },
+   {
+    "letter": "C",
+    "len": 274,
+    "densidad": 0,
+    "eco": 2,
+    "text": "Enable Autoclass on the bucket and, to guarantee that genuinely cold documents reach the cheapest tier instead of stopping at Nearline, add an Object Lifecycle Management rule with a SetStorageClass action that moves anything whose age exceeds 365 days into Archive storage."
+   },
+   {
+    "letter": "D",
+    "len": 292,
+    "densidad": 0,
+    "eco": 8,
+    "text": "Enable Cloud Storage Autoclass on the bucket, which automatically transitions objects to Nearline, Coldline, or Archive based on each individual object's last access time, and instantly transitions objects back to Standard upon access with zero retrieval fees or lifecycle transition charges."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-022",
+  "scenario": "An enterprise GKE cluster hosts both general web microservices and heavy GPU-accelerated LLM inference workloads. GPU nodes (NVIDIA A100) are expensive ($3.67/hr per GPU). You must ensure that standard CPU web pods are never scheduled on GPU nodes, while ML inference pods are scheduled exclusively on GPU nodes. How should you configure the node pools and pod manifests?",
+  "correct": "D",
+  "clave_len": 198,
+  "densidad_clave": 5,
+  "eco_clave": 2,
+  "explanation": "Applying Kubernetes taints (nvidia.com/gpu:NoSchedule) repels standard pods from scheduling on expensive GPU nodes. Pods requiring GPUs declare matching tolerations and nodeAffinity to land exclusively on the dedicated GPU node pool.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/gpus#scheduling_gpu_workloads",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 223,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Create a dedicated Kubernetes namespace for the inference workloads with a ResourceQuota granting nvidia.com/gpu resources, and rely on the scheduler to place any pod that requests a GPU on the node pool that provides them."
+   },
+   {
+    "letter": "B",
+    "len": 219,
+    "densidad": 2,
+    "eco": 3,
+    "text": "Label the GPU node pool with accelerator=nvidia-a100 and add a matching nodeSelector to the ML inference pod specs, leaving the web microservice manifests untouched so the scheduler places them wherever capacity exists."
+   },
+   {
+    "letter": "C",
+    "len": 211,
+    "densidad": 0,
+    "eco": 4,
+    "text": "Add a podAntiAffinity rule to the web microservice deployments so that they avoid nodes already running inference pods, and enable the cluster autoscaler on both node pools so capacity follows the actual demand."
+   },
+   {
+    "letter": "D",
+    "len": 198,
+    "densidad": 5,
+    "eco": 2,
+    "text": "Apply a Kubernetes Taint (e.g. nvidia.com/gpu=present:NoSchedule) to the GPU node pool, and configure ML pod specifications with matching Tolerations and nodeSelector/nodeAffinity for GPU resources."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-019",
+  "scenario": "Knightmotives Automotive uses Cloud Bigtable to store billions of time-series sensor readings from connected vehicles. To support fleet monitoring queries, the database must write sensor metrics at high throughput without write hotspotting, while allowing engineers to efficiently retrieve the most recent 24 hours of data for a specific vehicle. How should the Bigtable row key be designed?",
+  "correct": "A",
+  "clave_len": 77,
+  "densidad_clave": 4,
+  "eco_clave": 0,
+  "explanation": "En Cloud Bigtable, comenzar la clave de fila con `vehicle_id` distribuye uniformemente las escrituras entre los diferentes nodos del clúster (evitando hotspots), y añadir un `reverse_timestamp` (`Long.MAX_VALUE - timestamp`) ordena lexicográficamente las lecturas más recientes en primer lugar para consultas rápidas.",
+  "doc": "https://cloud.google.com/bigtable/docs/schema-design-time-series",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "densidad": 4,
+    "eco": 0,
+    "text": "Usar una clave compuesta `vehicle_id#reverse_timestamp` para balancear nodos."
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "densidad": 0,
+    "eco": 0,
+    "text": "Usar únicamente el modelo del vehículo seguido de un valor aleatorio UUIDv4."
+   },
+   {
+    "letter": "C",
+    "len": 84,
+    "densidad": 0,
+    "eco": 0,
+    "text": "Usar un número entero autoincremental gestionado por una secuencia de base de datos."
+   },
+   {
+    "letter": "D",
+    "len": 77,
+    "densidad": 0,
+    "eco": 0,
+    "text": "Usar una clave de fila con marca de tiempo secuencial al inicio del registro."
+   }
+  ]
+ }
+]

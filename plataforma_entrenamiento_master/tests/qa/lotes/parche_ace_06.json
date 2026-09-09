@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D5-001",
+  "options": {
+   "A": "Grant roles/bigquery.dataEditor on dataset sales_dw and roles/bigquery.jobUser at the project level.",
+   "B": "Grant roles/bigquery.user at the project level, which bundles running query jobs with dataset access.",
+   "C": "Grant roles/bigquery.metadataViewer on sales_dw and roles/bigquery.jobUser at the project level."
+  },
+  "distractors": {
+   "A": "dataEditor is a superset of dataViewer: it carries bigquery.tables.delete and bigquery.tables.update on every table in sales_dw, so the analysts could drop or rewrite exactly the tables the scenario forbids them to touch.",
+   "B": "Granted at the project level, roles/bigquery.user includes bigquery.datasets.create, so the analysts could create new datasets, which the requirement rules out. It also grants no read access to the rows of the pre-existing sales_dw tables.",
+   "C": "metadataViewer exposes only dataset, table and routine metadata (schemas, sizes, timestamps). It does not include bigquery.tables.getData, so the query jobs are accepted but every SELECT against sales_dw returns Access Denied on the table data."
+  }
+ },
+ {
+  "id": "ACE-D4-034",
+  "options": {
+   "A": "gcloud compute instance-groups managed delete-instances worker-mig --region=us-central1 --instances=worker-mig-7abc",
+   "C": "gcloud compute instance-groups managed recreate-instances worker-mig --region=us-central1 --instances=worker-mig-7abc",
+   "D": "gcloud compute instances update worker-mig-7abc --zone=us-central1-a --deletion-protection --update-labels=state=quarantined"
+  },
+  "distractors": {
+   "A": "delete-instances does remove the VM from the group and triggers a replacement, but it deletes the instance and its persistent disks. The corrupted machine the engineer needs for offline forensics no longer exists.",
+   "C": "recreate-instances deletes the instance and rebuilds it from the instance template under the same name. The VM keeps its MIG membership and health checks, and the faulty state that had to be preserved is wiped by the rebuild.",
+   "D": "Deletion protection and a label do not change group membership: the MIG still owns the instance, keeps health-checking and auto-healing it, and its own delete call on a protected instance now fails, so the replacement is never provisioned."
+  }
+ },
+ {
+  "id": "ACE-D3-029",
+  "options": {
+   "A": "Reference the ConfigMap with envFrom.configMapRef and the Secret with envFrom.secretRef in the container spec, so every key is injected into the process environment at startup.",
+   "C": "List app-config and db-credentials directly under spec.containers[].volumeMounts with mountPath /etc/app/config and /etc/app/secrets, declaring no volumes in the Pod spec.",
+   "D": "Mount an emptyDir at /etc/app/config and /etc/app/secrets and add an initContainer that runs kubectl get configmap/secret -o yaml to write the files before the app container starts."
+  },
+  "distractors": {
+   "A": "envFrom projects the keys as environment variables, not as files: nothing ever appears under /etc/app/config or /etc/app/secrets. Environment values are also frozen at container start, whereas a mounted volume is refreshed when the ConfigMap changes.",
+   "C": "volumeMounts.name must match the name of a volume declared in spec.volumes, not the name of a ConfigMap or Secret object. With no matching volumes entry the API server rejects the Pod with 'volumeMounts[0].name not found', so nothing is mounted.",
+   "D": "This re-implements what the kubelet already does natively, and it fails closed: the Pod service account has no RBAC to read Secrets by default and the image would need kubectl, while the copied files are a one-time snapshot that never refreshes."
+  }
+ },
+ {
+  "id": "ACE-D3-045",
+  "options": {
+   "B": "Set the Deployment strategy to RollingUpdate with maxUnavailable: 2, so at most two of the five pods restart.",
+   "C": "Attach a HorizontalPodAutoscaler with minReplicas: 3 and maxReplicas: 10 to the web deployment.",
+   "D": "Spread the five replicas across separate nodes with a topologySpreadConstraint on kubernetes.io/hostname."
+  },
+  "distractors": {
+   "B": "maxUnavailable only constrains disruptions the Deployment controller itself causes while rolling out a new template. A node drain during an upgrade evicts pods through the Eviction API, which honours PodDisruptionBudgets and ignores the rollout strategy.",
+   "C": "An HPA sets the desired replica count; it cannot veto an eviction. A drain can evict four of the five running pods at once and the HPA only reschedules them afterwards, so availability drops below three replicas during the upgrade.",
+   "D": "Spreading limits how many replicas one node failure takes down, but it puts no ceiling on how many nodes are drained concurrently. A surge upgrade can cordon several nodes at the same time and still leave fewer than three pods serving."
+  }
+ },
+ {
+  "id": "ACE-D3-022",
+  "options": {
+   "B": "gcloud storage buckets create gs://corp-customer-receipts --location=US --default-storage-class=STANDARD --uniform-bucket-level-access",
+   "C": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=NEARLINE --uniform-bucket-level-access",
+   "D": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --public-access-prevention"
+  },
+  "distractors": {
+   "B": "--location=US provisions a multi-region bucket: Cloud Storage chooses the underlying regions itself, so the data is not pinned to the us-central1 / us-east1 pair and none of the dual-region guarantees (turbo replication, known RPO) apply.",
+   "C": "Every element matches except the storage class: NEARLINE is not STANDARD and it imposes a 30-day minimum storage duration plus per-GB retrieval charges on receipts that are read frequently right after upload.",
+   "D": "Public access prevention blocks anonymous and allUsers grants; it is an orthogonal control. Uniform bucket-level access is never enabled, so legacy per-object ACLs stay active and object-level grants can still diverge from the bucket policy."
+  }
+ },
+ {
+  "id": "ACE-D3-054",
+  "options": {
+   "A": "gcloud bigtable instances update ad-bidding-engine --cluster=cluster-europe-west1 --cluster-zone=europe-west1-b --cluster-num-nodes=4",
+   "B": "gcloud bigtable clusters create cluster-europe-west1 --instance=ad-bidding-engine --zone=us-central1-c --num-nodes=4 --storage-type=SSD",
+   "C": "gcloud bigtable instances create ad-bidding-engine-eu --cluster-config=id=cluster-europe-west1,zone=europe-west1-b,nodes=4"
+  },
+  "distractors": {
+   "A": "gcloud bigtable instances update only changes instance-level attributes such as the display name or the edition; it accepts no --cluster flags at all. A cluster is a separate child resource, created with gcloud bigtable clusters create.",
+   "B": "The command is right and the zone is wrong: us-central1-c places the replica in the same region as the primary, so European bidders keep crossing the Atlantic on every read and a us-central1 regional failure still takes both clusters down.",
+   "C": "This creates a second, independent Bigtable instance. Replication is established only between clusters that belong to the same instance, so ad-bidding-engine-eu starts empty and never receives writes from ad-bidding-engine."
+  }
+ },
+ {
+  "id": "ACE-D4-048",
+  "options": {
+   "A": "gcloud sql instances patch prod-db-1 --maintenance-window-day=SUN --maintenance-window-hour=14",
+   "B": "gcloud sql instances patch prod-db-1 --maintenance-release-channel=week5 --maintenance-window-hour=2",
+   "C": "gcloud sql instances patch prod-db-1 --maintenance-window-day=SUN --maintenance-window-any"
+  },
+  "distractors": {
+   "A": "Right flags, wrong value: --maintenance-window-hour takes the UTC hour the one-hour window starts at, so 14 schedules maintenance at 14:00 UTC on Sunday, well outside the mandated 02:00-03:00 UTC slot the compliance rule allows.",
+   "B": "--maintenance-release-channel only decides how early this instance gets an update relative to other instances (week5 is the late track); it schedules nothing. With no --maintenance-window-day, the hour applies to any day, weekdays included.",
+   "C": "--maintenance-window-any is the opposite of what is needed: its documented effect is to remove the user-specified maintenance window, leaving the instance eligible for maintenance at any day and hour, and it conflicts with the SUN value set alongside it."
+  }
+ },
+ {
+  "id": "ACE-D4-043",
+  "options": {
+   "B": "gcloud compute disks create analytics-data-disk-restored --zone=us-central1-a --source-disk=analytics-data-disk --type=pd-ssd",
+   "C": "gcloud compute images create analytics-data-disk-restored --source-snapshot=snapshot-analytics-clean --storage-location=us-central1",
+   "D": "gcloud compute disks create analytics-data-disk-restored --zone=us-central1-a --size=500GB --type=pd-ssd --physical-block-size=4096"
+  },
+  "distractors": {
+   "B": "--source-disk clones the live disk, and the live disk is the corrupted volume being recovered from. The clone reproduces the corruption byte for byte; the restore has to read from the verified snapshot with --source-snapshot.",
+   "C": "This creates a custom image, not a persistent disk. An image is a global resource that cannot be attached to an instance; it would still have to be materialised with gcloud compute disks create --image, so the restoration is not done.",
+   "D": "Size, type and zone are right but no data source is given, so the command returns a blank, unformatted 500 GB volume. The snapshot is never referenced and none of the analytics data is recovered."
+  }
+ },
+ {
+  "id": "ACE-D5-002",
+  "options": {
+   "A": "Grant roles/iam.serviceAccountTokenCreator to the engineer on app-runner@corp.iam.gserviceaccount.com.",
+   "B": "Grant roles/iam.serviceAccountAdmin to the engineer on project corp-prod to manage the service accounts.",
+   "D": "Grant roles/compute.admin to the engineer on corp-prod, replacing the roles/compute.instanceAdmin.v1 binding."
+  },
+  "distractors": {
+   "A": "serviceAccountTokenCreator grants the impersonation permissions (generateAccessToken, signJwt, signBlob) used to call APIs as the service account. Attaching one to a VM is gated by a different permission, iam.serviceAccounts.actAs, so the 403 persists.",
+   "B": "serviceAccountAdmin is the lifecycle role: create, delete, update and set the IAM policy of service accounts. It deliberately excludes iam.serviceAccounts.actAs, so the engineer can administer app-runner and still not attach it to an instance.",
+   "D": "compute.admin is a superset of instanceAdmin.v1 for Compute resources, but no Compute role reaches across to the service account resource. The instances.create call checks iam.serviceAccounts.actAs on app-runner, which is still missing."
+  }
+ },
+ {
+  "id": "ACE-D5-043",
+  "options": {
+   "A": "Grant roles/artifactregistry.admin on the repository us-docker.pkg.dev/corp-prod/apps.",
+   "C": "Grant roles/artifactregistry.reader on the repository plus roles/logging.logWriter on the project.",
+   "D": "Grant roles/storage.objectAdmin on the artifacts.corp-prod.appspot.com Cloud Storage bucket."
+  },
+  "distractors": {
+   "A": "admin does cover push and pull, but it also carries artifactregistry.repositories.delete and artifactregistry.repositories.setIamPolicy, the two capabilities the requirement explicitly forbids. It fails least privilege, not the push.",
+   "C": "reader provides downloadArtifacts, so the layer-cache pull works, but docker push needs artifactregistry.repositories.uploadArtifacts, which reader does not include; the build stops with a denied permission error on the very first layer upload.",
+   "D": "That is the legacy Container Registry model, where images were stored in a GCS bucket named artifacts.PROJECT-ID.appspot.com. Artifact Registry keeps images in Google-managed storage and authorises only through artifactregistry.* permissions."
+  }
+ },
+ {
+  "id": "ACE-D5-007",
+  "options": {
+   "B": "Grant roles/cloudkms.cryptoKeyEncrypterDecrypter to the Cloud Storage Service Agent on the target CryptoKey.",
+   "C": "Grant roles/cloudkms.admin to the Compute Engine Service Agent on the key ring that holds the CryptoKey.",
+   "D": "Grant roles/cloudkms.cryptoKeyDecrypter to the Compute Engine Service Agent on the target CryptoKey."
+  },
+  "distractors": {
+   "B": "Right role, wrong service agent: the Cloud Storage agent (service-PROJECT_NUMBER@gs-project-accounts.iam.gserviceaccount.com) wraps objects in buckets. Persistent disks are wrapped by the Compute Engine agent, which still has no binding on the key.",
+   "C": "cloudkms.admin manages keys, key rings, rotation schedules and IAM policies, but Google keeps the cryptographic operations out of it: it grants neither cryptoKeyVersions.useToEncrypt nor useToDecrypt, so the agent cannot wrap the disk key.",
+   "D": "cryptoKeyDecrypter only carries cryptoKeyVersions.useToDecrypt. Creating a CMEK disk first has to wrap the generated data-encryption key, which is an encrypt call, so provisioning fails even though an existing disk could be read."
+  }
+ },
+ {
+  "id": "ACE-D4-011",
+  "options": {
+   "A": "gcloud compute disks snapshot database-boot-disk --zone=us-central1-b --description=snapshot-pre-upgrade-db",
+   "C": "gcloud compute images create snapshot-pre-upgrade-db --source-disk=database-boot-disk --source-disk-zone=us-central1-b",
+   "D": "gcloud compute disks snapshot database-host-1 --zone=us-central1-b --snapshot-names=snapshot-pre-upgrade-db"
+  },
+  "distractors": {
+   "A": "--description only attaches free text to the resource. Without --snapshot-names the API generates the snapshot name itself, so the required snapshot-pre-upgrade-db name is never applied and the rollback procedure cannot address it.",
+   "C": "This produces a custom image, which is a global, non-incremental resource; gcloud also refuses to build one from a disk attached to a running instance unless --force is passed, at the risk of an inconsistent image. The rollback point must be a snapshot.",
+   "D": "Right command, wrong resource: database-host-1 is the VM instance, while gcloud compute disks snapshot takes a disk name, so the call fails with a disk not found error. The disk that must be captured is database-boot-disk."
+  }
+ },
+ {
+  "id": "ACE-D3-055",
+  "options": {
+   "B": "gcloud storage notification-configurations create --topic=projects/corp-finance/topics/invoice-events --event-types=OBJECT_METADATA_UPDATE gs://incoming-invoices-vault",
+   "C": "gcloud eventarc triggers create invoice-events --destination-run-service=invoice-processor --event-filters=type=google.cloud.storage.object.v1.finalized --location=us",
+   "D": "gcloud logging sinks create invoice-sink pubsub.googleapis.com/projects/corp-finance/topics/invoice-events --log-filter=resource.type=gcs_bucket"
+  },
+  "distractors": {
+   "B": "OBJECT_METADATA_UPDATE fires when the metadata of an object that already exists is changed; a new upload emits OBJECT_FINALIZE. The pipeline would stay silent for every new invoice and only react when someone edited an object's metadata.",
+   "C": "An Eventarc trigger delivers the event to the destination it names, here a Cloud Run service. It builds its own internal transport topic and never publishes to invoice-events, so the subscriber already attached to that topic receives nothing.",
+   "D": "A logging sink routes LogEntry records, not object notifications: it needs Cloud Storage Data Access audit logs to be enabled (off by default for storage.objects.create) and it delivers an audit log payload instead of the object metadata."
+  }
+ },
+ {
+  "id": "ACE-D3-062",
+  "options": {
+   "B": "Create a Storage Transfer Service job that pulls the daily Google Ads report exports into the marketing_dw dataset.",
+   "C": "Schedule a recurring BigQuery scheduled query over a Drive-backed external table holding the exported Ads data.",
+   "D": "Deploy a Cloud Composer environment running a daily Airflow DAG that calls the Google Ads API and loads marketing_dw."
+  },
+  "distractors": {
+   "B": "Storage Transfer Service moves objects between object stores (S3, Azure Blob, URL lists, other buckets). It cannot authenticate against the Google Ads API and its only sink is a Cloud Storage bucket, never a BigQuery dataset.",
+   "C": "A scheduled query re-runs SQL over data BigQuery can already reach, so somebody still has to export Ads and Analytics to Drive every day. That manual export is precisely the recurring ingestion the service is supposed to own.",
+   "D": "This does work, but it is the custom pipeline the requirement excludes: a DAG is Python code to write, test and maintain plus a permanently billed Composer environment, for a source BigQuery Data Transfer Service already supports natively."
+  }
+ },
+ {
+  "id": "ACE-D4-015",
+  "options": {
+   "B": "Run kubectl rollout history deployment api-deployment followed by kubectl rollout pause deployment api-deployment.",
+   "C": "Run kubectl rollout undo deployment api-deployment --to-revision=1 to return to the first recorded revision.",
+   "D": "Run kubectl set image deployment/api-deployment api=api:latest and kubectl rollout restart deployment api-deployment."
+  },
+  "distractors": {
+   "B": "pause only freezes the Deployment controller so later template changes are not rolled out; it reverts no ReplicaSet and terminates none of the crashing pods. The broken version keeps serving, and the deployment stays stuck until it is resumed.",
+   "C": "--to-revision=1 pins the rollback to the very first revision in the history rather than the previous one, reintroducing an old image and configuration. Omitting the flag (or --to-revision=0) is what selects the last revision.",
+   "D": "This rolls forward onto a mutable tag instead of reverting: api:latest can still resolve to the broken digest, and rollout restart merely recreates the pods of the current ReplicaSet, so the crash loop comes straight back."
+  }
+ },
+ {
+  "id": "ACE-D4-045",
+  "options": {
+   "B": "Network Intelligence Center: Firewall Insights.",
+   "C": "Network Intelligence Center: Connectivity Tests.",
+   "D": "Cloud Trace: distributed request latency view."
+  },
+  "distractors": {
+   "B": "Firewall Insights reports on firewall rule usage: shadowed rules, rules with no hits, overly permissive ranges. It measures policy hygiene, not throughput, latency or packet loss between regions.",
+   "C": "Connectivity Tests runs a static configuration analysis of one source and destination pair against routes, firewall rules and NAT. It answers whether a packet can reach the target, not how much loss the live path is showing.",
+   "D": "Cloud Trace measures application request latency from instrumented spans inside services. It reports no network throughput or packet loss, and it only sees the traffic the application itself traces."
+  }
+ },
+ {
+  "id": "ACE-D3-060",
+  "options": {
+   "A": "Grant roles/compute.admin and roles/storage.admin to the Compute Engine default service account in prod-core.",
+   "B": "Grant roles/compute.viewer and roles/storage.objectAdmin to the Cloud Build service account in prod-core.",
+   "C": "Grant roles/cloudbuild.builds.editor and roles/iam.serviceAccountUser to the Cloud Build service account."
+  },
+  "distractors": {
+   "A": "The roles are right, the principal is not: the builds run as PROJECT_NUMBER@cloudbuild.gserviceaccount.com, so granting them to PROJECT_NUMBER-compute@developer.gserviceaccount.com leaves the identity Terraform actually uses unchanged.",
+   "B": "compute.viewer is read-only, so terraform apply fails on the first google_compute_instance, and storage.objectAdmin only manages objects inside existing buckets: it has no storage.buckets.create, so the bucket resources fail as well.",
+   "C": "Those two roles govern the build itself, submitting builds and impersonating service accounts. Neither adds compute.instances.create or storage.buckets.create, so terraform apply still stops on the resources it has to provision."
+  }
+ }
+]

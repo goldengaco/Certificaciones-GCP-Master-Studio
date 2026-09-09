@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D3-017",
+  "options": {
+   "A": "gcloud compute health-checks create tcp web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=TCP --health-checks=web-health-check --global && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --global",
+   "B": "gcloud compute health-checks create http web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --region=us-central1 && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-region=us-central1 --region=us-central1",
+   "D": "gcloud compute health-checks create http web-health-check --port=80 && gcloud compute backend-services create web-backend-svc --protocol=HTTP --port-name=http --health-checks=web-health-check --global && gcloud compute backend-services add-backend web-backend-svc --instance-group=web-mig-us --instance-group-zone=us-central1-a --global"
+  },
+  "distractors": {
+   "A": "The order and the resources are right, but a TCP health check only verifies that a socket opens on port 80 and a TCP backend service cannot be referenced by a URL map or a target HTTP proxy, so a Global External HTTP(S) Load Balancer cannot consume it. The scenario asks for an HTTP health check and an HTTP backend service.",
+   "B": "Correct commands anchored in the wrong scope: --region creates a regional backend service, which can only be attached to a regional load balancer. A Global External HTTP(S) Load Balancer requires a global backend service (--global) fronted by a global URL map and target HTTP proxy.",
+   "D": "The health check and the backend service are correct, but add-backend is told to look for a zonal instance group. web-mig-us is a regional MIG in us-central1, so --instance-group-zone=us-central1-a returns a resource-not-found error; regional MIGs are attached with --instance-group-region."
+  }
+ },
+ {
+  "id": "ACE-D5-019",
+  "options": {
+   "A": "Cloud Audit Logs with Admin Activity and Data Access logs enabled on every production project, reviewed weekly by the security officers.",
+   "B": "Organization Policy constraints plus IAM deny policies applied to the Google support accounts, lifted case by case by the security officers.",
+   "C": "Customer-Managed Encryption Keys on all production data plus Cloud DLP de-identification templates applied before any support ticket is opened."
+  },
+  "distractors": {
+   "A": "Cloud Audit Logs record API calls made by the customer's own principals and service accounts; actions taken by Google support engineers are not written to the customer's audit logs. Reviewing them is also a detective control that cannot hold an access request until an officer approves it.",
+   "B": "Organization Policy and IAM (including deny policies) govern the customer's own principals. Google's internal support access is not granted through the customer's IAM policy, so a deny rule neither blocks it nor produces the per-access justification record the regulator requires.",
+   "C": "CMEK and DLP change how the data is protected, not who may operate on the infrastructure: Cloud KMS decrypts transparently for the service, so support access is still neither gated by an explicit approval nor logged with the reason it happened."
+  }
+ },
+ {
+  "id": "ACE-D3-032",
+  "options": {
+   "B": "gcloud compute addresses create sftp-static-ip --global --ip-version=IPV4 && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=$(gcloud compute addresses describe sftp-static-ip --global --format='value(address)')",
+   "C": "gcloud compute addresses create sftp-static-ip --region=us-east1 --subnet=default --purpose=GCE_ENDPOINT --addresses=10.128.0.50 && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=10.128.0.50",
+   "D": "gcloud compute instances delete-access-config sftp-gateway --zone=us-east1-b --access-config-name='External NAT' && gcloud compute instances add-access-config sftp-gateway --zone=us-east1-b --address=203.0.113.42"
+  },
+  "distractors": {
+   "B": "Global external IPv4 addresses are anycast addresses reserved for global load balancing (external Application Load Balancers and external proxy Network Load Balancers) and cannot be attached to a VM network interface. The one-to-one NAT of an access config needs a regional address in the VM's own region.",
+   "C": "Combining --subnet with --purpose=GCE_ENDPOINT reserves a static internal RFC 1918 address. An access config performs one-to-one NAT with a public address, so the assignment is rejected, and even if it were accepted the trading partners on the internet could never route to 10.128.0.50.",
+   "D": "Recycling the access config is the right mechanism, but 203.0.113.42 was never reserved with gcloud compute addresses create, so the project does not hold that address and the request fails. Nothing named sftp-static-ip is created, so nothing is pinned for the partners."
+  }
+ },
+ {
+  "id": "ACE-D4-008",
+  "options": {
+   "A": "Create a sink routing resource.type=\"http_load_balancer\" AND httpRequest.status=200 to a Coldline Cloud Storage bucket so the health check entries are archived cheaply.",
+   "C": "Run gcloud logging buckets update _Default --location=global --retention-days=1 so the health check entries are dropped from the bucket one day after they arrive.",
+   "D": "Add an exclusion named skip-healthchecks to the _Required sink with the filter resource.type=\"http_load_balancer\" AND httpRequest.userAgent=\"GoogleHC/1.0\" at 100%."
+  },
+  "distractors": {
+   "A": "A sink is additive: routing a copy of the entries to Cloud Storage does not stop them being received by _Default, so the ingestion charge that caused the surge is unchanged and the archive bucket adds storage cost on top of it.",
+   "C": "Retention controls how long entries are kept, not whether they are received. Cloud Logging bills ingestion by volume at the moment entries arrive, so the cost is identical; the first 30 days of storage in _Default are free anyway.",
+   "D": "Right filter, wrong sink. _Required is immutable: it accepts no exclusions and cannot be deleted or modified, and it only routes Admin Activity and System Event audit logs. Load balancer request logs flow through _Default, so nothing is excluded."
+  }
+ },
+ {
+  "id": "ACE-D3-031",
+  "options": {
+   "A": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --nodes=300 --description='Orders Spanner' && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'",
+   "B": "gcloud spanner instances create spanner-orders --config=nam3 --processing-units=300 --description='Orders Spanner' && gcloud spanner databases create orders_db --instance=spanner-orders --ddl='CREATE TABLE Orders (OrderId STRING(36) NOT NULL, Amount INT64) PRIMARY KEY (OrderId)'",
+   "C": "gcloud spanner instances create spanner-orders --config=regional-us-central1 --processing-units=300 && gcloud spanner databases create orders_db --instance=spanner-orders && gcloud spanner databases execute-sql orders_db --instance=spanner-orders --sql='CREATE TABLE Orders (OrderId STRING(36)) PRIMARY KEY (OrderId)'"
+  },
+  "distractors": {
+   "A": "Right products, right order, wrong unit of capacity: one Cloud Spanner node equals 1000 processing units, so --nodes=300 provisions 300,000 PU, a thousand times the requested compute and its bill. Capacity below one node must be expressed with --processing-units.",
+   "B": "nam3 is a multi-region instance configuration spanning several US regions, not the regional us-central1 deployment the scenario specifies. Multi-region configurations also cannot be provisioned below one node (1000 PU), so --processing-units=300 is rejected.",
+   "C": "The instance and an empty database are created correctly, but execute-sql only runs queries and DML against an existing schema. Schema statements must be passed with --ddl on databases create, or applied afterwards with gcloud spanner databases ddl update, so the Orders table is never created."
+  }
+ },
+ {
+  "id": "ACE-D5-024",
+  "options": {
+   "B": "Grant the developer roles/container.viewer at the project level and create a Kubernetes ClusterRole plus a ClusterRoleBinding granting get, list and watch on pods and deployments in the cluster.",
+   "C": "Grant roles/container.clusterViewer at the project level with an IAM condition on resource.name that restricts the binding to the development namespace, so Cloud IAM alone enforces the scoping.",
+   "D": "Grant roles/container.developer at the project level and have the developer run kubectl config set-context --current --namespace=development so that every query stays inside that namespace."
+  },
+  "distractors": {
+   "B": "A ClusterRoleBinding binds the permissions across the whole cluster, so the developer can read pods and deployments in every namespace, kube-system included. Restricting the grant to one namespace requires a RoleBinding created inside the development namespace.",
+   "C": "Cloud IAM's resource hierarchy for GKE stops at the cluster. Namespaces are Kubernetes objects that IAM does not model, so an IAM condition cannot reference one: the binding either applies to the entire cluster or is invalid. Namespace scoping is done with Kubernetes RBAC.",
+   "D": "roles/container.developer grants full read and write access to all Kubernetes objects in every namespace of every cluster in the project. Setting the default namespace in kubeconfig is a client-side convenience the developer undoes with a single --namespace flag."
+  }
+ },
+ {
+  "id": "ACE-D3-013",
+  "options": {
+   "A": "Create the NAT gateway directly with gcloud compute routers nats create nat-gw --region=us-east1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges, then permit the traffic with gcloud compute firewall-rules create allow-egress --direction=EGRESS --action=allow --rules=all.",
+   "B": "Reserve addresses with gcloud compute addresses create vm-egress-ip --region=us-east1, then attach one to each instance using gcloud compute instances add-access-config vm-1 --zone=us-east1-b --address=vm-egress-ip so every VM can reach the internet directly.",
+   "C": "Create the Cloud Router using gcloud compute routers create nat-router --network=my-vpc --region=us-central1, then create the NAT gateway using gcloud compute routers nats create nat-gw --router=nat-router --region=us-central1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges."
+  },
+  "distractors": {
+   "A": "Cloud NAT is not a standalone resource: gcloud compute routers nats create has a required --router flag because the NAT configuration lives on a Cloud Router in the region. The command fails before the firewall rule matters, and egress is allowed by default anyway.",
+   "B": "Attaching an external IP to each VM does give outbound access, but a one-to-one NAT address is reachable from the internet, so the instances would accept unsolicited inbound connections, which the requirement forbids. Cloud NAT is outbound-only and needs no external IPs on the VMs.",
+   "C": "The two-step sequence and the flags are correct, but Cloud NAT is a regional service: a NAT gateway on a router in us-central1 only translates traffic for subnets in us-central1. The VMs in the us-east1 subnets still have no path to the internet."
+  }
+ },
+ {
+  "id": "ACE-D4-051",
+  "options": {
+   "B": "Keep the default profile explicitly with gcloud container clusters update my-cluster --autoscaling-profile=balanced for predictable scale-downs.",
+   "C": "Enable node auto-provisioning with gcloud container clusters update my-cluster --enable-autoprovisioning --min-cpu=1 --max-cpu=64 --max-memory=256.",
+   "D": "Define a PodDisruptionBudget with minAvailable: 1 per batch job and shrink the pool with gcloud container clusters resize my-cluster --num-nodes=3."
+  },
+  "distractors": {
+   "B": "balanced is the default profile and the conservative one: it protects running pods by waiting longer before removing underutilised nodes. Choosing it keeps idle capacity alive, which is the spend the team is trying to eliminate.",
+   "C": "Node auto-provisioning decides which node pools and machine shapes to create for pending pods. It does not change how aggressively the cluster autoscaler bin-packs pods or how quickly it drains underutilised nodes; that behaviour is set by the autoscaling profile.",
+   "D": "A manual resize is a one-off value the autoscaler overrides on the next scale-up, and the PodDisruptionBudget works against the goal: it blocks the autoscaler from evicting pods, so underutilised nodes cannot be drained and deleted at all."
+  }
+ },
+ {
+  "id": "ACE-D4-025",
+  "options": {
+   "A": "Enable IAP TCP forwarding and connect with gcloud compute ssh db-server-1 --zone=us-central1-a --tunnel-through-iap after granting roles/iap.tunnelResourceAccessor.",
+   "B": "Read the boot messages with gcloud compute instances get-serial-port-output db-server-1 --zone=us-central1-a --port=1 and pick the previous kernel from the output.",
+   "D": "Detach the boot disk with gcloud compute instances detach-disk db-server-1, attach it to a rescue VM with gcloud compute instances attach-disk, and edit grub.cfg offline."
+  },
+  "distractors": {
+   "A": "IAP only changes how the SSH session is tunnelled; the connection still terminates on the sshd daemon inside the guest OS. A VM halted at the GRUB prompt has no booted kernel and no SSH daemon, so no variant of SSH reaches it and GRUB cannot be driven.",
+   "B": "get-serial-port-output is a one-way dump of what the serial port has already emitted: it shows the kernel panic but accepts no keystrokes, so the GRUB menu cannot be navigated. Interactive access requires gcloud compute connect-to-serial-port.",
+   "D": "The rescue-disk workflow can repair a broken configuration file, but it requires stopping the VM and offers neither live boot console output nor the GRUB menu, so the older kernel cannot be selected interactively as the scenario requires."
+  }
+ },
+ {
+  "id": "ACE-D3-065",
+  "options": {
+   "A": "gcloud compute resource-policies create snapshot-schedule daily-backup-schedule --region=us-central1 --weekly-schedule=monday --start-time=02:00 --max-retention-days=14 --on-source-disk-delete=keep-auto-snapshots",
+   "B": "gcloud compute resource-policies create snapshot-schedule daily-backup-schedule --zone=us-central1-a --daily-schedule --start-time=02:00 --max-retention-days=14 --on-source-disk-delete=keep-auto-snapshots",
+   "D": "gcloud scheduler jobs create http daily-backup-schedule --schedule='0 2 * * *' --time-zone=UTC --uri=https://compute.googleapis.com/compute/v1/projects/p/zones/us-central1-a/disks/data/createSnapshot"
+  },
+  "distractors": {
+   "A": "Every flag is valid and the retention window is right, but --weekly-schedule takes a single day of the week and fires once every seven days at 02:00. The requirement is one snapshot every day, so six days out of seven are left unprotected.",
+   "B": "A snapshot schedule is a resource policy, and resource policies are regional resources attached to disks in their own region. The command exposes only --region, so --zone=us-central1-a is rejected as an unrecognised argument.",
+   "D": "Cloud Scheduler can call createSnapshot at 02:00 UTC, but nothing ever deletes the results: there is no retention window, so the 14-day requirement is unmet and snapshots accumulate forever. The job also targets one hard-coded disk instead of a policy attached to the disks."
+  }
+ },
+ {
+  "id": "ACE-D4-023",
+  "options": {
+   "A": "Enable VPC Flow Logs on the subnets of VPC-A and VPC-B with a 1.0 sampling rate, then query Cloud Logging for connection.dest_port=5432 to see where the packets stop.",
+   "B": "Turn on Firewall Rules Logging for every allow and deny rule in both VPCs and inspect the hits on port 5432 to identify the rule dropping the connection.",
+   "C": "Open Network Topology in Network Intelligence Center and inspect the traffic graph between VPC-A and VPC-B to find the hop where the 5432 flows disappear."
+  },
+  "distractors": {
+   "A": "Flow Logs are sampled records of packets that were actually forwarded. Traffic denied by a firewall rule, or with no matching route at all, produces no flow entry, so the logs show only an absence and never name the offending rule, route or missing peering export.",
+   "B": "Firewall Rules Logging reports on firewall rules only, and only for traffic that is actually generated, so it cannot reveal an invalid route or an unexported peering range. The implied deny rule cannot have logging enabled, so the drop that matters leaves no entry.",
+   "C": "Network Topology visualises observed traffic and its metrics; it is built from flow data, not from configuration analysis. It never evaluates a specific source, destination and port against the firewall rules, routes and peering configuration that could be dropping the packets."
+  }
+ },
+ {
+  "id": "ACE-D4-026",
+  "options": {
+   "A": "Partition the underlying table by ingestion time with PARTITION BY DATE(_PARTITIONTIME) so the scan is pruned and Stage 3 has fewer rows to repartition.",
+   "B": "Buy extra slot capacity with a BigQuery Editions reservation and assign the project to it so Stage 3 gets more parallel workers and its Wait time falls.",
+   "D": "Enable BI Engine acceleration on the dataset so the join and aggregation stages are served from the in-memory cache instead of being shuffled across slots."
+  },
+  "distractors": {
+   "A": "Partitioning prunes input blocks only when the query filters on the partitioning column, and it does not change how rows are hashed for the shuffle. A skewed join or GROUP BY key still routes most rows to a handful of workers, so the repartition stage is unchanged.",
+   "B": "Skew is a distribution problem, not a capacity problem: the oversized key still lands on a single worker, so the extra slots sit idle while that one finishes. Slot-milliseconds consumed and the bill rise while the stage takes just as long.",
+   "D": "BI Engine caches columnar data to accelerate small, repeated dashboard queries; it does not execute large shuffle-heavy analytical joins. The repartition stage still runs in the normal slot engine with exactly the same skew on the same key."
+  }
+ },
+ {
+  "id": "ACE-D5-033",
+  "options": {
+   "A": "Remove bigquery.googleapis.com from the restricted services of Perimeter A so the partner's calls into the BigQuery API are no longer blocked by the perimeter.",
+   "C": "Publish a Private Service Connect endpoint for the BigQuery API in partner-proj so their uploads reach Perimeter A over private addressing instead of the internet.",
+   "D": "Put partner-proj in its own perimeter and join it to Perimeter A with a perimeter bridge so the two perimeters can exchange the BigQuery datasets directly."
+  },
+  "distractors": {
+   "A": "This does unblock the partner, but only by taking BigQuery out of the perimeter altogether: every project inside Perimeter A loses VPC Service Controls protection for BigQuery, which is precisely the dismantling of the boundary the scenario rules out.",
+   "C": "VPC Service Controls enforces on the identity and the project of the caller, not on the network path taken. A request originating in partner-proj, which sits outside Perimeter A, is still rejected as a perimeter violation even when it arrives over Private Service Connect.",
+   "D": "Perimeter bridges cannot include projects from different organizations; both perimeters must live in the same organization and access policy, and partner-proj is in another one. A bridge is also bidirectional, so it would expose Perimeter A's data back to the partner."
+  }
+ },
+ {
+  "id": "ACE-D4-003",
+  "options": {
+   "B": "Create a machine image with gcloud compute machine-images create batch-img --source-instance=batch-worker-1, create a new e2-standard-8 VM from that image in us-central1-a, and repoint the workload at the new instance.",
+   "C": "Run gcloud compute instances set-machine-type batch-worker-1 --zone=us-central1-a --machine-type=e2-standard-8 against the running VM, then apply the change with gcloud compute instances reset batch-worker-1 --zone=us-central1-a.",
+   "D": "Add batch-worker-1 to a managed instance group, point the instance template at e2-standard-8, and roll the change out with gcloud compute instance-groups managed rolling-action start-update mig-batch --max-unavailable=0 --max-surge=1."
+  },
+  "distractors": {
+   "B": "This ends up with a second, differently named instance holding a new internal IP, and the downtime spans imaging the disk plus provisioning from the image. The requirement is minimal downtime on the existing VM, which set-machine-type delivers in seconds.",
+   "C": "The machine type can only be changed while the instance is in the TERMINATED state, so the API rejects the call on a running VM. reset is a hard power cycle that never releases the instance's host resources, so it cannot make the change take effect either.",
+   "D": "A managed instance group only manages instances it creates from its own template; an existing standalone VM cannot be enrolled into one. A rolling update also replaces instances with brand-new ones rather than resizing batch-worker-1 in place."
+  }
+ },
+ {
+  "id": "ACE-D3-020",
+  "options": {
+   "A": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD --display-name='Telemetry DB' && cbt -instance=telemetry-db createfamily device-readings cf1",
+   "C": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=HDD --display-name='Telemetry DB' && cbt -instance=telemetry-db createtable device-readings 'families=cf1'",
+   "D": "gcloud bigtable clusters create c1 --instance=telemetry-db --zone=us-central1-b --num-nodes=4 && cbt -project=$(gcloud config get-value project) -instance=telemetry-db createtable device-readings 'families=cf1'"
+  },
+  "distractors": {
+   "A": "The instance is provisioned exactly as specified, but cbt createfamily adds a column family to a table that must already exist. device-readings was never created with cbt createtable, so the second command fails with a table-not-found error.",
+   "C": "Identical provisioning except for the storage type. HDD clusters are meant for large sequential, infrequently read archives: they deliver roughly an order of magnitude fewer reads per second at much higher latency, and the scenario requires SSD, which cannot be changed after the instance is created.",
+   "D": "gcloud bigtable clusters create adds a cluster to an instance that must already exist, and no gcloud bigtable instances create precedes it, so the command fails. The cluster command also has no way to set SSD storage, which is fixed on the instance at creation time."
+  }
+ },
+ {
+  "id": "ACE-D5-027",
+  "options": {
+   "A": "Configure a Cloud Armor rule with the expression origin.region_code == 'CN' || origin.region_code == 'RU' and action deny-403 at priority 1000 to stop the attacks.",
+   "C": "Configure a Cloud Armor throttle rule with --rate-limit-threshold-count=100 --rate-limit-threshold-interval-sec=60 --enforce-on-key=IP and action rate-based-ban.",
+   "D": "Configure evaluatePreconfiguredExpr('sqli-v33-stable') and evaluatePreconfiguredExpr('xss-v33-stable') with action deny-403 and the --preview flag set on both rules."
+  },
+  "distractors": {
+   "A": "Geo-based rules match on the source location of the request and never on its payload: an SQL injection or XSS string sent from any other country reaches the backends untouched, while legitimate customers in the blocked regions lose access to the shop.",
+   "C": "Rate limiting caps how many requests a client may send; it never inspects the query string or the request body. A single crafted SQLi or XSS request that stays under 100 per minute is forwarded to the backend instances unmodified.",
+   "D": "The expressions are the right ones, but a rule in preview mode is evaluated for logging only: the match is recorded in Cloud Logging and Monitoring while the request is still passed to the backend. Nothing is blocked until preview is removed with --no-preview."
+  }
+ },
+ {
+  "id": "ACE-D5-050",
+  "options": {
+   "B": "Grant roles/cloudkms.admin plus roles/cloudkms.cryptoKeyEncrypterDecrypter to Key Administrators so they can verify that a new key works, and grant roles/cloudkms.cryptoKeyEncrypterDecrypter to the application service accounts.",
+   "C": "Grant roles/cloudkms.cryptoKeyEncrypter to the application service accounts and roles/cloudkms.cryptoKeyDecrypter to the Key Administrators, so that no single principal holds both halves of the cryptographic operation.",
+   "D": "Grant roles/cloudkms.admin to the Key Administrators and to the application service accounts, and rely on Cloud KMS audit logs plus quarterly reviews of the key ring IAM policy bindings to detect and roll back any misuse."
+  },
+  "distractors": {
+   "B": "The applications are configured correctly, but the administrators now hold both halves: the encrypter/decrypter role lets them decrypt production data with the very keys they manage. That is the exact privilege combination separation of duties exists to prevent.",
+   "C": "The split is made on the wrong axis. It hands the Key Administrators the decrypt permission, which is the data access the audit forbids, while the applications can encrypt but never read back what they wrote, and nobody receives the key management role at all.",
+   "D": "roles/cloudkms.admin deliberately excludes the encrypt and decrypt permissions, so the application service accounts cannot perform any cryptographic operation and the workload breaks. Audit review is a detective control and grants nothing the data plane needs."
+  }
+ }
+]

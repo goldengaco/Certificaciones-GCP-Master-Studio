@@ -7,6 +7,15 @@ window.GCP_UI_NEWS = {
   activeProvider: "all",
 
   init() {
+    // Delegacion: un solo listener para los chips (los onclick inline del HTML se eliminaron).
+    const filters = document.getElementById("freeCertCategoryFilters");
+    if (filters && !filters.dataset.delegated) {
+      filters.dataset.delegated = "1";
+      filters.addEventListener("click", (e) => {
+        const chip = e.target && e.target.closest ? e.target.closest(".free-cat-chip") : null;
+        if (chip && chip.dataset.cat) this.setCategoryFilter(chip.dataset.cat);
+      });
+    }
     this.renderNewsAndCourses();
   },
 
@@ -57,6 +66,7 @@ window.GCP_UI_NEWS = {
       <div class="free-cert-card">
         <div class="free-cert-header">
           <div class="free-cert-provider-badge">${item.provider}</div>
+          <span class="free-cert-lang" title="Idioma del curso">${item.idioma || "Inglés"}</span>
           <span class="free-cert-badge-pill">100% GRATIS</span>
         </div>
 
@@ -96,7 +106,9 @@ window.GCP_UI_NEWS = {
   setCategoryFilter(cat) {
     this.activeCategory = cat;
     document.querySelectorAll(".free-cat-chip").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.cat === cat);
+      const on = btn.dataset.cat === cat;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
     this.renderFilteredCourses();
   }

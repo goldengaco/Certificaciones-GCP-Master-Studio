@@ -1,0 +1,98 @@
+[
+ {
+  "id": "ACE-D5-039",
+  "subtopic": "Cloud Build IAM Security & Roles",
+  "scenario": "A developer needs to create and manage Cloud Build automated triggers and manually invoke builds from their CLI in project `ci-cd-prod`, but must NOT have permissions to modify IAM policies or delete storage buckets. Which predefined IAM role should be granted to the developer?",
+  "correct": "C",
+  "clave_len": 58,
+  "explanation": "`roles/cloudbuild.builds.editor` provides permissions to create, edit, and run Cloud Build triggers and build executions (`cloudbuild.builds.create`, `cloudbuild.builds.get`, `cloudbuild.triggers.create`), without granting broad administrative access across the project.",
+  "doc": "https://cloud.google.com/build/docs/securing-builds/configure-user-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Grant primitive roles/editor at the project level."
+   },
+   {
+    "letter": "B",
+    "len": 39,
+    "text": "Grant roles/owner at the project level."
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "Grant roles/cloudbuild.builds.editor at the project level."
+   },
+   {
+    "letter": "D",
+    "len": 58,
+    "text": "Grant roles/cloudbuild.builds.viewer at the project level."
+   }
+  ],
+  "ratio": 1.18
+ },
+ {
+  "id": "ACE-D3-008",
+  "subtopic": null,
+  "scenario": "You are configuring automated scaling for a backend microservice. You need to create a Compute Engine Instance Template named api-server-template specifying machine type e2-standard-4, boot disk of 50 GB pd-balanced, network tag api-server, and service account api-sa@corp.iam.gserviceaccount.com. Which command creates this template?",
+  "correct": "D",
+  "clave_len": 212,
+  "explanation": "gcloud compute instance-templates create is the dedicated command to create an instance template (a non-running VM blueprint defining machine type, boot disk, network tags, service account, and metadata) used by Managed Instance Groups for automated scaling and rolling deployments.",
+  "doc": "https://cloud.google.com/compute/docs/instance-templates/create-instance-templates",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 180,
+    "text": "gcloud compute instance-groups managed create api-server-template --region=us-central1 --size=3 --template=api-server-template --service-account=api-sa@corp.iam.gserviceaccount.com"
+   },
+   {
+    "letter": "B",
+    "len": 184,
+    "text": "gcloud compute instances create api-server-template --zone=us-central1-a --machine-type=e2-standard-4 --boot-disk-type=pd-balanced --service-account=api-sa@corp.iam.gserviceaccount.com"
+   },
+   {
+    "letter": "C",
+    "len": 179,
+    "text": "gcloud compute machine-images create api-server-template --source-instance=api-server-vm --source-instance-zone=us-central1-a --service-account=api-sa@corp.iam.gserviceaccount.com"
+   },
+   {
+    "letter": "D",
+    "len": 212,
+    "text": "gcloud compute instance-templates create api-server-template --machine-type=e2-standard-4 --boot-disk-type=pd-balanced --boot-disk-size=50GB --tags=api-server --service-account=api-sa@corp.iam.gserviceaccount.com"
+   }
+  ],
+  "ratio": 1.17
+ },
+ {
+  "id": "ACE-D1-033",
+  "subtopic": null,
+  "scenario": "A legacy on-premises application uses a user-managed service account JSON key to upload nightly batch files to Cloud Storage. Corporate security policy mandates periodic key rotation every 90 days with zero application downtime during the transition. Which workflow should you execute to rotate the key safely?",
+  "correct": "D",
+  "clave_len": 101,
+  "explanation": "Google Cloud service accounts can have multiple active user-managed keys simultaneously. To rotate keys without downtime, generate a new key, configure the application to use the new key, test the connection, and then safely delete the old key using gcloud iam service-accounts keys delete.",
+  "doc": "https://cloud.google.com/iam/docs/best-practices-for-managing-service-account-keys#rotating-keys",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 88,
+    "text": "Delete the existing active key first, then generate a new replacement key and deploy it."
+   },
+   {
+    "letter": "B",
+    "len": 89,
+    "text": "Disable the service account in Cloud Console for 24 hours, then re-enable with a new key."
+   },
+   {
+    "letter": "C",
+    "len": 85,
+    "text": "Edit the existing JSON key file locally and update the expiration timestamp property."
+   },
+   {
+    "letter": "D",
+    "len": 101,
+    "text": "Create a new key, update the application configuration, verify functionality, and delete the old key."
+   }
+  ],
+  "ratio": 1.16
+ }
+]

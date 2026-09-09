@@ -1,0 +1,532 @@
+[
+  {
+    "id": "ACE-D3-019",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.2",
+    "subsectionName": "Deploying and implementing Google Kubernetes Engine resources",
+    "subtopic": "GKE Ingress with Google-Managed SSL/TLS Certificates",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 90,
+    "caseStudy": null,
+    "title": "Configuring Google-Managed SSL Certificates for GKE Ingress",
+    "scenario": "You are exposing an HTTPS web application on Google Kubernetes Engine using the GKE Ingress controller. You need Google Cloud to automatically provision, attach, and renew trusted SSL/TLS certificates for app.example.com without managing manual certificate rotation or secret storage. Which configuration should you deploy?",
+    "conceptos": [
+      "GKE Ingress",
+      "Google-managed Certificates",
+      "ManagedCertificate CRD",
+      "SSL/TLS"
+    ],
+    "keywords": [
+      "gke",
+      "ingress",
+      "managed certificate",
+      "ssl",
+      "tls",
+      "networking.gke.io"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy a cert-manager CronJob that downloads Let's Encrypt keys and updates Ingress secrets."
+      },
+      {
+        "letter": "B",
+        "text": "Deploy a ManagedCertificate custom resource and reference it in the Ingress annotations."
+      },
+      {
+        "letter": "C",
+        "text": "Deploy a Secret of type kubernetes.io/tls containing self-signed certs in the namespace."
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a Cloud DNS record set containing public SSL private key pairs in TXT attributes."
+      }
+    ],
+    "correct": "B",
+    "explanation": "In GKE, Google-managed SSL certificates are configured by deploying a `ManagedCertificate` custom resource defining the target domain names, and annotating the GKE Ingress with `networking.gke.io/managed-certificates: <CERT_NAME>`. Google Cloud then handles provisioning, verification, and automatic renewals seamlessly without in-cluster certbot jobs or manual secret rotation.",
+    "distractors": {
+      "A": "Managing custom cert-manager CronJobs introduces ongoing maintenance overhead compared to native Google-managed SSL certificates.",
+      "C": "Kubernetes TLS Secrets with self-signed certificates cause browser security warnings and require manual renewal procedures.",
+      "D": "Cloud DNS TXT records publish DNS verification records, not active TLS certificates or private key termination material."
+    },
+    "gcloudCommand": "kubectl apply -f managed-cert.yaml; kubectl apply -f ingress.yaml",
+    "architectureComponents": [
+      "GKE Ingress",
+      "ManagedCertificate CRD",
+      "External Application Load Balancer"
+    ],
+    "officialDocUrl": "https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs"
+  },
+  {
+    "id": "ACE-D3-020",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud Bigtable Instance and Table Provisioning",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": null,
+    "title": "Creating Cloud Bigtable Instances and Schema Tables via CLI",
+    "scenario": "You are provisioning a high-throughput time-series metrics storage backend. You need to create a Cloud Bigtable production instance named telemetry-db with an initial cluster of 4 SSD nodes in us-central1-b, and create a table named device-readings with column family cf1. Which sequence of commands should you execute?",
+    "conceptos": [
+      "Cloud Bigtable",
+      "gcloud bigtable",
+      "cbt CLI",
+      "Column Families"
+    ],
+    "keywords": [
+      "bigtable",
+      "cbt",
+      "column family",
+      "ssd",
+      "instances create",
+      "createtable"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud sql instances create telemetry-db --database-family=BIGTABLE --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD && cbt -instance=telemetry-db createtable device-readings 'families=cf1'"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD && cbt -instance=telemetry-db createtable device-readings 'families=cf1'"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud compute instances create telemetry-db --zone=us-central1-b --custom-extensions=bigtable-ssd --cluster-num-nodes=4 --cluster-storage-type=SSD && cbt -instance=telemetry-db createtable device-readings 'families=cf1'"
+      },
+      {
+        "letter": "D",
+        "text": "bq mk --dataset --location=us-central1 telemetry-db && bq mk --table --storage_type=BIGTABLE_SSD telemetry-db.device-readings 'column_family:cf1' && cbt -instance=telemetry-db createtable device-readings 'families=cf1'"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Creating a Cloud Bigtable instance and table requires: (1) `gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD` to provision the instance and storage nodes, and (2) `cbt -instance=telemetry-db createtable device-readings 'families=cf1'` to create the table and initial column family. `gcloud sql`, `gcloud compute`, and `bq` manage relational, VM, and analytical services respectively.",
+    "distractors": {
+      "A": "gcloud sql manages relational database instances (MySQL, PostgreSQL, SQL Server), not NoSQL Cloud Bigtable clusters.",
+      "C": "gcloud compute instances create provisions Compute Engine virtual machines, not managed Bigtable storage clusters.",
+      "D": "bq mk creates BigQuery datasets and analytical tables, not Cloud Bigtable instances or column family schemas."
+    },
+    "gcloudCommand": "gcloud bigtable instances create telemetry-db --cluster=c1 --cluster-zone=us-central1-b --cluster-num-nodes=4 --cluster-storage-type=SSD; cbt -instance=telemetry-db createtable device-readings 'families=cf1'",
+    "architectureComponents": [
+      "Cloud Bigtable Instance",
+      "cbt CLI",
+      "Column Family"
+    ],
+    "officialDocUrl": "https://cloud.google.com/bigtable/docs/creating-instance"
+  },
+  {
+    "id": "ACE-D3-021",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "subtopic": "Compute Engine Custom Image Creation from Disk",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Creating Custom VM Images and Image Families from Boot Disks",
+    "scenario": "You have configured and stopped a hardened base virtual machine base-template-vm in zone us-east1-b. You need to create a reusable Compute Engine custom image named golden-ubuntu-v1 grouped under image family corp-ubuntu using the VM's source boot disk. Which Google Cloud CLI command should you execute?",
+    "conceptos": [
+      "Compute Engine",
+      "Custom Images",
+      "Image Families",
+      "gcloud compute images"
+    ],
+    "keywords": [
+      "compute engine",
+      "custom image",
+      "image family",
+      "source-disk",
+      "gcloud compute images"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute instances snapshot base-template-vm --zone=us-east1-b --snapshot-names=golden-ubuntu-v1 --family=corp-ubuntu"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud compute disks export base-template-vm --zone=us-east1-b --destination=gs://images/golden-ubuntu-v1 --family=corp-ubuntu"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud compute instance-templates create golden-ubuntu-v1 --source-disk=base-template-vm --zone=us-east1-b --family=corp-ubuntu"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The command `gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu` creates a reusable custom image from an existing boot disk and assigns it to an image family. Snapshots provide point-in-time backup copies, disk export creates offline storage files, and instance templates define VM provisioning metadata rather than the underlying OS image.",
+    "distractors": {
+      "A": "gcloud compute instances snapshot creates point-in-time disk backup snapshots, not custom boot images grouped under image families.",
+      "B": "gcloud compute disks export copies raw disk images to Cloud Storage buckets as files rather than registering a custom image in the project.",
+      "D": "gcloud compute instance-templates create defines complete VM provisioning specifications, not individual custom OS images."
+    },
+    "gcloudCommand": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --family=corp-ubuntu",
+    "architectureComponents": [
+      "Compute Engine VM",
+      "Custom Image",
+      "Image Family"
+    ],
+    "officialDocUrl": "https://cloud.google.com/compute/docs/images/create-custom"
+  },
+  {
+    "id": "ACE-D3-022",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.4",
+    "subsectionName": "Deploying and implementing data solutions",
+    "subtopic": "Cloud Storage Dual-Region Bucket Provisioning",
+    "difficulty": "easy",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 80,
+    "caseStudy": null,
+    "title": "Creating Dual-Region Cloud Storage Buckets with Uniform Bucket-Level Access",
+    "scenario": "Your company requires a highly available Cloud Storage bucket named corp-customer-receipts deployed across dual-region us-central1 and us-east1. The bucket must enforce Standard storage class and enforce uniform bucket-level access for simplified IAM security. Which Google Cloud CLI command should you run?",
+    "conceptos": [
+      "Cloud Storage",
+      "Dual-Region",
+      "Uniform Bucket-Level Access",
+      "gcloud storage buckets create"
+    ],
+    "keywords": [
+      "cloud storage",
+      "dual-region",
+      "uniform bucket level access",
+      "gcloud storage buckets create"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud storage buckets update gs://corp-customer-receipts --location=us-central1,us-east1 --storage-class=STANDARD --enable-uniform-bucket-level-access"
+      },
+      {
+        "letter": "C",
+        "text": "gsutil mb -c STANDARD -l us-central1,us-east1 -b on --dual-region=us-central1,us-east1 gs://corp-customer-receipts --enforce-uniform-bucket-access"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access"
+      }
+    ],
+    "correct": "D",
+    "explanation": "The command `gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access` creates a dual-region Cloud Storage bucket with Standard storage and Uniform Bucket-Level Access. `gcloud compute` does not manage storage buckets. `buckets update` modifies existing buckets. `gsutil mb` is the legacy CLI tool and uses invalid argument combinations.",
+    "distractors": {
+      "A": "gcloud compute buckets create is an invalid command; Cloud Storage buckets are managed under gcloud storage buckets.",
+      "B": "gcloud storage buckets update is used to modify existing buckets, not to provision new buckets in a specified location.",
+      "C": "gsutil mb is the legacy CLI tool and includes invalid syntax flags (--dual-region and --enforce-uniform-bucket-access)."
+    },
+    "gcloudCommand": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access",
+    "architectureComponents": [
+      "Cloud Storage Bucket",
+      "Dual-Region",
+      "Uniform Bucket-Level Access"
+    ],
+    "officialDocUrl": "https://cloud.google.com/storage/docs/creating-buckets"
+  },
+  {
+    "id": "ACE-D3-023",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.6",
+    "subsectionName": "Implementing resources through infrastructure as code",
+    "subtopic": "Cloud Build Trigger Configuration for Git Repositories",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 95,
+    "caseStudy": null,
+    "title": "Configuring Automated CI/CD Build Triggers in Cloud Build",
+    "scenario": "You are configuring continuous integration in Google Cloud. Whenever developers push new commits to the main branch of a GitHub repository named corp-app, Cloud Build must automatically invoke the build pipeline defined in cloudbuild.yaml. You need to set up this automated trigger with appropriate permissions. Which two actions should you take? (Choose 2.)",
+    "conceptos": [
+      "Cloud Build",
+      "Build Triggers",
+      "CI/CD Automation",
+      "Git Repositories"
+    ],
+    "keywords": [
+      "cloud build",
+      "triggers create",
+      "github",
+      "cloudbuild.yaml",
+      "service account"
+    ],
+    "isMultiSelect": true,
+    "expectedSelectCount": 2,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Deploy a Compute Engine VM configured with a cron job to poll git commits and run local build scripts."
+      },
+      {
+        "letter": "B",
+        "text": "Create a Cloud Build trigger for the connected repository filtering on the main branch via gcloud builds triggers create."
+      },
+      {
+        "letter": "C",
+        "text": "Configure a Cloud Pub/Sub topic subscription that receives GitHub webhooks and executes gcloud builds submit."
+      },
+      {
+        "letter": "D",
+        "text": "Create a Cloud Storage bucket notification trigger that invokes Cloud Functions whenever source code changes."
+      },
+      {
+        "letter": "E",
+        "text": "Grant the Cloud Build service account the required IAM roles to access project resources during build execution."
+      }
+    ],
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "Automating CI pipelines with Cloud Build requires: (1) creating a repository trigger (`gcloud builds triggers create github --repo-name=corp-app --branch-pattern='^main$' --build-config=cloudbuild.yaml`) to automatically start builds on Git push events, and (2) granting the Cloud Build service account the necessary IAM permissions to access build resources and target deployment environments. Cron polling, custom webhook subscriptions, and Cloud Storage triggers add unnecessary complexity.",
+    "distractors": {
+      "A": "Polling git repositories with cron scripts on Compute Engine adds operational maintenance and delays compared to native Cloud Build triggers.",
+      "C": "Custom webhook forwarding architectures are redundant when Cloud Build provides native repository connection triggers.",
+      "D": "Cloud Storage notifications respond to bucket archive uploads rather than native Git branch push events."
+    },
+    "gcloudCommand": "gcloud builds triggers create github --repo-name=corp-app --repo-owner=my-org --branch-pattern='^main$' --build-config=cloudbuild.yaml",
+    "architectureComponents": [
+      "Cloud Build",
+      "Build Trigger",
+      "GitHub Repository",
+      "Service Account"
+    ],
+    "officialDocUrl": "https://cloud.google.com/build/docs/automating-builds/create-manage-triggers"
+  },
+  {
+    "id": "ACE-D3-024",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.1",
+    "subsectionName": "Deploying and implementing Compute Engine resources",
+    "subtopic": "Managed Instance Group Autoscaling on Cloud Monitoring Metrics",
+    "difficulty": "hard",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 105,
+    "caseStudy": null,
+    "title": "Configuring Managed Instance Group Autoscaling Based on Cloud Monitoring Metrics",
+    "scenario": "You manage a regional Managed Instance Group (MIG) named worker-mig in us-central1 that pulls tasks from Cloud Pub/Sub. You must configure autoscaling between 2 and 50 instances based on the Cloud Monitoring metric pubsub.googleapis.com/subscription/num_undelivered_messages targeting 100 undelivered messages per instance. Which command should you execute?",
+    "conceptos": [
+      "Compute Engine",
+      "Managed Instance Groups",
+      "Autoscaling",
+      "Cloud Monitoring Metrics"
+    ],
+    "keywords": [
+      "compute engine",
+      "autoscaling",
+      "managed instance group",
+      "custom metric",
+      "pubsub"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud compute instance-groups managed set-autoscaling worker-mig --region=us-central1 --min-num-replicas=2 --max-num-replicas=50 --target-cpu-utilization=0.80 --target-load-balancing-utilization=0.80 --scale-in-control=max-scaled-in-replicas=5"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud compute instance-groups managed set-autoscaling worker-mig --region=us-central1 --min-num-replicas=2 --max-num-replicas=50 --custom-metric-metric=pubsub.googleapis.com/subscription/num_undelivered_messages --custom-metric-target=100 --custom-metric-target-type=GAUGE"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud monitoring alert-policies create --display-name=scale-worker-mig --condition-filter=resource.type=pubsub_subscription --min-replicas=2 --max-replicas=50 --action-scale-mig=worker-mig --region=us-central1 --target-metric-value=100"
+      },
+      {
+        "letter": "D",
+        "text": "kubectl autoscale deployment worker-mig --min=2 --max=50 --cpu-percent=80 --custom-metric=pubsub.googleapis.com/subscription/num_undelivered_messages --metric-target=100 --region=us-central1 --target-type=AverageValue"
+      }
+    ],
+    "correct": "B",
+    "explanation": "The command `gcloud compute instance-groups managed set-autoscaling <MIG> --region=<REGION> --min-num-replicas=2 --max-num-replicas=50 --custom-metric-metric=<METRIC> --custom-metric-target=100 --custom-metric-target-type=GAUGE` configures Compute Engine autoscaling based on custom or standard Cloud Monitoring metrics. CPU autoscaling does not track queue backlog. Alert policies send alerts but cannot configure autoscalers. `kubectl` is for GKE workloads.",
+    "distractors": {
+      "A": "CPU and load balancer autoscaling policies do not scale based on queue depth and fail to respond to Pub/Sub message backlog.",
+      "C": "Cloud Monitoring alert policies generate incident notifications but cannot configure Compute Engine MIG autoscaler policies.",
+      "D": "kubectl autoscale configures Kubernetes Horizontal Pod Autoscalers, not Compute Engine Managed Instance Groups."
+    },
+    "gcloudCommand": "gcloud compute instance-groups managed set-autoscaling worker-mig --region=us-central1 --min-num-replicas=2 --max-num-replicas=50 --custom-metric-metric='pubsub.googleapis.com/subscription/num_undelivered_messages' --custom-metric-target=100 --custom-metric-target-type=GAUGE",
+    "architectureComponents": [
+      "Compute Engine MIG",
+      "Cloud Autoscaler",
+      "Cloud Monitoring",
+      "Cloud Pub/Sub"
+    ],
+    "officialDocUrl": "https://cloud.google.com/compute/docs/autoscaler/scaling-cloud-monitoring-metrics"
+  },
+  {
+    "id": "ACE-D3-025",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.3",
+    "subsectionName": "Deploying and implementing Cloud Run and Cloud Functions resources",
+    "subtopic": "Cloud Run Secret Manager Integration",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Mounting Secret Manager Secrets in Cloud Run Container Deployments",
+    "scenario": "A containerized backend API deployed on Cloud Run requires database credentials stored in Secret Manager secret db-password (version latest). The application expects this value in an environment variable named DATABASE_PASSWORD. Which command deploys this service in region us-central1 while following security best practices?",
+    "conceptos": [
+      "Cloud Run",
+      "Secret Manager",
+      "Environment Variables",
+      "gcloud run deploy"
+    ],
+    "keywords": [
+      "cloud run",
+      "secret manager",
+      "set-secrets",
+      "environment variable",
+      "gcloud run deploy"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "gcloud run deploy api-service --image=us-docker.pkg.dev/proj/api:v1 --region=us-central1 --set-env-vars=DATABASE_PASSWORD=db-password:latest"
+      },
+      {
+        "letter": "B",
+        "text": "gcloud run deploy api-service --image=us-docker.pkg.dev/proj/api:v1 --region=us-central1 --set-custom-secrets=DATABASE_PASSWORD=/secrets/db-password"
+      },
+      {
+        "letter": "C",
+        "text": "gcloud run deploy api-service --image=us-docker.pkg.dev/proj/api:v1 --region=us-central1 --set-secrets=DATABASE_PASSWORD=db-password:latest"
+      },
+      {
+        "letter": "D",
+        "text": "gcloud compute instances create api-service --image=us-docker.pkg.dev/proj/api:v1 --zone=us-central1-a --set-secrets=DATABASE_PASSWORD=db-password"
+      }
+    ],
+    "correct": "C",
+    "explanation": "The command `gcloud run deploy <SERVICE> --image=<IMAGE> --region=<REGION> --set-secrets=ENV_VAR=SECRET_NAME:VERSION` injects the secret payload directly into the specified container environment variable securely. `--set-env-vars` sets plaintext string values. `--set-custom-secrets` is an invalid flag. `gcloud compute instances create` is for Compute Engine VMs.",
+    "distractors": {
+      "A": "--set-env-vars passes the literal string 'db-password:latest' into the environment variable rather than resolving the secret payload from Secret Manager.",
+      "B": "--set-custom-secrets is an invalid gcloud command flag; Cloud Run uses --set-secrets to bind Secret Manager secrets.",
+      "D": "gcloud compute instances create provisions Compute Engine virtual machines rather than deploying container services on Cloud Run."
+    },
+    "gcloudCommand": "gcloud run deploy api-service --image=us-docker.pkg.dev/proj/api:v1 --region=us-central1 --set-secrets=DATABASE_PASSWORD=db-password:latest",
+    "architectureComponents": [
+      "Cloud Run Service",
+      "Secret Manager",
+      "Artifact Registry"
+    ],
+    "officialDocUrl": "https://cloud.google.com/run/docs/configuring/secrets"
+  },
+  {
+    "id": "ACE-D3-026",
+    "certId": "ace",
+    "blockId": "ACE-B03",
+    "domainId": "ACE-D3",
+    "domainName": "Deploying and implementing a cloud solution",
+    "sectionId": "ACE-3",
+    "sectionName": "Deploying and implementing a cloud solution",
+    "subsectionId": "ACE-3.5",
+    "subsectionName": "Deploying and implementing networking resources",
+    "subtopic": "VPC Firewall Rules for Load Balancer Health Checks",
+    "difficulty": "medium",
+    "bloomsLevel": "apply",
+    "timeEstimateSeconds": 85,
+    "caseStudy": null,
+    "title": "Configuring VPC Firewall Rules for Load Balancer Health Check Probes",
+    "scenario": "You deployed a backend Managed Instance Group (MIG) behind an External Application Load Balancer. The load balancer marks all backend VM instances as UNHEALTHY. You verify that your application is running on port 80 but VPC ingress firewall rules are blocking health check probes. Which firewall rule should you configure?",
+    "conceptos": [
+      "VPC Firewall Rules",
+      "Health Checks",
+      "Load Balancing",
+      "Google IP Ranges"
+    ],
+    "keywords": [
+      "firewall rules",
+      "health checks",
+      "35.191.0.0/16",
+      "130.211.0.0/22",
+      "load balancing"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create an ingress rule allowing TCP port 80 traffic from source range 0.0.0.0/0 targeting all instances in the VPC network."
+      },
+      {
+        "letter": "B",
+        "text": "Create an egress rule allowing TCP port 80 traffic to Google public health probe ranges 35.191.0.0/16 and 130.211.0.0/22."
+      },
+      {
+        "letter": "C",
+        "text": "Create an ingress rule allowing all ICMP traffic from 10.0.0.0/8 to enable network ping responsiveness across all backend VMs."
+      },
+      {
+        "letter": "D",
+        "text": "Create an ingress rule allowing TCP port 80 from source IP ranges 35.191.0.0/16 and 130.211.0.0/22 to the target backend tag."
+      }
+    ],
+    "correct": "D",
+    "explanation": "Google Cloud load balancers probe backend instances from specific well-known IP ranges: `35.191.0.0/16` and `130.211.0.0/22` (for HTTP/HTTPS/TCP load balancing). To allow health check traffic, you must create a VPC ingress firewall rule allowing traffic on the application port from these exact probe ranges to the backend instances. Allowing `0.0.0.0/0` exposes the instances publicly. Health probes require ingress rules, not egress rules. ICMP ping does not satisfy application health checks.",
+    "distractors": {
+      "A": "Allowing ingress from 0.0.0.0/0 exposes backend VMs directly to the public internet, violating the principle of least privilege.",
+      "B": "Health check probes originate from Google's infrastructure into backend instances, requiring an ingress rule rather than an egress rule.",
+      "C": "Application Load Balancers perform TCP/HTTP application health checks, which cannot be satisfied by ICMP ping firewall rules."
+    },
+    "gcloudCommand": "gcloud compute firewall-rules create allow-health-checks --network=custom-vpc --action=ALLOW --direction=INGRESS --source-ranges=35.191.0.0/16,130.211.0.0/22 --rules=tcp:80 --target-tags=http-server",
+    "architectureComponents": [
+      "VPC Firewall Rules",
+      "Health Check Probes",
+      "Application Load Balancer"
+    ],
+    "officialDocUrl": "https://cloud.google.com/load-balancing/docs/health-checks#firewall_rules"
+  }
+]

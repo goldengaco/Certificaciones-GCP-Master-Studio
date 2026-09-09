@@ -1,0 +1,366 @@
+[
+ {
+  "id": "CDL-D1-017",
+  "scenario": "Una empresa de software bancario realizaba despliegues de software cada seis meses en fines de semana, lo que generaba fallos masivos e interrupciones prolongadas. ¿Qué dos beneficios aporta la adopción de prácticas modernas de integración y entrega continua (CI/CD) en la nube? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Automatiza la compilación, las pruebas y la publicación de cada cambio con Cloud Build, de modo que los defectos se detectan en minutos y no semanas después de haberse escrito el código."
+  },
+  "distractors": {
+   "A": "Agrupar seis meses de cambios en un único paquete es justamente la práctica que CI/CD sustituye: cuanto mayor es el lote, más difícil resulta aislar la causa de un fallo.",
+   "B": "CI/CD no elimina los entornos de preproducción; al contrario, se apoya en entornos equivalentes a producción para que las pruebas automatizadas sean fiables sin tocar datos reales.",
+   "D": "El proveedor de nube nunca decide cuándo se publica el software del cliente. Bajo el modelo de responsabilidad compartida, el ritmo y el contenido de cada despliegue siguen siendo del banco."
+  },
+  "explanation": "CI/CD aporta dos beneficios distintos y complementarios: por un lado reduce el tamaño del lote de cambio, lo que baja el riesgo de cada despliegue y acelera la corrección de defectos; por otro automatiza la cadena de compilación, prueba y publicación (por ejemplo con Cloud Build), lo que adelanta la detección de errores al momento en que se escribe el código."
+ },
+ {
+  "id": "CDL-D1-028",
+  "scenario": "Un conglomerado empresarial con múltiples divisiones de negocio autónomas está experimentando adopción desordenada de la nube, con políticas de seguridad dispares y gastos descontrolados. ¿Qué dos medidas debe adoptar para ordenar y gobernar esa adopción? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Estructurar los recursos en una jerarquía de organización con una carpeta por división de negocio y aplicar Políticas de Organización como guardarraíles centralizados heredados por los proyectos."
+  },
+  "distractors": {
+   "A": "Centralizar todo el aprovisionamiento en un equipo que despliega por ticket convierte a ese equipo en un cuello de botella y anula la agilidad que las divisiones buscan en la nube.",
+   "B": "Una oficina que solo revisa facturas y reparte costes aporta visibilidad financiera, pero no corrige las políticas de seguridad dispares ni fija estándares arquitectónicos.",
+   "C": "Un comité que revisa manualmente cada diseño sin seguridad ni finanzas repite el modelo de aprobación en cascada: frena la entrega y deja fuera las dos disciplinas que originan el problema."
+  },
+  "explanation": "El gobierno de la nube combina una pieza organizativa y otra técnica. El CCoE es el equipo multidisciplinario que fija estándares, forma a las unidades y define las prácticas de FinOps; la jerarquía de recursos con carpetas y las Políticas de Organización son el mecanismo que hace cumplir esos estándares de forma automática y heredada. Ninguna de las dos basta por sí sola."
+ },
+ {
+  "id": "CDL-TD-008",
+  "scenario": "Un grupo industrial decide operar con dos proveedores de nube pública distintos de forma permanente. El consejo pregunta qué gana con esa complejidad añadida. ¿Cuáles son dos razones de negocio legítimas? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Cumplir exigencias regulatorias o de clientes que impiden concentrar todas las cargas en un único proveedor, operándolas de forma homogénea con GKE Enterprise."
+  },
+  "distractors": {
+   "B": "Cada proveedor solo responde de su propia infraestructura: los controles de seguridad del cliente (identidades, cifrado, red) siguen siendo su responsabilidad en ambos entornos.",
+   "C": "Trabajar con dos proveedores fragmenta el consumo y suele reducir los descuentos por volumen o compromiso, además de duplicar el esfuerzo de operación.",
+   "D": "Las herramientas de cada proveedor son distintas, por lo que la multinube exige más formación del equipo, no menos."
+  },
+  "explanation": "La multinube se justifica por dos motivos de negocio reales y distintos: reducir la dependencia de un único proveedor pudiendo elegir el mejor servicio para cada carga, y responder a requisitos regulatorios o contractuales que prohíben concentrar todo en un solo proveedor. Google Cloud facilita el segundo con plataformas como GKE Enterprise, que permiten operar entornos heterogéneos de forma consistente."
+ },
+ {
+  "id": "CDL-TD-027",
+  "scenario": "Un equipo de marketing lanzará una campaña cuyo éxito es imprevisible: podría multiplicar el tráfico por diez o no mover la aguja. Quieren estar preparados sin comprometer una inversión grande por adelantado. ¿Qué dos características del modelo de nube les sirven? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "El autoescalado: Cloud Run y los grupos de instancias administrados añaden capacidad si el tráfico se dispara y la retiran en cuanto la campaña se enfría."
+  },
+  "distractors": {
+   "B": "Un compromiso a tres años exige fijar por adelantado una capacidad que aquí es desconocida; conviene a cargas estables, no a una campaña de resultado imprevisible.",
+   "C": "Comprar licencias perpetuas vuelve a convertir el gasto en una inversión inicial (CapEx), que es justo lo que el equipo quiere evitar mientras el éxito sea incierto.",
+   "D": "Alquilar espacio en un centro de datos externo obliga igualmente a comprar e instalar servidores dimensionados para el pico que quizá nunca llegue."
+  },
+  "explanation": "Son dos rasgos distintos y complementarios del modelo de nube: el pago por uso vincula el gasto al consumo real, de modo que una campaña fallida no genera factura; y el autoescalado ajusta automáticamente la capacidad, de modo que una campaña exitosa no se cae. Sin autoescalado el pago por uso no protege del pico, y sin pago por uso el autoescalado no protege del gasto."
+ },
+ {
+  "id": "CDL-D2-031",
+  "scenario": "En una arquitectura de comercio electrónico, el microservicio de procesamiento de pedidos debe notificar a múltiples servicios independientes (inventario, facturación, notificaciones por SMS y analítica) cada vez que se completa una compra, sin que los servicios dependan directamente unos de otros. Además, esos eventos deben transformarse y enriquecerse en tiempo real antes de cargarlos en BigQuery. ¿Qué dos servicios de Google Cloud cubren juntos la mensajería y el procesamiento de esos eventos? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Cloud Dataflow"
+  },
+  "distractors": {
+   "A": "Cloud Interconnect es un enlace físico dedicado entre el centro de datos del cliente y Google Cloud; no transporta ni procesa eventos entre microservicios.",
+   "B": "Cloud SQL es una base de datos relacional administrada. Usarla como cola obligaría a los servicios a sondearla constantemente y volvería a acoplarlos entre sí.",
+   "D": "Cloud Armor es el WAF y la protección DDoS del balanceador de carga; actúa sobre el tráfico de entrada, no sobre la mensajería interna ni sobre la transformación de datos."
+  },
+  "explanation": "El caso necesita dos piezas distintas del ciclo de vida del dato en streaming: Cloud Pub/Sub implementa el patrón publicador/suscriptor y desacopla al productor de los cuatro consumidores, y Cloud Dataflow (Apache Beam) consume esos mensajes para transformarlos y enriquecerlos antes de escribirlos en BigQuery. Pub/Sub entrega, Dataflow procesa."
+ },
+ {
+  "id": "CDL-D2-072",
+  "scenario": "Un banco internacional gasta millones de dólares al año en licencias de hardware y mantenimiento para su almacén de datos tradicional local (Teradata/Exadata). Al migrar a BigQuery, ¿cuáles son dos beneficios operativos y económicos inmediatos? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Sustitución de las licencias por nodo y del mantenimiento del hardware por un modelo de pago por consumo, en el que se factura por los bytes consultados o por los slots reservados."
+  },
+  "distractors": {
+   "B": "BigQuery no exige reservar un clúster fijo por adelantado: el modelo bajo demanda permite consultar sin ninguna reserva, y las reservas de slots son opcionales.",
+   "C": "BigQuery admite SQL estándar y funciones analíticas, y ofrece herramientas de traducción de SQL heredado; no obliga a reescribir la analítica en Java o Python.",
+   "D": "El coste de la WAN corporativa y la custodia de cintas no son los conceptos que dominan la factura de un almacén de datos local, ni cambian por adoptar BigQuery."
+  },
+  "explanation": "La migración aporta dos ganancias de naturaleza distinta. La operativa: desaparece el aprovisionamiento y el mantenimiento del hardware, y el escalado deja de requerir ventanas de parada. La económica: el modelo de licencias por nodo se sustituye por pago por consumo (bytes escaneados o slots), lo que alinea el coste con el uso real y reduce el TCO."
+ },
+ {
+  "id": "CDL-D2-032",
+  "scenario": "Una gran organización empresarial tiene datos distribuidos en cientos de buckets de Cloud Storage y conjuntos de datos de BigQuery gestionados por diferentes dominios de negocio. Requieren catalogar los metadatos, auditar la calidad y aplicar políticas de seguridad unificadas sin mover físicamente los datos y, además, descubrir y clasificar automáticamente los datos personales que esos conjuntos contienen. ¿Qué dos servicios deben implementar? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "B": "Compute Engine Bare Metal",
+   "C": "Cloud Composer",
+   "E": "Sensitive Data Protection"
+  },
+  "distractors": {
+   "B": "Bare Metal Solution ofrece servidores dedicados para cargas heredadas como Oracle; no cataloga metadatos ni gobierna datos.",
+   "C": "Cloud Composer orquesta flujos de trabajo con Apache Airflow: ejecuta pipelines en un orden dado, pero no cataloga ni clasifica el contenido de los datos.",
+   "D": "Cloud Trace mide la latencia de las peticiones entre microservicios; pertenece a la observabilidad de aplicaciones, no al gobierno de datos."
+  },
+  "explanation": "El gobierno de datos aquí necesita dos servicios complementarios. Dataplex unifica el catálogo, la calidad y las políticas sobre datos que siguen residiendo en Cloud Storage y BigQuery. Sensitive Data Protection (antes Cloud DLP) es el que inspecciona el contenido para descubrir y clasificar información personal mediante infoTypes, algo que un catálogo de metadatos no hace por sí solo."
+ },
+ {
+  "id": "CDL-IA-004",
+  "scenario": "Un fabricante despliega un asistente conversacional basado en un modelo generativo para responder dudas de garantía. El asistente contesta con fluidez, pero a veces describe coberturas que la empresa no ofrece. ¿Qué dos medidas reducen ese comportamiento? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Recuperar con Vertex AI Search los fragmentos del manual de garantía y entregarlos al modelo como contexto de la respuesta."
+  },
+  "distractors": {
+   "B": "Subir la temperatura aumenta la variedad de las respuestas y, con ella, la probabilidad de que el modelo invente coberturas inexistentes.",
+   "C": "Cloud Translation API traduce texto entre idiomas; el problema no es el idioma, sino que la respuesta no se apoya en la documentación real.",
+   "D": "Añadir réplicas al punto de conexión mejora el rendimiento ante la concurrencia, pero no cambia el contenido de lo que el modelo responde."
+  },
+  "explanation": "El anclaje (grounding) tiene dos elementos que deben darse juntos: la fuente verificada, es decir, los documentos oficiales de garantía frente a los que se contrastan las respuestas; y el mecanismo de recuperación que localiza los fragmentos pertinentes y los inyecta como contexto en cada consulta, que es lo que hace Vertex AI Search en un patrón RAG."
+ },
+ {
+  "id": "CDL-IA-006",
+  "scenario": "Un modelo de detección de fraude alcanzó un acierto muy alto al desplegarse hace un año. Sin cambiar su código ni su infraestructura, hoy deja pasar operaciones que antes bloqueaba. ¿Qué dos afirmaciones explican este deterioro y cómo mantenerlo bajo control? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Falta una práctica de MLOps que vigile la deriva con Vertex AI Model Monitoring y reentrene el modelo con datos recientes."
+  },
+  "distractors": {
+   "B": "Los parámetros de un modelo son datos almacenados y no se degradan físicamente; lo que cambia es la realidad que el modelo intenta describir.",
+   "C": "Las cuotas de un punto de conexión limitan el número de peticiones o provocan errores, pero nunca devuelven predicciones aproximadas de menor calidad.",
+   "D": "Los modelos no caducan por antigüedad ni cambian solos a un modo reducido: siguen aplicando exactamente la misma lógica con la que se entrenaron."
+  },
+  "explanation": "Son dos caras del mismo fenómeno. La causa es la deriva: los patrones de fraude evolucionan y los datos de producción dejan de parecerse a los de entrenamiento. La consecuencia organizativa es la ausencia de MLOps: sin monitorización de deriva (Vertex AI Model Monitoring) ni reentrenamiento periódico, ese deterioro solo se descubre cuando ya ha costado dinero."
+ },
+ {
+  "id": "CDL-IA-023",
+  "scenario": "Un hospital quiere usar un modelo para priorizar la revisión de pruebas diagnósticas. El comité clínico debate qué papel debe tener el sistema en la decisión final sobre cada paciente. ¿Qué dos planteamientos se alinean con la IA responsable? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "El modelo se documenta con una Model Card en Vertex AI y sus decisiones quedan registradas para que el comité clínico pueda auditarlas."
+  },
+  "distractors": {
+   "B": "Una exactitud media superior no justifica retirar al profesional de la decisión clínica: el modelo no responde de un error individual ni conoce el contexto del paciente.",
+   "C": "Ocultar al personal que existe un sistema que ordena su trabajo impide cuestionar sus recomendaciones y contradice el principio de transparencia.",
+   "D": "Un modelo que solo produce estadísticas agregadas no aporta valor al caso planteado, que consiste precisamente en priorizar la revisión de las pruebas."
+  },
+  "explanation": "La IA responsable en un entorno clínico exige dos cosas distintas: supervisión humana significativa, donde el modelo prioriza pero el profesional decide; y transparencia con trazabilidad, documentando el modelo (Model Cards) y registrando sus recomendaciones para que puedan auditarse después. Una sin la otra deja el sistema sin control efectivo."
+ },
+ {
+  "id": "CDL-D3-014",
+  "scenario": "Los desarrolladores de una compañía se quejan frecuentemente con la frase 'en mi computadora sí funciona, pero en el servidor de pruebas falla' debido a diferencias en versiones de dependencias, variables de entorno y librerías del sistema operativo. ¿Qué dos beneficios aporta la contenedorización en este caso? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Al compartir el kernel del sistema operativo anfitrión, el contenedor arranca en segundos y consume muchos menos recursos que una máquina virtual completa, lo que permite densificar el hardware y ejecutar la misma imagen tanto en GKE como en Cloud Run."
+  },
+  "distractors": {
+   "B": "Una imagen de disco personalizada de Compute Engine también estandariza el entorno, pero arrastra el sistema operativo completo, tarda minutos en arrancar y se reconstruye entera ante cualquier cambio.",
+   "C": "Un fichero de dependencias bloqueado fija las librerías de la aplicación, pero no las del sistema operativo ni las variables de entorno, que son parte de la causa del problema descrito.",
+   "D": "Un contenedor no incluye ni arranca su propio kernel: comparte el del anfitrión. Quien lleva un sistema operativo invitado completo es la máquina virtual."
+  },
+  "explanation": "La contenedorización resuelve dos problemas distintos a la vez. El de portabilidad: la imagen inmutable empaqueta código, runtime y dependencias del sistema, y se ejecuta igual en cualquier entorno. Y el de eficiencia: al compartir el kernel del anfitrión, el contenedor arranca en segundos y ocupa mucho menos que una VM, lo que abarata la infraestructura y permite desplegar la misma imagen en GKE o Cloud Run."
+ },
+ {
+  "id": "CDL-D3-013",
+  "scenario": "Una empresa de e-commerce tiene una aplicación monolítica gigante de 15 años. Cada vez que el equipo de pagos realiza un cambio menor, se debe compilar y probar toda la aplicación durante horas, y un fallo en el módulo de comentarios de usuarios derriba todo el portal de compras. ¿Cuáles son dos beneficios de descomponer este monolito en microservicios independientes? (Elige 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Permite elegir para cada servicio la tecnología y el destino de ejecución más adecuados, por ejemplo Cloud Run para el catálogo y GKE para el motor de pagos."
+  },
+  "distractors": {
+   "A": "Los microservicios no abaratan por sí solos la infraestructura: cada servicio suma su propia sobrecarga de red y observabilidad, y el ahorro llega del escalado selectivo, no del troceado.",
+   "C": "Es al revés: los microservicios exigen más orquestación, descubrimiento de servicios y observabilidad distribuida que un monolito, y por eso se apoyan en plataformas como GKE.",
+   "D": "Si todos los servicios siguen escribiendo en la misma base de datos central, el monolito persiste en la capa de datos y se pierde la independencia que se buscaba."
+  },
+  "explanation": "Descomponer el monolito aporta dos beneficios diferentes. La autonomía y el aislamiento: cada equipo despliega y escala su servicio sin recompilar todo, y un fallo en comentarios ya no derriba el portal. Y la libertad tecnológica: cada servicio puede usar el lenguaje y el modelo de ejecución que mejor le encaja, por ejemplo Cloud Run donde interesa escalar a cero y GKE donde se necesita control fino."
+ },
+ {
+  "id": "CDL-D3-016",
+  "scenario": "Una empresa necesita un repositorio centralizado y privado para almacenar y versionar sus imágenes de contenedores Docker y paquetes de software (npm, Maven, Python), que escanee automáticamente las imágenes en busca de vulnerabilidades conocidas (CVEs) y que además impida desplegar en GKE o Cloud Run cualquier imagen que no haya superado ese control. ¿Qué dos servicios de Google Cloud cubren este flujo? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "D": "Container Threat Detection de Security Command Center (detecta comportamiento sospechoso dentro de contenedores que ya están en ejecución)",
+   "E": "Binary Authorization (control de admisión que exige atestaciones firmadas antes de ejecutar una imagen en GKE o en Cloud Run)"
+  },
+  "distractors": {
+   "A": "Cloud Source Repositories aloja el código fuente en Git, no los artefactos compilados ni las imágenes de contenedor, y no realiza escaneo de vulnerabilidades.",
+   "B": "Un bucket de Cloud Storage puede guardar ficheros, pero no ofrece protocolo de registro de contenedores, gestión de versiones de paquetes ni análisis de CVEs.",
+   "D": "Container Threat Detection vigila el contenedor una vez en ejecución; llega tarde para impedir que una imagen sin verificar llegue a desplegarse."
+  },
+  "explanation": "El flujo pedido tiene dos momentos y necesita dos servicios. Artifact Registry almacena y versiona imágenes y paquetes y los analiza en busca de CVEs. Binary Authorization actúa después, en el momento del despliegue: es el control de admisión que bloquea en GKE o Cloud Run cualquier imagen que no traiga las atestaciones firmadas exigidas por la política."
+ },
+ {
+  "id": "CDL-D2-073",
+  "scenario": "El oficial de seguridad de una empresa pregunta qué configuraciones de cifrado deben activarse en Cloud Storage, BigQuery y Cloud SQL para asegurar que los datos no se almacenen en texto plano en los discos físicos de Google. ¿Qué dos afirmaciones describen correctamente el cifrado de datos en Google Cloud? (Elige 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Si una normativa exige que sea la propia organización quien controle el material criptográfico, puede añadir claves gestionadas por el cliente (CMEK) en Cloud KMS, pero el cifrado ya está activo sin esa configuración."
+  },
+  "distractors": {
+   "A": "Invierte la relación: CMEK es una capa opcional de control sobre la clave. Los datos ya se cifran en reposo aunque no se cree ninguna clave en Cloud KMS.",
+   "B": "El cifrado en reposo es idéntico y gratuito en Cloud Storage, BigQuery y Cloud SQL; no es una función de pago que se contrate por instancia.",
+   "D": "Google cifra tanto en tránsito como en reposo de forma predeterminada. Assured Workloads sirve para cumplir requisitos de soberanía y residencia, no para habilitar el cifrado."
+  },
+  "explanation": "Son dos afirmaciones verdaderas y complementarias sobre el mismo control. La primera describe la línea base: Google Cloud cifra automáticamente los datos en reposo con AES-256 y en tránsito, sin acción ni coste del cliente. La segunda describe la opción avanzada: CMEK en Cloud KMS traslada al cliente el control del ciclo de vida de la clave cuando la normativa lo exige, pero no es lo que hace que exista cifrado."
+ },
+ {
+  "id": "CDL-D4-003",
+  "scenario": "Un nuevo analista de datos junior se incorpora al equipo de marketing. Solo necesita ejecutar consultas SQL sobre un conjunto de datos específico de BigQuery. ¿Cuáles son dos prácticas correctas para otorgarle permisos según las recomendaciones de seguridad de Google Cloud? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Conceder ese rol a un grupo de Google que represente al puesto, en lugar de a la cuenta personal del analista, de modo que las altas y bajas del equipo se gestionen desde el grupo."
+  },
+  "distractors": {
+   "A": "El rol básico de editor concede permisos de escritura sobre casi todos los recursos del proyecto y es exactamente lo contrario del principio de mínimo privilegio.",
+   "B": "El rol de administrador de BigQuery permite crear y borrar conjuntos de datos y gestionar su acceso; aplicado además a nivel de carpeta, se hereda por todos los proyectos que contenga.",
+   "C": "Compartir el conjunto de datos con acceso público de solo lectura lo expone fuera de la organización; el acceso debe seguir estando restringido a identidades conocidas."
+  },
+  "explanation": "El mínimo privilegio se aplica en dos ejes distintos. El del permiso: se eligen roles predefinidos granulares en el recurso concreto, aquí lector de datos sobre el conjunto y usuario de trabajos en el proyecto. Y el de la identidad: los roles se asignan a un grupo de Google que representa el puesto, no a la persona, de modo que el acceso se retira automáticamente cuando alguien cambia de equipo."
+ },
+ {
+  "id": "CDL-D4-010",
+  "scenario": "Una empresa desea eliminar su compleja y costosa VPN corporativa tradicional. Quieren que los empleados remotos accedan a las aplicaciones web internas desde cualquier lugar del mundo de forma segura, evaluando dinámicamente en cada solicitud la identidad del usuario, el estado de seguridad de su dispositivo y su contexto de ubicación, bajo el principio de 'nunca confiar, siempre verificar'. ¿Qué dos componentes de Google Cloud implementan esta solución? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Access Context Manager (niveles de acceso por dispositivo y ubicación)"
+  },
+  "distractors": {
+   "A": "Cloud VPN es precisamente el modelo de perímetro que la empresa quiere retirar: concede acceso a la red completa y no evalúa el estado del dispositivo.",
+   "B": "Cloud Armor protege las aplicaciones expuestas frente a DDoS y ataques web; filtra por IP y patrones, no por identidad ni por postura del dispositivo.",
+   "C": "IAM autoriza el acceso a los recursos de Google Cloud, pero por sí solo no evalúa el contexto de la petición ni publica las aplicaciones internas a los empleados."
+  },
+  "explanation": "Zero Trust en Google Cloud se compone de dos piezas. BeyondCorp Enterprise es la solución que publica las aplicaciones internas y aplica la verificación en cada petición sin VPN. Access Context Manager es donde se definen los niveles de acceso, es decir, las condiciones de dispositivo, ubicación e identidad que esa verificación evalúa. Sin niveles de acceso definidos, no hay nada contextual que comprobar."
+ },
+ {
+  "id": "CDL-D4-031",
+  "scenario": "Un desarrollador necesita conectar una aplicación en GKE a una pasarela de pagos con una clave de API confidencial. ¿Qué dos razones justifican usar Secret Manager en lugar de guardar la clave en texto plano en el repositorio de código o en un ConfigMap de Kubernetes? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Los pods de GKE pueden obtener el secreto en tiempo de ejecución a través de Workload Identity, sin incrustar credenciales estáticas en la imagen del contenedor ni en el repositorio de la aplicación."
+  },
+  "distractors": {
+   "A": "El límite de tamaño no es el motivo de seguridad: un ConfigMap es inadecuado porque guarda el valor en claro y sin control de acceso propio, no porque sea pequeño.",
+   "B": "Secret Manager versiona y facilita la rotación, pero no genera ni cambia por sí mismo la credencial en el proveedor externo: esa rotación hay que orquestarla.",
+   "C": "Un Secret de Kubernetes se guarda codificado en base64 y puede cifrarse en etcd, así que el argumento es inexacto; lo que aporta Secret Manager es IAM, versiones y auditoría centralizados."
+  },
+  "explanation": "Hay dos razones distintas. La de gobierno del secreto: Secret Manager lo cifra en reposo, restringe quién puede leerlo con permisos granulares de IAM, mantiene versiones para rotarlo y registra cada acceso en Cloud Audit Logs. Y la de cómo lo consume la carga: con Workload Identity el pod de GKE se autentica como cuenta de servicio y recupera el secreto en ejecución, de modo que nunca hay una credencial estática dentro de la imagen ni del repositorio."
+ },
+ {
+  "id": "CDL-D3-031",
+  "scenario": "Una empresa opera una base de datos central en Compute Engine que funciona las 24 horas del día, los 365 días del año, y se proyecta que continuará operando de forma continua durante los próximos 3 años. ¿Qué dos medidas reducen de forma sostenida el coste de esa carga siempre encendida? (Elige 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "B": "Apagar la instancia fuera del horario laboral con Cloud Scheduler",
+   "E": "Aplicar las recomendaciones de dimensionamiento de Active Assist"
+  },
+  "distractors": {
+   "B": "La base de datos debe estar disponible las 24 horas: apagarla fuera de horario provocaría una interrupción del servicio, no un ahorro aceptable.",
+   "C": "Las Spot VMs pueden ser retiradas por Google con pocos segundos de aviso, algo inadmisible para una base de datos central que no tolera interrupciones.",
+   "D": "Una reserva de capacidad garantiza que habrá recursos disponibles en la zona, pero por sí sola no aporta el descuento: se factura al precio de lista salvo que se combine con un compromiso."
+  },
+  "explanation": "El ahorro sostenido se consigue en dos pasos que se complementan. Primero, ajustar el tamaño: el Recommender de Active Assist analiza el uso real y propone un tipo de máquina más pequeño, para no comprometerse con capacidad sobrante. Después, comprometer ese consumo estable con Committed Use Discounts a 1 o 3 años, que ofrecen los mayores descuentos a cambio del compromiso."
+ },
+ {
+  "id": "CDL-D4-025",
+  "scenario": "El Director Financiero de una startup establece un presupuesto mensual de 5.000 USD para Google Cloud y desea recibir avisos cuando los costos reales o previstos alcancen el 50%, 90% y 100% del presupuesto. ¿Qué dos afirmaciones describen el comportamiento de las alertas de presupuesto (Budget Alerts) de Google Cloud? (Elige 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "El presupuesto puede publicar además cada actualización en un tema de Cloud Pub/Sub, de modo que una Cloud Function reaccione automáticamente, por ejemplo avisando en un canal de chat o retirando permisos de creación de recursos."
+  },
+  "distractors": {
+   "A": "Cloud Billing no aplica un tope de gasto automático al llegar al 100%: el presupuesto es una herramienta de aviso, y cualquier corte hay que automatizarlo de forma explícita.",
+   "B": "Los umbrales pueden definirse tanto sobre el gasto real acumulado como sobre el gasto previsto para el cierre del mes, sin necesidad de proyecciones manuales.",
+   "C": "Las notificaciones se dirigen a los destinatarios de la cuenta de facturación y pueden ampliarse por correo, Pub/Sub o los canales de Cloud Monitoring."
+  },
+  "explanation": "Dos hechos verdaderos y complementarios. El primero es el comportamiento por defecto: el presupuesto notifica a los administradores de facturación al alcanzar cada umbral, pero nunca apaga recursos, para no provocar una caída de producción. El segundo es cómo se convierte ese aviso en acción: conectando el presupuesto a un tema de Pub/Sub que dispare una Cloud Function con la respuesta que la empresa decida."
+ },
+ {
+  "id": "CDL-D4-026",
+  "scenario": "Un equipo de FinOps necesita realizar análisis detallados de costos en la nube: desglosar el gasto por centro de costos, analizar el consumo hora por hora, rastrear el ahorro generado por descuentos (CUDs/SUDs) y construir tableros ejecutivos interactivos en Looker Studio. ¿Qué dos elementos deben poner en marcha para conseguirlo? (Elige 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Aplicar de forma sistemática labels de centro de coste a los proyectos y recursos, para que el gasto exportado pueda desglosarse después por esa dimensión."
+  },
+  "distractors": {
+   "A": "Los informes de la consola permiten agrupar por proyecto, servicio y SKU, pero no ofrecen el detalle horario ni sirven de fuente para tableros propios en Looker Studio.",
+   "C": "Los presupuestos con alertas avisan cuando el gasto se acerca a un umbral; no producen el histórico detallado que requiere el análisis por centro de coste.",
+   "D": "Descargar un CSV cada mes rompe la automatización, no conserva el detalle horario y obliga a rehacer el análisis manualmente en cada cierre."
+  },
+  "explanation": "El análisis detallado de costes necesita dos cosas. La fuente de datos: la exportación de Cloud Billing a BigQuery, que entrega el detalle horario, los créditos por CUDs y SUDs y se consulta con SQL o desde Looker Studio. Y la dimensión de negocio: los labels de centro de coste aplicados a proyectos y recursos, sin los cuales la exportación existe pero no puede desglosarse por unidad organizativa."
+ }
+]

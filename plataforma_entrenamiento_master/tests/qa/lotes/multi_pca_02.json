@@ -1,0 +1,374 @@
+[
+ {
+  "id": "PCA-D1-026",
+  "domainId": "PCA-D1",
+  "subtopic": "Knightmotives Automotive: Vehicle Gateway Local SSD Buffering",
+  "scenario": "Connected vehicles streaming telemetry over cellular frequently drive through tunnels and dead zones where cellular connectivity is lost for up to 30 minutes. Telemetry records must not be lost during outages and must be transmitted in chronological order once connectivity resumes without crashing vehicle memory. How should the vehicle IoT software client be designed?",
+  "correct": "C",
+  "explanation": "Store-and-forward architecture using local persistent storage ensures telemetry records survive network disconnects and power loss. Bounded storage with exponential backoff prevents RAM exhaustion and network storming.",
+  "doc": "https://cloud.google.com/architecture/iot-overview#device-gateway",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 207,
+    "text": "Rely on the Pub/Sub client library's built-in publisher retry with a long total-timeout setting, keeping unacknowledged telemetry buffered in-process until the cellular link to pubsub.googleapis.com returns."
+   },
+   {
+    "letter": "B",
+    "len": 251,
+    "text": "Buffer the readings in a bounded in-memory ring buffer sized for two minutes of telemetry, overwrite-oldest enabled, and publish whatever remains via pubsub.googleapis.com --topic=telemetry-prod as soon as the cellular modem reattaches to the network."
+   },
+   {
+    "letter": "C",
+    "len": 226,
+    "text": "Implement an embedded store-and-forward queue backed by persistent flash memory (e.g. SQLite/RocksDB) with bounded buffer size, automatically retrying with exponential backoff and publishing in-order to Pub/Sub when connected."
+   },
+   {
+    "letter": "D",
+    "len": 248,
+    "text": "Accumulate every unsent reading in an unbounded in-memory list inside the telemetry process and flush the whole list in a single --batch-size=0 pubsub.googleapis.com publish call when the modem regains signal, ordering entries by capture-timestamp."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-025",
+  "domainId": "PCA-D2",
+  "subtopic": "Altostrat Media: Spot VM Graceful Drain Lifecycle",
+  "scenario": "Altostrat Media operates 1,000 GKE nodes powered by Spot VMs to slash compute costs. When Google Cloud reclaims a Spot VM, the instance receives a 30-second ACPI preemption notice. altostrat needs an automated mechanism to catch this signal, mark the Kubernetes node as unschedulable (cordon), notify the Agones game server allocation controller to redirect new matches to healthy nodes, and allow active 20-second game rounds to finish cleanly. How should you implement this?",
+  "correct": "D",
+  "explanation": "The Node Termination Handler listens for the Compute Engine metadata preemption notice (http://metadata.google.internal/computeMetadata/v1/instance/preempted). It cordons the node immediately, preventing new pod assignments and triggering graceful game server draining before VM termination.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 230,
+    "text": "Define a PodDisruptionBudget with maxUnavailable set to zero for the Agones game server fleet and enable the cluster autoscaler so that Kubernetes refuses to evict any pod hosting an active match while the node is being reclaimed."
+   },
+   {
+    "letter": "B",
+    "len": 228,
+    "text": "Create a Cloud Monitoring log-based metric on the compute.instances.preempted system event and an alerting policy that invokes a Cloud Function which cordons the node and notifies the Agones allocator through the Kubernetes API."
+   },
+   {
+    "letter": "C",
+    "len": 221,
+    "text": "Move the game server fleet to on-demand instances covered by a three-year committed use discount and keep Spot VMs only for the batch analytics node pool, removing the preemption notice from the game server path entirely."
+   },
+   {
+    "letter": "D",
+    "len": 213,
+    "text": "Deploy the Kubernetes Node Termination Handler / GKE Graceful Node Taint controller as a DaemonSet to listen for metadata preemption notices, taint the node as Terminating, and trigger Agones game server draining."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-007",
+  "domainId": "PCA-D3",
+  "subtopic": "Service Account Impersonation & Token Creator",
+  "scenario": "A developer needs to run a local script that writes test records to a BigQuery table. Instead of downloading a service account JSON key to their laptop, the developer wants to use their corporate user identity to impersonate the service account 'bq-writer@project.iam.gserviceaccount.com' directly via the gcloud CLI. What IAM role must be granted to the developer on the service account?",
+  "correct": "A",
+  "explanation": "Granting roles/iam.serviceAccountTokenCreator on a specific service account allows a user to generate short-lived OAuth2 tokens or use the '--impersonate-service-account' gcloud flag, eliminating the need to download private keys.",
+  "doc": "https://cloud.google.com/iam/docs/impersonating-service-accounts",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 105,
+    "text": "Grant the developer the roles/iam.serviceAccountTokenCreator role on the target Service Account resource."
+   },
+   {
+    "letter": "B",
+    "len": 97,
+    "text": "Grant the developer the roles/iam.serviceAccountUser role on the target Service Account resource."
+   },
+   {
+    "letter": "C",
+    "len": 90,
+    "text": "Grant the developer roles/iam.workloadIdentityUser on the target Service Account resource."
+   },
+   {
+    "letter": "D",
+    "len": 93,
+    "text": "Grant the developer roles/iam.serviceAccountOpenIdTokenCreator on the target Service Account."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-039",
+  "domainId": "PCA-D4",
+  "subtopic": "SRE: Canary Traffic Splitting with Anthos Service Mesh",
+  "scenario": "An enterprise wants to test a new version (v2) of its checkout microservice on GKE. The test version must only receive requests from internal beta testers who have the HTTP header 'X-Beta-Tester: true' or specific mobile client versions. General public traffic must remain 100% on v1. What service mesh configuration enables this granular routing?",
+  "correct": "D",
+  "explanation": "Anthos Service Mesh (managed Istio) VirtualService resources support fine-grained Layer 7 routing rules matching HTTP headers, URIs, and cookies, routing internal beta testers to canary subsets without impacting production users.",
+  "doc": "https://cloud.google.com/service-mesh/docs/traffic-management",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 197,
+    "text": "Create a second Service and backend for v2 and split traffic with a weighted backend service on the GKE Gateway, sending 5 percent of all checkout requests to v2 and the remaining 95 percent to v1."
+   },
+   {
+    "letter": "B",
+    "len": 205,
+    "text": "Deploy the v2 pods behind the same Kubernetes Service as v1 with matching label selectors, and rely on the Service clientIP session affinity to keep each beta tester pinned to the new version once reached."
+   },
+   {
+    "letter": "C",
+    "len": 249,
+    "text": "Create an Istio DestinationRule for the checkout service with a consistentHash load balancer keyed on the 'X-Beta-Tester' HTTP header, so that requests carrying the header hash deterministically onto the v2 subset, while other requests hash onto v1."
+   },
+   {
+    "letter": "D",
+    "len": 219,
+    "text": "Deploy Anthos Service Mesh (ASM / Istio) and configure an Istio VirtualService with HTTP match rules routing requests with header 'X-Beta-Tester: true' to DestinationRule subset 'v2', and default traffic to subset 'v1'."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-025",
+  "domainId": "PCA-D5",
+  "subtopic": "Cloud Dataflow: Custom Streaming Templates with Flex Templates",
+  "scenario": "A centralized data platform team authors complex Apache Beam streaming pipelines in Python and Java. They need to package these pipelines into parameterized, versioned artifacts stored in Artifact Registry so that non-developer business analysts can launch custom streaming pipelines via CI/CD, Terraform, or Cloud Console with dynamic runtime parameters. What packaging standard should they use?",
+  "correct": "D",
+  "explanation": "Dataflow Flex Templates package Beam pipelines into Docker container images. Unlike legacy Classic Templates, Flex Templates construct the execution graph dynamically at launch time, supporting dynamic parameter parsing and arbitrary dependencies.",
+  "doc": "https://cloud.google.com/dataflow/docs/guides/templates/using-flex-templates",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 224,
+    "text": "Publish each pipeline as a Cloud Composer DAG that invokes DataflowRunner against a JAR or Python package staged on Cloud Storage, so analysts trigger the DAG from the Airflow UI and pass parameters as DAG run configuration."
+   },
+   {
+    "letter": "B",
+    "len": 245,
+    "text": "Legacy Classic Dataflow Templates, staging the serialized JSON execution graph on Cloud Storage and exposing every runtime parameter through Apache Beam ValueProvider interfaces, launched from Cloud Console or the templates.launch REST endpoint."
+   },
+   {
+    "letter": "C",
+    "len": 226,
+    "text": "Build each pipeline into a Docker image, push it to Artifact Registry, and run it as a long-lived Cloud Run service that starts the Beam pipeline with the DirectRunner whenever an analyst calls its parameterised HTTP endpoint."
+   },
+   {
+    "letter": "D",
+    "len": 250,
+    "text": "Dataflow Flex Templates, packaging the pipeline code and dependencies into Docker container images in Artifact Registry with a template-launcher JSON specification on Cloud Storage, enabling dynamic graph construction and flexible runtime parameters."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-005",
+  "domainId": "PCA-D6",
+  "subtopic": "Cloud Load Balancing: Global Anycast Multi-Region Failover",
+  "scenario": "An enterprise web application is deployed in both us-central1 and europe-west1 behind a single Global External Application Load Balancer Anycast IP address. If the entire us-central1 backend service becomes unhealthy or saturated due to a regional power failure, how does the load balancer react?",
+  "correct": "C",
+  "explanation": "Google's Global External Application Load Balancer uses Anycast BGP routing to advertise a single virtual IP globally. If backends in one region fail health checks, Google's edge proxies automatically reroute user requests to the nearest healthy region over Google's global backbone.",
+  "doc": "https://cloud.google.com/load-balancing/docs/https/cross-region-example",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 233,
+    "text": "The Anycast IP keeps advertising us-central1, so US requests continue to reach the failed backend service until an operator sets that backend's capacity scaler to 0.0 or detaches the unhealthy instance group from the backend service."
+   },
+   {
+    "letter": "B",
+    "len": 233,
+    "text": "Cloud DNS detects the regional outage through its health checks and rewrites the A record to point at the europe-west1 forwarding rule address, so US clients fail over once their resolver's TTL expires, typically within five minutes."
+   },
+   {
+    "letter": "C",
+    "len": 221,
+    "text": "The Global External Application Load Balancer automatically routes US users to healthy backends in europe-west1 seamlessly over Google's private global fiber network without changing IP addresses or modifying DNS records."
+   },
+   {
+    "letter": "D",
+    "len": 249,
+    "text": "Google's edge proxies return HTTP 503 to US users for the duration of the outage, because a Global External Application Load Balancer only spills traffic between backends inside the same region; cross-region overflow requires a second load balancer."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D1-008",
+  "domainId": "PCA-D1",
+  "subtopic": "Altostrat Media: Microservices Decoupling & Asynchronous Processing",
+  "scenario": "Altostrat Media's streaming platform is targeted by large-scale volumetric Layer 3/4 DDoS attacks and malicious Layer 7 bot scraping attempting to hijack user sessions. They need an automated, scalable security solution that filters threats at the edge of Google's network before traffic reaches backend compute resources. Which solution meets these criteria?",
+  "correct": "B",
+  "explanation": "Google Cloud Armor se integra nativamente en el Global External Application Load Balancer para absorber ataques DDoS volumétricos L3/L4 en la red global de Google y mitigar amenazas L7 mediante reglas WAF personalizadas y Machine Learning con Adaptive Protection.",
+  "doc": "https://cloud.google.com/armor/docs/cloud-armor-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 83,
+    "text": "Configurar reglas de firewall VPC para bloquear IPs tras registrar alertas en logs."
+   },
+   {
+    "letter": "B",
+    "len": 87,
+    "text": "Habilitar Cloud Armor con Adaptive Protection en el External Application Load Balancer."
+   },
+   {
+    "letter": "C",
+    "len": 75,
+    "text": "Desplegar firewalls de terceros en instancias Compute Engine por cada zona."
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "Configurar Cloud NAT con asignación de IPs públicas fijas para filtrar tráfico entrante."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D2-043",
+  "domainId": "PCA-D2",
+  "subtopic": "Storage Transfer Service for On-Premises POSIX Data",
+  "scenario": "An enterprise has 500TB of image files stored on an on-premises NetApp NFS storage appliance. They need to migrate the files to a Cloud Storage bucket over a 10Gbps Dedicated Interconnect. The migration tool must run multiple parallel streams, handle automated checksum verification, bandwidth rate limiting during business hours, and sync subsequent daily deltas. What solution should you deploy?",
+  "correct": "A",
+  "explanation": "Storage Transfer Service on-premises agents form a scalable cluster that coordinates parallel data transfers from POSIX/NFS storage directly to Cloud Storage with end-to-end checksum verification, pause/resume capabilities, and bandwidth rate limits.",
+  "doc": "https://cloud.google.com/storage-transfer/docs/on-prem-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 208,
+    "text": "Install a pool of Docker-based Storage Transfer Service Transfer Agents on-premises mounting the NFS share, and manage transfer jobs via Google Cloud Console/API with scheduled syncs and bandwidth throttling."
+   },
+   {
+    "letter": "B",
+    "len": 208,
+    "text": "Order a Transfer Appliance, copy the five hundred terabytes onto it at the datacentre and ship it to Google for ingestion into the Cloud Storage bucket, repeating the shipment for each subsequent daily delta."
+   },
+   {
+    "letter": "C",
+    "len": 206,
+    "text": "Schedule a gcloud storage rsync command from a single on-premises jump host with a cron entry, using parallel composite uploads and a nightly window so the copy does not compete with business-hours traffic."
+   },
+   {
+    "letter": "D",
+    "len": 222,
+    "text": "Create an agentless Storage Transfer Service job that reads a tab-separated URL list describing the five hundred terabytes of files served over HTTPS from the NetApp appliance and writes them into the Cloud Storage bucket."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D3-015",
+  "domainId": "PCA-D3",
+  "subtopic": "Customer-Supplied Encryption Keys (CSEK)",
+  "scenario": "A sovereign government client requires that raw AES-256 encryption keys protecting Compute Engine persistent disks and Cloud Storage buckets must never be stored, cached, or retained on Google Cloud infrastructure under any circumstances. The customer provides raw key strings in every API call. What encryption model is required?",
+  "correct": "B",
+  "explanation": "Customer-Supplied Encryption Keys (CSEK) requires the client to supply raw AES-256 keys in every API request. Google uses the key in ephemeral RAM to encrypt/decrypt data and discards it immediately without storing it in Cloud KMS or any database.",
+  "doc": "https://cloud.google.com/compute/docs/disks/customer-supplied-encryption",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 228,
+    "text": "Google default encryption, where each object and disk is encrypted with a data encryption key that is itself wrapped by a key generated, stored and automatically rotated inside Google's internal keystore with no customer action."
+   },
+   {
+    "letter": "B",
+    "len": 250,
+    "text": "Customer-Supplied Encryption Keys (CSEK), where the client supplies the raw 256-bit AES key in the headers of every read/write API call, and Google retains the key only in ephemeral memory during the request without ever persisting it to disk or KMS."
+   },
+   {
+    "letter": "C",
+    "len": 222,
+    "text": "Customer-Managed Encryption Keys (CMEK) with Cloud KMS backed by Cloud HSM at FIPS 140-2 Level 3, with the key ring in a customer-owned project, separate key custodian roles and the customer holding the destroy permission."
+   },
+   {
+    "letter": "D",
+    "len": 240,
+    "text": "Cloud External Key Manager (Cloud EKM), where Cloud KMS holds only a URI reference to a key hosted in the customer's own third-party HSM and brokers every wrap and unwrap operation out to that external endpoint over Private Service Connect."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D4-034",
+  "domainId": "PCA-D4",
+  "subtopic": "FinOps: Cloud Monitoring Metrics Scope Multi-Project Centralization",
+  "scenario": "An enterprise operates 100 Google Cloud projects. The centralized NOC team currently has to switch between 100 different project dashboards in the Google Cloud Console to inspect CPU, memory, and error metrics. How can you consolidate multi-project monitoring into a single unified workspace?",
+  "correct": "C",
+  "explanation": "Cloud Monitoring Metrics Scopes allow a central Scoping Project to monitor metrics across multiple Monitored Projects. This provides a unified single-pane-of-glass dashboard and multi-project PromQL/MQL alerting without merging project boundaries.",
+  "doc": "https://cloud.google.com/monitoring/settings/manage-metrics-scopes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 258,
+    "text": "Grant the NOC team roles/monitoring.viewer at the organization level so a single set of credentials opens the built in Cloud Monitoring dashboards and metrics of all 100 different projects, and bookmark each project console URL in one shared browser profile."
+   },
+   {
+    "letter": "B",
+    "len": 257,
+    "text": "Build an export pipeline that reads the time series of every project through the Cloud Monitoring API into one centralized BigQuery dataset, and rebuild the NOC dashboards in Looker Studio over those metrics tables to get a unified view of the 100 projects."
+   },
+   {
+    "letter": "C",
+    "len": 255,
+    "text": "Configure a centralized Scoping Project in Cloud Monitoring, adding the 100 projects as Monitored Projects to its Metrics Scope, allowing the NOC team to view dashboards, run multi-project MQL queries, and trigger unified alerts in a single pane of glass."
+   },
+   {
+    "letter": "D",
+    "len": 255,
+    "text": "Move the 100 projects under a single monitoring folder and turn on folder level dashboards and folder level alerting policies in Cloud Monitoring, so the metrics of every child project roll up automatically into one unified console view of the enterprise."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D5-024",
+  "domainId": "PCA-D5",
+  "subtopic": "Cloud SQL High Availability with Regional Failover",
+  "scenario": "An enterprise requires high availability for its Cloud SQL for PostgreSQL database. If the primary zone (us-central1-a) experiences a hardware or power failure, the database must automatically fail over to a standby instance in us-central1-b within 60 seconds, retaining the exact same IP address and synchronous data state (RPO = 0). What configuration achieves this?",
+  "correct": "A",
+  "explanation": "Setting availability_type = REGIONAL on Cloud SQL provisions a primary instance and a synchronous standby instance in a different zone. In the event of primary zone failure, failover is automated in under 60 seconds with zero data loss (RPO=0).",
+  "doc": "https://cloud.google.com/sql/docs/postgres/high-availability",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 250,
+    "text": "Configure the Cloud SQL instance with availability_type = 'REGIONAL' (High Availability), which provisions a primary VM in zone A and a synchronous standby VM in zone B with persistent disk network-level replication and automated sub-minute failover."
+   },
+   {
+    "letter": "B",
+    "len": 238,
+    "text": "Provision the Cloud SQL instance as Zonal in us-central1-a with a cross-zone read replica in us-central1-b, and automate failover by promoting the replica from a Cloud Function triggered by a Cloud Monitoring uptime-check alerting policy."
+   },
+   {
+    "letter": "C",
+    "len": 253,
+    "text": "Deploy Cloud SQL for PostgreSQL with availability_type = 'ZONAL' and place a regional internal passthrough Network Load Balancer in front of two independent instances in us-central1-a and us-central1-b so clients always reach a single stable virtual IP."
+   },
+   {
+    "letter": "D",
+    "len": 224,
+    "text": "Enable Cloud SQL Enterprise Plus with near-zero-downtime maintenance and point-in-time recovery retaining seven days of write-ahead logs, restoring the instance into us-central1-b from the retained logs after a zone failure."
+   }
+  ]
+ },
+ {
+  "id": "PCA-D6-030",
+  "domainId": "PCA-D6",
+  "subtopic": "Altostrat Media: GKE Fleet Multi-Region Ingress Failover",
+  "scenario": "Altostrat Media deploys matchmaking and API services across three GKE clusters in North America, Europe, and Asia. If the North American GKE cluster suffers a major incident, incoming mobile API requests must automatically redirect to the European or Asian clusters within seconds based on real-time health checks. What load balancer architecture achieves this?",
+  "correct": "D",
+  "explanation": "The GKE Multi-Cluster Gateway API provisions a Global External Application Load Balancer across multiple clusters in a GKE Fleet, providing automated health-checked failover and Anycast routing across regions.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/deploying-multi-cluster-gateways",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 217,
+    "text": "Give each GKE cluster its own regional Application Load Balancer and create a Cloud DNS routing policy of type GEO with --enable-health-checking over the forwarding rules in us-east4, europe-west1 and asia-northeast1."
+   },
+   {
+    "letter": "B",
+    "len": 241,
+    "text": "Enable multiclusterservicediscovery.googleapis.com on the fleet and export the matchmaking Service with a ServiceExport, so the gke-mcs-importer in us-east4 resolves the ClusterSetIP of every member and traffic reaches any surviving cluster."
+   },
+   {
+    "letter": "C",
+    "len": 246,
+    "text": "Attach the zonal NEGs of each cluster to its own backend service, and have a Cloud Build job run gcloud compute url-maps set-default-service --global to repoint the Global Application Load Balancer when an on-call engineer declares us-east4 down."
+   },
+   {
+    "letter": "D",
+    "len": 214,
+    "text": "Deploy the GKE Gateway API with Multi-Cluster GatewayClass (gke-l7-gxlb-mc) attached to a GKE Fleet, routing external traffic through a single Global Anycast IP with automated multi-cluster health-checked failover."
+   }
+  ]
+ }
+]

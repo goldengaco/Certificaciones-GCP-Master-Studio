@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D5-001",
+  "subtopic": "Cloud IAM Predefined Roles & Principle of Least Privilege",
+  "scenario": "You have a team of data analysts in project `corp-analytics-prod`. The analysts need to query tables in BigQuery dataset `sales_dw` and run query jobs, but must NOT be allowed to create new datasets, delete existing tables, or modify IAM permissions. Which predefined IAM role should you grant to the analysts' Google Group?",
+  "correct": "D",
+  "clave_len": 100,
+  "explanation": "Following the Principle of Least Privilege: `roles/bigquery.jobUser` at the project level allows users to run query jobs and consume project slot quota, while `roles/bigquery.dataViewer` scoped to the dataset grants read-only access to table schemas and rows without granting table deletion or schema modification rights.",
+  "doc": "https://cloud.google.com/bigquery/docs/access-control",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Grant primitive roles/editor at the project level."
+   },
+   {
+    "letter": "B",
+    "len": 48,
+    "text": "Grant roles/bigquery.admin at the project level."
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "Grant roles/bigquery.dataOwner on the project."
+   },
+   {
+    "letter": "D",
+    "len": 100,
+    "text": "Grant roles/bigquery.dataViewer on dataset sales_dw and roles/bigquery.jobUser at the project level."
+   }
+  ],
+  "ratio": 2.08
+ },
+ {
+  "id": "ACE-D4-034",
+  "subtopic": "Compute Engine MIG Abandon Instances Operations",
+  "scenario": "A VM instance `worker-mig-7abc` inside Managed Instance Group `worker-mig` is exhibiting an elusive memory corruption bug. A senior engineer needs to isolate this VM from the MIG so it is NOT deleted, replaced, or health-checked by the MIG, allowing offline forensic analysis while the MIG provisions a replacement. Which command should you execute?",
+  "correct": "B",
+  "clave_len": 116,
+  "explanation": "`gcloud compute instance-groups managed abandon-instances <MIG_NAME> --instances=<INSTANCE>` removes the VM from the Managed Instance Group without deleting the underlying VM. The instance becomes a standalone VM that can be inspected without being terminated or auto-healed by the MIG.",
+  "doc": "https://cloud.google.com/compute/docs/instance-groups/deleting-abandoning-instances-in-migs#abandoning_instances",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 30,
+    "text": "kubectl cordon worker-mig-7abc"
+   },
+   {
+    "letter": "B",
+    "len": 116,
+    "text": "gcloud compute instance-groups managed abandon-instances worker-mig --region=us-central1 --instances=worker-mig-7abc"
+   },
+   {
+    "letter": "C",
+    "len": 94,
+    "text": "gcloud compute instance-groups managed delete-instances worker-mig --instances=worker-mig-7abc"
+   },
+   {
+    "letter": "D",
+    "len": 45,
+    "text": "gcloud compute instances stop worker-mig-7abc"
+   }
+  ],
+  "ratio": 2.06
+ },
+ {
+  "id": "ACE-D3-029",
+  "subtopic": "Kubernetes ConfigMap & Secret Volume Mounts",
+  "scenario": "You have created a Kubernetes ConfigMap `app-config` and Secret `db-credentials` in namespace `prod`. You need your Pod to mount the configuration files as directory `/etc/app/config` and secrets as `/etc/app/secrets`. How should the Pod manifest be configured?",
+  "correct": "B",
+  "clave_len": 165,
+  "explanation": "In Kubernetes, ConfigMaps and Secrets are decoupled from container images by mounting them as volumes. Specifying `volumes.configMap` and `volumes.secret` with matching `volumeMounts` in the container spec safely exposes configurations as file paths inside the container filesystem.",
+  "doc": "https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 74,
+    "text": "Hardcode the configuration and passwords into the Dockerfile image layers."
+   },
+   {
+    "letter": "B",
+    "len": 165,
+    "text": "Define volumes in the Pod spec referencing the configMap and secret names, and add volumeMounts in the container spec mapping those volumes to the target mountPaths."
+   },
+   {
+    "letter": "C",
+    "len": 76,
+    "text": "Pass the secret data as URL query parameters in the Kubernetes Ingress host."
+   },
+   {
+    "letter": "D",
+    "len": 91,
+    "text": "Download the secrets from Cloud Storage in the container ENTRYPOINT script via public URLs."
+   }
+  ],
+  "ratio": 2.05
+ },
+ {
+  "id": "ACE-D3-045",
+  "subtopic": "Kubernetes Pod Disruption Budgets (PDB)",
+  "scenario": "You are configuring a mission-critical web deployment in GKE that runs with 5 replicas. During automated GKE node pool upgrades or voluntary node maintenance, you must ensure that at least 3 replicas remain available and serving traffic at all times. What Kubernetes resource should you deploy?",
+  "correct": "A",
+  "clave_len": 106,
+  "explanation": "A Kubernetes `PodDisruptionBudget` (PDB) specifies the minimum number (`minAvailable`) or maximum number (`maxUnavailable`) of Pod replicas that must be running simultaneously during voluntary disruptions (such as node drain, cluster upgrades, or autoscaler downscaling).",
+  "doc": "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 106,
+    "text": "Deploy a PodDisruptionBudget (PDB) resource with minAvailable: 3 matching the web deployment pod selector."
+   },
+   {
+    "letter": "B",
+    "len": 45,
+    "text": "Set the node pool autoscaling min-nodes to 3."
+   },
+   {
+    "letter": "C",
+    "len": 54,
+    "text": "Disable the GKE node auto-upgrade feature permanently."
+   },
+   {
+    "letter": "D",
+    "len": 56,
+    "text": "Create an IAM Deny policy preventing node pool upgrades."
+   }
+  ],
+  "ratio": 2.05
+ },
+ {
+  "id": "ACE-D3-022",
+  "subtopic": "Cloud Storage Bucket Provisioning & Configuration",
+  "scenario": "You need to create a Cloud Storage bucket named `corp-customer-receipts` in dual-region `us-central1,us-east1` with default storage class `STANDARD` and Uniform Bucket-Level Access enabled. Which command should you execute?",
+  "correct": "A",
+  "clave_len": 152,
+  "explanation": "The `gcloud storage buckets create` command supports specifying custom dual-region pairs (`--location=us-central1,us-east1`), `--default-storage-class=STANDARD`, and `--uniform-bucket-level-access` in a single declarative command.",
+  "doc": "https://cloud.google.com/storage/docs/creating-buckets",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 152,
+    "text": "gcloud storage buckets create gs://corp-customer-receipts --location=us-central1,us-east1 --default-storage-class=STANDARD --uniform-bucket-level-access"
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "gcloud compute buckets create gs://corp-customer-receipts --dual-region=us-central1,us-east1"
+   },
+   {
+    "letter": "C",
+    "len": 73,
+    "text": "gcloud storage objects create gs://corp-customer-receipts --location=nam4"
+   },
+   {
+    "letter": "D",
+    "len": 59,
+    "text": "gsutil mb -c STANDARD -l GLOBAL gs://corp-customer-receipts"
+   }
+  ],
+  "ratio": 2.04
+ },
+ {
+  "id": "ACE-D3-054",
+  "subtopic": "Cloud Bigtable Multi-Cluster Replication Deployment",
+  "scenario": "You have an existing Cloud Bigtable instance `ad-bidding-engine` with a single cluster `cluster-us-central1` in `us-central1-b`. To achieve high availability, 99.999% read SLA, and active-active cross-region replication for European bidding servers, you need to add a second cluster `cluster-europe-west1` in zone `europe-west1-b` with 4 SSD nodes. Which command deploys this cluster?",
+  "correct": "D",
+  "clave_len": 136,
+  "explanation": "Cloud Bigtable supports adding clusters dynamically to an existing instance using `gcloud bigtable clusters create <CLUSTER_ID> --instance=<INSTANCE_ID> --zone=<ZONE> --num-nodes=<NODES> --storage-type=<SSD/HDD>`. Google Bigtable automatically establishes bidirectional asynchronous data replication.",
+  "doc": "https://cloud.google.com/bigtable/docs/replication-overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 90,
+    "text": "gcloud bigtable instances create cluster-europe-west1 --replicate-from=cluster-us-central1"
+   },
+   {
+    "letter": "B",
+    "len": 76,
+    "text": "gcloud compute instances create cluster-europe-west1 --bigtable-cluster=true"
+   },
+   {
+    "letter": "C",
+    "len": 42,
+    "text": "cbt replicate-cluster cluster-europe-west1"
+   },
+   {
+    "letter": "D",
+    "len": 136,
+    "text": "gcloud bigtable clusters create cluster-europe-west1 --instance=ad-bidding-engine --zone=europe-west1-b --num-nodes=4 --storage-type=SSD"
+   }
+  ],
+  "ratio": 1.96
+ },
+ {
+  "id": "ACE-D4-048",
+  "subtopic": "Cloud SQL Maintenance Window Operations",
+  "scenario": "A company has strict maintenance blackout windows on weekdays. For Cloud SQL instance `prod-db-1`, automated Google infrastructure and engine maintenance must ONLY occur on Sunday mornings between 02:00 UTC and 03:00 UTC, with a 1-hour maintenance buffer. Which command configures this maintenance window?",
+  "correct": "D",
+  "clave_len": 93,
+  "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --maintenance-window-day=<DAY> --maintenance-window-hour=<UTC_HOUR>` restricts automated platform maintenance and security updates to the specified day and hour window, preventing disruptions during peak business hours.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/maintenance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 60,
+    "text": "gcloud compute instances set-maintenance prod-db-1 --day=SUN"
+   },
+   {
+    "letter": "B",
+    "len": 34,
+    "text": "gcloud app deploy maintenance.yaml"
+   },
+   {
+    "letter": "C",
+    "len": 49,
+    "text": "bq update --maintenance_schedule=SUN_02 prod-db-1"
+   },
+   {
+    "letter": "D",
+    "len": 93,
+    "text": "gcloud sql instances patch prod-db-1 --maintenance-window-day=SUN --maintenance-window-hour=2"
+   }
+  ],
+  "ratio": 1.95
+ },
+ {
+  "id": "ACE-D4-043",
+  "subtopic": "Compute Engine Disk Snapshot Restoration",
+  "scenario": "An analytics database disk `analytics-data-disk` in zone `us-central1-a` was corrupted. You have a verified healthy snapshot `snapshot-analytics-clean`. You need to create a new 500 GB SSD persistent disk named `analytics-data-disk-restored` in `us-central1-a` populated with data from this snapshot. Which command executes the disk restoration?",
+  "correct": "A",
+  "clave_len": 134,
+  "explanation": "`gcloud compute disks create <NEW_DISK_NAME> --source-snapshot=<SNAPSHOT_NAME> --zone=<ZONE>` restores an incremental snapshot into a brand-new persistent disk volume with identical data state.",
+  "doc": "https://cloud.google.com/compute/docs/disks/restore-and-create-snapshots#restore",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 134,
+    "text": "gcloud compute disks create analytics-data-disk-restored --zone=us-central1-a --source-snapshot=snapshot-analytics-clean --type=pd-ssd"
+   },
+   {
+    "letter": "B",
+    "len": 93,
+    "text": "gcloud compute instances restore-disk analytics-data-disk --snapshot=snapshot-analytics-clean"
+   },
+   {
+    "letter": "C",
+    "len": 59,
+    "text": "gsutil cp gs://snapshots/snapshot-analytics-clean /dev/sda1"
+   },
+   {
+    "letter": "D",
+    "len": 55,
+    "text": "bq restore snapshot-analytics-clean analytics-data-disk"
+   }
+  ],
+  "ratio": 1.94
+ },
+ {
+  "id": "ACE-D5-002",
+  "subtopic": "Cloud IAM Service Account User Role Binding",
+  "scenario": "A DevOps engineer needs to deploy Compute Engine instances that run under the authority of a dedicated service account `app-runner@corp.iam.gserviceaccount.com`. The engineer already has `roles/compute.instanceAdmin.v1` in project `corp-prod`. When attempting to launch the VM attached to the service account, the deployment fails with a 403 Forbidden error. Which IAM role must be granted to the engineer?",
+  "correct": "C",
+  "clave_len": 114,
+  "explanation": "To attach a service account to a Compute Engine VM or Cloud Run service, the deploying identity must possess the `roles/iam.serviceAccountUser` role on that specific service account resource (or at project level), preventing unauthorized privilege escalation.",
+  "doc": "https://cloud.google.com/iam/docs/service-account-permissions#user-role",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 49,
+    "text": "Grant roles/owner to the engineer on the project."
+   },
+   {
+    "letter": "B",
+    "len": 55,
+    "text": "Grant roles/iam.serviceAccountKeyAdmin to the engineer."
+   },
+   {
+    "letter": "C",
+    "len": 114,
+    "text": "Grant roles/iam.serviceAccountUser to the engineer on the service account app-runner@corp.iam.gserviceaccount.com."
+   },
+   {
+    "letter": "D",
+    "len": 77,
+    "text": "Set the Compute Engine default service account to have primitive Editor role."
+   }
+  ],
+  "ratio": 1.89
+ },
+ {
+  "id": "ACE-D5-043",
+  "subtopic": "Artifact Registry IAM Security & Deployment",
+  "scenario": "A CI/CD runner service account `build-bot@corp.iam.gserviceaccount.com` needs permission to push new Docker container images to Artifact Registry repository `us-docker.pkg.dev/corp-prod/apps` and pull existing images for layer caching, but must NOT have permission to delete the repository or modify repository IAM policies. Which predefined IAM role should be granted?",
+  "correct": "B",
+  "clave_len": 94,
+  "explanation": "`roles/artifactregistry.writer` grants permissions to read and write (push and pull) artifacts and container images (`artifactregistry.repositories.uploadArtifacts`, `artifactregistry.repositories.downloadArtifacts`), without granting repository deletion or IAM administration rights.",
+  "doc": "https://cloud.google.com/artifact-registry/docs/access-control",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 39,
+    "text": "Grant roles/owner at the project level."
+   },
+   {
+    "letter": "B",
+    "len": 94,
+    "text": "Grant roles/artifactregistry.writer on the Artifact Registry repository (or at project level)."
+   },
+   {
+    "letter": "C",
+    "len": 56,
+    "text": "Grant roles/artifactregistry.admin at the project level."
+   },
+   {
+    "letter": "D",
+    "len": 57,
+    "text": "Grant roles/artifactregistry.reader at the project level."
+   }
+  ],
+  "ratio": 1.86
+ },
+ {
+  "id": "ACE-D5-007",
+  "subtopic": "Cloud KMS CMEK Integration with Compute Engine",
+  "scenario": "Financial compliance mandates that all Persistent Disks in project `finance-prod` must be encrypted using Customer-Managed Encryption Keys (CMEK) managed in Cloud KMS. Before creating CMEK-encrypted disks, which IAM role must you grant to the Compute Engine Service Agent (`service-[PROJECT_NUMBER]@compute-system.iam.gserviceaccount.com`) on the CryptoKey?",
+  "correct": "A",
+  "clave_len": 109,
+  "explanation": "To enable Compute Engine to encrypt and decrypt persistent disks using CMEK, Google's Compute Engine Service Agent (`service-[PROJECT_NUM]@compute-system.iam.gserviceaccount.com`) must be granted `roles/cloudkms.cryptoKeyEncrypterDecrypter` on the specific KMS CryptoKey.",
+  "doc": "https://cloud.google.com/compute/docs/disks/customer-managed-encryption",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 109,
+    "text": "Grant roles/cloudkms.cryptoKeyEncrypterDecrypter to the Compute Engine Service Agent on the target CryptoKey."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Grant roles/owner to the Compute Engine default service account."
+   },
+   {
+    "letter": "C",
+    "len": 51,
+    "text": "Grant roles/cloudkms.admin to the VM instance user."
+   },
+   {
+    "letter": "D",
+    "len": 63,
+    "text": "Download the KMS private key and store it in instance metadata."
+   }
+  ],
+  "ratio": 1.84
+ },
+ {
+  "id": "ACE-D4-011",
+  "subtopic": "Compute Engine Manual Snapshot Creation",
+  "scenario": "Before performing an operating system upgrade on a production VM `database-host-1` in zone `us-central1-b`, you need to take an immediate point-in-time snapshot of its boot persistent disk `database-boot-disk` named `snapshot-pre-upgrade-db`. Which command executes this snapshot?",
+  "correct": "B",
+  "clave_len": 110,
+  "explanation": "`gcloud compute disks snapshot <DISK_NAME> --zone=<ZONE> --snapshot-names=<SNAPSHOT_NAME>` creates a point-in-time incremental backup snapshot of the specified persistent disk.",
+  "doc": "https://cloud.google.com/compute/docs/disks/create-snapshots",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 35,
+    "text": "bq mk --snapshot database-boot-disk"
+   },
+   {
+    "letter": "B",
+    "len": 110,
+    "text": "gcloud compute disks snapshot database-boot-disk --zone=us-central1-b --snapshot-names=snapshot-pre-upgrade-db"
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "gcloud compute instances snapshot database-host-1 --name=snapshot-pre-upgrade-db"
+   },
+   {
+    "letter": "D",
+    "len": 65,
+    "text": "gcloud storage objects copy database-boot-disk gs://my-snapshots/"
+   }
+  ],
+  "ratio": 1.83
+ },
+ {
+  "id": "ACE-D3-055",
+  "subtopic": "Cloud Storage Pub/Sub Notification Deployment",
+  "scenario": "You have an automated ingestion pipeline. Whenever a new file is uploaded to Cloud Storage bucket `gs://incoming-invoices-vault`, a message containing object metadata must be published immediately to Cloud Pub/Sub topic `projects/corp-finance/topics/invoice-events`. Which command establishes this notification pipeline?",
+  "correct": "A",
+  "clave_len": 160,
+  "explanation": "`gcloud storage notification-configurations create` (or `gsutil notification create`) configures native Cloud Storage Pub/Sub notifications, sending structured JSON notification messages to the designated topic whenever an object event (e.g. `OBJECT_FINALIZE`) occurs.",
+  "doc": "https://cloud.google.com/storage/docs/reporting-changes",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 160,
+    "text": "gcloud storage notification-configurations create --topic=projects/corp-finance/topics/invoice-events --event-types=OBJECT_FINALIZE gs://incoming-invoices-vault"
+   },
+   {
+    "letter": "B",
+    "len": 106,
+    "text": "gcloud logging sinks create invoice-sink pubsub.googleapis.com/projects/corp-finance/topics/invoice-events"
+   },
+   {
+    "letter": "C",
+    "len": 80,
+    "text": "gcloud compute instances create invoice-watcher --bucket=incoming-invoices-vault"
+   },
+   {
+    "letter": "D",
+    "len": 79,
+    "text": "gcloud pubsub subscriptions create invoice-sub --bucket=incoming-invoices-vault"
+   }
+  ],
+  "ratio": 1.81
+ },
+ {
+  "id": "ACE-D3-062",
+  "subtopic": "BigQuery Data Transfer Service Deployment",
+  "scenario": "A marketing analytics team needs to ingest daily campaign metrics from Google Ads and Google Analytics into a BigQuery dataset `marketing_dw` on an automated daily recurring schedule without writing custom Python ETL scripts. What service and deployment method should you configure?",
+  "correct": "A",
+  "clave_len": 124,
+  "explanation": "BigQuery Data Transfer Service (DTS) is a fully managed service that automates scheduled data transfers from SaaS applications (Google Ads, Campaign Manager, Google Analytics 4, YouTube) and cloud storage providers directly into BigQuery tables with zero custom code.",
+  "doc": "https://cloud.google.com/bigquery/docs/google-ads-transfer",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 124,
+    "text": "Configure BigQuery Data Transfer Service (via bq mk --transfer_config or Cloud Console) with the Google Ads transfer plugin."
+   },
+   {
+    "letter": "B",
+    "len": 50,
+    "text": "Deploy a Cloud Storage Transfer job from Ads URLs."
+   },
+   {
+    "letter": "C",
+    "len": 72,
+    "text": "Export Google Ads data to Google Drive and use BigQuery external tables."
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "Write a Python cron script on Compute Engine that calls Google Ads API and runs bq load."
+   }
+  ],
+  "ratio": 1.77
+ },
+ {
+  "id": "ACE-D4-015",
+  "subtopic": "Kubernetes Deployment Rollout Operations",
+  "scenario": "You deployed a new image version to a Kubernetes Deployment `api-deployment` in GKE. The new version causes unexpected application crashes. You need to view the rollout history, inspect previous revision numbers, and immediately undo the deployment to roll back to the previous stable revision. Which kubectl commands should you run?",
+  "correct": "A",
+  "clave_len": 113,
+  "explanation": "`kubectl rollout history deployment <NAME>` displays past deployment revisions, and `kubectl rollout undo deployment <NAME>` rolls back the workload to the previous revision instantly without recreating the deployment object.",
+  "doc": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 113,
+    "text": "Run kubectl rollout history deployment api-deployment followed by kubectl rollout undo deployment api-deployment."
+   },
+   {
+    "letter": "B",
+    "len": 63,
+    "text": "Run gcloud container clusters update --rollback=api-deployment."
+   },
+   {
+    "letter": "C",
+    "len": 89,
+    "text": "Run kubectl delete deployment api-deployment && kubectl create deployment api-deployment."
+   },
+   {
+    "letter": "D",
+    "len": 39,
+    "text": "Run gcloud compute instances reset-all."
+   }
+  ],
+  "ratio": 1.77
+ },
+ {
+  "id": "ACE-D4-045",
+  "subtopic": "Network Intelligence Center Network Topology",
+  "scenario": "Network operations engineers report that users in Asia are experiencing high latency and intermittent packet retransmissions when communicating with backend services in `us-central1`. Which Google Cloud visualization and diagnostic tool displays real-time inter-region traffic throughput, packet loss percentage, and performance overlays across GCP infrastructure?",
+  "correct": "A",
+  "clave_len": 46,
+  "explanation": "Network Topology in Network Intelligence Center provides real-time visualization of your global virtual network infrastructure, overlaying live network performance metrics (traffic volume, latency, packet loss percentage) across regions, zones, VPCs, and hybrid connections.",
+  "doc": "https://cloud.google.com/network-intelligence-center/docs/network-topology/concepts/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 46,
+    "text": "Network Intelligence Center: Network Topology."
+   },
+   {
+    "letter": "B",
+    "len": 24,
+    "text": "Cloud Billing Dashboard."
+   },
+   {
+    "letter": "C",
+    "len": 23,
+    "text": "BigQuery Slot Analyzer."
+   },
+   {
+    "letter": "D",
+    "len": 31,
+    "text": "Cloud Storage Transfer Service."
+   }
+  ],
+  "ratio": 1.77
+ },
+ {
+  "id": "ACE-D3-060",
+  "subtopic": "Cloud Build IAM & Terraform Deployment",
+  "scenario": "You are implementing GitOps infrastructure-as-code deployments where Cloud Build runs `terraform apply` against project `prod-core`. By default, the Cloud Build Service Account (`[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`) lacks permissions to provision Compute Engine and Cloud Storage resources, causing build failures. Which IAM roles must be granted to the Cloud Build service account?",
+  "correct": "D",
+  "clave_len": 110,
+  "explanation": "When using Cloud Build for Terraform infrastructure automation, the Cloud Build default service account (`<PROJECT_NUMBER>@cloudbuild.gserviceaccount.com`) must be granted the specific administrative predefined roles (`roles/compute.admin`, `roles/storage.admin`, etc.) corresponding to the cloud resources being provisioned.",
+  "doc": "https://cloud.google.com/build/docs/securing-builds/configure-access-for-cloud-build-service-account",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 75,
+    "text": "Download the project owner's JSON key and embed it into the Git repository."
+   },
+   {
+    "letter": "B",
+    "len": 64,
+    "text": "Grant primitive roles/viewer to the Cloud Build service account."
+   },
+   {
+    "letter": "C",
+    "len": 48,
+    "text": "Disable IAM role checks in Cloud Build settings."
+   },
+   {
+    "letter": "D",
+    "len": 110,
+    "text": "Grant roles/compute.admin and roles/storage.admin to the Cloud Build service account in the prod-core project."
+   }
+  ],
+  "ratio": 1.76
+ }
+]

@@ -1,0 +1,327 @@
+[
+ {
+  "id": "CDL-D3-081",
+  "options": {
+   "A": "Cloud DNS (para registrar la propiedad del dominio ante el registrador acreditado) y Cloud CDN (para servir los registros A, CNAME y MX desde la caché global).",
+   "B": "Cloud Domains (para registrar y administrar la propiedad del dominio) y Cloud Load Balancing con IP anycast global (para responder las consultas DNS con DNSSEC).",
+   "D": "Cloud Domains (para registrar y administrar la propiedad del dominio) y Cloud Armor (para publicar los registros DNS firmados y frenar la falsificación de DNS)."
+  },
+  "distractors": {
+   "A": "Cloud DNS no es un registrador de dominios (esa función es de Cloud Domains) y Cloud CDN cachea contenido HTTP, no responde consultas DNS autoritativas.",
+   "B": "Acierta el registrador pero ancla mal el servicio DNS: el balanceador distribuye tráfico de aplicación sobre una IP anycast, no aloja zonas DNS ni firma DNSSEC.",
+   "D": "Cloud Armor es un WAF y protección DDoS para balanceadores; no publica zonas DNS ni implementa DNSSEC, que es una capacidad de Cloud DNS."
+  }
+ },
+ {
+  "id": "CDL-D3-075",
+  "options": {
+   "A": "Permite replicar las máquinas virtuales de vSphere hacia Compute Engine con Migrate to Virtual Machines, de modo que el plan de recuperación se ejecute sobre instancias nativas de Google Cloud una vez convertidos los discos al formato de disco persistente.",
+   "B": "Permite archivar copias de seguridad de las máquinas virtuales en Cloud Storage Coldline y restaurarlas cuando ocurra el desastre, reduciendo el coste del almacenamiento en frío mientras el centro de datos principal sigue siendo el único sitio de recuperación.",
+   "C": "Permite ejecutar las cargas de VMware sobre Google Cloud VMware Engine solo después de refactorizar cada aplicación a contenedores en Google Kubernetes Engine, modernizando el código antes de poder declarar operativo el sitio secundario de recuperación."
+  },
+  "distractors": {
+   "A": "Convertir las VMs a Compute Engine rompe la compatibilidad con las herramientas de VMware: SRM y vSphere Replication no orquestan la conmutación sobre instancias nativas, que es justo lo que el banco quiere conservar.",
+   "B": "Un archivo frío es respaldo, no un sitio secundario: la restauración completa desde Coldline implica un RTO de horas o días y no ofrece conmutación orquestada con SRM.",
+   "C": "Google Cloud VMware Engine ejecuta el stack de vSphere tal cual: no exige refactorizar ni contenedorizar nada, y esa exigencia eliminaría el beneficio de reutilizar las herramientas existentes."
+  }
+ },
+ {
+  "id": "CDL-D2-040",
+  "options": {
+   "A": "Cloud Vision API (con detección de texto OCR para leer los caracteres del PDF)",
+   "C": "Cloud Natural Language API (con análisis de entidades y sintaxis sobre el texto)",
+   "D": "Vertex AI AutoML tabular (entrenando un modelo con las facturas históricas)"
+  },
+  "distractors": {
+   "A": "El OCR de Vision devuelve texto plano y posiciones, pero no identifica que cadena es el proveedor, el número de factura o el total: no entrega campos estructurados para el ERP.",
+   "C": "Analiza semántica de texto libre; no comprende la estructura ni el diseño de una factura, por lo que no extrae los campos clave de forma fiable.",
+   "D": "AutoML tabular parte de datos ya estructurados en filas y columnas: no puede consumir los PDF, que es precisamente el paso que falta por automatizar."
+  }
+ },
+ {
+  "id": "CDL-D4-090",
+  "options": {
+   "A": "Google Cloud cubre la seguridad de la infraestructura de extremo a extremo, por lo que el modelo de responsabilidad compartida traslada a Google la configuración de IAM, las reglas de firewall de la VPC, la clasificación de los datos del cliente y el cumplimiento normativo de la aplicación; el comité puede por tanto migrar las operaciones críticas sin definir controles propios ni conservar responsabilidades de auditoría interna.",
+   "B": "La postura de Google Cloud es sólida en cifrado en reposo y en seguridad del hardware, pero al carecer de certificaciones de terceros independientes como ISO 27001, SOC 2 Tipo II o PCI DSS y de informes de auditoría publicables ante el regulador, la institución debe conservar sus cargas reguladas en su propio centro de datos y limitar el uso de la nube a entornos de desarrollo y pruebas con datos sintéticos, sin información real de clientes.",
+   "C": "Para alcanzar el nivel exigido la institución debe sustituir los controles nativos de Google Cloud por herramientas de terceros: un SIEM comercial en lugar de Cloud Operations, un CASB externo en vez de Security Command Center y un HSM propio en su centro de datos, porque la plataforma no ofrece gobernanza de identidades ni observabilidad integradas para cargas reguladas."
+  },
+  "distractors": {
+   "A": "Invierte el modelo de responsabilidad compartida: Google asegura la infraestructura, pero la configuración de IAM, las redes, la clasificación de datos y el cumplimiento de la carga de trabajo siguen siendo del cliente.",
+   "B": "Parte de una premisa falsa: Google Cloud mantiene auditorías y certificaciones independientes ISO 27001, SOC 1/2/3 y PCI DSS, publicadas en el Compliance Resource Center.",
+   "C": "Niega capacidades que la plataforma sí ofrece de forma nativa: Security Command Center, Cloud Operations y Cloud HSM cubren postura, observabilidad y custodia de claves sin reemplazarlos por terceros."
+  }
+ },
+ {
+  "id": "CDL-D4-072",
+  "options": {
+   "A": "Cloud Operations Suite (que engloba a Cloud Monitoring, Cloud Logging, Cloud Trace y Error Reporting)",
+   "C": "Security Command Center (que engloba inventario de activos, Security Health Analytics y detección de amenazas)",
+   "D": "Cloud Billing con informes de coste, exportación a BigQuery y presupuestos con alertas por umbral"
+  },
+  "distractors": {
+   "A": "Es la suite de observabilidad: recoge métricas, registros y trazas del estado actual, pero no genera recomendaciones de optimización de coste, seguridad o sostenibilidad.",
+   "C": "Cubre únicamente la postura de seguridad; no aborda las recomendaciones de coste, rendimiento ni sostenibilidad que exige el enunciado.",
+   "D": "Muestra y alerta sobre el gasto ya incurrido, pero no aplica aprendizaje automático para proponer acciones de optimización en las cuatro dimensiones citadas."
+  }
+ },
+ {
+  "id": "CDL-D3-083",
+  "options": {
+   "B": "Zonal Persistent Disk con instantáneas (snapshots) programadas cada hora y almacenadas de forma redundante en varias regiones",
+   "C": "Local SSD con replicación por software en RAID configurada entre dos discos locales de la misma máquina virtual",
+   "D": "Filestore Basic HDD (sistema de archivos NFS administrado y zonal, montado por red desde una máquina virtual arrancada en otra zona de la región)"
+  },
+  "distractors": {
+   "B": "Las instantáneas son copias asíncronas puntuales: obligan a restaurar y pueden perder hasta una hora de datos, mientras el enunciado exige replicación síncrona sin restauración.",
+   "C": "El Local SSD está unido físicamente al host: sus datos se pierden al detener la VM y el RAID no cruza la frontera de zona, así que no sobrevive a una falla zonal.",
+   "D": "El nivel Basic de Filestore es zonal: reside en la misma zona que falla, y además ofrece almacenamiento de archivos en red en vez de un disco en bloque adjunto."
+  }
+ },
+ {
+  "id": "CDL-D3-059",
+  "options": {
+   "A": "Rehospedar el mainframe (Rehost) con Migrate to Virtual Machines para levantar sus cargas como instancias de Compute Engine y consultar los saldos desde las aplicaciones móviles.",
+   "B": "Replicar cada noche los saldos del mainframe hacia BigQuery mediante un proceso por lotes, de modo que las aplicaciones móviles consulten el almacén analítico y no el sistema central.",
+   "C": "Conectar las aplicaciones móviles directamente al mainframe a través de un túnel de Cloud VPN, publicando sus protocolos heredados sin una capa intermedia de gestión de APIs."
+  },
+  "distractors": {
+   "A": "Contradice la restricción del caso: el regulador impone Retain, de modo que el sistema central no puede migrarse; además Migrate to Virtual Machines no convierte cargas de mainframe.",
+   "B": "Una replica nocturna entrega saldos desactualizados: BigQuery es un almacén analítico y no responde consultas transaccionales en tiempo real como exige la banca móvil.",
+   "C": "La VPN aporta conectividad privada pero no fachada: deja los protocolos heredados expuestos al cliente móvil, sin seguridad de API, versionado, cuotas ni analítica."
+  }
+ },
+ {
+  "id": "CDL-D4-083",
+  "options": {
+   "A": "Aplicando la Protección Adaptativa (Adaptive Protection) de Cloud Armor, que aprende el patrón de tráfico normal del sitio y sugiere reglas de mitigación al detectar desviaciones anómalas.",
+   "C": "Escribiendo reglas personalizadas en el lenguaje de expresiones de Cloud Armor que comparen el encabezado y el cuerpo de cada petición contra las firmas publicadas del OWASP Top 10.",
+   "D": "Activando reCAPTCHA Enterprise y la gestión de bots en el balanceador, que distinguen a los usuarios legítimos de las automatizaciones antes de que la petición llegue al backend."
+  },
+  "distractors": {
+   "A": "Adaptive Protection detecta anomalías volumétricas de DDoS de Capa 7 tras un periodo de aprendizaje; no inspecciona la carga útil en busca de firmas de SQLi, XSS o RCE.",
+   "C": "Es exactamente el trabajo manual que la pregunta descarta: obliga a redactar y mantener las expresiones desde cero en lugar de habilitar el conjunto ya preconfigurado.",
+   "D": "La gestión de bots clasifica el origen del tráfico, no el contenido: una petición de un usuario legítimo con una carga útil de inyección SQL la atraviesa sin bloquearse."
+  }
+ },
+ {
+  "id": "CDL-D3-061",
+  "options": {
+   "A": "(1) RPO (Recovery Point Objective); (2) RTO (Recovery Time Objective)",
+   "C": "(1) SLO (Service Level Objective); (2) SLA (Service Level Agreement)",
+   "D": "(1) MTTR (Mean Time To Repair); (2) MTBF (Mean Time Between Failures)"
+  },
+  "distractors": {
+   "A": "Invierte las dos métricas: el tiempo máximo de inactividad es el RTO y la pérdida máxima de datos es el RPO, no al revés.",
+   "C": "SLO y SLA fijan el nivel de servicio comprometido en operación normal; no describen los objetivos de recuperación tras un desastre.",
+   "D": "Son promedios estadísticos de mantenimiento observados, no objetivos de continuidad que la dirección fija por adelantado."
+  }
+ },
+ {
+  "id": "CDL-D3-039",
+  "options": {
+   "A": "(1) Apigee (para validar claves de API y tokens JWT con latencia mínima entre microservicios); (2) Cloud Endpoints (para el portal de desarrolladores, cuotas de facturación y monetización)",
+   "B": "(1) Cloud Endpoints (para la validación ligera de JWT entre microservicios); (2) API Gateway (para exponer las APIs a socios con portal de desarrolladores y monetización)",
+   "D": "(1) Cloud Endpoints (para la validación ligera de JWT interna); (2) Cloud Armor con reglas WAF y limitación de peticiones por socio comercial en el balanceador externo"
+  },
+  "distractors": {
+   "A": "Asigna cada producto al caso contrario: Apigee es la plataforma empresarial con portal y monetización, y Cloud Endpoints es el proxy ligero para microservicios internos.",
+   "B": "API Gateway es una pasarela serverless administrada para APIs propias: no incluye portal de desarrolladores, analítica de negocio ni monetización para un ecosistema de socios.",
+   "D": "Cloud Armor es seguridad perimetral: filtra y limita tráfico, pero no gestiona el ciclo de vida de las APIs, ni el portal, ni las cuotas de facturación de los socios."
+  }
+ },
+ {
+  "id": "CDL-D4-036",
+  "options": {
+   "B": "En un sumidero de registros (Log Sink) que exporte los eventos a un bucket de Cloud Storage con reglas de ciclo de vida de 400 y 30 días según el tipo de registro exportado.",
+   "C": "En las reglas de vencimiento de las tablas particionadas de BigQuery a las que se enrutan los registros, ajustando la caducidad de las particiones a 400 y a 30 días.",
+   "D": "En las políticas de la organización (Organization Policies) de Resource Manager, definiendo una restricción de retención mínima de registros para cada carpeta y proyecto."
+  },
+  "distractors": {
+   "B": "Recurso correcto pero punto de anclaje equivocado: el ciclo de vida rige la copia exportada en Cloud Storage y no altera la retención de los registros dentro de Cloud Logging.",
+   "C": "Configura la retención del destino analítico, no la de Cloud Logging: los registros seguirían con la retención predeterminada en sus buckets de registros de origen.",
+   "D": "Las Organization Policies imponen restricciones sobre la configuración de recursos; no existe una restricción que fije periodos de retención de registros por tipo de log."
+  }
+ },
+ {
+  "id": "CDL-D4-048",
+  "options": {
+   "B": "Configurar la alerta de presupuesto con destinatarios de correo electrónico en el umbral del 100% para que el administrador de facturación reciba el aviso y apague manualmente las máquinas virtuales de prueba desde la consola.",
+   "C": "Establecer una cuota de consumo de 500 USD en el proyecto desde IAM y Administración > Cuotas, de modo que Google Cloud rechace la creación de nuevos recursos al alcanzarse ese importe presupuestado.",
+   "D": "Activar la recomendación de Active Assist sobre máquinas virtuales inactivas para que Recommender apague automáticamente las instancias de prueba cuando el gasto del proyecto supere el presupuesto."
+  },
+  "distractors": {
+   "B": "La notificación por correo informa pero no ejecuta nada: depende de que una persona reaccione, de modo que el gasto sigue corriendo mientras no intervenga el administrador.",
+   "C": "Las cuotas limitan unidades de recurso (vCPU, direcciones IP, llamadas a la API), no importes en dólares: no existe una cuota de gasto que detenga el consumo al llegar a 500 USD.",
+   "D": "Recommender solo emite recomendaciones que alguien debe aplicar y se basa en el uso del recurso, no en el presupuesto: no ejecuta acciones ni reacciona a umbrales de facturación."
+  }
+ },
+ {
+  "id": "CDL-D3-073",
+  "options": {
+   "B": "Aplica el conjunto de reglas WAF preconfiguradas de Cloud Armor basadas en ModSecurity Core Rule Set, comparando cada petición con las firmas conocidas de inyección SQL, XSS y ejecución remota de código.",
+   "C": "Distribuye el tráfico entrante entre más regiones con el balanceador de carga global y Cloud CDN, absorbiendo el volumen del ataque en la caché del borde hasta que el patrón de peticiones se normalice.",
+   "D": "Limita las peticiones por dirección IP mediante reglas de limitación de frecuencia (rate limiting) fijas en Cloud Armor, bloqueando a cualquier cliente que supere el umbral definido por el administrador."
+  },
+  "distractors": {
+   "B": "Son reglas basadas en firmas estáticas y el escenario indica que el ataque no coincide con ninguna firma conocida, que es justamente el hueco que cubre Adaptive Protection.",
+   "C": "Absorber tráfico escala el coste con el ataque y no distingue peticiones maliciosas de legítimas: mitiga volumen, pero no identifica ni bloquea el ataque de Capa 7.",
+   "D": "El umbral es fijo y manual: un ataque distribuido entre miles de IP se mantiene por debajo del límite por cliente, y ajustarlo a mano llega tarde frente a un patrón cambiante."
+  }
+ },
+ {
+  "id": "CDL-D4-065",
+  "options": {
+   "A": "Configurar un Log Sink en Cloud Logging que exporte los registros de auditoría y seguridad a un bucket de Cloud Storage, desde donde el SIEM descargue los archivos por lotes cada varias horas.",
+   "B": "Configurar un Log Sink que enrute los registros de auditoría a un conjunto de datos de BigQuery para que el SIEM ejecute consultas SQL programadas sobre las tablas particionadas por día.",
+   "D": "Conceder al equipo del SOC el rol de visualizador de registros privados y pedirle que consulte el Explorador de Registros y Security Command Center desde la consola de Google Cloud."
+  },
+  "distractors": {
+   "A": "Cloud Storage como destino entrega archivos por lotes con latencia de horas, incompatible con la correlación de incidentes en milisegundos que exige el SOC.",
+   "B": "Convierte una transmisión continua en un modelo de consulta bajo demanda: el SIEM tendría que sondear tablas periódicamente en lugar de recibir los eventos al producirse.",
+   "D": "Ofrece consulta manual en la consola de Google Cloud y no integra los eventos en el SIEM, por lo que no habilita la correlación automática con el resto de fuentes del banco."
+  }
+ },
+ {
+  "id": "CDL-D4-039",
+  "options": {
+   "B": "Permite conceder al desarrollador el rol de Propietario (Owner) del proyecto mientras dure la tarea administrativa, de modo que no necesite ninguna clave JSON y Google Cloud registre sus acciones en los registros de auditoría de actividad de administrador.",
+   "C": "Permite descargar una clave JSON de la cuenta de servicio con una fecha de caducidad de una hora escrita en el propio archivo, de forma que la credencial deje de funcionar al terminar la sesión interactiva del desarrollador.",
+   "D": "Cifra el archivo de clave JSON de la cuenta de servicio con Cloud KMS antes de entregarlo al desarrollador, de modo que solo pueda descifrarlo mientras conserve el rol de creador de tokens sobre esa cuenta."
+  },
+  "distractors": {
+   "B": "Elimina la clave pero vulnera el privilegio mínimo: concede permisos sobre todos los servicios del proyecto en lugar de acotar el acceso a la cuenta de servicio necesaria.",
+   "C": "Las claves JSON de cuenta de servicio no tienen fecha de caducidad: siguen siendo válidas hasta que alguien las elimina o inhabilita, que es el riesgo que se pretende evitar.",
+   "D": "Protege la clave en reposo pero sigue existiendo una credencial estática de larga duración: una vez descifrada puede copiarse y reutilizarse fuera de la sesión autorizada."
+  }
+ },
+ {
+  "id": "CDL-D3-016",
+  "options": {
+   "A": "Cloud Source Repositories (el repositorio Git privado y administrado de Google Cloud con control de acceso mediante IAM)",
+   "B": "Cloud Storage con buckets privados y versionado de objetos habilitado para almacenar las imágenes y los paquetes",
+   "D": "Binary Authorization (el control de admisión que exige atestaciones firmadas antes de ejecutar una imagen en GKE o Cloud Run)"
+  },
+  "distractors": {
+   "A": "Versiona código fuente, no imágenes de contenedor ni paquetes compilados, y no ejecuta análisis de vulnerabilidades CVE sobre artefactos.",
+   "B": "Un bucket guarda archivos pero no habla los protocolos de registro Docker, npm o Maven ni analiza vulnerabilidades de las imágenes almacenadas.",
+   "D": "Es la puerta de control en el despliegue: verifica firmas antes de ejecutar, pero no almacena ni versiona las imágenes y los paquetes de la empresa."
+  }
+ },
+ {
+  "id": "CDL-D4-084",
+  "options": {
+   "A": "Event Threat Detection (en Security Command Center Premium)",
+   "B": "Web Security Scanner (en Security Command Center Standard)",
+   "D": "Cloud Asset Inventory (con feeds de cambios y exportación)"
+  },
+  "distractors": {
+   "A": "Detecta amenazas activas analizando los registros en tiempo real, no configuraciones incorrectas persistentes de la infraestructura.",
+   "B": "Analiza aplicaciones web desplegadas buscando XSS o contenido mixto; no revisa buckets públicos, reglas de firewall ni claves sin rotar.",
+   "D": "Inventaria y notifica cambios de recursos, pero no los evalúa contra las mejores prácticas ni genera hallazgos de mala configuración."
+  }
+ },
+ {
+  "id": "CDL-D4-037",
+  "options": {
+   "A": "El agente heredado de Cloud Monitoring basado en collectd en cada máquina virtual",
+   "B": "El Guest Environment preinstalado en las imágenes públicas de Compute Engine",
+   "C": "El agente heredado de Cloud Logging basado en fluentd, desplegado en las mismas máquinas virtuales"
+  },
+  "distractors": {
+   "A": "El agente de monitoreo heredado recoge métricas pero no envía registros, por lo que no cubre syslog ni los logs de Apache o Nginx que pide el equipo.",
+   "B": "El entorno invitado integra la VM con la plataforma (metadatos, claves SSH, red); no recopila ni exporta métricas del sistema operativo ni registros.",
+   "C": "El agente de registros heredado transmite logs pero no métricas de memoria, disco ni procesos, y no es el agente unificado que sustituye a ambos."
+  }
+ },
+ {
+  "id": "CDL-D3-047",
+  "options": {
+   "B": "Persistent Disk SSD (almacenamiento en bloque persistente conectado por red a la VM)",
+   "C": "Filestore Zonal (recurso compartido NFS administrado y montado en la instancia)",
+   "D": "Memorystore for Redis (caché en memoria administrada dentro de la misma región)"
+  },
+  "distractors": {
+   "B": "Es almacenamiento en bloque conectado por red: su latencia y su techo de IOPS quedan muy por debajo del disco físicamente adjunto al host.",
+   "C": "Es un sistema de archivos compartido por red pensado para acceso concurrente, no un dispositivo de baja latencia para espacio de trabajo temporal.",
+   "D": "Es un servicio de caché remoto accesible por red, no un dispositivo de almacenamiento acoplado a la instancia como pide el escenario."
+  }
+ },
+ {
+  "id": "CDL-D4-027",
+  "options": {
+   "B": "Las Etiquetas (Labels) están gobernadas centralmente por el administrador de la organización y permiten conceder permisos condicionales de IAM y reglas de firewall; los Rótulos (Tags) son pares clave-valor libres que cada equipo aplica para desglosar el gasto en la factura.",
+   "C": "Las Etiquetas (Labels) y los Rótulos (Tags) son pares clave-valor equivalentes con distinto nombre comercial, y ambos se heredan automáticamente desde la carpeta hacia los proyectos y hacia todos los recursos hijos sin necesidad de aplicarlos recurso por recurso.",
+   "D": "Las Etiquetas (Labels) organizan recursos y desglosan costes, mientras que la jerarquía de recursos con carpetas y proyectos es el único mecanismo para aplicar IAM y firewall condicionales, porque los Rótulos (Tags) solo pueden asignarse a máquinas virtuales."
+  },
+  "distractors": {
+   "B": "Intercambia las dos definiciones: las Labels son metadatos libres para costes y las Tags de Resource Manager son las gobernadas y usables en políticas condicionales.",
+   "C": "Las Labels no se heredan por la jerarquía (se aplican a cada recurso) y no sirven para políticas: solo las Tags se heredan y se evalúan en condiciones de IAM y firewall.",
+   "D": "Confunde las Tags de Resource Manager con las etiquetas de red de las VMs: las Tags se aplican a la organización, carpetas y proyectos y son la base de las políticas condicionales."
+  }
+ },
+ {
+  "id": "CDL-D4-035",
+  "options": {
+   "B": "Cloud Audit Logs de acceso a datos (registro de las lecturas sobre los datos del cliente) y Access Context Manager (definición de niveles de acceso según red y dispositivo).",
+   "C": "Access Transparency (visibilidad en registros del acceso del personal de Google) y VPC Service Controls (perímetro que impide la exfiltración de datos hacia proyectos externos).",
+   "D": "Assured Workloads (controles de residencia y de personal por región soberana) y Key Access Justifications (motivo declarado en cada descifrado con la clave del cliente)."
+  },
+  "distractors": {
+   "B": "Los registros de acceso a datos capturan las acciones de las identidades del propio cliente, no los accesos del personal de soporte de Google, que solo aparecen en Access Transparency.",
+   "C": "Acierta la primera mitad pero VPC Service Controls define un perímetro contra la exfiltración: no somete a aprobación explícita del banco cada acceso del ingeniero de Google.",
+   "D": "Key Access Justifications actúa sobre las solicitudes de uso de claves de cifrado externas, no sobre el acceso de un ingeniero de soporte a los datos durante un ticket."
+  }
+ },
+ {
+  "id": "CDL-D3-088",
+  "options": {
+   "A": "(1) External Application Load Balancer (para el tráfico público desde Internet); (2) Cloud NAT (para que la capa de microservicios reciba las conexiones privadas de la capa web sin IP externa)",
+   "B": "(1) Internal Application Load Balancer con IP privada de la subred publicada en Cloud DNS; (2) External Application Load Balancer con IP pública anycast global para la capa de microservicios",
+   "D": "(1) External Application Load Balancer (para el tráfico público desde Internet); (2) Private Service Connect publicando el backend como servicio consumible desde la VPC de la capa web"
+  },
+  "distractors": {
+   "A": "Cloud NAT habilita salida a Internet desde instancias sin IP pública: no balancea tráfico entrante ni ofrece una IP virtual interna para la capa de backend.",
+   "B": "Invierte los dos balanceadores: dejaría la capa web sin acceso desde Internet y expondría a Internet el backend que debe permanecer privado.",
+   "D": "Private Service Connect publica un servicio entre VPC o proyectos distintos y necesita un balanceador interno detrás: por sí mismo no distribuye el tráfico entre los backends."
+  }
+ },
+ {
+  "id": "CDL-D3-028",
+  "options": {
+   "A": "Migrate to Containers (anteriormente Migrate for Anthos, para modernizar cargas hacia GKE)",
+   "B": "Google Cloud VMware Engine (nodos dedicados de VMware vSphere administrados por Google)",
+   "C": "Storage Transfer Service (transferencia administrada de datos hacia buckets de Cloud Storage)"
+  },
+  "distractors": {
+   "A": "Convierte las cargas en contenedores sobre GKE en lugar de trasladar los servidores a instancias de Compute Engine, y exige modernizar la aplicación.",
+   "B": "Mantiene las máquinas sobre la pila de VMware en nodos dedicados: no las convierte en instancias nativas de Compute Engine como pide el equipo.",
+   "C": "Mueve objetos y archivos entre repositorios de almacenamiento; no replica discos de servidores en ejecución ni crea instancias arrancables."
+  }
+ },
+ {
+  "id": "CDL-D4-055",
+  "options": {
+   "A": "plantillas de inspección (inspection templates) reutilizables entre proyectos",
+   "B": "transformaciones de desidentificación (enmascaramiento, tokenización y cifrado)",
+   "C": "trabajos de descubrimiento (discovery jobs) programados sobre los repositorios"
+  },
+  "distractors": {
+   "A": "Una plantilla empaqueta y reutiliza la configuración de un análisis; no es el detector de una categoría concreta de dato sensible.",
+   "B": "Son las acciones que se aplican sobre los hallazgos una vez detectados, no los detectores que localizan las tarjetas o el RFC.",
+   "C": "El trabajo es la ejecución programada del análisis sobre un repositorio; los detectores de categoría son un concepto distinto dentro de esa configuración."
+  }
+ },
+ {
+  "id": "CDL-D4-004",
+  "options": {
+   "B": "Los roles primitivos (Viewer, Editor, Owner) se heredan desde la organización y no pueden revocarse en el ámbito del proyecto, de modo que la única forma de retirarle el acceso a un usuario sería eliminar su cuenta del dominio; los roles predefinidos y personalizados sí admiten revocación granular por recurso.",
+   "C": "Porque los roles predefinidos generan registros de auditoría más detallados en Cloud Audit Logs que los primitivos, permitiendo reconstruir qué acción concreta ejecutó cada usuario, mientras que Viewer y Editor conceden exactamente los mismos permisos que un rol predefinido de administrador de servicio.",
+   "D": "Porque los roles primitivos solo alcanzan a los recursos que ya existían cuando se asignó la vinculación y no cubren los servicios habilitados después en el proyecto, mientras que los roles predefinidos se actualizan solos cuando Google añade permisos nuevos a cada servicio administrado."
+  },
+  "distractors": {
+   "B": "Los roles básicos se conceden y se revocan como cualquier otra vinculación de IAM en el proyecto: el problema es su amplitud de permisos, no una supuesta imposibilidad de revocarlos.",
+   "C": "El detalle del registro de auditoría depende del servicio y del tipo de log, nunca del tipo de rol concedido; además Editor abarca muchísimos más permisos que un rol predefinido de un solo servicio.",
+   "D": "Invierte el comportamiento real: los roles básicos se aplican a todos los recursos del proyecto, incluidos los creados o habilitados después, y por eso resultan excesivamente amplios."
+  }
+ }
+]

@@ -1,0 +1,297 @@
+[
+  {
+    "id": "PCA-D3-001",
+    "certId": "pca",
+    "domainId": "PCA-D3",
+    "domainName": "3. Designing for security and compliance",
+    "sectionId": "PCA-3",
+    "sectionName": "Designing for security and compliance",
+    "subsectionId": "PCA-3.1",
+    "subsectionName": "Designing for security",
+    "subtopic": "Workload Identity Federation for GitHub Actions",
+    "conceptos": [
+      "Workload Identity Federation",
+      "OIDC provider",
+      "attribute mapping",
+      "service account impersonation"
+    ],
+    "title": "Keyless GitHub Actions Deployments Under a Zero-Key Policy",
+    "scenario": "A fintech company runs 25 microservices on Cloud Run, deployed from 40 GitHub repositories through GitHub Actions at roughly 60 workflow runs per day. A recent audit found long-lived service account keys stored as GitHub secrets, and the new security policy mandates zero downloadable service account keys in CI/CD. Each workflow must authenticate to Google Cloud with short-lived tokens valid for at most 1 hour, and only workflows from the production environment of the payments repository may impersonate the production deployer service account. The platform team wants no secret rotation runbooks and full attribution of each deployment to its source repository in Cloud Audit Logs. Which design meets these requirements?",
+    "keywords": [
+      "Workload Identity Federation",
+      "GitHub Actions",
+      "OIDC",
+      "short-lived tokens"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create a service account key for the deployer identity, store it as an Actions secret in each repository, and rotate every copy every 30 days with a scheduled job that rewrites all 40 secrets."
+      },
+      {
+        "letter": "B",
+        "text": "Create a Workload Identity Federation pool with an OIDC provider for GitHub, map repository and environment claims, and grant deployer impersonation only to the payments repository production environment."
+      },
+      {
+        "letter": "C",
+        "text": "Create the same federation pool but grant the deployer role to every authenticated GitHub subject, and rely on branch protection rules on the main branch to keep other repositories from triggering production deployments."
+      },
+      {
+        "letter": "D",
+        "text": "Run one self-hosted Actions runner on a Compute Engine VM with an attached service account, share that runner across all 40 repositories, and let every workflow deploy with the same runner identity."
+      }
+    ],
+    "correct": "B",
+    "explanation": "Workload Identity Federation lets GitHub Actions exchange its OIDC tokens for short-lived Google access tokens, so no downloadable key ever exists and there is nothing to rotate. The OIDC provider validates tokens issued by GitHub, attribute mapping exposes the repository and environment claims, and the IAM allow policy on the deployer service account grants impersonation only to the authenticated subject matching the payments repository production environment. Each exchange is recorded with its attributes, giving per-repository attribution in Cloud Audit Logs.",
+    "distractors": {
+      "A": "Storing a downloadable key in every repository keeps exactly the material the audit banned, and rotating 40 copies on a schedule preserves the rotation runbooks the team was told to eliminate.",
+      "C": "Federating without attribute conditions authenticates every repository at once, so any compromised or experimental workflow inherits production deploy rights that branch protection rules cannot revoke at the IAM layer.",
+      "D": "A shared self-hosted runner collapses all 40 repositories into a single VM identity, so deployments lose per-repository attribution and any workflow reaching the runner inherits full production rights."
+    },
+    "officialDocUrl": "https://cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D3-002",
+    "certId": "pca",
+    "domainId": "PCA-D3",
+    "domainName": "3. Designing for security and compliance",
+    "sectionId": "PCA-3",
+    "sectionName": "Designing for security and compliance",
+    "subsectionId": "PCA-3.1",
+    "subsectionName": "Designing for security",
+    "subtopic": "Workload Identity Federation for AWS EC2",
+    "conceptos": [
+      "Workload Identity Federation",
+      "AWS provider",
+      "attribute mapping",
+      "least privilege"
+    ],
+    "title": "Keyless BigQuery Loads from AWS EC2 During a 9-Month Migration",
+    "scenario": "A logistics company runs nightly ETL on 300 Amazon EC2 instances that load about 50 GB per day into BigQuery. The migration to Google Cloud will take 9 more months, and the CISO forbids storing any long-lived Google service account keys on AWS infrastructure. Each loader must authenticate with short-lived tokens valid for at most 1 hour, and only instances assuming the AWS role data-pipeline-prod may obtain BigQuery write access. The data team refuses to manage key rotation for hundreds of instances and needs every load attributed to its source AWS role in Cloud Audit Logs. Which design meets these requirements?",
+    "keywords": [
+      "Workload Identity Federation",
+      "AWS",
+      "EC2",
+      "BigQuery"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create a service account key for each ETL loader, distribute the keys through AWS Secrets Manager, and rotate all 300 keys every 30 days with a scheduled AWS Lambda function."
+      },
+      {
+        "letter": "B",
+        "text": "Open a dedicated network link from the AWS VPC to Google Cloud, place one hardened proxy host holding a single service account key there, and funnel all 300 loaders through that one trusted proxy identity."
+      },
+      {
+        "letter": "C",
+        "text": "Create a Workload Identity Federation pool with an AWS provider, map the AWS role ARN to an attribute, and grant the BigQuery write roles only to the authenticated subject carrying the data-pipeline-prod role."
+      },
+      {
+        "letter": "D",
+        "text": "Federate the whole AWS account without any role condition, grant the BigQuery write roles to every authenticated AWS principal at once, and trust the AWS account boundary alone instead of checking the EC2 instance role."
+      }
+    ],
+    "correct": "C",
+    "explanation": "The AWS provider of Workload Identity Federation validates the signed sts:GetCallerIdentity request from each EC2 instance, so Google trusts the AWS credential directly and no service account key is ever created or stored on AWS. Mapping the AWS role ARN into a Google attribute lets the IAM allow policy on the BigQuery roles admit only the data-pipeline-prod subject, enforcing least privilege per instance role. Tokens are short-lived by construction and each exchange carries the AWS attributes, giving per-role attribution in Cloud Audit Logs.",
+    "distractors": {
+      "A": "A key per instance recreates exactly the long-lived material banned on AWS, and rotating 300 keys on a schedule keeps the rotation burden the data team explicitly refused to manage.",
+      "B": "A private link plus a proxy host still authenticates to Google with a downloadable key, adds a single choke point for 50 GB per day, and funnels every loader through one identity with no per-role attribution.",
+      "D": "Federating without the role condition hands BigQuery write access to every principal in the AWS account, so a compromised test instance or an unrelated role could load data into the production tables."
+    },
+    "officialDocUrl": "https://cloud.google.com/iam/docs/workload-identity-federation-with-other-clouds",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D3-003",
+    "certId": "pca",
+    "domainId": "PCA-D3",
+    "domainName": "3. Designing for security and compliance",
+    "sectionId": "PCA-3",
+    "sectionName": "Designing for security and compliance",
+    "subsectionId": "PCA-3.1",
+    "subsectionName": "Designing for security",
+    "subtopic": "IAM Conditions for Time & IP Restrictions",
+    "conceptos": [
+      "IAM Conditions",
+      "CEL expression",
+      "allow binding",
+      "least privilege"
+    ],
+    "title": "Time and IP Restrictions on BigQuery Reads with One Binding",
+    "scenario": "A bank gives 800 analysts BigQuery read access to a risk dataset queried about 200 times per hour during the business day. Regulators require that reads succeed only between 08:00 and 18:00 CET and only from the corporate egress range 203.0.113.0/24, with access denied at any other time or from any other network. The access must evaluate both restrictions together on every request, and the security team will not maintain duplicate role bindings per shift. Which IAM design enforces both restrictions on a single grant?",
+    "keywords": [
+      "IAM Conditions",
+      "time restriction",
+      "IP restriction",
+      "BigQuery"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Create one binding limited to business hours and a second binding limited to the corporate range, so access survives whenever either the time window or the source network matches."
+      },
+      {
+        "letter": "B",
+        "text": "Enforce an organization policy across the project hierarchy that pins BigQuery usage to office hours, and rely on the corporate firewall alone to block every query arriving from outside the egress range."
+      },
+      {
+        "letter": "C",
+        "text": "Put the dataset project in a VPC Service Controls perimeter for the corporate offices, accepting that its network-identity decision replaces any time-of-day check."
+      },
+      {
+        "letter": "D",
+        "text": "Grant the BigQuery Data Viewer role in a single binding carrying an IAM Condition that requires request.time to fall inside 08:00-18:00 CET together with the source IP falling inside 203.0.113.0/24."
+      }
+    ],
+    "correct": "D",
+    "explanation": "IAM Conditions attach a CEL expression to a single allow binding, and the binding grants access only when the whole expression evaluates to true. Combining a request.time comparison with an IP range check in one condition forces AND semantics, so both the hour window and the corporate range must hold on the same request. One binding also removes the duplicated grants per shift, and denial outside the window is automatic because no binding matches.",
+    "distractors": {
+      "A": "Separate allow bindings combine with OR semantics, so a midnight request from the corporate network still matches the IP binding and a home request inside office hours still matches the time binding.",
+      "B": "Organization policies constrain resource configuration across the hierarchy and cannot express a per-request allow window combining hour of day with caller IP for one group of analysts.",
+      "C": "A service perimeter enforces data-movement boundaries by network and project identity without any notion of hour of day, so analysts on the corporate network would keep read access at midnight."
+    },
+    "officialDocUrl": "https://cloud.google.com/iam/docs/conditions-overview",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D3-004",
+    "certId": "pca",
+    "domainId": "PCA-D3",
+    "domainName": "3. Designing for security and compliance",
+    "sectionId": "PCA-3",
+    "sectionName": "Designing for security and compliance",
+    "subsectionId": "PCA-3.1",
+    "subsectionName": "Designing for security",
+    "subtopic": "IAM Deny Policies",
+    "conceptos": [
+      "IAM Deny policies",
+      "deny rule",
+      "folder attachment",
+      "break-glass exception"
+    ],
+    "title": "Exception-Proof Guardrail Against Bucket and Audit-Sink Deletion",
+    "scenario": "A software company gives 120 developers the Editor role on a development folder holding 200 projects so teams stay autonomous. After an incident in which a script deleted 15 log buckets, compliance demands a guardrail that blocks storage bucket deletion and audit-sink deletion for everyone except 3 break-glass administrators, and the block must survive any future Owner grant within 2 hours of its assignment. The team will not rewrite the 120 existing allow bindings. Which mechanism enforces an exception-proof prohibition?",
+    "keywords": [
+      "IAM Deny policies",
+      "deny rule",
+      "least privilege",
+      "guardrail"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Remove Editor from the 120 developers, re-issue narrow per-project roles without delete rights, and repeat the review every quarter to catch each newly granted Owner binding."
+      },
+      {
+        "letter": "B",
+        "text": "Attach a deny policy on the folder for storage.buckets.delete and logging.sinks.delete covering all but the 3 break-glass admins, since deny rules beat any allow including future grants."
+      },
+      {
+        "letter": "C",
+        "text": "Set a boolean organization policy constraint on the folder that forbids bucket and sink deletion in every project beneath it, applying the same flat prohibition to the break-glass administrators."
+      },
+      {
+        "letter": "D",
+        "text": "Append an IAM Condition with a short expiry to every existing allow binding, so each grant lapses quickly and developers must request approval before deleting any bucket or sink."
+      }
+    ],
+    "correct": "B",
+    "explanation": "IAM Deny policies attach guardrails that override allow policies: a denied permission is refused no matter which allow binding grants it, including Owner roles granted later. Attaching the policy at the development folder with a denied-permission list covering storage.buckets.delete and logging.sinks.delete, plus an exception for the break-glass group, produces a prohibition that survives future grants without rewriting the 120 existing allow bindings.",
+    "distractors": {
+      "A": "Rewriting 120 bindings is heavy toil and purely detective: nothing stops a project owner from granting Owner again next week and silently reintroducing the delete rights.",
+      "C": "No boolean organization policy constraint covers per-permission deletion guards, and a flat hierarchy prohibition would also block the 3 break-glass administrators the scenario must preserve.",
+      "D": "Expiry conditions only narrow the current allow bindings, so a fresh Owner grant issued tomorrow without that condition restores full delete rights within minutes."
+    },
+    "officialDocUrl": "https://cloud.google.com/iam/docs/deny-overview",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  },
+  {
+    "id": "PCA-D3-005",
+    "certId": "pca",
+    "domainId": "PCA-D3",
+    "domainName": "3. Designing for security and compliance",
+    "sectionId": "PCA-3",
+    "sectionName": "Designing for security and compliance",
+    "subsectionId": "PCA-3.2",
+    "subsectionName": "Designing for compliance",
+    "subtopic": "Org Policy: Disable Service Account Key Creation",
+    "conceptos": [
+      "organization policy",
+      "disableServiceAccountKeyCreation",
+      "policy hierarchy",
+      "service account keys"
+    ],
+    "title": "Org-Wide Ban on Service Account Key Creation with a Legacy Exception",
+    "scenario": "A retail company with 500 developers across 80 projects failed a compliance audit after 300 orphaned user-managed service account keys older than 180 days were found with no owner. The framework requires that creating new user-managed keys be impossible across the organization within 24 hours, with a documented exception for at most 2 legacy service accounts that cannot use federation yet. The control must be preventive rather than detective and visible to auditors at the organization level. Which control satisfies the requirement?",
+    "keywords": [
+      "organization policy",
+      "service account keys",
+      "compliance",
+      "preventive control"
+    ],
+    "isMultiSelect": false,
+    "expectedSelectCount": 1,
+    "options": [
+      {
+        "letter": "A",
+        "text": "Run a nightly Cloud Function that lists keys older than 180 days, deletes the orphaned ones, and emails each project owner a weekly report of the remaining user-managed keys."
+      },
+      {
+        "letter": "B",
+        "text": "Attach an IAM Deny policy in every one of the 80 projects blocking key creation for all developers, and remember to copy the same policy into each newly created project."
+      },
+      {
+        "letter": "C",
+        "text": "Enforce iam.disableServiceAccountKeyCreation at the organization root, and keep the 2 legacy service accounts in an exempt folder outside that scope, with the exception recorded."
+      },
+      {
+        "letter": "D",
+        "text": "Grant the key-administration role only to a central security group, require a ticket for each key request, and review the 300 existing keys every quarter together with the project owners."
+      }
+    ],
+    "correct": "C",
+    "explanation": "The boolean constraint iam.disableServiceAccountKeyCreation is a preventive organization policy control: once enforced at the organization root it blocks creation of user-managed keys in every current and future project, and the enforced state is visible to auditors in one place. Scoping the 2 legacy accounts into an exempt folder keeps the exception explicit and reviewable instead of weakening the org-wide rule.",
+    "distractors": {
+      "A": "A nightly scan is detective rather than preventive: it cleans up after the fact but never makes new key creation impossible, so the 24-hour prevention requirement stays unmet.",
+      "B": "Per-project deny policies must be copied into every new project by hand, so a project created next month silently escapes the prohibition and the posture stays scattered instead of visible at the organization level.",
+      "D": "A ticket process still permits key creation and depends on human discipline for every request, so it cannot guarantee the impossibility the framework demands and leaves no hierarchical enforced state for auditors."
+    },
+    "officialDocUrl": "https://cloud.google.com/resource-manager/docs/organization-policy/restricting-service-accounts",
+    "difficulty": "advanced",
+    "bloomsLevel": "analyze",
+    "timeEstimateSeconds": 120,
+    "caseStudy": "none",
+    "caseStudySection": "General Enterprise Architecture",
+    "blockId": "BLOCK-1"
+  }
+]

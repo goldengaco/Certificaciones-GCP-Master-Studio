@@ -1,0 +1,327 @@
+[
+ {
+  "id": "PCA-D3-001",
+  "options": {
+   "A": "Create a dedicated deployment service account, generate a key with gcloud iam service-accounts keys create, store the JSON blob in a GitHub Actions encrypted secret, and rotate it every 30 days with a scheduled workflow that mints a new key and deletes the old one.",
+   "B": "Configure Workload Identity Federation with an OIDC Workload Identity Pool and Provider for token.actions.githubusercontent.com, then grant roles/iam.workloadIdentityUser on the deployment service account to the pool-wide principalSet covering every repository the provider can issue tokens for.",
+   "C": "Configure Workload Identity Federation with a SAML 2.0 workload identity provider pointed at GitHub's OIDC discovery document, mapping google.subject to assertion.repository and granting that principal permission to impersonate the deployment service account."
+  },
+  "distractors": {
+   "A": "Still creates and stores a long-lived service account key, which the policy forbids outright; rotation only shortens the exposure window of a credential that should never exist.",
+   "B": "Right mechanism, missing attribute condition: an unscoped pool-wide principalSet lets any GitHub repository on the internet mint tokens for the service account, so the binding must target the repository subject assertion.",
+   "C": "Provider type mismatch: GitHub Actions issues signed OIDC JWTs, so the pool needs an OIDC provider configured with the issuer URI; a SAML provider expects a signed SAML assertion and rejects the token."
+  }
+ },
+ {
+  "id": "PCA-D4-021",
+  "options": {
+   "A": "Deploy the community Prometheus Helm chart on all 50 GKE clusters with Thanos sidecars shipping TSDB blocks into a Cloud Storage bucket and a Thanos Query layer federating the clusters, pointing the existing Grafana dashboards at the Thanos query endpoint.",
+   "B": "Install the Ops Agent Prometheus receiver on every node to scrape the existing exporters and forward the samples into Cloud Monitoring as custom metrics, then rebuild the Grafana dashboards and alerting rules against Cloud Monitoring using MQL queries.",
+   "D": "Enable Managed Service for Prometheus in self-deployed collection mode, running a modified Prometheus server per cluster that remote-writes into the managed backend while keeping 15 days of local TSDB retention for the Grafana instances to query."
+  },
+  "distractors": {
+   "A": "Preserves PromQL and gives global federation but the team still runs and upgrades Prometheus, Thanos queriers, compactors and bucket retention, which is precisely the operational toil to be eliminated.",
+   "B": "Samples land as Cloud Monitoring custom metrics addressed by MQL, so the 5,000 existing PromQL rules and Grafana dashboards must all be rewritten, defeating the native-PromQL requirement.",
+   "D": "Self-deployed collection is a valid GMP mode but leaves a Prometheus server plus local TSDB in every cluster, so the storage, compaction and HA burden named in the scenario remains."
+  }
+ },
+ {
+  "id": "PCA-D5-020",
+  "options": {
+   "A": "Implement the 50 tasks as a Google Cloud Workflows YAML state machine with sequential steps and sub-workflow calls per system, using built-in retry policies and invoking the pipeline daily from a Cloud Scheduler job.",
+   "B": "Chain the six stages with Eventarc triggers so each Cloud Run service publishes a completion event that starts the next stage, adding Pub/Sub dead-letter topics for retries and Cloud Monitoring alerting policies for pipeline SLA tracking.",
+   "D": "Deploy a self-managed Apache Airflow cluster on GKE with the Kubernetes Executor, a Cloud SQL metadata database and a GCS-backed DAG bucket, authoring the same Python DAGs with the Google Cloud Airflow operators."
+  },
+  "distractors": {
+   "A": "Workflows is a linear branching state machine for API orchestration: it models no dependency graph, has no SLA tracking or backfill, and steps are YAML rather than the Python task definitions required.",
+   "B": "Event chaining gives no global view of the DAG: fan-in dependencies, backfills and per-task retry state have to be reimplemented, and a failed run cannot be inspected or restarted from one place.",
+   "D": "Identical DAG semantics but the team now owns the scheduler, workers, metadata database and version upgrades, while the requirement explicitly asks for a managed orchestration service."
+  }
+ },
+ {
+  "id": "PCA-D1-049",
+  "options": {
+   "A": "Configure Cloud Storage Pub/Sub notifications on the upload bucket and have a Compute Engine managed instance group pull that subscription, download each 2GB study, push it into the Healthcare API DICOM Store and run the hemorrhage inference model locally on the VM.",
+   "B": "Have the CT and MRI modalities send studies over DIMSE C-STORE straight into the Cloud Healthcare API DICOM Store, enable DICOM Store Pub/Sub notifications, and run a nightly batch Vertex AI prediction job across the day's accumulated imaging studies.",
+   "C": "Deploy a Cloud Run service invoked every minute by a Cloud Scheduler job that lists new objects under the bucket prefix, ingests them into the DICOM Store, invokes the Vertex AI imaging model and posts the on-call radiologist webhook for positive findings."
+  },
+  "distractors": {
+   "A": "A pull-based VM pool has capacity provisioned ahead of demand: scanner uploads are bursty, so notifications queue behind busy workers and the radiologist notification slips well past the immediate requirement.",
+   "B": "Nightly batch inference cannot surface an acute brain hemorrhage in time; the scenario requires inference and the radiologist webhook to fire immediately on upload.",
+   "C": "Polling by object listing adds up to a minute of delay, re-lists the whole prefix on every run and needs its own bookkeeping to avoid reprocessing, whereas the finalize event can be delivered directly."
+  }
+ },
+ {
+  "id": "PCA-D2-044",
+  "options": {
+   "A": "At least 2 cross-connects in a single metropolitan colocation facility terminated on two separate Google edge routers, each paired with its own Cloud Router in Regional dynamic routing mode.",
+   "C": "At least 4 cross-connects inside one metropolitan colocation facility, two per edge availability domain, with redundant Cloud Routers configured in Global dynamic routing mode.",
+   "D": "At least 2 cross-connects across 2 separate metropolitan colocation facilities (one circuit per metro) with a single Cloud Router in Global dynamic routing mode aggregating both VLAN attachments."
+  },
+  "distractors": {
+   "A": "Two circuits in one metro qualify only for the 99.9% SLA tier: surviving the loss of an entire edge colocation facility requires circuits in a second metropolitan area.",
+   "C": "All four circuits still terminate in a single metro, so a facility-level outage removes every one of them; the 99.99% SLA is defined across two separate metropolitan locations.",
+   "D": "One circuit per metro leaves no edge availability domain pair inside each metro, so a single edge router failure wipes out that metro's capacity; the SLA requires two circuits per metro."
+  }
+ },
+ {
+  "id": "PCA-D1-044",
+  "options": {
+   "A": "Regional Cloud Spanner instance in us-central1 with an hourly backup schedule copied cross-region to us-east4, restoring the database into the surviving region whenever a regional disaster takes the primary region offline.",
+   "B": "Cloud SQL for PostgreSQL configured with availability_type REGIONAL plus a cross-region replica in a second US region promoted automatically when the primary region becomes unreachable.",
+   "D": "AlloyDB for PostgreSQL with cross-region replication to a secondary cluster promoted during a regional disaster, offering strongly consistent reads from the primary cluster and a 99.99% availability SLA."
+  },
+  "distractors": {
+   "A": "Hourly backups mean up to an hour of lost charting data (RPO > 0) plus a restore-length outage, while the requirement is zero data loss and uninterrupted clinical charting.",
+   "B": "Cloud SQL high availability is zonal within one region and its cross-region replicas are asynchronous only, so a regional disaster loses in-flight transactions and RPO is not zero.",
+   "D": "AlloyDB cross-region replication is asynchronous with a non-zero RPO and promotion is an explicit operator action, and its SLA sits below Spanner's 99.999% multi-region guarantee."
+  }
+ },
+ {
+  "id": "PCA-D5-024",
+  "options": {
+   "B": "Provision the Cloud SQL instance as Zonal in us-central1-a with a cross-zone read replica in us-central1-b, and automate failover by promoting the replica from a Cloud Function triggered by a Cloud Monitoring uptime-check alerting policy.",
+   "C": "Deploy Cloud SQL for PostgreSQL with availability_type = 'ZONAL' and place a regional internal passthrough Network Load Balancer in front of two independent instances in us-central1-a and us-central1-b so clients always reach a single stable virtual IP.",
+   "D": "Enable Cloud SQL Enterprise Plus with near-zero-downtime maintenance and point-in-time recovery retaining seven days of write-ahead logs, restoring the instance into us-central1-b from the retained logs after a zone failure."
+  },
+  "distractors": {
+   "B": "Read replicas replicate asynchronously and promotion breaks the replication topology: transactions still in flight are lost (RPO > 0) and the promoted instance answers on a different IP address.",
+   "C": "The load balancer preserves the address but the two zonal instances share no state: without synchronous replication the standby holds no data, so RPO = 0 is impossible.",
+   "D": "Point-in-time recovery is a restore that creates a new instance with a new IP address and takes far longer than 60 seconds; near-zero-downtime maintenance covers planned maintenance, not zone loss."
+  }
+ },
+ {
+  "id": "PCA-D5-030",
+  "options": {
+   "A": "Publish claims to a Cloud Pub/Sub topic processed by a Cloud Run service with maximum instances set to 50 and container concurrency set to 1, so at most 50 claim submissions are ever in flight against the clearinghouse gateway.",
+   "C": "Publish claims to a Pub/Sub topic and run a streaming Dataflow pipeline with a fixed 50-worker pool submitting claims to the clearinghouse, relying on Pub/Sub flow control (max outstanding messages) to hold the discharge-hour backlog.",
+   "D": "Enqueue claims into a Cloud Tasks queue configured with max_burst_size = 50 and max_concurrent_dispatches = 2000 so the queue drains the discharge-hour backlog quickly while the token bucket smooths the initial submission burst."
+  },
+  "distractors": {
+   "A": "Capping concurrency limits requests in flight, not requests per second: 50 instances each completing a fast call produce many hundreds of requests per second and the gateway still throttles.",
+   "C": "Flow control bounds unacknowledged messages rather than dispatch rate, so as clearinghouse response latency varies the outbound request rate drifts above the 50 requests per second ceiling.",
+   "D": "max_burst_size only caps the token bucket's burst size; without max_dispatches_per_second the sustained rate is unbounded and 2,000 concurrent dispatches swamps the 50 req/s gateway."
+  }
+ },
+ {
+  "id": "PCA-D2-035",
+  "options": {
+   "A": "Configure Cloud NAT for the private subnets and attach a network firewall policy egress rule whose destination uses FQDN objects for api.partner.com and *.github.com, allowing outbound HTTPS only to the resolved partner addresses.",
+   "B": "Deploy a fleet of self-managed Squid proxy VMs in a managed instance group behind an internal passthrough load balancer and force all workload egress through it, allowlisting the approved partner domains in the Squid configuration.",
+   "D": "Enable a Cloud DNS response policy that resolves only the approved partner domains, combine it with a default-deny egress firewall rule, and keep Private Google Access on so workloads cannot look up any unapproved hostname."
+  },
+  "distractors": {
+   "A": "FQDN objects reject wildcard patterns such as *.github.com and program at most 32 resolved IPv4 addresses per name, so a CDN-backed SaaS answer set is never fully covered.",
+   "B": "Rebuilds the control on customer-managed VMs rather than using a managed Google Cloud service, leaving the team to patch, scale and keep the proxy tier highly available itself.",
+   "D": "DNS filtering is bypassed by dialling a literal IP address, and the default-deny egress rule then also blocks the approved CDN addresses because they are not known ahead of time."
+  }
+ },
+ {
+  "id": "PCA-D1-041",
+  "options": {
+   "B": "Apply the constraints/iam.allowedPolicyMemberDomains organization policy so IAM grants are limited to the corporate Cloud Identity domain, and add IAM Conditions on the patient data buckets so only employee principals can read them.",
+   "C": "Enable Sensitive Data Protection (Cloud DLP) discovery scanning across BigQuery and Cloud Storage to classify PHI automatically, and configure Security Command Center alerting on any large export or copy job touching the classified tables.",
+   "D": "Remove all persistent IAM bindings on the healthcare projects and require analysts to obtain access through Privileged Access Manager entitlements with manager approval and a two-hour expiry, logging every elevation to Cloud Audit Logs."
+  },
+  "distractors": {
+   "B": "Domain restriction stops sharing with external identities but does nothing against an authorized insider copying tables into another project that sits inside the same organization.",
+   "C": "Classification and alerting are detective controls that fire after the copy has already completed; nothing in this design blocks the exfiltrating API request itself.",
+   "D": "Just-in-time elevation shrinks standing privilege, but an approved analyst holds valid credentials during the window and can still copy tables to a personal project: there is no API-level boundary."
+  }
+ },
+ {
+  "id": "PCA-D5-028",
+  "options": {
+   "A": "Implement Cloud Memorystore for Redis with Pub/Sub channels for the in-game chat and guild messaging layer, and implement Cloud Firestore in Native mode with multi-document transactions for the global inventory and purchase ledger.",
+   "B": "Implement Cloud Bigtable with a TTL garbage collection policy for the in-game chat and guild messaging layer, and implement Cloud Spanner for the global transactional inventory and real-money purchase ledger.",
+   "D": "Implement Cloud Firestore in Datastore mode with TTL policies for the in-game chat and guild messaging layer, and implement Cloud Firestore in Native mode for the global inventory and real-money purchase ledger."
+  },
+  "distractors": {
+   "A": "Redis Pub/Sub is fire-and-forget with no offline delivery or TTL-managed history for mobile clients, and Firestore's document model provides no relational joins for the purchase ledger.",
+   "B": "Bigtable expires cells with TTL but exposes no real-time listener or push API, so mobile chat clients must poll and the sub-100ms push sync requirement cannot be met.",
+   "D": "Datastore mode exposes no real-time onSnapshot listeners, so chat sync degrades to polling, and Firestore Native still lacks the relational joins the transactional ledger requires."
+  }
+ },
+ {
+  "id": "PCA-D1-060",
+  "options": {
+   "B": "Deploy Cloud Bigtable with SSD storage and a single-cluster routing app profile, writing aircraft coordinates as time-series rows and issuing point reads from the AR rendering engine 120 times per second over the VPC.",
+   "C": "Deploy Cloud Memorystore for Memcached with a large node count and store each aircraft's 3D coordinates as serialized JSON blobs read by the AR rendering engine over the standard Memcached protocol.",
+   "D": "Deploy Cloud Firestore in Native mode with real-time onSnapshot listeners inside the AR rendering engine so aircraft coordinate documents are pushed to the renderer as they change instead of being polled 120 times per second."
+  },
+  "distractors": {
+   "B": "Bigtable point reads land in the single-digit millisecond range once RPC overhead is included, which sits above the strict 2ms budget: it is a disk-backed store, not an in-memory cache.",
+   "C": "Memcached offers no replication or persistence and no structured hash fields, so losing a single node silently drops an entire slice of aircraft coordinates in the middle of a live broadcast.",
+   "D": "Firestore listener delivery is measured in tens to hundreds of milliseconds across a managed API endpoint, two orders of magnitude above the 2ms frame budget."
+  }
+ },
+ {
+  "id": "PCA-D3-008",
+  "options": {
+   "A": "Use Policy Analyzer in Policy Intelligence to enumerate which principals can access which resources, export the allow-policy analysis to BigQuery, and hand-craft custom roles from the reported permission sets.",
+   "B": "Enable Data Access audit logs on all services, route them to a BigQuery sink, and run scheduled queries over 90 days of methodName values to derive the minimal permission set for each of the 500 service accounts.",
+   "D": "Apply the constraints/iam.disableServiceAccountKeyCreation and constraints/iam.allowedPolicyMemberDomains organization policies and downgrade all 500 service accounts from Owner to the Editor predefined role as an interim step."
+  },
+  "distractors": {
+   "A": "Policy Analyzer reports what access is granted, not what was actually exercised, so it cannot distinguish an unused Owner grant from one a production job depends on.",
+   "B": "Uses real usage data but is a hand-built pipeline with no permission mapping or safety analysis: API method names do not map one-to-one onto IAM permissions, so derived roles break callers.",
+   "D": "Editor is still a broad write role across every service in the project, so it is not least privilege, and those organization policies govern key handling rather than permission scope."
+  }
+ },
+ {
+  "id": "PCA-D2-005",
+  "options": {
+   "A": "Build HA Cloud VPN tunnels from the vendor VPC to each of the 200 client VPCs with Cloud Router BGP sessions advertising only the payment API subnet, using custom route priorities to arbitrate between the overlapping client ranges.",
+   "C": "Publish the payment API behind an Internal Application Load Balancer and attach all 200 client projects to the vendor VPC as Shared VPC service projects so the banks deploy their consumer workloads directly into the vendor's service subnets.",
+   "D": "Deploy Private Service Connect by creating a PSC endpoint for Google APIs using the all-apis bundle in each of the 200 client VPCs and pointing it at the vendor's payment API hostname over Google's internal network backbone."
+  },
+  "distractors": {
+   "A": "BGP cannot install 200 identical 10.0.0.0/16 prefixes learned from different peers: the overlapping client ranges collide in the vendor route table, and traffic also leaves Google's backbone over IPsec.",
+   "C": "Shared VPC only spans projects inside a single organization, and it would place 200 external banks' workloads inside the vendor's own network, an untenable trust, quota and blast-radius boundary.",
+   "D": "The all-apis endpoint targets Google-managed API services only; publishing a customer-owned service requires a service attachment fronted by an internal load balancer, which this design omits."
+  }
+ },
+ {
+  "id": "PCA-D2-017",
+  "options": {
+   "A": "Use Migrate to Containers to modernize the 500 VMware virtual machines into GKE workloads, extracting each application layer out of the guest, generating Kubernetes manifests and cutting the applications over cluster by cluster.",
+   "B": "Export the VMware guests to VMDK/OVA images, move them into Cloud Storage with Storage Transfer Service or a Transfer Appliance, and run gcloud compute images import for each of the 500 VMs before booting the resulting instances.",
+   "C": "Use Database Migration Service together with Application Integration to replicate the 500 workloads continuously, running test clones in a sandbox project before scheduling the final cutover inside a ten-minute maintenance window per VM."
+  },
+  "distractors": {
+   "A": "Migrate to Containers rewrites workloads into containers instead of lifting the VMs: it performs no continuous block-level disk replication and cannot deliver a ten-minute per-VM cutover.",
+   "B": "Image import is a one-shot offline copy: the source must be quiesced for the export and everything written afterwards is lost, so there is no continuous replication or short cutover window.",
+   "C": "Database Migration Service replicates database engines, not whole virtual machines: it cannot move a VMware guest's operating system, application binaries and attached disks."
+  }
+ },
+ {
+  "id": "PCA-D3-028",
+  "options": {
+   "A": "Keep every workload in the single existing production project but carve the Cardholder Data Environment into its own Shared VPC subnet with dedicated firewall rules and custom IAM roles narrowed by resource-level IAM Conditions on the payment resources.",
+   "B": "Create a dedicated 'PCI-CDE' folder holding the isolated production projects and connect it to the corporate VPC with VPC Network Peering, permitting only TLS 1.3 traffic from the corporate application tier into the cardholder subnets.",
+   "D": "Create a dedicated 'PCI-CDE' project inside the existing production folder, enable Assured Workloads on it, and apply organization policy constraints restricting resource locations and mandating CMEK for all cardholder data at rest."
+  },
+  "distractors": {
+   "A": "One project is one IAM and audit boundary: project-level role grants still reach the CDE resources, so PCI scope expands to cover every workload sharing that project.",
+   "B": "Peering establishes direct routing between the non-CDE and CDE networks, which the requirement forbids and which drags the peered corporate network into PCI audit scope.",
+   "D": "Assured Workloads enforces data residency and personnel access regimes and offers no PCI-DSS control package, while a project inside the shared folder inherits that folder's IAM grants."
+  }
+ },
+ {
+  "id": "PCA-D1-070",
+  "options": {
+   "A": "Serve the manifests through Media CDN from the Cloud Storage origin using signed URLs and signed cookies that expire after 60 seconds, so scrapers cannot replay a harvested manifest link and origin requests are absorbed by the edge cache.",
+   "B": "Deploy Apigee X as an API gateway in front of the manifest endpoints, applying a Spike Arrest policy of 100 requests per minute per client IP plus bot-detection policies before proxying requests through to the Cloud Storage origin.",
+   "D": "Apply a Cloud Storage bucket IAM policy with an IP-range condition on the manifest objects and enable Cloud CDN negative caching on the load balancer so unauthorized clients receive cached 403 responses instead of the manifest files."
+  },
+  "distractors": {
+   "A": "Signed URLs stop replay of a stolen link but impose no request-rate ceiling: a scraper running a legitimate player client keeps minting fresh signed URLs and harvesting at full speed.",
+   "B": "Apigee X runs as a regional managed instance behind the load balancer, so scraper traffic still crosses Google's edge and reaches regional compute instead of being dropped at the edge POPs.",
+   "D": "Scraper source addresses are unknown and rotate constantly, so an IP allowlist cannot express a per-client rate limit; negative caching merely stores the error it is given."
+  }
+ },
+ {
+  "id": "PCA-D2-008",
+  "options": {
+   "A": "Configure a regional Managed Instance Group whose instance template attaches a shared Filestore NFS volume and a reserved static internal IP address defined once for every instance in the group.",
+   "B": "Configure a Managed Instance Group with autohealing plus Persistent Disk snapshot schedules, restoring each instance's data disk from its latest snapshot whenever the group recreates it.",
+   "C": "Configure a Managed Instance Group with per-instance metadata entries recording each instance's disk name and address, plus a startup script that attaches the disk and assigns the address at boot."
+  },
+  "distractors": {
+   "A": "Instance template values are shared by all members, so every VM would claim the same disk and the same address; per-instance identity requires stateful per-instance configurations.",
+   "B": "Snapshot restore loses every write since the last snapshot and yields a brand-new disk and IP address, so the instance's persistent identity is not preserved across recreation.",
+   "C": "Metadata is purely descriptive: without auto_delete = NEVER the MIG still deletes the attached disk on recreation, and the address must be a stateful IP to survive the operation."
+  }
+ },
+ {
+  "id": "PCA-D2-012",
+  "options": {
+   "B": "Provision Bigtable with SSD storage on a static cluster sized for the 100,000 QPS daytime peak, and add a second replicated cluster with multi-cluster routing to absorb the overnight read traffic.",
+   "C": "Provision Bigtable with HDD storage and enable cluster autoscaling with min and max node bounds and a 60% target CPU utilization so node count tracks the daytime and overnight traffic curve.",
+   "D": "Provision Bigtable with SSD storage and schedule a Cloud Scheduler job calling the Bigtable Admin API to raise the cluster to a high node count each morning and drop it each night, following the known traffic curve."
+  },
+  "distractors": {
+   "B": "A statically peak-sized cluster keeps paying for daytime capacity all night, and the second replicated cluster doubles node spend rather than reducing it as the cost requirement demands.",
+   "C": "HDD storage cannot deliver a sub-5ms read SLA (it targets large batch and archival workloads), and adding nodes does not move the underlying disk latency floor.",
+   "D": "A fixed schedule cannot react to unplanned surges and mis-sizes the cluster whenever traffic deviates from the assumed curve, whereas native autoscaling tracks real CPU and storage utilization."
+  }
+ },
+ {
+  "id": "PCA-D2-031",
+  "options": {
+   "B": "Add a lifecycle { create_before_destroy = true } block to the production database and storage resources so replacements are built before removal.",
+   "C": "Add a lifecycle { ignore_changes = all } block to the production database and storage resources so Terraform stops tracking drift and never plans updates.",
+   "D": "Move the production databases into a separate state file and run 'terraform state rm' on them so destroy plans no longer include those resources."
+  },
+  "distractors": {
+   "B": "create_before_destroy only reorders a replacement; it does not veto a destroy, so 'terraform destroy' still deletes the production databases.",
+   "C": "ignore_changes suppresses attribute drift only: the resource is still destroyed by a destroy plan or by removing its block from the configuration.",
+   "D": "state rm merely forgets the resource, leaving it unmanaged and orphaned; a later import or re-added block can still destroy it, and no protection lives in the resource itself."
+  }
+ },
+ {
+  "id": "PCA-D5-005",
+  "options": {
+   "A": "Deploy Cloud Composer and author an Airflow DAG whose five tasks call each service in turn, with an on_failure_callback task that runs the compensating delete-database-account step, triggering the DAG from the onboarding REST endpoint.",
+   "C": "Chain the five steps with Eventarc and Pub/Sub so each Cloud Run service publishes its own completion event, implementing the rollback by having the payment service publish a failure event that a compensating Cloud Run service subscribes to and acts on.",
+   "D": "Use Cloud Tasks with one queue per step and per-task retries with exponential backoff, having each Cloud Run handler enqueue the next step and the payment handler enqueue a compensating rollback task whenever the card charge is declined."
+  },
+  "distractors": {
+   "A": "Composer is a scheduled data-pipeline orchestrator running a permanently provisioned environment: it is heavyweight and high-latency for a per-request, event-driven onboarding transaction.",
+   "C": "Choreography spreads the transaction across five services with no central execution state: there is no single run record, no shared retry policy and every compensation must be hand-built.",
+   "D": "Cloud Tasks dispatches individual work items and models no workflow: there is no shared execution state, no conditional branching and no ordering guarantee across the five separate queues."
+  }
+ },
+ {
+  "id": "PCA-D5-007",
+  "options": {
+   "B": "Configure a Cloud Storage Pub/Sub notification on the bucket and attach a push subscription that delivers the notification payload to the Cloud Run service URL authenticated with an OIDC service account token.",
+   "C": "Enable Object Lifecycle Management on the bucket with a rule matching newly created objects and configure the rule action to issue an HTTP callback to the Cloud Run service so every upload triggers the resize container.",
+   "D": "Configure a Cloud Logging sink filtered to storage.objects.create audit entries that routes matched entries into a Pub/Sub topic whose push subscription invokes the Cloud Run resize service for each uploaded profile image."
+  },
+  "distractors": {
+   "B": "Delivers Pub/Sub's own message envelope with Cloud Storage attributes rather than the standard CloudEvents payload the question specifies, and the notification wiring is maintained by hand.",
+   "C": "Lifecycle rules can only change storage class or delete objects, and they run asynchronously on a roughly daily cadence: there is no action that invokes an HTTP endpoint.",
+   "D": "Depends on Cloud Storage Data Access audit logs, which are off by default and costly at upload volume, and delivers a LogEntry rather than a CloudEvent while adding log ingestion latency."
+  }
+ },
+ {
+  "id": "PCA-D5-009",
+  "options": {
+   "A": "Deploy Datastream with an Oracle source connection profile writing Avro change files into Cloud Storage, then schedule a BigQuery Data Transfer Service load every 15 minutes to merge those change files into the destination tables.",
+   "B": "Deploy Database Migration Service with an Oracle source and a BigQuery destination to replicate inserts, updates and deletes continuously, letting the managed service handle schema evolution and upserts serverlessly.",
+   "D": "Create a BigQuery federated query connection to the on-premises Oracle instance through BigQuery Omni so analysts read live transactional rows directly with no replication pipeline to operate or monitor."
+  },
+  "distractors": {
+   "A": "The Cloud Storage destination plus a scheduled merge adds minutes of latency and leaves you to build the upsert logic, whereas the BigQuery destination applies CDC upserts natively.",
+   "B": "Database Migration Service targets managed database destinations such as Cloud SQL, AlloyDB and Spanner; BigQuery is not a supported destination, which is what Datastream is for.",
+   "D": "BigQuery federation reaches Cloud SQL, Spanner and other clouds' object stores, not an on-premises Oracle database, and a federated read is not change data capture: updates and deletes leave no history."
+  }
+ },
+ {
+  "id": "PCA-D1-040",
+  "options": {
+   "A": "Export the FHIR store into BigQuery, run a Sensitive Data Protection (Cloud DLP) inspection job with the HIPAA infoTypes, and apply column-level access policy tags so researchers querying the dataset cannot read the 18 identifier columns while the underlying values stay stored in the table.",
+   "B": "Run a Dataflow pipeline over the FHIR export applying Cloud DLP deterministic crypto-hash transformations to all 18 identifier fields, including every admission, discharge and treatment date, and write the pseudonymised records into the researchers' BigQuery dataset.",
+   "C": "Configure a Cloud Healthcare API FHIR store de-identification configuration that redacts the structured identifier fields and generalizes ages above 89, exporting the result to the research dataset while leaving the clinical narrative notes untouched to preserve their research value."
+  },
+  "distractors": {
+   "A": "Access-control masking leaves the identifiers physically present, so the dataset shared with external researchers is not de-identified under Safe Harbor, and policy tags never touch identifiers buried in free-text notes.",
+   "B": "Hashing the dates destroys the temporal intervals between visits that oncology outcome analysis depends on: Safe Harbor date handling requires shifting, and the pipeline still ignores the free-text notes.",
+   "C": "Leaving free-text clinical notes unprocessed leaves names, medical record numbers and dates inside the narrative, so the export still carries PHI that Safe Harbor requires be redacted."
+  }
+ },
+ {
+  "id": "PCA-D6-009",
+  "options": {
+   "A": "The read-only replicas in the surviving regions are automatically promoted to read-write replicas by the Spanner control plane, which rebuilds a Paxos quorum from their local snapshots and resumes write traffic once replication lag has fully drained.",
+   "B": "Write transactions continue to be accepted in the surviving regions but are buffered locally and applied asynchronously once the default leader region us-east4 is restored, so client applications observe no errors while the region is unavailable.",
+   "C": "An operator must first move write leadership by updating the instance configuration's default leader region with gcloud spanner instances update, after which the surviving regions elect a leader and read-write transactions resume for the affected database."
+  },
+  "distractors": {
+   "A": "Read-only replicas hold no Paxos vote and are never promoted into the write quorum: the quorum is re-formed from the surviving read-write replicas, which already carry committed state.",
+   "B": "Locally buffering commits and applying them later would break external consistency and admit lost or reordered writes; Spanner never acknowledges a commit without a quorum acknowledgement.",
+   "C": "Makes recovery a manual operator action: leader election is automatic on heartbeat loss, and the default leader setting is only a placement preference, not a precondition for failover."
+  }
+ }
+]

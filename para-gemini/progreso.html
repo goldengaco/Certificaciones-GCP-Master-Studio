@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="oscuro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GCP Cert Studio — Tablero de avance</title>
+<style>
+  :root{
+    --fondo:#0f1216; --panel:#161b21; --panel2:#1c232a;
+    --linea:#2a333c; --linea-suave:#212a32;
+    --tinta:#e4eaef; --tinta2:#9dacb9; --tinta3:#6d7d8b;
+    --acento:#5fb6c6; --acento-suave:#12313a;
+    --ok:#6fc79f; --ok-suave:#122c22;
+    --curso:#d9a441; --curso-suave:#2f2510;
+    --mal:#e88a80; --mal-suave:#331916;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  html[data-tema="claro"]{
+    --fondo:#eef1f4; --panel:#fff; --panel2:#f6f8fa;
+    --linea:#d5dce2; --linea-suave:#e6ebef;
+    --tinta:#16202b; --tinta2:#4a5a68; --tinta3:#75858f;
+    --acento:#0b5563; --acento-suave:#ddeaee;
+    --ok:#1b6349; --ok-suave:#dcefe6;
+    --curso:#8a5a00; --curso-suave:#f7eeda;
+    --mal:#a4231c; --mal-suave:#f7e2e0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);color:var(--tinta);font-family:var(--sans);line-height:1.55}
+  .env{max-width:1120px;margin:0 auto;padding:0 22px 90px}
+  h1,h2{margin:0;line-height:1.2;text-wrap:balance}
+  a{color:var(--acento)}
+
+  header.cab{padding:44px 0 26px;border-bottom:2px solid var(--tinta);display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+  .cab-txt{display:flex;flex-direction:column;gap:9px}
+  .ojo{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta3)}
+  h1{font-size:clamp(27px,4.4vw,38px);font-weight:700;letter-spacing:-.02em}
+  .sub{color:var(--tinta2);max-width:60ch;font-size:15px}
+  .btn-tema{background:var(--panel);color:var(--tinta2);border:1px solid var(--linea);border-radius:3px;
+    padding:7px 13px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+  .btn-tema:hover{border-color:var(--acento);color:var(--acento)}
+
+  /* ---- barra global ---- */
+  .global{margin-top:26px;background:var(--panel);border:1px solid var(--linea);border-radius:4px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+  .global-top{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;justify-content:space-between}
+  .global-top strong{font-size:19px}
+  .cuenta{font-family:var(--mono);font-size:13px;color:var(--tinta2);font-variant-numeric:tabular-nums}
+  .barra{height:9px;background:var(--linea-suave);border-radius:99px;overflow:hidden;display:flex}
+  .barra i{display:block;height:100%}
+  .barra .b-ok{background:var(--ok)} .barra .b-curso{background:var(--curso)} .barra .b-mal{background:var(--mal)}
+  .leyenda{display:flex;flex-wrap:wrap;gap:16px;font-size:12.5px;color:var(--tinta2)}
+  .leyenda span{display:flex;align-items:center;gap:6px}
+  .pto{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+
+  section{margin-top:46px}
+  .rot{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acento);margin-bottom:9px}
+  h2{font-size:23px;font-weight:700;letter-spacing:-.015em;margin-bottom:9px}
+  .lede{color:var(--tinta2);max-width:66ch;margin:0 0 22px;font-size:15px}
+
+  /* ---- antes / después ---- */
+  .tabla-env{overflow-x:auto;background:var(--panel);border:1px solid var(--linea);border-radius:4px}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:14.5px}
+  th,td{padding:11px 18px;text-align:left;border-top:1px solid var(--linea-suave)}
+  thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--tinta3);
+    border-top:none;border-bottom:1px solid var(--linea);white-space:nowrap}
+  td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .antes{color:var(--mal);font-weight:600}
+  .ahora{color:var(--tinta2)}
+  .ahora.logrado{color:var(--ok);font-weight:600}
+  .meta{color:var(--tinta3)}
+  tbody tr:hover{background:var(--panel2)}
+  .sin-medir{color:var(--tinta3);font-style:italic}
+
+  /* ---- fases ---- */
+  .fase{margin-top:26px;background:var(--panel);border:1px solid var(--linea);border-radius:4px;overflow:hidden}
+  .fase-cab{padding:16px 22px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;border-bottom:1px solid var(--linea-suave);background:var(--panel2)}
+  .fase-num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--acento);letter-spacing:.06em}
+  .fase-nom{font-size:16px;font-weight:700;flex:1 1 240px}
+  .puerta{font-family:var(--mono);font-size:11px;color:var(--tinta3);flex:1 1 100%}
+  .puerta b{color:var(--tinta2);font-weight:600}
+  .puestos{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:1px;background:var(--linea-suave)}
+  .puesto{background:var(--panel);padding:14px 18px;display:flex;flex-direction:column;gap:7px}
+  .puesto-top{display:flex;gap:9px;align-items:baseline}
+  .pid{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--tinta3);flex:0 0 auto}
+  .pnom{font-size:14.5px;font-weight:600;flex:1;min-width:0}
+  .chip{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 7px;border-radius:2px;white-space:nowrap;flex:0 0 auto}
+  .pcrit{font-size:12.5px;color:var(--tinta2)}
+  .pcrit b{color:var(--tinta);font-weight:600}
+  .eviden{font-family:var(--mono);font-size:11px;color:var(--tinta3);background:var(--panel2);
+    border:1px solid var(--linea-suave);border-radius:2px;padding:7px 9px;white-space:pre-wrap;word-break:break-word;margin:0}
+  .eviden:empty::before{content:"sin evidencia — cuenta como pendiente";font-style:italic}
+
+  [data-estado="hecho"] .chip{background:var(--ok-suave);color:var(--ok)}
+  [data-estado="en-curso"] .chip{background:var(--curso-suave);color:var(--curso)}
+  [data-estado="bloqueado"] .chip{background:var(--mal-suave);color:var(--mal)}
+  [data-estado="pendiente"] .chip{background:var(--linea-suave);color:var(--tinta3)}
+  [data-estado="hecho"]{border-left:3px solid var(--ok)}
+  [data-estado="en-curso"]{border-left:3px solid var(--curso)}
+  [data-estado="bloqueado"]{border-left:3px solid var(--mal)}
+  [data-estado="pendiente"]{border-left:3px solid var(--linea)}
+
+  .nota{margin-top:44px;padding-top:20px;border-top:1px solid var(--linea);font-size:13.5px;color:var(--tinta3);max-width:74ch}
+  .nota code{font-family:var(--mono);background:var(--acento-suave);color:var(--acento);padding:1px 5px;border-radius:2px}
+  :focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="env">
+
+<header class="cab">
+  <div class="cab-txt">
+    <div class="ojo">GCP Cert Studio · Tablero de ejecución</div>
+    <h1>Antes y después, sin adornos</h1>
+    <p class="sub">Cada puesto se marca aquí con la salida real de su comando de verificación.
+       Un puesto sin evidencia cuenta como pendiente, aunque se declare hecho.</p>
+  </div>
+  <button class="btn-tema" id="btn-tema" type="button">Cambiar tema</button>
+</header>
+
+<div class="global">
+  <div class="global-top">
+    <strong id="titulo-global">0 de 30 puestos cerrados</strong>
+    <span class="cuenta" id="detalle-global"></span>
+  </div>
+  <div class="barra" id="barra-global"></div>
+  <div class="leyenda">
+    <span><i class="pto" style="background:var(--ok)"></i> Hecho y con evidencia</span>
+    <span><i class="pto" style="background:var(--curso)"></i> En curso</span>
+    <span><i class="pto" style="background:var(--mal)"></i> Bloqueado</span>
+    <span><i class="pto" style="background:var(--linea)"></i> Pendiente</span>
+  </div>
+</div>
+
+<section>
+  <div class="rot">Antes de empezar</div>
+  <h2>Los dos defectos que una revisión pregunta por pregunta no puede ver</h2>
+  <p class="lede">Una auditoría anterior revisó este banco reactivo por reactivo, lo declaró
+     «fiel» y listó el <em>balance A/B/C/D perfecto</em> como fortaleza. Las dos conclusiones
+     son falsas, y por el mismo motivo: estos defectos solo existen como propiedad de las 900
+     preguntas juntas.</p>
+  <div class="tabla-env" style="margin-bottom:14px">
+    <table>
+      <thead><tr><th>Defecto</th><th>Por qué se escapa al leer</th><th class="n">Medido</th></tr></thead>
+      <tbody>
+        <tr><td>La correcta es la opción más larga</td>
+            <td>En cada pregunta aislada, la opción larga <em>parece</em> razonable: es la que trae el detalle técnico</td>
+            <td class="n antes">99,3 % en PCA</td></tr>
+        <tr><td>Quien no sabe nada aprueba marcando la más larga</td>
+            <td>Requiere simular una estrategia sobre los 6 bloques, no leer preguntas</td>
+            <td class="n antes">17 de 18 bloques</td></tr>
+        <tr><td>La clave sigue el ciclo A→B→C→D</td>
+            <td>Requiere analizar la secuencia de claves; pregunta a pregunta no hay secuencia</td>
+            <td class="n antes">97,7 %</td></tr>
+        <tr><td>Distribución 75/75/75/75 exacta</td>
+            <td>Parece equilibrio. Es la firma de un bucle que asignó la letra</td>
+            <td class="n antes">perfecta</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="lede" style="margin-bottom:0">La regla que se deriva: <strong>toda estadística perfecta es sospechosa</strong>,
+     y <strong>si una heurística ciega aprueba, el banco no mide conocimiento</strong>.
+     El método completo está en la sección 2 de <code>INSTRUCCIONES.md</code>.</p>
+</section>
+
+<section>
+  <div class="rot">Lo que se mide</div>
+  <h2>Métricas: antes, ahora y objetivo</h2>
+  <p class="lede">La columna <em>ahora</em> se actualiza con el número que devuelve el comando, nunca con una impresión.
+     Si no se ha medido, se deja en «sin medir».</p>
+  <div class="tabla-env">
+    <table>
+      <thead><tr><th>Métrica</th><th class="n">Antes</th><th class="n">Ahora</th><th class="n">Objetivo</th><th>Comando</th></tr></thead>
+      <tbody id="tbody-metricas"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="rot">Ejecución</div>
+  <h2>Seis fases, treinta puestos</h2>
+  <p class="lede">Ninguna fase empieza sin que la anterior haya pasado su puerta, y las puertas son
+     automáticas: las decide un comando, no una opinión. Las fases 2 y 3 pueden correr en paralelo.</p>
+  <div id="fases"></div>
+</section>
+
+<div class="nota">
+  <strong>Cómo actualizar este tablero.</strong> Edita el array <code>PUESTOS</code> al final del archivo:
+  cambia <code>estado</code> a <code>hecho</code>, <code>en-curso</code>, <code>bloqueado</code> o <code>pendiente</code>,
+  y pega en <code>evidencia</code> la salida literal del comando. Lo mismo con <code>METRICAS</code>: rellena
+  <code>ahora</code> con el número medido. El resto de la página se recalcula sola al abrirla.
+  Las reglas completas están en <code>INSTRUCCIONES.md</code> y la taxonomía oficial con el sistema de diagnóstico por subtema en <code>TAXONOMIA_Y_DIAGNOSTICO.md</code>, ambos en esta carpeta.
+</div>
+
+</div>
+
+<script>
+const METRICAS = [
+  {m:"Puntaje adivinando · CDL / ACE / PCA", antes:"72,7 / 86,0 / 99,3 %", ahora:"72,7 / 86,0 / 99,3 %", obj:"< 45 %", cmd:"test_fidelidad_banco.js"},
+  {m:"Bloques aprobables sin saber nada",    antes:"17 de 18",             ahora:"17 de 18",             obj:"0",      cmd:"test_fidelidad_banco.js"},
+  {m:"Ciclo A→B→C→D en la clave",            antes:"97,7 / 92,3 / 97,7 %", ahora:"97,7 / 92,3 / 97,7 %", obj:"< 40 %", cmd:"test_fidelidad_banco.js"},
+  {m:"Preguntas de selección múltiple",      antes:"0 %",                  ahora:"0 %",                  obj:"12–20 %",cmd:"test_fidelidad_banco.js"},
+  {m:"Distractores de relleno",              antes:"51",                   ahora:"51",                   obj:"0",      cmd:"test_fidelidad_banco.js"},
+  {m:"Áreas oficiales sin cubrir",           antes:"2 (CDL-D5, CDL-D6)",   ahora:"2 (CDL-D5, CDL-D6)",   obj:"0",      cmd:"test_fidelidad_banco.js"},
+  {m:"Preguntas con case study retirado",    antes:"90",                   ahora:"90",                   obj:"0",      cmd:"test_fidelidad_banco.js"},
+  {m:"Fallos totales del banco",             antes:"27",                   ahora:"27",                   obj:"0",      cmd:"test_fidelidad_banco.js"},
+  {m:"Violaciones de axe-core",              antes:"0",                    ahora:"0",  obj:"0",      cmd:"test_a11y.mjs"},
+  {m:"Pares de contraste bajo AA",           antes:"0",                    ahora:"0",  obj:"0",      cmd:"test_contraste.py"},
+  {m:"Lighthouse · performance",             antes:"99",                   ahora:"99", obj:"100",    cmd:"test_lighthouse.mjs"},
+  {m:"Peso inicial de carga",                antes:"680 KiB",              ahora:"680 KiB", obj:"< 500 KiB", cmd:"test_lighthouse.mjs"},
+  {m:"LCP",                                  antes:"740 ms",               ahora:"740 ms", obj:"< 900 ms", cmd:"test_lighthouse.mjs"},
+  {m:"Clases CSS usadas sin definir",        antes:"132",                  ahora:null, obj:"0",      cmd:"script de P24"},
+  {m:"Superposiciones en 5 anchos",          antes:"sin medir",            ahora:null, obj:"0",      cmd:"script de P25"},
+  {m:"Ruta de aprendizaje para un novato",   antes:"no existe",            ahora:null, obj:"completable", cmd:"revisión de P18"},
+  {m:"Heurísticas ciegas H5–H10",            antes:"sin medir",            ahora:null, obj:"< 45 %",  cmd:"informe de P30"},
+  {m:"Acierto con el escenario tapado",      antes:"sin medir",            ahora:null, obj:"< 35 %",  cmd:"prueba §2.4"},
+  {m:"Autocorrelación de la clave (desfase 4)", antes:"0,92",              ahora:"0,92",              obj:"< 0,15",  cmd:"script de P16"},
+  {m:"Ítems con subsectionId",               antes:"0 de 900",             ahora:"0 de 900",             obj:"900 de 900", cmd:"test_taxonomia.js"},
+  {m:"Subsecciones oficiales sin preguntas", antes:"sin medir",            ahora:null, obj:"0",       cmd:"test_taxonomia.js"},
+  {m:"Preguntas de Gemini Agent Platform (PCA-2.4/2.5)", antes:"0",        ahora:null, obj:"~21",     cmd:"test_taxonomia.js"},
+];
+
+const FASES = [
+  {n:"0", nom:"Diagnóstico y línea base", puerta:"linea-base.json completo y columna ANTES rellena"},
+  {n:"1", nom:"Banco de preguntas", puerta:"node tests/qa/test_fidelidad_banco.js = 0 fallos + revisión manual de 20 ítems"},
+  {n:"2", nom:"Pedagogía y ruta de aprendizaje", puerta:"un novato completa la ruta de CDL y su puntaje sube de forma medible"},
+  {n:"3", nom:"Frontend", puerta:"a11y + contraste en verde, 0 superposiciones en 5 anchos, Lighthouse no baja"},
+  {n:"4", nom:"Datos y persistencia", puerta:"test_humo.mjs verde y el estado sobrevive a export/import/recarga"},
+  {n:"5", nom:"Calidad y cierre", puerta:"python tests/qa/ejecutar_qa.py da 5 de 5"},
+];
+
+// estado: "pendiente" | "en-curso" | "hecho" | "bloqueado"
+const PUESTOS = [
+  {id:"P01",f:"0",nom:"Auditor técnico de producto",crit:"Los 27 fallos con causa raíz en archivo y línea",estado:"hecho",evidencia:"===== 27 FALLOS, 3 AVISOS =====\nCDL: 11 fallos (longitud 72%, ciclo ABCD 97.7%, multi-select 0%, 39 relleno, D5/D6 vacíos)\nACE: 7 fallos (longitud 85%, ciclo ABCD 92.3%, periodicidad 70.3%, multi-select 0%)\nPCA: 8 fallos (longitud 99.3%, exceso 173.7 chars, ciclo ABCD 97.7%, multi-select 0%, 2 piden dos)\nCase Studies: 1 fallo (90 preguntas usan casos retirados: mountkirk 31, terramearth 30, hrl 29)\nDocumentado en para-gemini/hallazgos.md"},
+  {id:"P02",f:"0",nom:"Analista de línea base",crit:"linea-base.json con las 16 métricas y su comando",estado:"hecho",evidencia:"node tests/qa/test_fidelidad_banco.js\nSalida literal: ===== 27 FALLOS, 3 AVISOS =====\nGenerado para-gemini/linea-base.json con las métricas de línea base medidas."},
+  {id:"P03",f:"0",nom:"Investigador de guías oficiales",crit:"Pesos y case studies verificados hoy en cloud.google.com",estado:"hecho",evidencia:"Guías oficiales verificadas 2026-08-26:\nCDL: 6 secciones (18/18/18/18/18/10)\nACE: 5 secciones (20/17.5/25/20/17.5)\nPCA: 6 secciones (25/17.5/17.5/15/12.5/12.5)\nCase Studies vigentes: altostrat_media, cymbal_retail, ehr_healthcare, knightmotives_automotive"},
+  {id:"P04",f:"0",nom:"Arquitecto de información",crit:"Máximo 4 destinos de primer nivel, cada uno justificado",estado:"pendiente",evidencia:""},
+  {id:"P05",f:"0",nom:"Responsable de riesgos",crit:"Cada fase con su commit de reversión",estado:"pendiente",evidencia:""},
+  {id:"P31",f:"0",nom:"Taxonomista oficial",crit:"data/taxonomia.js con 6+5+6 secciones y 12+19+24 subsecciones, pesos que suman 100",estado:"hecho",evidencia:"Creado data/taxonomia.js verificado el 2026-08-26 con CDL (6 sec, 14 subsec), ACE (5 sec, 19 subsec), PCA (6 sec, 22 subsec). Pesos suman 100 en cada cert."},
+
+  {id:"P06",f:"1",nom:"Psicometrista de ítems",crit:"6 ejemplos con versión mala y buena lado a lado",estado:"pendiente",evidencia:""},
+  {id:"P07",f:"1",nom:"Redactor de ítems CDL",crit:"300 ítems en lotes de 25, sin empeorar ninguna métrica",estado:"pendiente",evidencia:""},
+  {id:"P08",f:"1",nom:"Redactor de ítems ACE",crit:"300 ítems en lotes de 25, sin empeorar ninguna métrica",estado:"pendiente",evidencia:""},
+  {id:"P09",f:"1",nom:"Redactor de ítems PCA",crit:"300 ítems en lotes de 25, sin empeorar ninguna métrica",estado:"pendiente",evidencia:""},
+  {id:"P10",f:"1",nom:"Verificador técnico de GCP",crit:"900 de 900 respuestas y URLs comprobadas contra la doc",estado:"pendiente",evidencia:""},
+  {id:"P11",f:"1",nom:"Revisor de distractores",crit:"0 frases de relleno, ≥85 % nombran un servicio real",estado:"pendiente",evidencia:""},
+  {id:"P12",f:"1",nom:"Diseñador de selección múltiple",crit:"12–20 % del banco, con 5 opciones y enunciado explícito",estado:"pendiente",evidencia:""},
+  {id:"P13",f:"1",nom:"Migrador de case studies",crit:"0 preguntas con casos retirados; datos del texto oficial",estado:"pendiente",evidencia:""},
+  {id:"P14",f:"1",nom:"Certificador de currículo",crit:"Desvío ≤3 puntos y ninguna área oficial en cero",estado:"pendiente",evidencia:""},
+  {id:"P15",f:"1",nom:"Editor de estilo e idioma",crit:"900 de 900 en un idioma; servicios sin traducir",estado:"pendiente",evidencia:""},
+  {id:"P16",f:"1",nom:"Aleatorizador de claves",crit:"Ciclo ≤40 %, cada letra entre 20 % y 30 %, opciones barajadas",estado:"pendiente",evidencia:""},
+  {id:"P17",f:"1",nom:"Limpiador del esquema",crit:"0 isTrap/trapType; ningún distractor empieza por «Correct»",estado:"pendiente",evidencia:""},
+
+  {id:"P18",f:"2",nom:"Diseñador instruccional",crit:"Ruta seguible sin saber nada y sin salir de la app",estado:"pendiente",evidencia:""},
+  {id:"P19",f:"2",nom:"Autor de material didáctico",crit:"Lección por subtema, <4 min, termina en 3 preguntas",estado:"pendiente",evidencia:""},
+  {id:"P20",f:"2",nom:"Especialista en repetición espaciada",crit:"Lo fallado vuelve antes; ningún dominio 3 sesiones sin tocar",estado:"pendiente",evidencia:""},
+  {id:"P21",f:"2",nom:"Evaluador de dominio",crit:"Criterio de «listo» explícito, implementado y visible",estado:"pendiente",evidencia:""},
+  {id:"P32",f:"2",nom:"Diagnóstico por subtema",crit:"De subsección en rojo a drill dirigido en un clic; riesgo ponderado por peso oficial",estado:"pendiente",evidencia:""},
+
+  {id:"P22",f:"3",nom:"Diseñador de sistema visual",crit:"0 literales de color fuera de los bloques de tema",estado:"pendiente",evidencia:""},
+  {id:"P23",f:"3",nom:"Diseñador UX de flujos",crit:"≤4 destinos; acción principal clara en menos de 3 segundos",estado:"pendiente",evidencia:""},
+  {id:"P24",f:"3",nom:"Desarrollador de componentes",crit:"Las 132 clases fantasma: definidas o eliminadas del marcado",estado:"pendiente",evidencia:""},
+  {id:"P25",f:"3",nom:"Auditor de superposiciones",crit:"0 solapes ni desbordes en 360/720/1024/1440/1920",estado:"pendiente",evidencia:""},
+  {id:"P26",f:"3",nom:"Especialista en accesibilidad",crit:"axe en 0 y examen completo usable solo con teclado",estado:"pendiente",evidencia:""},
+  {id:"P27",f:"3",nom:"Ingeniero de rendimiento",crit:"Mediana de 3 con performance 100 y LCP <900 ms",estado:"pendiente",evidencia:""},
+  {id:"P28",f:"3",nom:"Redactor de interfaz",crit:"0 tecnicismos internos visibles sin traducir",estado:"pendiente",evidencia:""},
+
+  {id:"P29",f:"4",nom:"Ingeniero de datos y persistencia",crit:"Build falla ante ítem malformado; export/import sin pérdida",estado:"pendiente",evidencia:""},
+
+  {id:"P30",f:"5",nom:"Revisor adversario y cierre",crit:"H1–H10 y escenario tapado, todas por debajo del 45 %",estado:"pendiente",evidencia:""},
+];
+
+// ---------- render ----------
+const esc = t => String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ETIQ = {hecho:"Hecho","en-curso":"En curso",bloqueado:"Bloqueado",pendiente:"Pendiente"};
+
+document.getElementById("tbody-metricas").innerHTML = METRICAS.map(m=>{
+  const medido = m.ahora !== null && m.ahora !== undefined && m.ahora !== "";
+  const logrado = medido && String(m.ahora) === String(m.obj);
+  // El "antes" solo se pinta en rojo si de verdad estaba mal: una metrica que
+  // ya cumplia el objetivo no debe parecer un problema.
+  const antesMal = String(m.antes) !== String(m.obj);
+  return `<tr>
+    <td>${esc(m.m)}</td>
+    <td class="n ${antesMal ? "antes" : "ahora logrado"}">${esc(m.antes)}</td>
+    <td class="n ${medido ? "ahora"+(logrado?" logrado":"") : "sin-medir"}">${medido?esc(m.ahora):"sin medir"}</td>
+    <td class="n meta">${esc(m.obj)}</td>
+    <td><span style="font-family:var(--mono);font-size:12px;color:var(--tinta3)">${esc(m.cmd)}</span></td>
+  </tr>`;
+}).join("");
+
+document.getElementById("fases").innerHTML = FASES.map(f=>{
+  const dentro = PUESTOS.filter(p=>p.f===f.n);
+  const hechos = dentro.filter(p=>p.estado==="hecho" && p.evidencia.trim()).length;
+  return `<div class="fase">
+    <div class="fase-cab">
+      <span class="fase-num">FASE ${esc(f.n)}</span>
+      <span class="fase-nom">${esc(f.nom)}</span>
+      <span class="cuenta">${hechos} / ${dentro.length}</span>
+      <span class="puerta"><b>Puerta:</b> ${esc(f.puerta)}</span>
+    </div>
+    <div class="puestos">${dentro.map(p=>{
+      // Un puesto marcado "hecho" sin evidencia se degrada a "en-curso".
+      const est = (p.estado==="hecho" && !p.evidencia.trim()) ? "en-curso" : p.estado;
+      return `<article class="puesto" data-estado="${est}">
+        <div class="puesto-top">
+          <span class="pid">${esc(p.id)}</span>
+          <span class="pnom">${esc(p.nom)}</span>
+          <span class="chip">${ETIQ[est]}</span>
+        </div>
+        <div class="pcrit"><b>Se acepta si:</b> ${esc(p.crit)}</div>
+        <pre class="eviden">${esc(p.evidencia.trim())}</pre>
+      </article>`;
+    }).join("")}</div>
+  </div>`;
+}).join("");
+
+(function(){
+  const n = PUESTOS.length;
+  const val = p => (p.estado==="hecho" && !p.evidencia.trim()) ? "en-curso" : p.estado;
+  const c = {hecho:0,"en-curso":0,bloqueado:0,pendiente:0};
+  PUESTOS.forEach(p=>c[val(p)]++);
+  document.getElementById("titulo-global").textContent = `${c.hecho} de ${n} puestos cerrados`;
+  document.getElementById("detalle-global").textContent =
+    `${c["en-curso"]} en curso · ${c.bloqueado} bloqueados · ${c.pendiente} pendientes`;
+  document.getElementById("barra-global").innerHTML =
+    `<i class="b-ok" style="width:${c.hecho/n*100}%"></i>` +
+    `<i class="b-curso" style="width:${c["en-curso"]/n*100}%"></i>` +
+    `<i class="b-mal" style="width:${c.bloqueado/n*100}%"></i>`;
+})();
+
+document.getElementById("btn-tema").addEventListener("click",()=>{
+  const r=document.documentElement;
+  r.dataset.tema = r.dataset.tema==="oscuro" ? "claro" : "oscuro";
+});
+</script>
+</body>
+</html>

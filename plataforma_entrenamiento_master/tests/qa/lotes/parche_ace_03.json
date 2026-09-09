@@ -1,0 +1,223 @@
+[
+ {
+  "id": "ACE-D3-070",
+  "options": {
+   "A": "Create a PodDisruptionBudget for the payment Deployment with minAvailable set to 100% so the scheduler refuses to evict any of its Pods.",
+   "B": "Set identical CPU and memory requests and limits on the payment containers so they receive the Guaranteed QoS class and are evicted last.",
+   "D": "Deploy a PriorityClass valued at 1000000 with preemptionPolicy: Never and reference it via priorityClassName in the payment Pod template."
+  },
+  "distractors": {
+   "A": "A PodDisruptionBudget only guards voluntary disruptions such as node drains; it carries no scheduling priority, so it neither survives kubelet node-pressure eviction nor lets payment Pods preempt batch Pods.",
+   "B": "Guaranteed QoS only ranks victims for kubelet eviction under node pressure; it grants no scheduling priority, so a payment Pod that finds no free capacity stays Pending instead of preempting batch Pods.",
+   "D": "preemptionPolicy: Never gives the Pod a head start in the scheduling queue but explicitly forbids evicting lower-priority Pods, so payment Pods wait for capacity instead of preempting batch workloads."
+  }
+ },
+ {
+  "id": "ACE-D3-048",
+  "options": {
+   "A": "Deploy a NetworkPolicy in namespace prod with podSelector 'app: backend-api' and an egress rule allowing TCP port 5432 to podSelector 'app: database'.",
+   "C": "Create a VPC firewall rule allowing TCP 5432 from the backend node pool network tag and denying every other source on the database node pool tag.",
+   "D": "Deploy a NetworkPolicy in namespace prod with podSelector 'app: database' and an ingress rule listing only ports protocol TCP port 5432, with no from selector."
+  },
+  "distractors": {
+   "A": "This constrains what backend-api Pods may send, not what the database accepts; any other Pod in prod, or a compromised workload not covered by the policy, can still open port 5432.",
+   "C": "VPC firewall rules match node VM interfaces and IP ranges, not Pod labels; both apps share nodes and the same pod CIDR, so the rule cannot distinguish app=backend-api Pods from the rest.",
+   "D": "An ingress rule whose from list is empty matches every source, so restricting the port alone still allows any Pod in the cluster, and any external client, to reach the database on 5432."
+  }
+ },
+ {
+  "id": "ACE-D5-010",
+  "options": {
+   "A": "Create a dedicated deployment service account with roles/artifactregistry.writer, store its JSON key in GitHub Secrets, and add a scheduled workflow calling gcloud iam service-accounts keys create to rotate that key every 30 days.",
+   "C": "Enable GKE Workload Identity on a cluster in the project and annotate a Kubernetes ServiceAccount with the deployment service account, then point the GitHub Actions job at that binding to obtain short-lived tokens.",
+   "D": "Create a Workload Identity Pool with an AWS provider, map the GitHub Actions OIDC claims to pool attributes, and grant the mapped principal roles/artifactregistry.writer on the Artifact Registry repository."
+  },
+  "distractors": {
+   "A": "Rotation shortens the exposure window but the workflow still holds a downloadable long-lived service account JSON key, which is exactly the credential the security requirement bans.",
+   "C": "GKE Workload Identity issues tokens only to Pods running inside that cluster, through the GKE metadata server; a GitHub-hosted runner sits outside Google Cloud and can never reach it.",
+   "D": "An AWS provider validates signed AWS GetCallerIdentity requests; GitHub Actions presents an OIDC JWT, so the pool needs an OIDC provider with issuer token.actions.githubusercontent.com."
+  }
+ },
+ {
+  "id": "ACE-D4-001",
+  "options": {
+   "A": "Configure a Cloud Router and a Cloud NAT gateway for the subnet, then run gcloud compute ssh backend-worker-1 --zone=us-central1-a --internal-ip so the session reaches the instance on its private address.",
+   "B": "Enable OS Login by setting the enable-oslogin=TRUE project metadata, grant roles/compute.osAdminLogin to the operators, then run gcloud compute ssh backend-worker-1 --zone=us-central1-a to open the session.",
+   "D": "Run gcloud compute ssh backend-worker-1 --zone=us-central1-a --tunnel-through-iap after granting roles/iap.tunnelResourceAccessor and allowing ingress on TCP 22 from 130.211.0.0/22 and 35.191.0.0/16."
+  },
+  "distractors": {
+   "A": "Cloud NAT provides only outbound source translation and opens no inbound path, and --internal-ip requires the client to already be inside the VPC, so the SSH connection never reaches the VM.",
+   "B": "OS Login manages SSH key provisioning and Linux account authorization, not connectivity; with no external IP and no tunnel there is still no network path to port 22 on the instance.",
+   "D": "Those two ranges are the Google load balancer health check probes; IAP TCP forwarding traffic arrives from 35.235.240.0/20, so the firewall drops the tunnel and the connection times out."
+  }
+ },
+ {
+  "id": "ACE-D5-037",
+  "options": {
+   "A": "Enforce the Organization Policy constraint 'essentialcontacts.allowedContactDomains' with corp.example.com as the single allowed value.",
+   "B": "Enforce the constraint 'iam.allowedPolicyMemberDomains' at the organization, listing the literal domain string corp.example.com in its allowed values.",
+   "C": "Remove roles/resourcemanager.projectIamAdmin from project administrators and grant it only to the central security team across every project."
+  },
+  "distractors": {
+   "A": "That constraint restricts which domains may receive Essential Contacts notifications; it never inspects IAM policy bindings, so an administrator can still grant a role to a gmail.com account.",
+   "B": "The allowed values of this constraint are Cloud Identity customer IDs or organization principal sets, not domain name strings, so the policy is rejected and no domain restriction takes effect.",
+   "C": "This limits who may edit IAM policies but not which identities may be added; the security team can still bind an external gmail.com account, and nothing enforces the rule on new projects."
+  }
+ },
+ {
+  "id": "ACE-D5-004",
+  "options": {
+   "A": "gcloud iam roles create computeOperator --project=corp-prod --title='Compute Operator' --permissions=compute.instances.start,compute.instances.stop,compute.instances.reset,compute.instances.attachDisk,compute.instances.get --stage=GA",
+   "C": "gcloud iam roles copy --source=roles/compute.instanceAdmin.v1 --destination=computeOperator --dest-project=corp-prod && gcloud iam roles update computeOperator --project=corp-prod --title='Compute Operator' --stage=GA",
+   "D": "gcloud projects add-iam-policy-binding corp-prod --member=group:developers@corp.example.com --role=roles/compute.instanceAdmin.v1 --condition='title=computeOperator,expression=resource.type==\"compute.googleapis.com/Instance\"'"
+  },
+  "distractors": {
+   "A": "compute.instances.attachDisk authorizes modifying disk attachments, which the security team explicitly forbids; every other part of the command is correct, which is what makes it tempting.",
+   "C": "Copying roles/compute.instanceAdmin.v1 reproduces its whole permission set, including compute.instances.create, compute.instances.delete and compute.instances.attachDisk, so the forbidden operations stay granted.",
+   "D": "An IAM condition narrows which resources a role applies to, never which permissions it contains, so instanceAdmin.v1 still authorizes creating, deleting and reattaching disks on those instances."
+  }
+ },
+ {
+  "id": "ACE-D5-044",
+  "options": {
+   "A": "Create a Cloud Router and a Cloud NAT gateway in us-central1 with gcloud compute routers nats create so the VMs egress to the API endpoints through managed public addresses.",
+   "C": "Enable Private Google Access for the whole network with gcloud compute networks update prod-vpc --enable-private-ip-google-access so every subnet inherits the setting.",
+   "D": "Configure Private Services Access by allocating an internal IP range and running gcloud services vpc-peerings connect so the VMs reach the Google service producer network."
+  },
+  "distractors": {
+   "A": "The requirement explicitly rules out a NAT gateway, and Cloud NAT sends the requests to the public API front ends through external addresses rather than over Google's internal path.",
+   "C": "Private Google Access is a per-subnet property configured with gcloud compute networks subnets update; there is no network-level flag, so this command fails and private-sub stays without access.",
+   "D": "Private Services Access peers the VPC with service producer networks for managed products such as Cloud SQL or Memorystore; the Cloud Storage and BigQuery API endpoints are not reachable over that peering."
+  }
+ },
+ {
+  "id": "ACE-D3-052",
+  "options": {
+   "B": "Set resources.requests with cpu: '2', memory: '4Gi' and resources.limits with cpu: '500m', memory: '1Gi' in the container spec.",
+   "C": "Create a ResourceQuota in the namespace with requests.cpu 500m, requests.memory 1Gi, limits.cpu 2 and limits.memory 4Gi.",
+   "D": "Configure a VerticalPodAutoscaler in Auto mode for the Deployment with minAllowed cpu 500m, memory 1Gi and maxAllowed cpu 2, memory 4Gi."
+  },
+  "distractors": {
+   "B": "The two blocks are inverted: a limit lower than its request is rejected by the API server, and the intent is reversed, reserving 2 vCPU while throttling the container at 500m.",
+   "C": "A ResourceQuota caps the aggregate requests and limits of all Pods in the namespace; it reserves nothing for this container and triggers no per-container CPU throttling or OOM kill.",
+   "D": "VPA recomputes requests from observed usage and must evict the Pod to apply them, so it provides no fixed guarantee at startup and no hard ceiling that throttles CPU or OOM-kills at 4 GiB."
+  }
+ },
+ {
+  "id": "ACE-D3-016",
+  "options": {
+   "B": "gcloud container node-pools create batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-taints=app=batch-worker:NoSchedule",
+   "C": "gcloud compute instance-groups managed create batch-pool --region=us-central1 --size=5 --template=batch-spot-template --base-instance-name=batch-worker",
+   "D": "gcloud container node-pools update batch-pool --cluster=analytics-cluster --region=us-central1 --machine-type=e2-standard-4 --num-nodes=5 --spot --node-labels=app=batch-worker"
+  },
+  "distractors": {
+   "B": "--node-taints repels every Pod without a matching toleration instead of labelling the nodes; the requested app=batch-worker node label is never created, so batch nodeSelectors match nothing.",
+   "C": "A raw managed instance group creates plain Compute Engine VMs that never register with the analytics-cluster control plane, so they are not GKE nodes and carry no Kubernetes node labels.",
+   "D": "The update verb only modifies a node pool that already exists, and batch-pool has not been created yet, so the command errors out instead of provisioning the five Spot nodes."
+  }
+ },
+ {
+  "id": "ACE-D3-021",
+  "options": {
+   "A": "gcloud compute images create golden-ubuntu-v1 --source-disk=base-template-vm --source-disk-zone=us-east1-b --storage-location=us-east1 --labels=family=corp-ubuntu",
+   "B": "gcloud compute disks snapshot base-template-vm --zone=us-east1-b --snapshot-names=golden-ubuntu-v1 --storage-location=us-east1 --description='Golden hardened Ubuntu base image'",
+   "C": "gcloud compute machine-images create golden-ubuntu-v1 --source-instance=base-template-vm --source-instance-zone=us-east1-b --storage-location=us-east1 --description='Golden hardened Ubuntu base image'"
+  },
+  "distractors": {
+   "A": "--labels only attaches a resource label to the image; membership in an image family requires --family, so instance templates resolving --image-family=corp-ubuntu still find no image.",
+   "B": "This produces a snapshot, a point-in-time backup of the disk contents; a snapshot cannot belong to an image family and cannot be used directly as the boot image of an instance template.",
+   "C": "A machine image is a distinct resource capturing the whole VM configuration and all its disks; it supports no image family and cannot be consumed through --image-family in a template."
+  }
+ },
+ {
+  "id": "ACE-D3-067",
+  "options": {
+   "A": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order?token=SHARED_SECRET --ack-deadline=60 --message-retention-duration=7d --expiration-period=never",
+   "B": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --ack-deadline=60 && gcloud run services add-iam-policy-binding orders-api --member=serviceAccount:pubsub-invoker@corp.iam.gserviceaccount.com --role=roles/run.invoker",
+   "D": "gcloud pubsub subscriptions create order-push-sub --topic=order-events --push-endpoint=https://orders-api-xyz.a.run.app/handle-order --push-auth-service-account=pubsub-invoker@corp.iam.gserviceaccount.com --push-auth-token-audience=https://pubsub.googleapis.com"
+  },
+  "distractors": {
+   "A": "A shared secret in the query string is not a Google-signed OIDC token, so a Cloud Run service deployed with --no-allow-unauthenticated rejects every push with HTTP 401 before the handler runs.",
+   "B": "Without --push-endpoint the command creates a pull subscription, so Pub/Sub never calls the Cloud Run URL; the run.invoker binding authorizes an identity but initiates no delivery.",
+   "D": "The OIDC audience must match the Cloud Run service URL; a token minted for the Pub/Sub API audience fails the receiving service's token validation and every push is rejected with HTTP 401."
+  }
+ },
+ {
+  "id": "ACE-D3-034",
+  "options": {
+   "A": "gcloud compute disks create data-index-disk --zone=us-central1-a --size=200GB --type=pd-ssd && gcloud compute disks add-resource-policies data-index-disk --zone=us-central1-a --resource-policies=daily-snapshot",
+   "B": "gcloud compute disks create data-index-disk --zone=us-central1-b --size=200GB --type=pd-ssd && gcloud compute instances attach-disk data-processor-vm --disk=data-index-disk --zone=us-central1-b",
+   "C": "gcloud compute instances create data-processor-vm --zone=us-central1-a --machine-type=e2-standard-4 --create-disk=name=data-index-disk,size=200GB,type=pd-ssd,auto-delete=no"
+  },
+  "distractors": {
+   "A": "The second command binds a snapshot schedule to the new disk instead of attaching it, so data-processor-vm never sees the block device and there is nothing to format as ext4.",
+   "B": "The disk is created in us-central1-b while the VM runs in us-central1-a, and a zonal persistent disk can only be attached to an instance in its own zone, so the attach step fails.",
+   "C": "instances create provisions a brand-new VM and aborts because data-processor-vm already exists; --create-disk only adds storage at creation time, never to a running instance."
+  }
+ },
+ {
+  "id": "ACE-D4-021",
+  "options": {
+   "A": "gcloud compute health-checks describe frontend-hc --global --format='value(checkIntervalSec)'",
+   "C": "gcloud compute instance-groups managed describe frontend-mig --region=us-central1",
+   "D": "gcloud compute backend-services get-health frontend-backend --global --format=json"
+  },
+  "distractors": {
+   "A": "This prints the health check's own configuration, such as port, path and interval; it returns no result for any VM, so the failing instances stay invisible.",
+   "C": "describe returns the group's template, autohealing policy and aggregate currentActions counters, but never the per-instance HEALTHY or UNHEALTHY state that list-instances shows.",
+   "D": "get-health reports the load balancer's own probing of backends, a separate health check resource from the autohealing one that is recreating the VMs in the MIG."
+  }
+ },
+ {
+  "id": "ACE-D4-028",
+  "options": {
+   "A": "Enable Data Access audit logs for Cloud Storage and route the ADMIN_READ and DATA_READ entries into BigQuery with a daily log sink.",
+   "B": "Configure Storage Transfer Service jobs that copy the ten buckets into an analysis bucket every night and parse the resulting transfer operation logs.",
+   "C": "Chart the Cloud Monitoring metrics storage/object_count and storage/total_bytes per bucket and storage class, exporting the daily time series to BigQuery."
+  },
+  "distractors": {
+   "A": "Audit logs record only the API calls that actually happened; objects nobody touched generate no entry, so the export can never be a complete inventory of the 50 million objects.",
+   "B": "Storage Transfer Service copies object payloads, duplicating 50 million objects and their storage cost daily, and its operation logs list only transferred objects with no last access time.",
+   "C": "Those metrics are daily aggregates per bucket and storage class; they contain no per-object rows, so object names, sizes and last access times are unavailable for lifecycle planning."
+  }
+ },
+ {
+  "id": "ACE-D5-049",
+  "options": {
+   "A": "Enforce the Organization Policy constraint 'iam.disableServiceAccountKeyUpload' at the Organization or Folder level.",
+   "B": "Enforce the Organization Policy constraint 'iam.serviceAccountKeyExpiryHours' with an allowed value of 24 hours.",
+   "D": "Enforce the Organization Policy constraint 'iam.disableServiceAccountCreation' at the Organization or Folder level."
+  },
+  "distractors": {
+   "A": "That constraint blocks uploading externally generated public keys onto a service account; Google-generated JSON private keys can still be created and downloaded normally.",
+   "B": "This only caps how long a newly created key remains valid; administrators can still create and download JSON key files, which the mandate forbids outright.",
+   "D": "It prevents new service accounts from being created but leaves every existing service account intact, so downloadable JSON keys can still be generated for them."
+  }
+ },
+ {
+  "id": "ACE-D4-022",
+  "options": {
+   "A": "Run kubectl drain gke-prod-pool-1-abc1 --ignore-daemonsets --disable-eviction --force to delete the Pods without waiting on the eviction API.",
+   "C": "Run kubectl cordon gke-prod-pool-1-abc1 and wait for the Deployments to reschedule their Pods onto the remaining healthy nodes of the cluster.",
+   "D": "Run kubectl taint nodes gke-prod-pool-1-abc1 maintenance=true:NoSchedule so the scheduler moves the running Pods onto the other nodes."
+  },
+  "distractors": {
+   "A": "--disable-eviction deletes Pods through the API directly, bypassing the eviction subresource and every PodDisruptionBudget, so a replicated service can lose all its replicas at once.",
+   "C": "cordon only marks the node unschedulable for new Pods; the Pods already running on it keep running there until a drain evicts them, so the node is never freed for maintenance.",
+   "D": "A NoSchedule taint applies only to future scheduling decisions; Pods already bound to the node are not evicted, which would require a NoExecute taint or an explicit drain."
+  }
+ },
+ {
+  "id": "ACE-D5-006",
+  "options": {
+   "A": "Enforce the storage.publicAccessPrevention and storage.uniformBucketLevelAccess Organization Policy constraints on the project patient-data-prod.",
+   "B": "Define an Access Context Manager access level requiring corporate devices and IP ranges and apply it to BigQuery and Cloud Storage access in the project.",
+   "C": "Enable Sensitive Data Protection discovery scans and de-identification templates over the BigQuery tables and Cloud Storage buckets in patient-data-prod."
+  },
+  "distractors": {
+   "A": "Those constraints stop buckets in the project from being shared publicly or through ACLs, but an authenticated insider can still read the records and copy them into a bucket they own elsewhere.",
+   "B": "An access level only conditions who may reach the resources; with no service perimeter there is no egress boundary, so an approved caller can still copy data to external projects.",
+   "C": "Sensitive Data Protection classifies content and can mask fields, but it inspects data instead of authorizing API calls, so it never blocks a copy to a destination outside the organization."
+  }
+ }
+]

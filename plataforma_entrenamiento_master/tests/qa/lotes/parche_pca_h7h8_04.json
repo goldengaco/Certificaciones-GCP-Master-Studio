@@ -1,0 +1,67 @@
+[
+ {
+  "id": "PCA-D6-017",
+  "options": {
+   "A": "This setup applies a storage policy pinning Pub/Sub topics to two Google Cloud regions, assuming data shifts between them automatically if one goes down. It only restricts where data sits, adding no replication, so an entire region failure leaves queued traffic stuck until recovery, and the downtime this design should survive comes right back.",
+   "B": "Matching Pub/Sub topics are created in two Google Cloud regions and a streaming job mirrors every event between them automatically, with consumers dropping repeats by ID. The mirror job runs in a single zone, so its own failure during an entire region outage stops the copy, and the downtime this design should survive comes back.",
+   "D": "This setup pins publishers and subscribers to one Pub/Sub Google Cloud regional endpoint, retrying a second endpoint once the first stops answering. Fixed endpoints are not the automatically routed global service, so an entire region failure leaves traffic with nowhere to land, and the downtime returns until it recovers."
+  },
+  "distractors": {
+   "A": "Fijar la politica de almacenamiento a dos regiones solo restringe donde se guardan los mensajes; no anade replicacion entre ellas, asi que si la region asignada falla, el trafico en cola queda atrapado hasta la recuperacion, justo el downtime que se buscaba evitar.",
+   "B": "El job de streaming que copia los mensajes a la segunda region corre el mismo en una unica zona: si esa zona cae durante el mismo incidente regional, la copia se detiene en silencio y los suscriptores se quedan sin el respaldo que este diseno prometia.",
+   "D": "Fijar publishers y subscribers a un endpoint regional, aunque con reintento a un segundo endpoint, no equivale al servicio global con enrutamiento automatico: si toda la region falla, el trafico sigue sin destino hasta que se recupera."
+  }
+ },
+ {
+  "id": "PCA-D3-048",
+  "options": {
+   "A": "Load the notes into a Cloud Healthcare API FHIR store as DocumentReference resources and call fhirStores.deidentify on projects/PROJECT_ID/locations/us-central1/datasets/ehr/fhirStores/notes with a FhirConfig and DicomConfig that strip identifying elements, writing output into a second FHIR store for model training.",
+   "B": "Send each note to the Healthcare Natural Language API at healthcare.googleapis.com/v1/projects/PROJECT_ID/services/nlp:analyzeEntities, whose entity extraction returns medical concepts and character offsets mapped to standard clinical vocabularies, feeding those annotations straight into the model training corpus.",
+   "C": "Load the notes into BigQuery, tag the note_text column with a policy tag from projects/PROJECT_ID/policyTags/PII_TAG, and apply a dynamic data masking rule using the SHA256 routine so that any principal without the Fine-Grained Reader role receives a masked value for that column."
+  },
+  "distractors": {
+   "A": "El de-identify de un FHIR store limpia campos y recursos estructurados (DocumentReference, tags DICOM), pero no inspecciona el texto libre de la nota clinica en busca de nombres, fechas o telefonos incrustados en la prosa; el PHI narrativo queda intacto.",
+   "B": "La Healthcare Natural Language API extrae y anota entidades clinicas, pero no enmascara ni redacta nada: el resultado son anotaciones sobre el texto original, que sigue conteniendo el PHI sin tocar.",
+   "C": "El enmascarado dinamico de BigQuery opera sobre una columna estructurada completa en el momento de la consulta; no inspecciona el texto libre para localizar nombres, fechas o telefonos incrustados dentro de la nota, asi que el PHI narrativo no se detecta ni se transforma."
+  }
+ },
+ {
+  "id": "PCA-D4-038",
+  "options": {
+   "A": "Configure Object Lifecycle Management rules with age-based SetStorageClass actions, moving files to Nearline, Coldline and Archive on a fixed schedule, so unstructured document data ages out on a timer regardless of its unpredictable access pattern, still risking retrieval charges whenever an old file is touched again.",
+   "B": "Stamp Custom Time on each unstructured document whenever it is read, then key lifecycle rules on that stamp so the tier reflects real access instead of creation age, covering the unpredictable pattern of a 20 petabyte archive, though retrieval charges on colder tiers still apply once a file is accessed.",
+   "C": "Enable Autoclass so unstructured, unpredictably accessed document data settles into Nearline or Coldline on its own, then add a lifecycle rule forcing anything untouched past 365 days into Archive, since without it some genuinely cold files could keep risking retrieval charges at a warmer tier."
+  },
+  "distractors": {
+   "A": "Las reglas de lifecycle por edad degradan el objeto segun su antiguedad, no segun su patron real de acceso: un archivo con acceso completamente impredecible puede enfriarse aunque siga consultandose, o permanecer caliente aunque lleve anos sin tocarse, y de igual forma sigue generando cargos de recuperacion al acceder a un archivo ya frio.",
+   "B": "Depender de una Cloud Function que reescriba Custom Time en cada lectura anade un punto de fallo y coste operativo por objeto sobre 20 petabytes de archivos, y no elimina los cargos de recuperacion de las reglas de lifecycle estandar cuando un archivo frio vuelve a pedirse.",
+   "C": "Combinar Autoclass con una regla de lifecycle por edad reintroduce justo lo que Autoclass evita: esa regla mueve a Archive por antiguedad sin mirar el acceso real, asi que un archivo consultado hace poco pero con mas de 365 dias puede caer a Archive y generar cargos de recuperacion en el proximo acceso."
+  }
+ },
+ {
+  "id": "PCA-D2-022",
+  "options": {
+   "A": "Create an inference namespace with a ResourceQuota granting requests.nvidia.com/gpu=4, and rely on the gpu-node-pool taint-free scheduler to place any pod requesting a GPU where capacity exists.",
+   "B": "Label the GPU node pool accelerator=nvidia-a100 and add a matching nodeSelector to the ML pod specs, leaving the web-microservice manifests untouched so the scheduler places them freely.",
+   "C": "Add a podAntiAffinity rule so web-microservice deployments avoid nodes already running inference-workload=true pods, and enable the cluster-autoscaler on both node pools."
+  },
+  "distractors": {
+   "A": "Un ResourceQuota solo limita cuantos recursos nvidia.com/gpu puede pedir el namespace; no impide que el scheduler coloque un pod web sin esa peticion en un nodo GPU, asi que los pods web pueden terminar igual en el node pool caro.",
+   "B": "El nodeSelector solo actua sobre los pods de inferencia que lo declaran; los manifiestos de los microservicios web no llevan ningun taint que los repela, asi que el scheduler puede colocarlos igualmente en el node pool GPU cuando hay espacio.",
+   "C": "El podAntiAffinity solo evita coexistir en el mismo nodo con pods de inferencia ya en marcha; no impide que un pod web aterrice primero en un nodo GPU vacio, asi que la exclusividad de las GPU sigue sin garantizarse."
+  }
+ },
+ {
+  "id": "PCA-D1-019",
+  "options": {
+   "B": "Usar `modelo_vehiculo` seguido de un `UUID_v4` aleatorio como clave de fila.",
+   "C": "Usar un entero autoincremental generado por una `secuencia_db` central.",
+   "D": "Usar `timestamp#vehicle_id` como clave, con el tiempo al inicio del registro."
+  },
+  "distractors": {
+   "B": "Agrupar por modelo de vehiculo satura los mismos nodos cuando ese modelo es popular, y el UUID aleatorio destruye el orden temporal, asi que no se puede recuperar eficientemente las ultimas 24 horas de un vehiculo concreto.",
+   "C": "Un entero autoincremental hace que todas las escrituras nuevas caigan siempre en la ultima fila, concentrando la carga en un unico nodo (hotspot) en lugar de repartirla entre el cluster.",
+   "D": "Poner la marca de tiempo al inicio concentra todas las escrituras del mismo instante en el mismo rango de claves entre todos los vehiculos, generando el hotspot que se queria evitar, ademas de dificultar filtrar por vehiculo."
+  }
+ }
+]

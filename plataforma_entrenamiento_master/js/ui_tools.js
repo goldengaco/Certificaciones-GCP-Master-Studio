@@ -139,12 +139,12 @@ window.GCP_UI_TOOLS = {
           <table class="enterprise-table">
             <thead>
               <tr>
-                <th>Clase</th>
-                <th>Retención Mínima</th>
-                <th>Frecuencia de Acceso</th>
-                <th>Costo Almacenamiento</th>
-                <th>Costo de Recuperación</th>
-                <th>Caso de Uso Óptimo</th>
+                <th scope="col">Clase</th>
+                <th scope="col">Retención Mínima</th>
+                <th scope="col">Frecuencia de Acceso</th>
+                <th scope="col">Costo Almacenamiento</th>
+                <th scope="col">Costo de Recuperación</th>
+                <th scope="col">Caso de Uso Óptimo</th>
               </tr>
             </thead>
             <tbody>

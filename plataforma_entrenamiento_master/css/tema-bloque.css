@@ -1,0 +1,715 @@
+/* =========================================================================
+   TEMA "BLOQUE" — capa de rediseño sobre styles.css
+   Se carga DESPUES de styles.css y solo redefine tokens y los componentes
+   de la pantalla de examen. Para volver al tema anterior basta con quitar
+   la linea <link> de tema-bloque.css en index.html.
+
+   Direccion elegida (maqueta C): papel claro, tinta negra, bordes duros de
+   2px, cero sombras difusas, azul electrico como unico acento de seleccion.
+   Sin fuentes de CDN: la plataforma sigue funcionando sin internet, el
+   caracter lo dan el peso, el tamano y los bordes, no una tipografia nueva.
+   ========================================================================= */
+
+html:root,
+html[data-theme="dark"],
+html[data-theme="light"] {
+  /* Superficies: papel calido en vez de gris oscuro */
+  --bg-base: #F4F2EC;
+  --bg-surface: #FBFAF6;
+  --bg-surface-elevated: #EDEAE1;
+  --bg-surface-high: #E4E0D6;
+  --bg-input: #FFFFFF;
+  --bg-modal-backdrop: rgba(17, 17, 17, 0.55);
+
+  /* Bordes: el negro es estructura, no decoracion */
+  --border-subtle: #D9D5CB;
+  --border-default: #111111;
+  --border-bright: #111111;
+  --border-focus: #2D4BFF;
+
+  /* Tipografia: tinta sobre papel */
+  --text-primary: #111111;
+  --text-secondary: #2A2822;
+  --text-muted: #6E6A61;
+  --text-inverse: #F4F2EC;
+
+  /* Marca: colores solidos legibles sobre claro (los pasteles del tema
+     oscuro se volvian ilegibles sobre papel) */
+  --gcp-blue: #2D4BFF;
+  --gcp-blue-hover: #1A32C4;
+  --gcp-blue-subtle: rgba(45, 75, 255, 0.12);
+  --gcp-blue-border: #2D4BFF;
+  --brand-blue-solid: #2D4BFF;
+
+  --gcp-green: #146B3A;
+  --gcp-green-hover: #0E4F2B;
+  --gcp-green-subtle: rgba(20, 107, 58, 0.12);
+  --gcp-green-border: #146B3A;
+
+  --gcp-red: #B3261E;
+  --gcp-red-hover: #8C1C16;
+  --gcp-red-subtle: rgba(179, 38, 30, 0.12);
+  --gcp-red-border: #B3261E;
+
+  --gcp-yellow: #7A5C00;
+  --gcp-yellow-hover: #5E4700;
+  --gcp-yellow-subtle: rgba(255, 226, 77, 0.45);
+  --gcp-yellow-border: #7A5C00;
+
+  --gcp-purple: #5B2BC4;
+  --gcp-purple-accessible: #5B2BC4;
+  --gcp-purple-subtle: rgba(91, 43, 196, 0.12);
+  --gcp-purple-border: #5B2BC4;
+
+  --gcp-cyan: #06697D;
+  --gcp-cyan-subtle: rgba(6, 105, 125, 0.12);
+
+  /* Sobre fondo de marca solido va tinta blanca */
+  --on-brand-ink: #FFFFFF;
+  --opt-correct-bg: #146B3A;
+  --opt-incorrect-bg: #B3261E;
+
+  /* Sombras duras desplazadas, no difuminadas */
+  --shadow-sm: none;
+  --shadow-md: 3px 3px 0 #111111;
+  --shadow-lg: 5px 5px 0 #111111;
+  --shadow-xl: 7px 7px 0 #111111;
+
+  /* Esquinas rectas */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-full: 0;
+}
+
+/* ---------- Barra superior del examen: bloque negro ---------- */
+.exam-hud-bar {
+  background: #111111;
+  border: none;
+  border-radius: 0;
+  padding: 0.85rem 1.75rem;
+  box-shadow: none;
+}
+.exam-title-badge {
+  background: transparent;
+  border: none;
+  color: #F4F2EC;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  padding: 0;
+}
+.exam-block-title { color: #F4F2EC; font-weight: 500; }
+.exam-position-text { color: #9A968C; letter-spacing: 0.06em; }
+.exam-track-bar { height: 7px; background: #3A382F; border-radius: 0; }
+.exam-track-fill { background: #2D4BFF; border-radius: 0; }
+
+.flag-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #9A968C;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 0;
+}
+.flag-toggle-btn.active,
+.flag-toggle-btn[aria-pressed="true"] {
+  background: transparent;
+  border: none;
+  color: #FFE24D;
+}
+
+.timer-badge {
+  background: transparent;
+  border: none;
+  color: #F4F2EC;
+  font-size: 1.3rem;
+  padding: 0;
+  letter-spacing: 0.02em;
+}
+.timer-badge.timer-normal { background: transparent; color: #F4F2EC; }
+.timer-badge.timer-warning { background: transparent; color: #FFE24D; }
+.timer-badge.timer-critical { background: transparent; color: #FF6B4A; }
+
+.exam-hud-bar .btn-primary {
+  background: #F4F2EC;
+  border: 2px solid #F4F2EC;
+  color: #111111;
+}
+.exam-hud-bar .btn-primary:hover:not(:disabled) {
+  background: transparent;
+  color: #F4F2EC;
+}
+
+/* ---------- Enunciado: sin caja, la jerarquia la marca el tamano ---------- */
+.scenario-box {
+  background: transparent;
+  border: none;
+  border-left: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 1.6rem;
+  font-size: 1.19rem;
+  line-height: 1.58;
+  color: #111111;
+  text-wrap: pretty;
+}
+.keyword-highlight {
+  background: transparent;
+  box-shadow: inset 0 -8px 0 #FFE24D;
+  border: none;
+  border-radius: 0;
+  color: #111111;
+  font-weight: 600;
+  padding: 0 2px;
+}
+.domain-tag {
+  border-radius: 0;
+  border: 2px solid #111111;
+  background: transparent;
+  color: #111111;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---------- Opciones: bloque de letra pegado, borde duro ---------- */
+.option-card, .option-item, .drill-option-card {
+  background: #FBFAF6;
+  border: 2px solid #111111;
+  border-radius: 0;
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+  box-shadow: none;
+}
+.option-card:hover:not(.disabled),
+.option-item:hover:not(.disabled),
+.drill-option-card:hover {
+  background: #F0EDE4;
+  border-color: #111111;
+  transform: none;
+  box-shadow: 3px 3px 0 #111111;
+}
+
+.option-letter-badge, .option-letter, .drill-opt-badge {
+  width: 46px;
+  min-width: 46px;
+  height: auto;
+  border-radius: 0;
+  border: none;
+  background: #111111;
+  color: #F4F2EC;
+  font-size: 1.05rem;
+  font-weight: 800;
+  align-self: stretch;
+}
+.option-content-text, .option-text, .drill-opt-text {
+  padding: 0.9rem 1.15rem;
+  color: #111111;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.option-card.selected, .option-item.selected, .drill-option-card.selected {
+  background: #2D4BFF !important;
+  border-color: #2D4BFF !important;
+  box-shadow: none;
+}
+.option-card.selected .option-letter-badge,
+.option-item.selected .option-letter,
+.drill-option-card.selected .drill-opt-badge {
+  background: #2D4BFF !important;
+  border-color: #2D4BFF !important;
+  color: #FFFFFF !important;
+}
+.option-card.selected .option-content-text,
+.option-item.selected .option-text,
+.drill-option-card.selected .drill-opt-text {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.option-card.correct, .option-item.correct, .drill-option-card.correct {
+  background: #146B3A !important;
+  border-color: #146B3A !important;
+}
+.option-card.correct .option-content-text,
+.option-item.correct .option-text,
+.drill-option-card.correct .drill-opt-text { color: #FFFFFF; }
+
+.option-card.incorrect, .option-item.incorrect, .drill-option-card.incorrect {
+  background: #B3261E !important;
+  border-color: #B3261E !important;
+}
+.option-card.incorrect .option-content-text,
+.option-item.incorrect .option-text,
+.drill-option-card.incorrect .drill-opt-text { color: #FFFFFF; }
+
+/* ---------- Pie de navegacion ---------- */
+.exam-navigation-footer {
+  border-top: 2px solid #111111;
+  padding-top: 1.15rem;
+  margin-top: 1.4rem;
+}
+.exam-kbd-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6E6A61;
+}
+
+/* ---------- Botones ---------- */
+.btn { border-radius: 0; font-weight: 600; }
+.btn-primary {
+  background: #111111;
+  border: 2px solid #111111;
+  color: #F4F2EC;
+  box-shadow: none;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #2D4BFF;
+  border-color: #2D4BFF;
+  color: #FFFFFF;
+}
+.btn-secondary {
+  background: transparent;
+  border: 2px solid #111111;
+  color: #111111;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #111111;
+  color: #F4F2EC;
+}
+
+/* ---------- Mapa de preguntas: celdas cuadradas ---------- */
+.palette-grid-50 { gap: 4px; }
+.palette-btn {
+  height: 34px;
+  border-radius: 0;
+  border: 1px solid #D9D5CB;
+}
+.palette-btn.unanswered { background: #E9E6DD; color: #6E6A61; }
+.palette-btn.answered { background: #111111; color: #F4F2EC; border-color: #111111; }
+.palette-btn.flagged { border: 2px solid #FFC400; }
+.palette-btn.active {
+  background: #2D4BFF;
+  color: #FFFFFF;
+  border-color: #2D4BFF;
+}
+
+/* =========================================================================
+   Correcciones de especificidad: styles.css usa !important en .btn-primary y
+   selectores con #view-exam para la insignia de letra. Sin igualar eso, la
+   capa del tema no llegaba a aplicarse en esos puntos.
+   ========================================================================= */
+
+.btn-primary {
+  background: #111111 !important;
+  border: 2px solid #111111 !important;
+  color: #F4F2EC !important;
+  box-shadow: none !important;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #2D4BFF !important;
+  border-color: #2D4BFF !important;
+  color: #FFFFFF !important;
+  box-shadow: none !important;
+  transform: none;
+}
+.btn-primary:active:not(:disabled) { transform: none; box-shadow: none !important; }
+
+.btn-secondary {
+  background: transparent !important;
+  border: 2px solid #111111 !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #111111 !important;
+  color: #F4F2EC !important;
+  transform: none;
+}
+
+.exam-hud-bar .btn-primary {
+  background: #F4F2EC !important;
+  border-color: #F4F2EC !important;
+  color: #111111 !important;
+}
+.exam-hud-bar .btn-primary:hover:not(:disabled) {
+  background: #2D4BFF !important;
+  border-color: #2D4BFF !important;
+  color: #FFFFFF !important;
+}
+
+#view-exam .option-card {
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+  border: 2px solid #111111;
+  border-radius: 0;
+}
+#view-exam .option-letter-badge {
+  width: 46px;
+  min-width: 46px;
+  min-height: 0;
+  height: auto;
+  padding: 4px 0;
+  background: #111111;
+  border: none;
+  border-radius: 0;
+  align-self: stretch;
+}
+#view-exam .option-letra { color: #F4F2EC; font-size: 1.05rem; }
+#view-exam .option-num { color: #F4F2EC; opacity: 0.6; }
+
+#view-exam .option-card.selected .option-letter-badge { background: #2D4BFF !important; }
+#view-exam .option-card.selected .option-letra,
+#view-exam .option-card.selected .option-num { color: #FFFFFF; }
+#view-exam .option-card.correct .option-letter-badge { background: #0E4F2B !important; }
+#view-exam .option-card.correct .option-letra,
+#view-exam .option-card.correct .option-num { color: #FFFFFF; }
+#view-exam .option-card.incorrect .option-letter-badge { background: #8C1C16 !important; }
+#view-exam .option-card.incorrect .option-letra,
+#view-exam .option-card.incorrect .option-num { color: #FFFFFF; }
+
+/* =========================================================================
+   Segunda pasada: quitar las cajas exteriores (el contenido va sobre el
+   papel, no dentro de tarjetas) y recuperar la firma de la maqueta C:
+   la tira de 50 segmentos y el contador de posicion grande.
+   ========================================================================= */
+
+.exam-question-area,
+.exam-palette-sidebar {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+.exam-palette-sidebar { border-left: 2px solid #111111; padding-left: 1.25rem; }
+
+.multi-select-badge {
+  border-radius: 0;
+  border: 2px solid #111111;
+  background: #FFE24D;
+  color: #111111;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Tira de progreso segmentada en 50: cada barra es una pregunta */
+.hud-center { min-width: 420px; gap: 0.45rem; }
+.exam-position-text {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #F4F2EC;
+  letter-spacing: 0.02em;
+}
+.exam-track-bar {
+  position: relative;
+  height: 9px;
+  background: #3A382F;
+}
+.exam-track-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0 calc(2% - 2px),
+    #111111 calc(2% - 2px) 2%
+  );
+}
+
+/* Cabeceras del navegador de preguntas, en la misma clave grafica */
+.palette-header h3, .palette-header h4 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+.palette-filter-chip {
+  border-radius: 0;
+  border: 2px solid #111111;
+  background: transparent;
+  color: #111111;
+  font-weight: 600;
+}
+.palette-filter-chip.active {
+  background: #111111;
+  color: #F4F2EC;
+}
+
+/* Ajuste fino de la barra superior: al ensanchar la tira de 50 segmentos,
+   el titulo del bloque y el boton de entrega se partian en dos lineas. */
+.hud-center { min-width: 380px; }
+.exam-block-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30ch;
+}
+.exam-hud-bar .btn { white-space: nowrap; }
+.flag-toggle-btn { white-space: nowrap; }
+
+/* =========================================================================
+   Tercera pasada: el resto de la aplicacion. styles.css tiene 15 fondos
+   oscuros escritos a mano (degradados de tarjeta, cabecera) que sobre papel
+   quedaban como manchas negras, y un texto gris claro (.cert-pill) que se
+   volvia ilegible. Se corrigen aqui, sin tocar styles.css.
+   ========================================================================= */
+
+/* Cabecera de la aplicacion: papel con regla negra, no cristal oscuro */
+.app-header {
+  background: #F4F2EC;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 2px solid #111111;
+}
+
+/* Selector de certificacion */
+.cert-pill {
+  color: #2A2822;
+  border-radius: 0;
+  border: 2px solid transparent;
+}
+.cert-pill:hover { border-color: #111111; }
+.cert-pill.active {
+  background: #111111 !important;
+  color: #F4F2EC !important;
+  border-color: #111111;
+  box-shadow: none;
+}
+
+/* Tarjetas del panel: bloque blanco con borde duro, sin degradados */
+.human-welcome-card,
+.action-card,
+.card-study-human,
+.card-exam-human,
+.card-drill-human,
+.stat-pill,
+.stat-card,
+.domain-mastery-card,
+.domain-list-card,
+.leitner-status-card,
+.history-card {
+  background: #FBFAF6;
+  border: 2px solid #111111;
+  border-radius: 0;
+  box-shadow: none;
+}
+.human-welcome-card { box-shadow: 5px 5px 0 #111111; }
+
+.stat-pill:hover, .stat-card:hover,
+.domain-mastery-card:hover {
+  border-color: #111111;
+  background: #F0EDE4;
+  box-shadow: 3px 3px 0 #111111;
+  transform: none;
+}
+.card-study-human:hover, .card-exam-human:hover, .card-drill-human:hover,
+.action-card:hover {
+  border-color: #111111;
+  box-shadow: 4px 4px 0 #2D4BFF;
+  transform: none;
+}
+
+/* La franja de color de cada tarjeta se queda: es lo unico que distingue
+   estudio / examen / repaso de un vistazo. Pasa a 4px, plana. */
+.human-welcome-card::before,
+.card-study-human::before,
+.card-exam-human::before,
+.card-drill-human::before {
+  height: 4px;
+  opacity: 1;
+}
+
+.stats-toggle-section {
+  background: transparent;
+  border-radius: 0;
+}
+
+/* Barras de progreso por dominio */
+.domain-progress-track, .domain-bar-bg {
+  background: #E4E0D6;
+  border-radius: 0;
+  border: 1px solid #111111;
+}
+.domain-progress-fill, .domain-bar-fill { border-radius: 0; }
+.domain-status-pill, .domain-badge, .keyword-chip, .cs-badge, .exam-code-badge, .cert-level-badge {
+  border-radius: 0;
+  border: 1.5px solid #111111;
+}
+
+/* Pestanas de navegacion principal */
+.app-nav .nav-tab.active, .nav-tab.active {
+  border-radius: 0;
+}
+
+/* =========================================================================
+   Cuarta pasada: los ultimos restos del tema anterior en el panel.
+   Botones de accion con degradado y halo, pestanas en pildora azul y
+   tarjetas de estadistica con borde fino: todo pasa a bloque plano.
+   ========================================================================= */
+
+.btn-accent {
+  background: #146B3A !important;
+  border: 2px solid #146B3A !important;
+  color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+.btn-accent:hover:not(:disabled) {
+  background: #0E4F2B !important;
+  border-color: #0E4F2B !important;
+  transform: none;
+  box-shadow: none !important;
+}
+.btn-warning {
+  background: #FFC400 !important;
+  border: 2px solid #111111 !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+.btn-warning:hover:not(:disabled) {
+  background: #E6B000 !important;
+  transform: none;
+  box-shadow: none !important;
+}
+.btn-danger {
+  background: #B3261E !important;
+  border: 2px solid #B3261E !important;
+  color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+.btn-outline, .btn-ghost { border-radius: 0; }
+.btn-outline { border: 2px solid #111111; color: #111111; }
+
+/* Pestanas: subrayado grueso en vez de pildora azul */
+.nav-tab {
+  border-radius: 0;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #2A2822;
+}
+.nav-tab:hover { background: transparent; border-bottom-color: #C9C4B8; }
+.nav-tab.active {
+  background: transparent !important;
+  color: #111111 !important;
+  border: none;
+  border-bottom: 3px solid #2D4BFF !important;
+  font-weight: 700;
+}
+.nav-tab.active .icon { color: #2D4BFF; }
+
+/* Tarjetas de cifra del panel */
+.stat-pill {
+  border: 2px solid #111111 !important;
+  border-radius: 0;
+  background: #FBFAF6 !important;
+}
+.stat-num { font-weight: 800; letter-spacing: -0.02em; }
+
+/* Cajas Leitner: la franja de color pasa arriba, coherente con las tarjetas */
+.leitner-box-card, .leitner-box {
+  border-radius: 0;
+  border: 2px solid #111111;
+}
+
+.stats-toggle-section { box-shadow: none; border: 2px solid #111111; }
+
+/* Auditoria de contraste: --text-muted (#6E6A61) sobre la superficie elevada
+   (#EDEAE1) daba 4.48:1, justo por debajo del 4.5:1 de WCAG AA. Seis textos
+   del panel caian ahi. Se oscurece lo justo para pasar. */
+html:root, html[data-theme="dark"], html[data-theme="light"] {
+  --text-muted: #67635A;
+}
+
+/* =========================================================================
+   Quinta pasada: el numero de pregunta grande de la maqueta C. Es la pieza
+   que fija de un vistazo "donde estoy" sin leer la barra superior.
+   Vive en .exam-q-header, que pasa a rejilla: numero | etiquetas | boton.
+   ========================================================================= */
+
+.exam-q-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 1.25rem;
+  margin-bottom: 1.4rem;
+}
+.exam-q-index {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 0.88;
+  padding-right: 1.25rem;
+  border-right: 2px solid #111111;
+  min-width: 92px;
+}
+.exam-q-index-num {
+  font-size: 4.2rem;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  color: #111111;
+  font-variant-numeric: tabular-nums;
+}
+.exam-q-index-total {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #67635A;
+  margin-top: 0.35rem;
+}
+.exam-q-header-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  align-self: center;
+}
+
+/* En pantallas estrechas el numero se encoge antes que romper la fila */
+@media (max-width: 1100px) {
+  .exam-q-index-num { font-size: 3rem; }
+  .exam-q-index { min-width: 68px; padding-right: 0.9rem; }
+}
+
+/* =========================================================================
+   Botones de utilidad de la cabecera (idioma y tema). Estaban descuadrados:
+   .lang-btn hereda el 40x40 de .icon-btn pero lleva icono + texto dentro, asi
+   que el contenido se salia de la caja y las dos cajas no casaban.
+   ========================================================================= */
+
+.header-right { gap: 10px; }
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  border: 2px solid #111111;
+  background: transparent;
+  color: #111111;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.icon-btn:hover {
+  background: #111111;
+  color: #F4F2EC;
+}
+.icon-btn .icon { width: 20px; height: 20px; }
+
+/* El de idioma es mas ancho: icono + etiqueta, sin deformar la altura */
+.icon-btn.lang-btn {
+  width: auto;
+  min-width: 0;
+  padding: 0 12px;
+  gap: 7px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.icon-btn.lang-btn .lang-text,
+.icon-btn.lang-btn .lang-tag { color: inherit; }
+.icon-btn.lang-btn:hover .lang-text,
+.icon-btn.lang-btn:hover .lang-tag { color: #F4F2EC; }

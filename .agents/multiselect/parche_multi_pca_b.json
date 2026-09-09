@@ -1,0 +1,290 @@
+[
+ {
+  "id": "PCA-D4-006",
+  "scenario": "A critical customer-facing payment API processes 100,000,000 requests per month. The product team targets a 99.9% availability SLO over a rolling 30-day window. In the past 10 days, an outage resulted in 150,000 failed requests (HTTP 500). Which two actions should the SRE team and engineering leads take, according to Google SRE error budget policy, to respond to the overrun and to detect the next one earlier? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Encode the 99.9% target as a request-based availability SLO in Cloud Monitoring Service Monitoring, then add multi-window multi-burn-rate alerting on the resulting error budget so a comparable drain pages the on-call engineer within an hour instead of surfacing during the monthly review."
+  },
+  "distractors": {
+   "B": "Error budgets are not waived by declaring an outage exceptional; excluding the failed requests from the rolling window hides a real breach and would let the release train run against a budget that is already 150% spent.",
+   "C": "Burn-rate alerting is worth adding, but as written this option keeps the release cadence unchanged, so it does nothing about a budget that is already exhausted.",
+   "D": "Adding a second regional replica may improve reliability later, yet leaving the feature release cadence untouched violates the error budget policy the question asks the team to enforce."
+  },
+  "explanation": "At 99.9% on 100M requests the 30-day budget is 100,000 errors; 150,000 failures spend 150% of it, so the error budget policy is enforced by freezing non-critical feature work (A). Enforcement alone is reactive: the same policy requires the SLO and its error budget to be measured in Cloud Monitoring with multi-window burn-rate alerts so the next drain is caught in hours rather than at the end of the window (E)."
+ },
+ {
+  "id": "PCA-D4-007",
+  "scenario": "An enterprise SRE team suffers from alert fatigue due to noisy short-lived error spikes while simultaneously missing slow, catastrophic error budget drains that deplete 100% of the budget over 3 days. Which two configuration steps in Cloud Monitoring are required, following Google SRE Workbook principles, to make burn-rate alerting both computable and free of false pages? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Define the service and its SLO in Cloud Monitoring Service Monitoring first: a request-based availability SLI expressed as a good/total ratio over a rolling 30-day compliance window, which is what gives the alerting policies an explicit error budget to compute a burn rate against."
+  },
+  "distractors": {
+   "A": "A single fast-burn policy catches sharp spikes only, and disabling every other channel removes exactly the low-burn ticket path needed for the slow three-day drain described.",
+   "B": "Static thresholds on raw 5xx ratio and p99 latency are the source of the alert fatigue: they ignore budget consumption and need manual retuning as traffic grows.",
+   "C": "Waiting for the compliance window to close means the team is notified once the budget is already at zero, which is precisely the slow-drain failure mode described."
+  },
+  "explanation": "Multi-window multi-burn-rate alerting (D) pairs a fast 14.4x page with a slow 6x ticket, removing spike noise while catching multi-day drains. It is only computable once the SLI and SLO are declared in Cloud Monitoring Service Monitoring (E), because burn rate is defined as budget consumed per unit time against that explicit error budget."
+ },
+ {
+  "id": "PCA-D4-013",
+  "scenario": "An enterprise operates a massive monolithic on-premises banking application. The architecture leadership mandates migrating to cloud-native microservices on Google Cloud. A 'big bang' complete rewrite is deemed too high-risk by the executive board. Which two elements make up the incremental modernization architecture, covering both the request routing and the data during the period when the monolith and the new services coexist? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Keep the data consistent during coexistence with Database Migration Service or Datastream change data capture, continuously replicating the tables owned by each carved-out capability from the monolith's database into Cloud SQL or Spanner until that capability's writes move to the new service."
+  },
+  "distractors": {
+   "A": "Migrate to Virtual Machines rehosting moves the monolith unchanged into Compute Engine, which postpones decomposition rather than performing it and delivers no microservices.",
+   "B": "Branch-by-abstraction still ends in one coordinated cutover of every consumer, which is the big-bang risk profile the executive board rejected.",
+   "C": "Migrate to Containers on GKE Autopilot changes the runtime only; the monolith remains a single deployable unit with no incremental extraction of domain capabilities."
+  },
+  "explanation": "The Strangler Fig pattern places Apigee X in front of the legacy monolith and moves API routes to Google Cloud microservices capability by capability (D). Routing alone is not enough: while old and new run side by side, each extracted capability needs its data kept in sync through DMS or Datastream CDC (E), otherwise the redirected traffic reads stale or missing records."
+ },
+ {
+  "id": "PCA-D4-023",
+  "scenario": "An enterprise is migrating a mission-critical 10TB MySQL database from an on-premises datacenter to Google Cloud SQL for MySQL. The business allows a maximum of 15 minutes of downtime for final application cutover. Which two elements should the migration plan contain to meet the downtime budget and to stay recoverable if post-cutover validation fails? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Plan the fallback before the cutover: keep the on-premises MySQL server intact and configure reverse replication from the promoted Cloud SQL instance back to it, so the application can be repointed on premises if validation fails after the switch."
+  },
+  "distractors": {
+   "A": "A 10TB mysqldump plus import runs for many hours with writes frozen, which blows the 15-minute downtime budget by a wide margin.",
+   "C": "Datastream lands change events for analytics targets such as BigQuery or Cloud Storage; it is not a supported replication path into Cloud SQL for a production cutover.",
+   "D": "Migrate to Virtual Machines rehosts the database server onto Compute Engine, leaving the enterprise self-managing MySQL instead of arriving on managed Cloud SQL."
+  },
+  "explanation": "Database Migration Service performs the initial dump and then continuous binlog CDC, so the cutover is a short promotion inside the 15-minute window (B). A cutover plan is only complete with a way back: leaving the source intact and reverse-replicating from Cloud SQL (E) keeps a rollback possible without losing the transactions written after the switch."
+ },
+ {
+  "id": "PCA-D4-032",
+  "scenario": "A backend service running behind an External Application Load Balancer is under heavy CPU load. The health check is configured with check_interval = 1s, timeout = 1s, unhealthy_threshold = 1. Due to brief 1.2-second CPU garbage collection pauses, the load balancer prematurely marks backends unhealthy, removing them and cascading the overload to remaining instances (thundering herd). Which two changes address both the false ejections and the cascading overload they trigger? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Limit the blast radius of any ejection that does occur: enable connection draining on the backend service and give the managed instance group autoscaler enough headroom, so removing one backend redistributes load gradually instead of pushing the survivors past the pause threshold."
+  },
+  "distractors": {
+   "A": "Raising only timeout_sec still ejects a backend on a single failed probe, so one pause longer than the new timeout removes an instance immediately.",
+   "B": "Leaving the 1s/1s/1 thresholds untouched keeps the false ejections happening; outlier detection reacts to request errors and does not stop a probe from misreading a GC pause.",
+   "C": "Retuning the JVM may shorten pauses but leaves a health check that ejects a backend on one slow probe, so any future stall still triggers the same cascade."
+  },
+  "explanation": "The primary fix is tuning the probe so a transient pause cannot eject a healthy backend: timeout 5s, interval 5-10s, unhealthy_threshold 3, healthy_threshold 2 (D). That alone does not address the second risk, the herd effect when an ejection is genuine, so connection draining plus autoscaler headroom (E) keeps the remaining backends from being pushed into the same overload."
+ },
+ {
+  "id": "PCA-D4-037",
+  "scenario": "A streaming payment consumer crashes whenever it receives a malformed 'poison pill' JSON message from Pub/Sub. Because the subscriber fails before acknowledging the message, Pub/Sub re-delivers the poison pill endlessly in an infinite loop, blocking all valid subsequent messages in the queue. Which two configuration steps are required so that poisoned messages stop blocking the queue and are still available for debugging? (Choose 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Grant the Pub/Sub service agent roles/pubsub.publisher on the dead-letter topic and roles/pubsub.subscriber on the source subscription, and attach a subscription to that topic, since otherwise forwarding fails silently."
+  },
+  "distractors": {
+   "A": "A 600-second ack deadline only delays each redelivery; the subscriber still crashes on the same payload and the poison pill keeps blocking the backlog forever.",
+   "B": "Exponential backoff spaces retries out but never removes the message, so the malformed payload continues to be redelivered indefinitely.",
+   "D": "Shrinking message retention discards the poisoned message along with every other unacknowledged payment message in the backlog, causing real data loss."
+  },
+  "explanation": "A dead-letter topic with max_delivery_attempts=5 plus a retry policy pulls the poison pill out of the delivery loop so valid messages flow again (C). The feature only works once the Pub/Sub service agent holds publisher rights on the dead-letter topic and subscriber rights on the source subscription, and the dead-letter topic itself has a subscription to retain the forwarded messages for offline analysis (E)."
+ },
+ {
+  "id": "PCA-D4-042",
+  "scenario": "An enterprise architect is evaluating DR strategies for a Tier-1 financial platform requiring RTO < 5 seconds and RPO = 0 vs a Tier-2 internal HR application requiring RTO < 2 hours and RPO < 1 hour. Which two elements should the disaster recovery plan include so that each tier is both architected to its objectives and proven to meet them? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Rehearse each tier on a schedule and record the measured numbers: non-disruptive multi-region failure drills against the Cloud Spanner and Global Load Balancer stack for Tier-1, and timed promotions of the Cloud SQL cross-region read replica for Tier-2, because an untested plan has no demonstrated RTO."
+  },
+  "distractors": {
+   "A": "Applying the Hot-Hot topology to Tier-2 as well meets its objectives but pays multi-region Spanner and active-active compute costs for a target that a warm standby satisfies.",
+   "B": "Warm standby with a DNS-driven promotion runbook cannot deliver Tier-1's sub-five-second RTO and zero RPO, since replica promotion and DNS propagation take minutes.",
+   "C": "Backup and restore with five-minute PITR granularity gives Tier-1 an RPO of minutes and an RTO of the restore time, far outside its RPO = 0 requirement."
+  },
+  "explanation": "Matching architecture to tier is the design half: Hot-Hot multi-region with Cloud Spanner for Tier-1 and warm standby on Cloud SQL cross-region replicas for Tier-2 (D). The objectives are only real once the failover is exercised, so scheduled drills that measure actual recovery time for both tiers (E) are the second required element of the plan."
+ },
+ {
+  "id": "PCA-D5-002",
+  "scenario": "Multiple independent development teams publish events to a shared 'enterprise-events' Pub/Sub topic. Downstream analytics pipelines frequently break when a publishing team introduces backward-incompatible JSON schema changes (e.g. renaming fields or changing data types). Which two steps enforce the contract at the topic and still let the schema evolve over time? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Manage change through Pub/Sub schema revisions: commit new revisions of the registered schema, set the topic's first and last accepted revision range, and validate compatibility in CI so a rename or type change is rejected before it reaches the shared topic."
+  },
+  "distractors": {
+   "A": "Validating inside a Dataflow pipeline catches the breakage only after publication, so the malformed events are already in the topic and downstream consumers are already affected.",
+   "B": "A BigQuery subscription with use-topic-schema protects that one destination table; other subscribers of the shared topic still receive the non-conforming messages.",
+   "C": "A shared client library is advisory only: any team can publish with a stale pinned version or call the API directly, so the contract is not enforced at the topic."
+  },
+  "explanation": "Attaching a Pub/Sub Schema resource (Avro or Protobuf) to the topic makes the service validate every payload at publish time and reject non-conforming messages synchronously (D). Enforcement alone would freeze the contract, so schema revisions with an accepted revision range on the topic (E) are what allow compatible evolution while still blocking breaking changes."
+ },
+ {
+  "id": "PCA-D5-017",
+  "scenario": "A streaming financial transaction pipeline running on Cloud Dataflow writes records into BigQuery. The pipeline must guarantee strictly Exactly-Once delivery semantics (no duplicate rows inserted even during pipeline worker restarts) while supporting 500,000 rows per second at lower cost than legacy streaming insert APIs. Which two choices are required to obtain those semantics end to end? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Run the job in Dataflow's exactly-once streaming mode rather than the cheaper at-least-once streaming mode, because at-least-once mode explicitly trades duplicate suppression for latency and cost and would let a worker restart replay records into the sink."
+  },
+  "distractors": {
+   "B": "Legacy streaming inserts with insertId deduplicate only on a best-effort basis inside a short window, and at 500,000 rows per second they also cost far more than the Storage Write API.",
+   "C": "STORAGE_API_AT_LEAST_ONCE on the default stream is documented to allow duplicates; without downstream deduplication the pipeline cannot claim exactly-once.",
+   "D": "A Pub/Sub BigQuery subscription removes the Dataflow transformation stage entirely and provides at-least-once delivery, not the exactly-once guarantee required."
+  },
+  "explanation": "BigQueryIO with Method.STORAGE_WRITE_API commits through stream offsets over gRPC, giving exactly-once persistence at roughly a fifth of the legacy streaming insert cost (A). The sink guarantee only holds if the runner itself does not replay: Dataflow's at-least-once streaming mode drops that suppression by design, so the job must run in exactly-once streaming mode (E)."
+ },
+ {
+  "id": "PCA-D5-023",
+  "scenario": "An operator mistakenly ran a DROP TABLE command or updated all customer balances to 0 in Cloud Spanner at 14:32:15 UTC. The database administrator needs to recover the database to its exact microsecond state at 14:31:00 UTC (1 minute prior to the corruption). Which two statements describe the recovery mechanism and the configuration it depends on? (Choose 2.)",
+  "correct": [
+   "D",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Point-in-time recovery only reaches timestamps inside the database's version_retention_period, which defaults to one hour and must have been raised in advance, so scheduled Spanner backups remain necessary for any corruption discovered outside that window."
+  },
+  "distractors": {
+   "A": "Restoring the 02:00 backup and replaying request logs is not a Spanner capability: there is no queryable request log to reapply, and the approach loses twelve hours of transactions.",
+   "B": "Hourly Avro exports to Cloud Storage give at best hourly granularity, and change stream data retained separately does not reconstruct the exact microsecond state required.",
+   "C": "Every read-write replica in a multi-region configuration applies the same committed transactions, so the DROP TABLE is present in us-east1 too and failover recovers nothing."
+  },
+  "explanation": "Spanner PITR restores a database to any microsecond timestamp by specifying the recovery time in a restore operation (D). It is bounded by version_retention_period, whose default is one hour and whose maximum is seven days, so recovery is only possible if that retention was configured beforehand and backups still cover anything older (E)."
+ },
+ {
+  "id": "PCA-D5-030",
+  "scenario": "EHR Healthcare integrates with external state insurance clearinghouses to submit patient medical claims. Clearinghouse mainframe gateways throttle and reject traffic if submissions exceed 50 requests per second. During morning hospital discharge hours, claims volume spikes to 2,000 claims/sec. Which two elements should the submission queue configuration include so the gateway is paced and no claim is lost when it still rejects one? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Set the queue's retry configuration with a bounded max_attempts and exponential backoff, and route a task that exhausts its attempts to a separate Cloud Tasks queue or Pub/Sub topic for manual adjudication, so a rejected claim is preserved instead of dropped."
+  },
+  "distractors": {
+   "A": "Cloud Run max-instances caps concurrent containers, not requests per second: fifty instances at one request each can still exceed fifty submissions per second on short calls.",
+   "C": "Pub/Sub flow control limits outstanding messages per subscriber client, so a fifty-worker Dataflow pool gives no deterministic gateway-side rate ceiling.",
+   "D": "max_burst_size only sizes the token bucket; with max_concurrent_dispatches at 2000 the queue drains the discharge backlog straight through the clearinghouse limit."
+  },
+  "explanation": "A Cloud Tasks queue with max_dispatches_per_second = 50 and bounded concurrency absorbs the 2,000/sec discharge burst and paces submissions to the clearinghouse limit (B). Pacing does not make a rejection safe, so bounded retries with backoff plus a dead-letter path for exhausted claims (E) is required to keep a failed claim recoverable rather than silently lost."
+ },
+ {
+  "id": "PCA-D6-012",
+  "scenario": "To satisfy annual financial regulatory audits, an enterprise must conduct full disaster recovery failover testing simulating the loss of its primary datacenter and primary Google Cloud region. The DR test must validate application startup, database restore, and transaction processing without disrupting live production users. Which two elements should the DR drill design include to exercise recovery safely and to leave the auditors defensible evidence? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Capture the evidence as the drill runs: export the sandbox's Cloud Logging entries, the restore timestamps and the measured RTO and RPO into a Cloud Storage bucket protected by Bucket Lock retention, so the audit record cannot be altered after the exercise is finished and the environment is destroyed."
+  },
+  "distractors": {
+   "A": "Running the failover against the live production instance and repointing production DNS disrupts real users, which the requirement explicitly forbids.",
+   "C": "A tabletop walkthrough of runbooks and diagrams never restores a database or processes a transaction, so it validates none of the behaviour the audit requires.",
+   "D": "Staging shares VPC peering and IAM bindings with production, so a failed drill can reach production resources and the isolation the test requires is absent."
+  },
+  "explanation": "An isolated sandbox VPC built by Terraform and hydrated by PITR or snapshot restores lets the team run synthetic end-to-end transactions and measure RTO and RPO without touching production (B). Because the sandbox is destroyed afterwards, the drill's evidence must be exported first into retention-locked Cloud Storage (E), which is what makes the result auditable months later."
+ },
+ {
+  "id": "PCA-D6-014",
+  "scenario": "An enterprise deploys AlloyDB for PostgreSQL in us-central1 as its primary transactional database. To achieve cross-region disaster recovery, they provision an AlloyDB Secondary Cluster in europe-west1 with continuous asynchronous storage replication. During a major US outage, which two steps make up the failover procedure? (Choose 2.)",
+  "correct": [
+   "C",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Repoint the applications at the promoted cluster's europe-west1 endpoint or Private Service Connect attachment, then restore disaster recovery coverage by creating a new AlloyDB secondary cluster once a healthy region is available again."
+  },
+  "distractors": {
+   "A": "A switchover coordinates a planned role exchange and needs a reachable, healthy primary; during a regional outage the us-central1 cluster cannot participate.",
+   "B": "Restoring from continuous backup into a new cluster discards the replicated state already present in europe-west1 and takes far longer than promoting it.",
+   "D": "Read pool instances serve read-only queries and forward nothing: with us-central1 unreachable there is no primary to accept the write traffic."
+  },
+  "explanation": "Promoting the europe-west1 secondary cluster turns it into an independent primary that accepts read-write transactions in seconds (C). Promotion alone leaves clients pointed at a dead endpoint and the estate without DR, so repointing the applications and rebuilding a new secondary cluster (E) completes the procedure."
+ },
+ {
+  "id": "PCA-D6-015",
+  "scenario": "A rogue script accidentally overwrote 10,000 production configuration files in a Cloud Storage bucket with empty 0-byte files. Which two Cloud Storage mechanisms can return the previous valid contents of those objects without restoring from offline backups? (Choose 2.)",
+  "correct": [
+   "B",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "If the bucket has a soft delete policy, the generations replaced by the overwrite are kept for the policy's retention window and can be listed and brought back with the Cloud Storage restore operation, even on a bucket where object versioning was never enabled."
+  },
+  "distractors": {
+   "A": "A retention policy blocks deletion of the current generation and a lifecycle rule only expires data; neither restores content that has already been overwritten.",
+   "C": "Dual-region replication is synchronous in both directions, so the overwrite propagated to the second region and no untouched copy exists there.",
+   "D": "There is no support path that rolls a bucket back to an earlier point in time; recovery relies on features the customer enabled beforehand."
+  },
+  "explanation": "Object Versioning keeps each overwritten object as a noncurrent generation, so copying the previous generation numbers back into the live namespace restores all 10,000 files (B). Cloud Storage soft delete provides the same recovery through a different mechanism: replaced generations are retained for the policy's window and returned by a restore operation (E), which is the path available when versioning was never turned on."
+ },
+ {
+  "id": "PCA-D6-024",
+  "scenario": "An enterprise operates legacy worker VMs on Compute Engine. Occasionally, an internal queue processing daemon freezes without crashing the VM. The operations team wants automated self-healing: when zero queue message processing is observed for 10 minutes, a workflow must safely restart the systemd service on the affected VM without human intervention. Which two components does this pipeline require? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Collect the signal the alert depends on: install the Ops Agent on the worker VMs to publish the daemon's messages-processed rate as a custom Cloud Monitoring metric, since a frozen daemon leaves the VM healthy and no built-in Compute Engine metric reports zero queue throughput."
+  },
+  "distractors": {
+   "B": "Managed instance group autohealing recreates whole instances and its health check cannot observe queue throughput, so a frozen daemon on a responsive port is never detected.",
+   "C": "An hourly OS Config patch deployment restarts the daemon fleet-wide on a fixed schedule, leaving up to an hour of stalled processing and disturbing healthy VMs.",
+   "D": "Audit log events for compute.instances.* fire on API calls against instances, not on an application daemon freezing, so the Eventarc trigger never fires."
+  },
+  "explanation": "A webhook notification channel on the alert policy invoking an OIDC-authenticated Cloud Run or Cloud Functions handler, which restarts the unit through OS Config or Cloud Workflows, is the remediation half (A). The alert can only fire if the throughput signal exists, so the Ops Agent must publish the daemon's processing rate as a custom metric (E); without it the frozen daemon is invisible to Cloud Monitoring."
+ },
+ {
+  "id": "PCA-D6-032",
+  "scenario": "Agricultural tractors frequently operate in rural remote farm fields with zero cellular connectivity for 12 to 18 hours at a time. The onboard vehicle telemetry system must continue logging fine-grained sensor data (100+ parameters) locally without buffer overflow, and automatically synchronize the buffered batch records once coverage is restored. Which two elements does an architecture with zero data loss and no duplicated readings require? (Choose 2.)",
+  "correct": [
+   "A",
+   "E"
+  ],
+  "expectedSelectCount": 2,
+  "options": {
+   "E": "Make the forwarding side idempotent, because a batch upload interrupted mid-transfer is retried after the link drops again: give each batch a deterministic Cloud Storage object name derived from vehicle id and time range, and set a Pub/Sub ordering or message key so the ingestion pipeline in BigQuery collapses a replayed batch instead of double-counting the readings it carries."
+  },
+  "distractors": {
+   "B": "A RAM-backed ring buffer sized to the onboard unit's memory cannot hold 12 to 18 hours of 100+ parameters, so the oldest readings are overwritten before coverage returns.",
+   "C": "Publishing directly to Pub/Sub requires a live link; with no connectivity the publish calls fail and the seven-day retention never receives the readings to replay.",
+   "D": "Cloud Storage FUSE needs an active connection to flush writes to the bucket, so during the outage the logger's writes fail rather than being buffered locally."
+  },
+  "explanation": "Store-and-forward buffering on encrypted onboard flash with FIFO rotation, then compressed batch upload with checksum verification when the link returns, is what survives an 18-hour disconnect (A). Because those uploads are retried across intermittent rural coverage, the ingestion side must be idempotent through deterministic object names and message keys (E), otherwise retries silently duplicate telemetry."
+ }
+]

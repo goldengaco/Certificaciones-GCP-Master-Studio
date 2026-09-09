@@ -1,0 +1,546 @@
+[
+ {
+  "id": "ACE-D3-068",
+  "subtopic": "Cloud Monitoring Alert Policy Deployment",
+  "scenario": "You have defined a JSON alerting policy `high-cpu-alert.json` that monitors Compute Engine VM CPU utilization and triggers an alert when average CPU exceeds 85% for 5 consecutive minutes, notifying notification channel `projects/corp-ops/notificationChannels/98765`. Which command deploys this alerting policy?",
+  "correct": "C",
+  "clave_len": 78,
+  "explanation": "`gcloud alpha monitoring policies create --policy-from-file=<FILE>` is the Google Cloud CLI command to deploy declarative JSON/YAML alerting policy configurations to Google Cloud Monitoring.",
+  "doc": "https://cloud.google.com/monitoring/alerts/using-alerting-api",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "bq mk --alert_policy=high-cpu-alert.json"
+   },
+   {
+    "letter": "B",
+    "len": 57,
+    "text": "gcloud compute instances create-alert high-cpu-alert.json"
+   },
+   {
+    "letter": "C",
+    "len": 78,
+    "text": "gcloud alpha monitoring policies create --policy-from-file=high-cpu-alert.json"
+   },
+   {
+    "letter": "D",
+    "len": 36,
+    "text": "kubectl apply -f high-cpu-alert.json"
+   }
+  ],
+  "ratio": 1.76
+ },
+ {
+  "id": "ACE-D4-030",
+  "subtopic": "Cloud Bigtable Node Scaling & Operations",
+  "scenario": "Your Cloud Bigtable cluster `cluster-us-central1` is experiencing CPU utilization above 80% due to an unexpected influx of IoT sensor traffic, causing write latency to spike above 50ms. You need to increase the cluster node count from 4 nodes to 12 nodes immediately to restore sub-10ms latency. Which command scales the cluster?",
+  "correct": "B",
+  "clave_len": 91,
+  "explanation": "`gcloud bigtable clusters update <CLUSTER_ID> --instance=<INSTANCE_ID> --num-nodes=<COUNT>` dynamically scales the Bigtable cluster node count in seconds without restarting the cluster or interrupting streaming writes.",
+  "doc": "https://cloud.google.com/bigtable/docs/modifying-instance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 52,
+    "text": "gcloud compute instances create bigtable-node-[5-12]"
+   },
+   {
+    "letter": "B",
+    "len": 91,
+    "text": "gcloud bigtable clusters update cluster-us-central1 --instance=iot-telemetry --num-nodes=12"
+   },
+   {
+    "letter": "C",
+    "len": 55,
+    "text": "gcloud sql instances patch iot-telemetry --num-nodes=12"
+   },
+   {
+    "letter": "D",
+    "len": 48,
+    "text": "cbt updatecluster cluster-us-central1 --nodes=12"
+   }
+  ],
+  "ratio": 1.76
+ },
+ {
+  "id": "ACE-D3-018",
+  "subtopic": "BigQuery Table Creation & Schema Loading",
+  "scenario": "You are deploying a new financial transactions table in BigQuery dataset `corp_finance`. The table must be partitioned by transaction date (`transaction_time` TIMESTAMP field), clustered by `merchant_id` and `customer_id`, and loaded with schema from `./schema.json`. Which `bq` CLI command creates the table?",
+  "correct": "A",
+  "clave_len": 140,
+  "explanation": "The `bq mk --table` command creates tables in BigQuery. Adding `--time_partitioning_field=<COLUMN>` defines the time partition column and `--clustering_fields=<COL1,COL2>` configures clustering columns alongside the schema JSON definition.",
+  "doc": "https://cloud.google.com/bigquery/docs/creating-partitioned-tables",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 140,
+    "text": "bq mk --table --time_partitioning_field=transaction_time --clustering_fields=merchant_id,customer_id corp_finance.transactions ./schema.json"
+   },
+   {
+    "letter": "B",
+    "len": 92,
+    "text": "bq create table corp_finance.transactions --partition=transaction_time --cluster=merchant_id"
+   },
+   {
+    "letter": "C",
+    "len": 60,
+    "text": "bq load --autodetect corp_finance.transactions ./schema.json"
+   },
+   {
+    "letter": "D",
+    "len": 88,
+    "text": "gcloud bigquery tables create transactions --dataset=corp_finance --schema=./schema.json"
+   }
+  ],
+  "ratio": 1.75
+ },
+ {
+  "id": "ACE-D4-049",
+  "subtopic": "Cloud Storage Bucket Lock Operations",
+  "scenario": "You have configured a 7-year retention policy on Cloud Storage compliance bucket `gs://sec-archive-vault`. To satisfy SEC Rule 17a-4 compliance, you must lock the retention policy permanently so that NO ONE (including project owners and Google Cloud super admins) can reduce the retention period or remove the policy. Which command locks the policy?",
+  "correct": "A",
+  "clave_len": 76,
+  "explanation": "Locking a retention policy (`--lock-retention-policy`) permanently cements the bucket's retention period. Once locked, the policy cannot be deleted, removed, or reduced in duration by any user or IAM role, guaranteeing immutable WORM (Write Once, Read Many) compliance.",
+  "doc": "https://cloud.google.com/storage/docs/bucket-lock#lock-bucket",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 76,
+    "text": "gcloud storage buckets update gs://sec-archive-vault --lock-retention-policy"
+   },
+   {
+    "letter": "B",
+    "len": 42,
+    "text": "bq update --lock-dataset sec-archive-vault"
+   },
+   {
+    "letter": "C",
+    "len": 57,
+    "text": "gcloud compute disks snapshot lock gs://sec-archive-vault"
+   },
+   {
+    "letter": "D",
+    "len": 35,
+    "text": "gsutil rm -r gs://sec-archive-vault"
+   }
+  ],
+  "ratio": 1.7
+ },
+ {
+  "id": "ACE-D4-037",
+  "subtopic": "Cloud Storage Event-Based & Temporary Holds",
+  "scenario": "A corporate legal department issues a litigation hold on specific contract files in Cloud Storage bucket `gs://customer-contracts-vault`. Objects with a legal hold must not be deleted or overwritten by any user until the lawsuit concludes, regardless of bucket retention policies or lifecycle rules. Which command applies a temporary legal hold to an object?",
+  "correct": "B",
+  "clave_len": 98,
+  "explanation": "Cloud Storage supports Temporary Holds (`--temporary-hold`) and Event-Based Holds. Placing a temporary hold on an object prevents it from being deleted or overwritten until an administrator explicitly removes the hold.",
+  "doc": "https://cloud.google.com/storage/docs/holds-and-retention#holds",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 40,
+    "text": "bq update --legal_hold contract-2026-xyz"
+   },
+   {
+    "letter": "B",
+    "len": 98,
+    "text": "gcloud storage objects update gs://customer-contracts-vault/contract-2026-xyz.pdf --temporary-hold"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "gsutil rm -d gs://customer-contracts-vault/contract-2026-xyz.pdf"
+   },
+   {
+    "letter": "D",
+    "len": 73,
+    "text": "gcloud compute disks snapshot create --hold gs://customer-contracts-vault"
+   }
+  ],
+  "ratio": 1.66
+ },
+ {
+  "id": "ACE-D4-055",
+  "subtopic": "Cloud NAT Port Exhaustion Troubleshooting",
+  "scenario": "Backend Compute Engine instances on private subnets are encountering intermittent connection timeouts when opening outbound connections to external SaaS REST APIs. You suspect the Cloud NAT gateway has exhausted its allocated NAT IP source ports. Which Cloud Logging filter identifies Cloud NAT port allocation drops?",
+  "correct": "A",
+  "clave_len": 71,
+  "explanation": "When Cloud NAT logging is enabled, dropped outbound connections caused by source port exhaustion are logged under `resource.type=\"nat_gateway\"` with `jsonPayload.allocation_status=\"DROPPED\"`.",
+  "doc": "https://cloud.google.com/nat/docs/troubleshooting#dropped-connections",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 71,
+    "text": "resource.type=\"nat_gateway\" AND jsonPayload.allocation_status=\"DROPPED\""
+   },
+   {
+    "letter": "B",
+    "len": 40,
+    "text": "gcloud compute routers delete nat-router"
+   },
+   {
+    "letter": "C",
+    "len": 43,
+    "text": "SELECT * FROM nat_logs WHERE status='error'"
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "resource.type=\"gce_instance\" AND severity=DEBUG"
+   }
+  ],
+  "ratio": 1.64
+ },
+ {
+  "id": "ACE-D5-021",
+  "subtopic": "VPC Firewall Rules for Multi-Tier Architecture",
+  "scenario": "You are configuring network security for a 3-tier application (Web, App, Database). The Database tier VMs have network tag `db-tier` and run MySQL on port 3306. To enforce strict network segmentation, database instances must ONLY accept connections from VMs carrying the network tag `app-tier`, blocking all other internal VMs and the public internet. Which firewall rule should you create?",
+  "correct": "B",
+  "clave_len": 111,
+  "explanation": "Using `--target-tags=db-tier` with `--source-tags=app-tier` enforces strict L3/L4 microsegmentation, ensuring that only VMs tagged with `app-tier` can establish TCP connections on port 3306 to database instances.",
+  "doc": "https://cloud.google.com/vpc/docs/firewalls#target-tags",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 61,
+    "text": "Create an egress firewall rule on db-tier to allow port 3306."
+   },
+   {
+    "letter": "B",
+    "len": 111,
+    "text": "Create an ingress firewall rule specifying --target-tags=db-tier, --source-tags=app-tier, and --allow=tcp:3306."
+   },
+   {
+    "letter": "C",
+    "len": 90,
+    "text": "Create an ingress firewall rule specifying --source-ranges=0.0.0.0/0 and --allow=tcp:3306."
+   },
+   {
+    "letter": "D",
+    "len": 53,
+    "text": "Assign public IP addresses to all database instances."
+   }
+  ],
+  "ratio": 1.63
+ },
+ {
+  "id": "ACE-D4-019",
+  "subtopic": "GKE Container Runtime Debugging",
+  "scenario": "A developer needs to troubleshoot an active running web application container inside GKE Pod `web-app-8594-xyz` in namespace `staging`. The developer needs to open an interactive bash shell inside the running container to inspect local configuration files and run diagnostics. Which kubectl command should they execute?",
+  "correct": "A",
+  "clave_len": 66,
+  "explanation": "`kubectl exec -it <POD_NAME> -- <COMMAND>` opens an interactive TTY terminal session directly inside the running container namespace, allowing developers to execute diagnostic commands in real time.",
+  "doc": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_exec/",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 66,
+    "text": "kubectl exec -it web-app-8594-xyz --namespace=staging -- /bin/bash"
+   },
+   {
+    "letter": "B",
+    "len": 35,
+    "text": "gcloud compute ssh web-app-8594-xyz"
+   },
+   {
+    "letter": "C",
+    "len": 46,
+    "text": "gcloud container clusters ssh web-app-8594-xyz"
+   },
+   {
+    "letter": "D",
+    "len": 41,
+    "text": "kubectl attach web-app-8594-xyz --restart"
+   }
+  ],
+  "ratio": 1.62
+ },
+ {
+  "id": "ACE-D5-011",
+  "subtopic": "Cloud Storage Uniform Bucket-Level Access",
+  "scenario": "An internal audit found that some objects in Cloud Storage bucket `gs://corp-sensitive-docs` have inconsistent object-level ACLs, granting unauthorized read access to external email addresses. You need to enforce a uniform security model where access is governed exclusively through Cloud IAM roles across all current and future objects in the bucket, disabling object ACLs entirely. Which command enforces this?",
+  "correct": "C",
+  "clave_len": 84,
+  "explanation": "Uniform Bucket-Level Access (UBLA) unifies access control exclusively to Google Cloud IAM, disabling individual object ACLs and preventing accidental exposure of individual files through fine-grained ACL leaks.",
+  "doc": "https://cloud.google.com/storage/docs/uniform-bucket-level-access",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 51,
+    "text": "gsutil acl set public-read gs://corp-sensitive-docs"
+   },
+   {
+    "letter": "B",
+    "len": 59,
+    "text": "gcloud compute networks update sensitive-docs --enable-ubla"
+   },
+   {
+    "letter": "C",
+    "len": 84,
+    "text": "gcloud storage buckets update gs://corp-sensitive-docs --uniform-bucket-level-access"
+   },
+   {
+    "letter": "D",
+    "len": 46,
+    "text": "bq update --uniform_access corp-sensitive-docs"
+   }
+  ],
+  "ratio": 1.62
+ },
+ {
+  "id": "ACE-D4-002",
+  "subtopic": "GKE Node Pool Upgrade Operations",
+  "scenario": "You are upgrading a production GKE Standard cluster node pool `app-pool` from Kubernetes version 1.27 to 1.28. To guarantee that customer workloads do not experience downtime or capacity degradation during the rolling node upgrade, you need to configure the upgrade strategy to provision 1 extra node before draining an old node (`max-surge=1`) and allow 0 unavailable nodes (`max-unavailable=0`). Which command initiates the upgrade?",
+  "correct": "A",
+  "clave_len": 109,
+  "explanation": "GKE node pool upgrades are initiated with `gcloud container clusters upgrade <CLUSTER> --node-pool=<POOL> --cluster-version=<VERSION>`. GKE uses configured surge upgrade parameters (`max-surge` and `max-unavailable`) to gracefully cordon, drain, and replace worker nodes sequentially.",
+  "doc": "https://cloud.google.com/kubernetes-engine/docs/how-to/node-pool-upgrades",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 109,
+    "text": "gcloud container clusters upgrade my-cluster --node-pool=app-pool --cluster-version=1.28 --region=us-central1"
+   },
+   {
+    "letter": "B",
+    "len": 78,
+    "text": "gcloud container clusters update my-cluster --disable-addons=HttpLoadBalancing"
+   },
+   {
+    "letter": "C",
+    "len": 65,
+    "text": "kubectl delete nodes --all && kubectl create nodes --version=1.28"
+   },
+   {
+    "letter": "D",
+    "len": 60,
+    "text": "gcloud compute instances delete $(kubectl get nodes -o name)"
+   }
+  ],
+  "ratio": 1.61
+ },
+ {
+  "id": "ACE-D3-036",
+  "subtopic": "Storage Transfer Service Deployment",
+  "scenario": "Your company is migrating 100 TB of media assets from an Amazon Web Services S3 bucket `s3://media-source-bucket` to a Google Cloud Storage bucket `gs://media-target-bucket`. The migration must run on Google's high-speed backbone, perform automated checksum validations, and run on a recurring daily sync schedule. Which service should you deploy?",
+  "correct": "C",
+  "clave_len": 66,
+  "explanation": "Google Storage Transfer Service is a fully managed, scalable data migration service designed to transfer petabytes of data from Amazon S3, Azure Blob, or HTTP endpoints to Cloud Storage with automated parallelization, retries, and MD5 checksum validation.",
+  "doc": "https://cloud.google.com/storage-transfer/docs/overview",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 54,
+    "text": "A shell script running gsutil cp -r on an e2-micro VM."
+   },
+   {
+    "letter": "B",
+    "len": 31,
+    "text": "BigQuery Data Transfer Service."
+   },
+   {
+    "letter": "C",
+    "len": 66,
+    "text": "Google Storage Transfer Service (via gcloud transfer jobs create)."
+   },
+   {
+    "letter": "D",
+    "len": 39,
+    "text": "Cloud VPN tunnel connecting to AWS VPC."
+   }
+  ],
+  "ratio": 1.6
+ },
+ {
+  "id": "ACE-D4-060",
+  "subtopic": "Cloud Logging Log Bucket Retention Operations",
+  "scenario": "A financial regulatory compliance requirement mandates that all logs stored in the `_Default` log bucket of project `corp-finance-prod` must be retained for exactly 365 days (instead of the standard 30-day default retention period). Which command updates the log bucket retention?",
+  "correct": "A",
+  "clave_len": 77,
+  "explanation": "`gcloud logging buckets update <BUCKET_ID> --location=<LOCATION> --retention-days=<DAYS>` configures the log retention period of Cloud Logging log buckets (such as `_Default` or `_Required`), extending retention from 30 days up to 3650 days (10 years).",
+  "doc": "https://cloud.google.com/logging/docs/buckets#custom-retention",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 77,
+    "text": "gcloud logging buckets update _Default --location=global --retention-days=365"
+   },
+   {
+    "letter": "B",
+    "len": 41,
+    "text": "bq update --retention=365 logging_dataset"
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "gsutil retention set 365d gs://logging-default-bucket"
+   },
+   {
+    "letter": "D",
+    "len": 50,
+    "text": "gcloud compute networks update --log-retention=365"
+   }
+  ],
+  "ratio": 1.6
+ },
+ {
+  "id": "ACE-D5-003",
+  "subtopic": "Secret Manager IAM Roles & Least Privilege",
+  "scenario": "A Cloud Run microservice `order-processor` running as service account `order-sa@corp.iam.gserviceaccount.com` needs to retrieve a database connection string stored in Google Secret Manager secret `prod-db-conn`. The service only needs to read the secret payload at startup. Which IAM role should be granted to `order-sa` on the secret?",
+  "correct": "B",
+  "clave_len": 80,
+  "explanation": "`roles/secretmanager.secretAccessor` grants permission (`secretmanager.versions.access`) to read secret payloads and decrypt secret versions. `roles/secretmanager.viewer` only views secret metadata (names, creation times) without access to the actual secret payload.",
+  "doc": "https://cloud.google.com/secret-manager/docs/access-control",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 50,
+    "text": "Grant primitive roles/editor at the project level."
+   },
+   {
+    "letter": "B",
+    "len": 80,
+    "text": "Grant roles/secretmanager.secretAccessor to order-sa on the secret prod-db-conn."
+   },
+   {
+    "letter": "C",
+    "len": 53,
+    "text": "Grant roles/secretmanager.admin at the project level."
+   },
+   {
+    "letter": "D",
+    "len": 47,
+    "text": "Grant roles/secretmanager.viewer on the secret."
+   }
+  ],
+  "ratio": 1.6
+ },
+ {
+  "id": "ACE-D5-038",
+  "subtopic": "Cloud SQL SSL/TLS Enforcement Configuration",
+  "scenario": "A security compliance framework requires that all client connections to a Cloud SQL MySQL instance `corp-db-prod` must be strictly encrypted using SSL/TLS, rejecting any unencrypted plaintext TCP connections from application servers. Which command enforces SSL/TLS on the instance?",
+  "correct": "B",
+  "clave_len": 65,
+  "explanation": "`gcloud sql instances patch <INSTANCE_NAME> --ssl-mode=ENCRYPTED_ONLY` (or `TRUSTED_CLIENT_CERTIFICATES`) enforces that all incoming client TCP connections must establish an SSL/TLS handshake, rejecting unencrypted plaintext SQL queries.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/configure-ssl-instance",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 63,
+    "text": "gcloud compute firewall-rules create allow-ssl --allow=tcp:3306"
+   },
+   {
+    "letter": "B",
+    "len": 65,
+    "text": "gcloud sql instances patch corp-db-prod --ssl-mode=ENCRYPTED_ONLY"
+   },
+   {
+    "letter": "C",
+    "len": 26,
+    "text": "gcloud app deploy ssl.yaml"
+   },
+   {
+    "letter": "D",
+    "len": 33,
+    "text": "bq update --ssl=true corp-db-prod"
+   }
+  ],
+  "ratio": 1.6
+ },
+ {
+  "id": "ACE-D3-058",
+  "subtopic": "Cloud SQL Restore & Point-in-Time Recovery",
+  "scenario": "A developer accidentally executed a data-corrupting SQL migration script on database `customer-db` at 14:32:00 UTC on August 20, 2026. The instance has automated backups and binary logging (PITR) enabled. You need to restore the database to an exact clean state as of 14:30:00 UTC on the same day into a new instance `customer-db-restored`. Which command executes this point-in-time clone/restore?",
+  "correct": "A",
+  "clave_len": 100,
+  "explanation": "Point-in-Time Recovery in Cloud SQL is performed via `gcloud sql instances clone <SOURCE_INSTANCE> <TARGET_INSTANCE> --point-in-time=<ISO_TIMESTAMP>`. This creates a new fully functional instance containing database state exactly as of that specified millisecond without modifying or overwriting the original instance.",
+  "doc": "https://cloud.google.com/sql/docs/mysql/clone-instance#point-in-time",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 100,
+    "text": "gcloud sql instances clone customer-db customer-db-restored --point-in-time=2026-08-20T14:30:00.000Z"
+   },
+   {
+    "letter": "B",
+    "len": 60,
+    "text": "gcloud compute instances restore customer-db --time=14:30:00"
+   },
+   {
+    "letter": "C",
+    "len": 67,
+    "text": "gcloud sql instances restore-backup customer-db --backup-time=14:30"
+   },
+   {
+    "letter": "D",
+    "len": 62,
+    "text": "gsutil cp gs://backups/db.sql | gcloud sql connect customer-db"
+   }
+  ],
+  "ratio": 1.59
+ },
+ {
+  "id": "ACE-D4-054",
+  "subtopic": "Compute Engine Metadata Management Operations",
+  "scenario": "You have an existing virtual machine `api-gateway-1` in zone `us-central1-b`. You need to add a new metadata key-value pair `environment=production` and `release_version=3.2` to the VM instance without restarting or stopping the VM. Which command applies these metadata changes?",
+  "correct": "D",
+  "clave_len": 126,
+  "explanation": "`gcloud compute instances add-metadata <VM_NAME> --metadata=<KEY=VALUE,...>` updates the instance's metadata dictionary online without stopping or rebooting the virtual machine.",
+  "doc": "https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set_instance_metadata",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 117,
+    "text": "gcloud compute instances stop api-gateway-1 && gcloud compute instances set-machine-type api-gateway-1 --metadata=..."
+   },
+   {
+    "letter": "B",
+    "len": 63,
+    "text": "gcloud storage objects update gs://api-gateway-1 --metadata=..."
+   },
+   {
+    "letter": "C",
+    "len": 58,
+    "text": "kubectl annotate node api-gateway-1 environment=production"
+   },
+   {
+    "letter": "D",
+    "len": 126,
+    "text": "gcloud compute instances add-metadata api-gateway-1 --zone=us-central1-b --metadata=environment=production,release_version=3.2"
+   }
+  ],
+  "ratio": 1.59
+ },
+ {
+  "id": "ACE-D3-025",
+  "subtopic": "Cloud Run Secret Manager Integration",
+  "scenario": "A containerized API on Cloud Run needs to connect to a database using a password stored in Google Secret Manager secret `db-password` (version `latest`). The container expects the password to be available in an environment variable named `DATABASE_PASSWORD`. Which command deploys the service with the secret mounted securely?",
+  "correct": "A",
+  "clave_len": 131,
+  "explanation": "Cloud Run natively integrates with Secret Manager via `--set-secrets=<ENV_VAR>=<SECRET_NAME>:<VERSION>`. Cloud Run fetches the secret dynamically at runtime and injects it as an environment variable (or volume mount) into the container without exposing plaintext passwords in build files.",
+  "doc": "https://cloud.google.com/run/docs/configuring/secrets",
+  "opciones": [
+   {
+    "letter": "A",
+    "len": 131,
+    "text": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-secrets=DATABASE_PASSWORD=db-password:latest"
+   },
+   {
+    "letter": "B",
+    "len": 136,
+    "text": "gcloud run deploy api-service --image=gcr.io/my-proj/api:v1 --region=us-central1 --set-env-vars=DATABASE_PASSWORD='plainTextPassword123'"
+   },
+   {
+    "letter": "C",
+    "len": 64,
+    "text": "gcloud compute instances create api-service --secret=db-password"
+   },
+   {
+    "letter": "D",
+    "len": 49,
+    "text": "gsutil cp gs://my-secrets/db-pass.txt /etc/secret"
+   }
+  ],
+  "ratio": 1.58
+ }
+]
